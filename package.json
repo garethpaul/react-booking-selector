@@ -1,11 +1,11 @@
 {
   "name": "react-booking-selector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A grid based booking selector.",
   "author": "Gareth Paul Jones",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bibekg/react-booking-selector.git"
+    "url": "https://github.com/garethpaul/react-booking-selector.git"
   },
   "keywords": [
     "react",
