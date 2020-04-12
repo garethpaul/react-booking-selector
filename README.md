@@ -7,10 +7,10 @@ yarn add react-booking-selector styled-components
 ```
 
 ```js
-import ScheduleSelector from 'react-booking-selector'
+import BookingSelector from 'react-booking-selector'
 
 class App extends React.Component {
-  state = { schedule = [] }
+  state = { schedule = [], blocked = [] }
 
   handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
@@ -18,8 +18,9 @@ class App extends React.Component {
 
   render() {
     return (
-      <ScheduleSelector
+      <BookingSelector
         selection={this.state.schedule}
+        blocked={this.state.blocked}
         numDays={5}
         minTime={8}
         maxTime={22}
@@ -30,9 +31,9 @@ class App extends React.Component {
 }
 ```
 
-## `<ScheduleSelector />`
+## `<BookingSelector />`
 
-`ScheduleSelector` is a controlled component that can be used easily with the default settings. Just provide a controlled value for `selection` and include an `onChange` handler and you're good to go. Further customization can be done using the props outlined below.
+`BookingSelector` is a controlled component that can be used easily with the default settings. Just provide a controlled value for `selection`, `blocked` and include an `onChange` handler and you're good to go. Further customization can be done using the props outlined below.
 
 To customize the UI, you can either:
 
@@ -45,7 +46,15 @@ To customize the UI, you can either:
 
 **type**: `Array<Date>`
 
-**description**: List of dates that should be filled in on the grid (reflect the start time of each cell).
+**description**: List of dates/times that should be filled in on the grid (reflect the start time of each cell).
+
+**required**: yes
+
+### `blocked`
+
+**type**: `Array<Date`
+
+**description**: These are blocked or unavailable dates/times on the calendar that will be filled in on the grid and unavailable to select.
 
 **required**: yes
 
@@ -156,6 +165,16 @@ To customize the UI, you can either:
 **required**: no
 
 **default value**: `'#dbedff'`
+
+#### `blockedColor`
+
+**type**: `string`
+
+**description**: The color of a blocked cell
+
+**required**: no
+
+**default value**: `'rgba(79, 79, 79, 1)'`
 
 #### `renderDateCell`
 
