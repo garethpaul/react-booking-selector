@@ -1,5 +1,7 @@
 # React Booking Selector
 
+![Screenshot](/screenshot.png?raw=true)
+
 ## Getting Started
 
 ```
