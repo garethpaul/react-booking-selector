@@ -1,4 +1,4 @@
-# React Schedule Selector
+# React Booking Selector
 
 ## Getting Started
 
