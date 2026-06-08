@@ -17,20 +17,20 @@ type SelectionSchemeType = 'linear' | 'square'
 type TouchSelectionEventType = {
   touches?: Array<{
     clientX: number,
-    clientY: number
-  }>
+    clientY: number,
+  }>,
 }
 
 type KeyboardSelectionEventType = {
   key: string,
-  preventDefault: () => void
+  preventDefault: () => void,
 }
 
 type DateGridPropsType = {
   startDate?: Date,
   numDays: number,
   minTime: number,
-  maxTime: number
+  maxTime: number,
 }
 
 const toCssUnit = (value: ?(number | string)): string => {
@@ -49,15 +49,15 @@ const toDate = (value: DateValueType): Date => {
   }
 }
 
-const normalizeDates = (dates: ?Array<DateValueType>): Array<Date> => (Array.isArray(dates) ? dates : [])
-  .map(toDate)
-  .filter(isValid)
+const normalizeDates = (dates: ?Array<DateValueType>): Array<Date> =>
+  (Array.isArray(dates) ? dates : []).map(toDate).filter(isValid)
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
 const getDatesSignature = (dates: ?Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
-const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
+const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> =>
+  new Set(normalizeDates(dates).map(dateMinuteKey))
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   const dateMinuteKeys = new Set()
@@ -95,7 +95,7 @@ const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType)
   const dates = []
   for (let d = 0; d < numDays; d += 1) {
     const currentDay = []
-    visibleHours.forEach(h => {
+    visibleHours.forEach((h) => {
       currentDay.push(addHours(addDays(startTime, d), h))
     })
     dates.push(currentDay)
@@ -152,14 +152,14 @@ const TimeColumn = styled(Column)`
 export const GridCell = styled.div`
   box-sizing: border-box;
   display: block;
-  margin: ${props => toCssUnit(props.$margin)};
-  height: ${props => toCssUnit(props.$height)};
+  margin: ${(props) => toCssUnit(props.$margin)};
+  height: ${(props) => toCssUnit(props.$height)};
   padding: 0;
   border: 0;
   appearance: none;
   background: transparent;
   color: inherit;
-  ${props => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}
+  ${(props) => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}
   font: inherit;
   opacity: 1;
   touch-action: none;
@@ -178,12 +178,14 @@ const DateCell = styled.div`
   width: 100%;
   height: 100%;
   border-radius: 4px;
-  transition: background-color 120ms ease, transform 120ms ease;
-  ${props => props.$selected && !props.$blocked && `background-color: ${props.$selectedColor};`}
-  ${props => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
-  ${props => props.$blocked && `background-color: ${props.$blockedColor};`}
+  transition:
+    background-color 120ms ease,
+    transform 120ms ease;
+  ${(props) => props.$selected && !props.$blocked && `background-color: ${props.$selectedColor};`}
+  ${(props) => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
+  ${(props) => props.$blocked && `background-color: ${props.$blockedColor};`}
   &:hover {
-    background-color: ${props => (props.$blocked ? props.$blockedColor : props.$hoveredColor)};
+    background-color: ${(props) => (props.$blocked ? props.$blockedColor : props.$hoveredColor)};
   }
 `
 
@@ -247,7 +249,7 @@ type PropsType = {
   selectedColor: string,
   hoveredColor: string,
   blockedColor: string,
-  renderDateCell?: (Date, boolean, boolean) => React.Node
+  renderDateCell?: (Date, boolean, boolean) => React.Node,
 }
 
 type StateType = {
@@ -258,13 +260,13 @@ type StateType = {
   selectionPropSignature: string,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
-  isTouchDragging: boolean
+  isTouchDragging: boolean,
 }
 
 type DerivedStateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
-  selectionPropSignature: string
+  selectionPropSignature: string,
 }
 
 export const preventScroll = (e: TouchEvent) => {
@@ -294,7 +296,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     unselectedColor: colors.paleBlue,
     hoveredColor: colors.lightBlue,
     blockedColor: colors.black,
-    onChange: () => {}
+    onChange: () => {},
   }
 
   constructor(props: PropsType) {
@@ -316,12 +318,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionPropSignature,
       selectionType: null,
       selectionStart: null,
-      isTouchDragging: false
+      isTouchDragging: false,
     }
 
     this.selectionSchemeHandlers = {
       linear: selectionSchemes.linear,
-      square: selectionSchemes.square
+      square: selectionSchemes.square,
     }
 
     this.endSelection = this.endSelection.bind(this)
@@ -344,7 +346,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return {
       selectionDraft,
       selectionBase: selectionDraft,
-      selectionPropSignature
+      selectionPropSignature,
     }
   }
 
@@ -441,7 +443,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
     this.setState({
       selectionType: null,
-      selectionStart: null
+      selectionStart: null,
     })
   }
 
@@ -454,14 +456,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionSchemeHandler =
       this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square
     const availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(
-      time => !this.isBlocked(time)
+      (time) => !this.isBlocked(time),
     )
-    let nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(time => !this.isBlocked(time)))
+    let nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter((time) => !this.isBlocked(time)))
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
     } else {
       const availableSelectionKeys = new Set(availableSelection.map(dateMinuteKey))
-      nextDraft = nextDraft.filter(date => !availableSelectionKeys.has(dateMinuteKey(date)))
+      nextDraft = nextDraft.filter((date) => !availableSelectionKeys.has(dateMinuteKey(date)))
     }
     this.setState({ selectionDraft: nextDraft }, callback)
   }
@@ -476,7 +478,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
       selectionStart: startTime,
-      selectionBase: this.state.selectionDraft
+      selectionBase: this.state.selectionDraft,
     })
   }
 
@@ -538,11 +540,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       {
         selectionType: timeSelected ? 'remove' : 'add',
         selectionStart: time,
-        selectionBase: this.state.selectionDraft
+        selectionBase: this.state.selectionDraft,
       },
       () => {
         this.updateAvailabilityDraft(time, this.endSelection)
-      }
+      },
     )
   }
 
@@ -579,11 +581,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderTimeLabels = (): React.Element<*> => {
     const labels = [<GridCell $height="40" key={-1} />] // Ensures time labels start at correct location
-    getVisibleHours(this.props.minTime, this.props.maxTime).forEach(t => {
+    getVisibleHours(this.props.minTime, this.props.maxTime).forEach((t) => {
       labels.push(
         <TimeLabelCell key={t}>
           <TimeText>{formatHour(t)}</TimeText>
-        </TimeLabelCell>
+        </TimeLabelCell>,
       )
     })
     return <TimeColumn aria-hidden="true">{labels}</TimeColumn>
@@ -595,7 +597,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDate(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
       </GridCell>
-      {dayOfTimes.map(time => this.renderDateCellWrapper(time))}
+      {dayOfTimes.map((time) => this.renderDateCellWrapper(time))}
     </Column>
   )
 
@@ -648,7 +650,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         onTouchStart={touchStartHandler}
         onTouchMove={this.handleTouchMoveEvent}
         onTouchEnd={this.handleTouchEndEvent}
-        onKeyDown={event => {
+        onKeyDown={(event) => {
           this.handleCellKeyDownEvent(event, time, blocked)
         }}
       >
@@ -685,7 +687,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
           <Grid
             role="group"
             aria-label="Booking time slots"
-            ref={el => {
+            ref={(el) => {
               this.gridRef = el
             }}
           >

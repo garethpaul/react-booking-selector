@@ -16,22 +16,22 @@ const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
       (acc, dayOfTimes) =>
         acc.concat(
           dayOfTimes.filter(
-            t =>
+            (t) =>
               selectionStart &&
               selectionEnd &&
               dateUtils.dateIsBetween(
                 dateIsReversed ? selectionEnd : selectionStart,
                 t,
-                dateIsReversed ? selectionStart : selectionEnd
+                dateIsReversed ? selectionStart : selectionEnd,
               ) &&
               dateUtils.timeIsBetween(
                 timeIsReversed ? selectionEnd : selectionStart,
                 t,
-                timeIsReversed ? selectionStart : selectionEnd
-              )
-          )
+                timeIsReversed ? selectionStart : selectionEnd,
+              ),
+          ),
         ),
-      []
+      [],
     )
   }
 

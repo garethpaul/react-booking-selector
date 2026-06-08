@@ -112,7 +112,7 @@ var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_temp
 }, _colors.default.blue);
 
 // Style the Date Cell
-var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition: background-color 120ms ease, transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    background-color: ", ";\n  }\n"])), function (props) {
+var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition:\n    background-color 120ms ease,\n    transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    background-color: ", ";\n  }\n"])), function (props) {
   return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
 }, function (props) {
   return !props.$selected && !props.$blocked && "background-color: " + props.$unselectedColor + ";";

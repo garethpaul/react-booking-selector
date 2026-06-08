@@ -2,7 +2,7 @@ import { addDays, addHours, startOfDay } from 'date-fns'
 
 import linear from '../../../src/lib/selection-schemes/linear'
 
-const toTimeValues = dates => dates.map(date => date.getTime())
+const toTimeValues = (dates) => dates.map((date) => date.getTime())
 
 describe('linear selection scheme', () => {
   const dates = []
@@ -35,8 +35,8 @@ describe('linear selection scheme', () => {
     const expected = []
     const START = { DATE: 1, TIME: 10 }
     const END = { DATE: 2, TIME: 5 }
-    dates[START.DATE].slice(START.TIME).forEach(d => expected.push(d))
-    dates[END.DATE].slice(0, END.TIME + 1).forEach(d => expected.push(d))
+    dates[START.DATE].slice(START.TIME).forEach((d) => expected.push(d))
+    dates[END.DATE].slice(0, END.TIME + 1).forEach((d) => expected.push(d))
 
     const result = linear(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates)
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
@@ -46,8 +46,8 @@ describe('linear selection scheme', () => {
     const expected = []
     const START = { DATE: 2, TIME: 5 }
     const END = { DATE: 1, TIME: 10 }
-    dates[END.DATE].slice(END.TIME).forEach(d => expected.push(d))
-    dates[START.DATE].slice(0, START.TIME + 1).forEach(d => expected.push(d))
+    dates[END.DATE].slice(END.TIME).forEach((d) => expected.push(d))
+    dates[START.DATE].slice(0, START.TIME + 1).forEach((d) => expected.push(d))
 
     const result = linear(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates)
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))

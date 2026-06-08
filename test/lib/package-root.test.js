@@ -17,9 +17,9 @@ it('supports the package ESM import condition', () => {
     [
       '--input-type=module',
       '-e',
-      "import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'; console.log(`${typeof BookingSelector}:${BookingSelector === NamedBookingSelector}`)"
+      "import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'; console.log(`${typeof BookingSelector}:${BookingSelector === NamedBookingSelector}`)",
     ],
-    { cwd: process.cwd(), encoding: 'utf8' }
+    { cwd: process.cwd(), encoding: 'utf8' },
   )
 
   expect(output.trim()).toBe('function:true')

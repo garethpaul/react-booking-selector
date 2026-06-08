@@ -3,5 +3,5 @@ import square from './square.js'
 
 export default {
   linear,
-  square
+  square,
 }

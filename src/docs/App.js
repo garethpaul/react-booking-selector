@@ -72,7 +72,7 @@ const Links = styled.div`
 `
 
 const ExternalLink = styled.a`
-  background-color: ${props => props.$color};
+  background-color: ${(props) => props.$color};
   color: white;
   padding: 10px 12px;
   border-radius: 3px;
@@ -90,7 +90,7 @@ const ExternalLink = styled.a`
 
 type StateType = {
   schedule: Array<Date>,
-  blocked: Array<Date>
+  blocked: Array<Date>,
 }
 
 const getDemoDate = (day: number, hour: number = 0): Date => new Date(2020, 3, day, hour)
@@ -100,11 +100,11 @@ class App extends React.Component<{}, StateType> {
     super()
     this.state = {
       schedule: [],
-      blocked: [getDemoDate(8, 10), getDemoDate(9, 10), getDemoDate(10, 10)]
+      blocked: [getDemoDate(8, 10), getDemoDate(9, 10), getDemoDate(10, 10)],
     }
   }
 
-  handleDateChange = newSchedule => {
+  handleDateChange = (newSchedule) => {
     this.setState({ schedule: newSchedule })
   }
 

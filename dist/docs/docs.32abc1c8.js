@@ -75,7 +75,9 @@ Example:
   width: 100%;
   height: 100%;
   border-radius: 4px;
-  transition: background-color 120ms ease, transform 120ms ease;
+  transition:
+    background-color 120ms ease,
+    transform 120ms ease;
   ${e=>e.$selected&&!e.$blocked&&`background-color: ${e.$selectedColor};`}
   ${e=>!e.$selected&&!e.$blocked&&`background-color: ${e.$unselectedColor};`}
   ${e=>e.$blocked&&`background-color: ${e.$blockedColor};`}

@@ -1,4 +1,4 @@
-const loadStyledWithMock = mock => {
+const loadStyledWithMock = (mock) => {
   jest.resetModules()
   jest.doMock('styled-components', () => mock)
   const styled = require('../../src/lib/styled').default

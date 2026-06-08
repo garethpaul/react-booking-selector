@@ -1,7 +1,7 @@
 import * as React from 'react'
 import BookingSelector, {
   BookingSelector as NamedBookingSelector,
-  type BookingSelectorProps
+  type BookingSelectorProps,
 } from 'react-booking-selector'
 
 const dateLike = { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() }
@@ -10,7 +10,7 @@ const selection: BookingSelectorProps['selection'] = [
   '2026-06-08T10:00:00.000Z',
   dateLike,
   null,
-  undefined
+  undefined,
 ]
 const blocked: BookingSelectorProps['blocked'] = [new Date('2026-06-08T12:00:00.000Z').getTime(), null, undefined]
 
@@ -18,8 +18,8 @@ const renderDateCell: BookingSelectorProps['renderDateCell'] = (time, selected, 
   <span data-time={time.toISOString()} data-selected={selected} data-blocked={blockedCell} />
 )
 
-const onChange: BookingSelectorProps['onChange'] = nextSelection => {
-  nextSelection.forEach(time => {
+const onChange: BookingSelectorProps['onChange'] = (nextSelection) => {
+  nextSelection.forEach((time) => {
     time.toISOString()
   })
 }

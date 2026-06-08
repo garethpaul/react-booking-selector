@@ -7,7 +7,7 @@ export const Subtitle = styled.h2`
   font-size: 20px;
   font-weight: 400;
   color: ${colors.black};
-  text-align: ${props => props.align || 'center'};
+  text-align: ${(props) => props.align || 'center'};
 
   @media (max-width: 700px) {
     font-size: 18px;

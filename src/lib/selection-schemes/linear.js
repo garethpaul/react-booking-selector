@@ -14,17 +14,17 @@ const linear = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
       (acc, dayOfTimes) =>
         acc.concat(
           dayOfTimes.filter(
-            t =>
+            (t) =>
               selectionStart &&
               selectionEnd &&
               dateUtils.dateHourIsBetween(
                 reverseSelection ? selectionEnd : selectionStart,
                 t,
-                reverseSelection ? selectionStart : selectionEnd
-              )
-          )
+                reverseSelection ? selectionStart : selectionEnd,
+              ),
+          ),
         ),
-      []
+      [],
     )
   }
   return selected

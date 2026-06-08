@@ -72,7 +72,8 @@
     "build": "yarn lib:build && yarn docs:build",
     "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} setupTests.js --quiet",
     "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx",
-    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx}\" \"*.{js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx}\" \"*.{js,json,md}\"",
     "cover": "jest --coverage",
     "cover:check": "yarn lib:build && jest --coverage --runInBand; status=$?; rm -rf coverage; exit $status",
     "test": "yarn lib:build && jest",
@@ -82,7 +83,7 @@
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "pack:check": "npm pack --dry-run; status=$?; rm -f react-booking-selector-*.tgz; exit $status",
-    "verify": "yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check",
+    "verify": "yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check",
     "start": "yarn docs:dev"
   },
   "engines": {

@@ -18,7 +18,7 @@ const renderSelector = (props = {}) => {
     },
     rerenderWithProps(nextProps) {
       utils.rerender(<BookingSelector {...nextProps} ref={instanceRef} />)
-    }
+    },
   }
 }
 
@@ -27,7 +27,7 @@ const setStateAsync = (instance, state) =>
     instance.setState(state)
   })
 
-const clickCell = cell => {
+const clickCell = (cell) => {
   fireEvent.mouseDown(cell)
   fireEvent.mouseUp(cell)
 }
@@ -46,7 +46,7 @@ describe('snapshot tests', () => {
       selection: getTestSchedule(),
       startDate,
       numDays: 5,
-      onChange: () => undefined
+      onChange: () => undefined,
     })
 
     expect(container.firstChild).toMatchSnapshot()
@@ -62,7 +62,7 @@ describe('snapshot tests', () => {
       startDate,
       numDays: 5,
       onChange: () => undefined,
-      renderDateCell: customDateCellRenderer
+      renderDateCell: customDateCellRenderer,
     })
 
     expect(container.firstChild).toMatchSnapshot()
@@ -82,7 +82,7 @@ describe('snapshot tests', () => {
       numDays: 1,
       minTime: 9,
       maxTime: 10,
-      renderDateCell: customDateCellRenderer
+      renderDateCell: customDateCellRenderer,
     })
 
     expect(getByTestId('slot-9')).toHaveAttribute('data-selected', 'true')
@@ -97,7 +97,7 @@ it('getTimeFromTouchEvent returns the time for that cell', () => {
   const mainSpy = jest.spyOn(instance, 'getTimeFromTouchEvent')
   const mockCellTime = new Date()
   const mockEvent = {
-    touches: [{ clientX: 1, clientY: 2 }]
+    touches: [{ clientX: 1, clientY: 2 }],
   }
   const mockElement = {}
   document.elementFromPoint.mockReturnValue(mockElement)
@@ -141,7 +141,7 @@ it('endSelection calls the onChange prop and resets selection state', async () =
   expect(changeSpy).toHaveBeenCalledWith([])
   expect(setStateSpy).toHaveBeenCalledWith({
     selectionType: null,
-    selectionStart: null
+    selectionStart: null,
   })
 
   setStateSpy.mockRestore()
@@ -176,7 +176,7 @@ it('endSelection passes cloned selection dates to onChange', async () => {
 
 it('keeps internal selection state isolated from onChange mutations', async () => {
   const selected = addHours(startOfDay(startDate), 9)
-  const changeSpy = jest.fn(nextSelection => {
+  const changeSpy = jest.fn((nextSelection) => {
     nextSelection[0].setHours(10)
     nextSelection.pop()
   })
@@ -200,9 +200,9 @@ describe('mouse handlers', () => {
   })
 
   test.each([
-    ['onMouseDown', cell => fireEvent.mouseDown(cell)],
-    ['onMouseEnter', cell => fireEvent.mouseEnter(cell)],
-    ['onMouseUp', cell => fireEvent.mouseUp(cell)]
+    ['onMouseDown', (cell) => fireEvent.mouseDown(cell)],
+    ['onMouseEnter', (cell) => fireEvent.mouseEnter(cell)],
+    ['onMouseUp', (cell) => fireEvent.mouseUp(cell)],
   ])('calls the handler for %s', (name, fireHandler) => {
     const { container } = renderSelector()
     const cell = container.querySelector('button.rgdp__grid-cell')
@@ -260,7 +260,7 @@ describe('mouse handlers', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 10
+      maxTime: 10,
     })
     const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
 
@@ -275,7 +275,7 @@ describe('mouse handlers', () => {
   })
 
   afterEach(() => {
-    Object.keys(spies).forEach(spyName => {
+    Object.keys(spies).forEach((spyName) => {
       spies[spyName].mockRestore()
     })
   })
@@ -284,7 +284,10 @@ describe('mouse handlers', () => {
 describe('touch handlers', () => {
   const spies = {}
   const mockEvent = {
-    touches: [{ clientX: 1, clientY: 2 }, { clientX: 100, clientY: 200 }]
+    touches: [
+      { clientX: 1, clientY: 2 },
+      { clientX: 100, clientY: 200 },
+    ],
   }
 
   beforeEach(() => {
@@ -294,9 +297,9 @@ describe('touch handlers', () => {
   })
 
   test.each([
-    ['onTouchStart', cell => fireEvent.touchStart(cell)],
-    ['onTouchMove', cell => fireEvent.touchMove(cell, mockEvent)],
-    ['onTouchEnd', cell => fireEvent.touchEnd(cell)]
+    ['onTouchStart', (cell) => fireEvent.touchStart(cell)],
+    ['onTouchMove', (cell) => fireEvent.touchMove(cell, mockEvent)],
+    ['onTouchEnd', (cell) => fireEvent.touchEnd(cell)],
   ])('calls the handler for %s', (name, fireHandler) => {
     const { container } = renderSelector()
     const cell = container.querySelector('button.rgdp__grid-cell')
@@ -395,7 +398,7 @@ describe('touch handlers', () => {
   })
 
   afterEach(() => {
-    Object.keys(spies).forEach(spyName => {
+    Object.keys(spies).forEach((spyName) => {
       spies[spyName].mockRestore()
     })
   })
@@ -422,36 +425,33 @@ describe('updateAvailabilityDraft', () => {
     ['add', 1],
     ['remove', 1],
     ['add', -1],
-    ['remove', -1]
-  ])(
-    'updateAvailabilityDraft handles addition and removals, for forward and reversed drags',
-    async (type, amount) => {
-      const start = addHours(startDate, 5)
-      const end = addHours(start, amount)
-      const outOfRangeOne = addHours(start, amount + 5)
-      const selectedRange = amount > 0 ? [start, end] : [end, start]
-      const expectedSelection = type === 'add' ? [outOfRangeOne, ...selectedRange] : [outOfRangeOne]
+    ['remove', -1],
+  ])('updateAvailabilityDraft handles addition and removals, for forward and reversed drags', async (type, amount) => {
+    const start = addHours(startDate, 5)
+    const end = addHours(start, amount)
+    const outOfRangeOne = addHours(start, amount + 5)
+    const selectedRange = amount > 0 ? [start, end] : [end, start]
+    const expectedSelection = type === 'add' ? [outOfRangeOne, ...selectedRange] : [outOfRangeOne]
 
-      const { instance } = renderSelector({
-        selection: type === 'remove' ? [start, end, outOfRangeOne] : [outOfRangeOne],
-        startDate: start,
-        numDays: 5,
-        minTime: 0,
-        maxTime: 23
-      })
+    const { instance } = renderSelector({
+      selection: type === 'remove' ? [start, end, outOfRangeOne] : [outOfRangeOne],
+      startDate: start,
+      numDays: 5,
+      minTime: 0,
+      maxTime: 23,
+    })
 
-      await setStateAsync(instance, {
-        selectionType: type,
-        selectionStart: start
-      })
+    await setStateAsync(instance, {
+      selectionType: type,
+      selectionStart: start,
+    })
 
-      await act(async () => {
-        instance.updateAvailabilityDraft(end)
-      })
+    await act(async () => {
+      instance.updateAvailabilityDraft(end)
+    })
 
-      expect(instance.state.selectionDraft).toEqual(expectedSelection)
-    }
-  )
+    expect(instance.state.selectionDraft).toEqual(expectedSelection)
+  })
 
   it('updateAvailabilityDraft handles a single cell click correctly', async () => {
     const { instance } = renderSelector()
@@ -459,7 +459,7 @@ describe('updateAvailabilityDraft', () => {
 
     await setStateAsync(instance, {
       selectionType: 'add',
-      selectionStart: start
+      selectionStart: start,
     })
 
     await act(async () => {
@@ -477,12 +477,12 @@ describe('updateAvailabilityDraft', () => {
       numDays: 1,
       minTime: 5,
       maxTime: 6,
-      blocked: [blocked]
+      blocked: [blocked],
     })
 
     await setStateAsync(instance, {
       selectionType: 'add',
-      selectionStart: start
+      selectionStart: start,
     })
 
     await act(async () => {
@@ -501,13 +501,13 @@ describe('updateAvailabilityDraft', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 10
+      maxTime: 10,
     })
 
     await setStateAsync(instance, {
       selectionType: 'add',
       selectionStart: available,
-      selectionBase: [blocked]
+      selectionBase: [blocked],
     })
 
     await act(async () => {
@@ -526,13 +526,13 @@ describe('updateAvailabilityDraft', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 10
+      maxTime: 10,
     })
 
     await setStateAsync(instance, {
       selectionType: 'remove',
       selectionStart: removed,
-      selectionBase: [duplicate, duplicateSameMinute, removed]
+      selectionBase: [duplicate, duplicateSameMinute, removed],
     })
 
     await act(async () => {
@@ -550,12 +550,12 @@ describe('updateAvailabilityDraft', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 10
+      maxTime: 10,
     })
 
     await setStateAsync(instance, {
       selectionType: 'add',
-      selectionStart: start
+      selectionStart: start,
     })
 
     await act(async () => {
@@ -573,7 +573,10 @@ describe('updateAvailabilityDraft', () => {
     clickCell(firstCell)
     clickCell(secondCell)
 
-    expect(changeSpy).toHaveBeenLastCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    expect(changeSpy).toHaveBeenLastCalledWith([
+      addHours(startOfDay(startDate), 9),
+      addHours(startOfDay(startDate), 10),
+    ])
   })
 
   it('removes a visibly selected draft cell before parent rerender', () => {
@@ -667,7 +670,7 @@ describe('componentWillUnmount', () => {
   it('removes the touchmove event listeners from the date cells', () => {
     const { instance, unmount } = renderSelector()
     const mockDateCell = {
-      removeEventListener: jest.fn()
+      removeEventListener: jest.fn(),
     }
     instance.cellToDate.set(mockDateCell, new Date())
     instance.dateToCell.set(startDate.getTime(), mockDateCell)
@@ -808,7 +811,7 @@ describe('prop updates', () => {
       startDate: addDays(startDate, 1),
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
 
     expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
@@ -837,7 +840,7 @@ describe('blocked cells', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
 
@@ -854,7 +857,7 @@ describe('blocked cells', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
 
@@ -871,7 +874,7 @@ describe('blocked cells', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const mouseSpy = jest.spyOn(instance, 'handleMouseDownEvent')
     const touchSpy = jest.spyOn(instance, 'handleTouchStartEvent')
@@ -915,17 +918,17 @@ describe('cell accessibility', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 11
+      maxTime: 11,
     })
 
     expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
-      'true'
+      'true',
     )
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })).toHaveAttribute(
       'aria-pressed',
-      'false'
+      'false',
     )
   })
 
@@ -937,12 +940,12 @@ describe('cell accessibility', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
 
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
-      'false'
+      'false',
     )
   })
 
@@ -955,12 +958,12 @@ describe('cell accessibility', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 10
+      maxTime: 10,
     })
 
     expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
-      'true'
+      'true',
     )
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
   })
@@ -975,7 +978,7 @@ describe('cell accessibility', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
 
@@ -992,7 +995,7 @@ describe('cell accessibility', () => {
     const throwingDateLike = {
       valueOf: () => {
         throw new Error('Invalid date-like value')
-      }
+      },
     }
     const { getByRole } = renderSelector({
       selection: [null, void 0, throwingDateLike],
@@ -1000,12 +1003,12 @@ describe('cell accessibility', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
 
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
-      'false'
+      'false',
     )
   })
 })
@@ -1026,14 +1029,14 @@ describe('keyboard interaction', () => {
   it('toggles a custom-rendered focused cell with Enter', async () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
-    const renderDateCell = time => <span data-testid={`custom-slot-${time.getHours()}`}>{time.getHours()}</span>
+    const renderDateCell = (time) => <span data-testid={`custom-slot-${time.getHours()}`}>{time.getHours()}</span>
     const { getByTestId } = renderSelector({
       onChange: changeSpy,
       renderDateCell,
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const customContent = getByTestId('custom-slot-9')
     const cell = customContent.closest('button.rgdp__grid-cell')
@@ -1056,7 +1059,7 @@ describe('keyboard interaction', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const cell = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })
     const event = createEvent.keyDown(cell, { key: ' ' })
@@ -1132,7 +1135,7 @@ describe('keyboard interaction', () => {
       startDate,
       numDays: 1,
       minTime: 9,
-      maxTime: 9
+      maxTime: 9,
     })
     const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
 
@@ -1145,7 +1148,7 @@ describe('keyboard interaction', () => {
 describe('preventScroll', () => {
   it('prevents the event default', () => {
     const event = {
-      preventDefault: jest.fn()
+      preventDefault: jest.fn(),
     }
     preventScroll(event)
     expect(event.preventDefault).toHaveBeenCalled()
