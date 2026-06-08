@@ -12,3 +12,4 @@
 - Aligned TypeScript date value declarations with the runtime handling of nullish selection and blocked entries.
 - Kept coverage reports focused on source files by excluding generated `dist` artifacts.
 - Reset native button appearance and opacity so slot colors remain consistent across browsers.
+- Added keyboard regression coverage showing custom-rendered slots still toggle through the accessible grid cell wrapper.

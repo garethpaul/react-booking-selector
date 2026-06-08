@@ -26,5 +26,4 @@ selected and blocked booleans were not explicitly asserted.
 ## Follow-Up Candidates
 
 - Add examples for custom renderers in the README.
-- Add focused tests for custom renderer interaction with keyboard navigation.
 - Add package dry-run checks to the verify gate if release automation needs it.

@@ -963,6 +963,30 @@ describe('keyboard interaction', () => {
     })
   })
 
+  it('toggles a custom-rendered focused cell with Enter', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const renderDateCell = time => <span data-testid={`custom-slot-${time.getHours()}`}>{time.getHours()}</span>
+    const { getByTestId } = renderSelector({
+      onChange: changeSpy,
+      renderDateCell,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const customContent = getByTestId('custom-slot-9')
+    const cell = customContent.closest('[role="button"]')
+
+    expect(cell).toHaveAttribute('aria-label', 'Available Monday, January 1, 2018 at 9 am')
+
+    fireEvent.keyDown(cell, { key: 'Enter' })
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([selected])
+    })
+  })
+
   it('removes a selected focused cell with Space', async () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
