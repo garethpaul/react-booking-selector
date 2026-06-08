@@ -9,19 +9,23 @@ yarn add react-booking-selector styled-components
 ```
 
 ```js
+import React from 'react'
 import BookingSelector from 'react-booking-selector'
 
 class App extends React.Component {
-  state = { schedule = [], blocked = [] }
+  state = {
+    selection: [],
+    blocked: []
+  }
 
-  handleChange = newSchedule => {
-    this.setState({ schedule: newSchedule })
+  handleChange = selection => {
+    this.setState({ selection })
   }
 
   render() {
     return (
       <BookingSelector
-        selection={this.state.schedule}
+        selection={this.state.selection}
         blocked={this.state.blocked}
         numDays={5}
         minTime={8}
@@ -35,7 +39,7 @@ class App extends React.Component {
 
 ## `<BookingSelector />`
 
-`BookingSelector` is a controlled component that can be used easily with the default settings. Just provide a controlled value for `selection`, `blocked` and include an `onChange` handler and you're good to go. Further customization can be done using the props outlined below.
+`BookingSelector` is a controlled component that can be used with the default settings. Provide values for `selection` and `blocked`, pass an `onChange` handler, and customize the UI with the props below.
 
 To customize the UI, you can either:
 
@@ -50,15 +54,19 @@ To customize the UI, you can either:
 
 **description**: List of dates/times that should be filled in on the grid (reflect the start time of each cell).
 
-**required**: yes
+**required**: no
 
-### `blocked`
+**default value**: `[]`
 
-**type**: `Array<Date`
+#### `blocked`
+
+**type**: `Array<Date>`
 
 **description**: These are blocked or unavailable dates/times on the calendar that will be filled in on the grid and unavailable to select.
 
-**required**: yes
+**required**: no
+
+**default value**: `[]`
 
 #### `selectionScheme`
 
@@ -76,13 +84,15 @@ To customize the UI, you can either:
 
 **description**: Called when selected availability is changed. The new list of selected dates is passed in as the first parameter.
 
-**required**: yes
+**required**: no
+
+**default value**: no-op function
 
 #### `startDate`
 
 **type**: `Date`
 
-**description**: The date on which the grid should start (time portion is ignored, specify start time via `minTime`) 
+**description**: The date on which the grid should start. The time portion is ignored; specify start time with `minTime`.
 
 **required**: no
 
@@ -92,7 +102,7 @@ To customize the UI, you can either:
 
 **type**: `number`
 
-**description**: The number of days to show, startin from today
+**description**: The number of days to show, starting from `startDate`
 
 **required**: no
 
@@ -122,11 +132,11 @@ To customize the UI, you can either:
 
 **type**: `string`
 
-**description**: The [date format](https://date-fns.org/v1.29.0/docs/format) to be used for the column headers
+**description**: The date-fns `format` token string used for the column headers
 
 **required**: no
 
-**default value**: `'M/D'`
+**default value**: `'d'`
 
 #### `margin`
 
@@ -146,17 +156,17 @@ To customize the UI, you can either:
 
 **required**: no
 
-**default value**: `'rgba(89, 154, 242, 1)'`
+**default value**: `'#dbedff'`
 
 #### `selectedColor`
 
 **type**: `string`
 
-**description**: The color of an unselected cell
+**description**: The color of a selected cell
 
 **required**: no
 
-**default value**: `'rgba(162, 198, 248, 1)'`
+**default value**: `'rgba(89, 154, 242, 1)'`
 
 #### `hoveredColor`
 
@@ -166,7 +176,7 @@ To customize the UI, you can either:
 
 **required**: no
 
-**default value**: `'#dbedff'`
+**default value**: `'rgba(162, 198, 248, 1)'`
 
 #### `blockedColor`
 
@@ -180,8 +190,8 @@ To customize the UI, you can either:
 
 #### `renderDateCell`
 
-**type**: `(time: Date, selected: boolean, refSetter: function) => React.Node`
+**type**: `(time: Date, selected: boolean, blocked: boolean) => React.Node`
 
-**description**: A render prop function that accepts the time this cell is representing and whether the cell is selected or not and returns a React element. It is your responsibility to apply the `refSetter` as a ref to the component you render -- neglecting to do so will cause the component to not work properly for touch devices. If you choose to use this custom render function, the color props above have no effect.
+**description**: A render prop function that receives the time represented by the cell, whether the cell is selected, and whether the cell is blocked. If you choose to use this custom render function, the color props above have no effect.
 
 **required**: no

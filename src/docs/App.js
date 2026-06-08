@@ -52,6 +52,17 @@ const ExternalLink = styled.a`
   margin: 5px;
 `
 
+const ActionButton = styled.button`
+  background-color: ${props => props.color};
+  border: 0;
+  color: white;
+  padding: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font: inherit;
+  margin: 5px;
+`
+
 type StateType = {
   schedule: Array<Date>,
   blocked: Array<Date>
@@ -104,9 +115,9 @@ class App extends React.Component<{}, StateType> {
             <ExternalLink color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
               GitHub
             </ExternalLink>
-            <ExternalLink color="red" onClick={this.save}>
-              Save (see console.log)
-            </ExternalLink>
+            <ActionButton color="red" onClick={this.save} type="button">
+              Save
+            </ActionButton>
           </Links>
         </MainDiv>
       </React.Fragment>
