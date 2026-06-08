@@ -7,7 +7,10 @@ import BookingSelector from '../lib'
 
 const GlobalStyle = createGlobalStyle`
   body {
-    font-family: sans-serif;
+    margin: 0;
+    color: #111827;
+    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   * {
@@ -19,37 +22,70 @@ const MainDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  padding: 32px 16px 40px;
 `
 
 const IntroText = styled.div`
   width: 100%;
+  max-width: 760px;
   text-align: center;
+  h1 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.15;
+  }
+  @media (max-width: 699px) {
+    h1 {
+      font-size: 30px;
+    }
+  }
+`
+
+const StatusText = styled.p`
+  margin: 18px 0 18px;
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.4;
 `
 
 const BookingSelectorCard = styled.div`
+  background: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
-  padding: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+  padding: 22px;
   width: 90%;
   max-width: 800px;
   & > * {
     flex-grow: 1;
   }
+  @media (max-width: 699px) {
+    width: 100%;
+    padding: 16px 14px;
+  }
 `
 
 const Links = styled.div`
   display: flex;
-  margin-top: 20px;
+  margin-top: 24px;
 `
 
 const ExternalLink = styled.a`
   background-color: ${props => props.color};
   color: white;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 3px;
   cursor: pointer;
   text-decoration: none;
   margin: 5px;
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid #599af2;
+    outline-offset: 3px;
+  }
 `
 
 type StateType = {
@@ -75,13 +111,18 @@ class App extends React.Component<{}, StateType> {
   }
 
   render(): React.Element<*> {
+    const selectedCount = this.state.schedule.length
+    const blockedCount = this.state.blocked.length
+
     return (
       <React.Fragment>
         <GlobalStyle />
         <MainDiv>
           <IntroText>
             <h1>React Booking Selector</h1>
-            <p>Tap to select one time or drag to select multiple times at once.</p>
+            <StatusText aria-live="polite">
+              {selectedCount} selected - {blockedCount} blocked
+            </StatusText>
           </IntroText>
           <BookingSelectorCard>
             <BookingSelector
