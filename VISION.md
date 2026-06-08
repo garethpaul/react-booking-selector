@@ -39,7 +39,7 @@ Booking grids often represent availability and scheduling data. The component
 should remain a local UI primitive and should not introduce network behavior,
 tracking, or storage concerns.
 
-## What We Will Not Merge For Now
+## What We Will Not Merge (For Now)
 
 - Hidden analytics or remote availability fetches
 - Public prop changes without migration guidance
