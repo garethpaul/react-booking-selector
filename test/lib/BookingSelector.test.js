@@ -259,6 +259,29 @@ describe('updateAvailabilityDraft', () => {
     expect(instance.state.selectionDraft).toEqual([start])
   })
 
+  it('falls back to square selection for unknown selection schemes', async () => {
+    const start = addHours(startOfDay(startDate), 9)
+    const end = addHours(startOfDay(startDate), 10)
+    const { instance } = renderSelector({
+      selectionScheme: 'unknown',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10
+    })
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: start
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(end)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([start, end])
+  })
+
   it('preserves the visible draft when adding another cell before parent rerender', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })

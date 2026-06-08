@@ -362,7 +362,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     let newSelection = []
     if (selectionStart && selectionType) {
-      newSelection = this.selectionSchemeHandlers[this.props.selectionScheme](selectionStart, selectionEnd, this.dates)
+      const selectionSchemeHandler =
+        this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square
+      newSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates)
     }
     const availableSelection = newSelection.filter(time => !this.isBlocked(time))
     let nextDraft = [...this.state.selectionBase]
