@@ -77,6 +77,8 @@ const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): strin
   return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(time.getHours())}`
 }
 
+const dateKey = (time: Date): number => time.getTime()
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -204,6 +206,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
   cellToDate: Map<HTMLElement, Date>
+  dateToCell: Map<number, HTMLElement>
   gridRef: ?HTMLElement
 
   static defaultProps = {
@@ -227,6 +230,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     this.dates = buildDates(props)
     this.cellToDate = new Map()
+    this.dateToCell = new Map()
 
     const selectionDraft = normalizeDates(this.props.selection)
     this.state = {
@@ -282,19 +286,27 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         dateCell.removeEventListener('touchmove', preventScroll)
       }
     })
+    this.cellToDate.clear()
+    this.dateToCell.clear()
   }
 
   registerDateCell(dateCell: HTMLElement, time: Date) {
+    const previousTime = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) {
       dateCell.addEventListener('touchmove', preventScroll, { passive: false })
+    } else if (previousTime) {
+      this.dateToCell.delete(dateKey(previousTime))
     }
     this.cellToDate.set(dateCell, time)
+    this.dateToCell.set(dateKey(time), dateCell)
   }
 
   unregisterDateCell(dateCell: HTMLElement) {
+    const time = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) return
     dateCell.removeEventListener('touchmove', preventScroll)
     this.cellToDate.delete(dateCell)
+    if (time) this.dateToCell.delete(dateKey(time))
   }
 
   isBlocked(time: Date): boolean {
@@ -387,7 +399,30 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.updateAvailabilityDraft(time, this.endSelection)
   }
 
+  getKeyboardNavigationTarget(time: Date, key: string): ?Date {
+    if (key === 'ArrowRight') return addDays(time, 1)
+    if (key === 'ArrowLeft') return addDays(time, -1)
+    if (key === 'ArrowDown') return addHours(time, 1)
+    if (key === 'ArrowUp') return addHours(time, -1)
+    return null
+  }
+
+  focusDateCell(time: Date): boolean {
+    if (this.isBlocked(time)) return false
+    const dateCell = this.dateToCell.get(dateKey(time))
+    if (!dateCell) return false
+    dateCell.focus()
+    return true
+  }
+
   handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
+    const navigationTarget = this.getKeyboardNavigationTarget(time, event.key)
+    if (navigationTarget) {
+      event.preventDefault()
+      this.focusDateCell(navigationTarget)
+      return
+    }
+
     if (blocked || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
     const timeSelected = this.isSelected(time)

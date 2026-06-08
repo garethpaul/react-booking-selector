@@ -422,6 +422,38 @@ describe('keyboard interaction', () => {
       expect(changeSpy).toHaveBeenCalled()
     })
   })
+
+  it('moves focus between adjacent cells with arrow keys', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 10 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const mondayTen = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+    const tuesdayTen = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 10 am' })
+
+    mondayNine.focus()
+    fireEvent.keyDown(mondayNine, { key: 'ArrowRight' })
+    expect(tuesdayNine).toHaveFocus()
+
+    fireEvent.keyDown(tuesdayNine, { key: 'ArrowDown' })
+    expect(tuesdayTen).toHaveFocus()
+
+    fireEvent.keyDown(tuesdayTen, { key: 'ArrowLeft' })
+    expect(mondayTen).toHaveFocus()
+
+    fireEvent.keyDown(mondayTen, { key: 'ArrowUp' })
+    expect(mondayNine).toHaveFocus()
+  })
+
+  it('does not move focus to blocked cells with arrow keys', () => {
+    const blocked = addHours(addDays(startOfDay(startDate), 1), 9)
+    const { getByRole } = renderSelector({ blocked: [blocked], startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    mondayNine.focus()
+    fireEvent.keyDown(mondayNine, { key: 'ArrowRight' })
+
+    expect(mondayNine).toHaveFocus()
+  })
 })
 
 describe('preventScroll', () => {

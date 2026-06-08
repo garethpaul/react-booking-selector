@@ -57,7 +57,7 @@ Values in `selection` and `blocked` are matched to grid slots at minute precisio
 
 ### Accessibility
 
-Each time slot is rendered as a keyboard-focusable button unless it is blocked. Users can toggle a focused slot with `Enter` or `Space`, and every slot exposes an accessible label with its selected, blocked, or available state plus the full date and hour.
+Each time slot is rendered as a keyboard-focusable button unless it is blocked. Users can move between adjacent slots with the arrow keys, toggle a focused slot with `Enter` or `Space`, and every slot exposes an accessible label with its selected, blocked, or available state plus the full date and hour.
 
 ### `Props`
 

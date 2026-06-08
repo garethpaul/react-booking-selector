@@ -62,6 +62,9 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
   return state + " " + (0, _dateFns.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
+var dateKey = function dateKey(time) {
+  return time.getTime();
+};
 var Wrapper = _styledComponents.default.div.withConfig({
   displayName: "BookingSelector__Wrapper",
   componentId: "sc-1e1auar-0"
@@ -124,6 +127,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.dates = void 0;
     _this.selectionSchemeHandlers = void 0;
     _this.cellToDate = void 0;
+    _this.dateToCell = void 0;
     _this.gridRef = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
@@ -240,6 +244,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.dates = buildDates(props);
     _this.cellToDate = new Map();
+    _this.dateToCell = new Map();
     var selectionDraft = normalizeDates(_this.props.selection);
     _this.state = {
       selectionDraft: selectionDraft,
@@ -291,19 +296,27 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         dateCell.removeEventListener('touchmove', preventScroll);
       }
     });
+    this.cellToDate.clear();
+    this.dateToCell.clear();
   };
   _proto.registerDateCell = function registerDateCell(dateCell, time) {
+    var previousTime = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) {
       dateCell.addEventListener('touchmove', preventScroll, {
         passive: false
       });
+    } else if (previousTime) {
+      this.dateToCell.delete(dateKey(previousTime));
     }
     this.cellToDate.set(dateCell, time);
+    this.dateToCell.set(dateKey(time), dateCell);
   };
   _proto.unregisterDateCell = function unregisterDateCell(dateCell) {
+    var time = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) return;
     dateCell.removeEventListener('touchmove', preventScroll);
     this.cellToDate.delete(dateCell);
+    if (time) this.dateToCell.delete(dateKey(time));
   };
   _proto.isBlocked = function isBlocked(time) {
     return Boolean(this.props.blocked.find(function (blockedTime) {
@@ -405,8 +418,28 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.handleMouseUpEvent = function handleMouseUpEvent(time) {
     this.updateAvailabilityDraft(time, this.endSelection);
   };
+  _proto.getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
+    if (key === 'ArrowRight') return (0, _dateFns.addDays)(time, 1);
+    if (key === 'ArrowLeft') return (0, _dateFns.addDays)(time, -1);
+    if (key === 'ArrowDown') return (0, _dateFns.addHours)(time, 1);
+    if (key === 'ArrowUp') return (0, _dateFns.addHours)(time, -1);
+    return null;
+  };
+  _proto.focusDateCell = function focusDateCell(time) {
+    if (this.isBlocked(time)) return false;
+    var dateCell = this.dateToCell.get(dateKey(time));
+    if (!dateCell) return false;
+    dateCell.focus();
+    return true;
+  };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this3 = this;
+    var navigationTarget = this.getKeyboardNavigationTarget(time, event.key);
+    if (navigationTarget) {
+      event.preventDefault();
+      this.focusDateCell(navigationTarget);
+      return;
+    }
     if (blocked || event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     var timeSelected = this.isSelected(time);
