@@ -57,7 +57,7 @@
     "clean:docs": "rm -rf dist/docs",
     "clean:lib": "rm -rf dist/lib",
     "build": "yarn lib:build && yarn docs:build",
-    "lint": "eslint src/**/*.{js,jsx} --quiet",
+    "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} setupTests.js --quiet",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "cover": "jest --coverage",
     "test": "jest",

@@ -1,5 +1,3 @@
-/* eslint-disable flowtype/* */
-
 import React, { act } from 'react'
 import { addDays, addHours, startOfDay } from 'date-fns'
 import { fireEvent, render, waitFor } from '@testing-library/react'

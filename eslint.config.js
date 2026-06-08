@@ -14,6 +14,18 @@ const browserGlobals = {
   window: 'readonly'
 }
 
+const jestGlobals = {
+  afterAll: 'readonly',
+  afterEach: 'readonly',
+  beforeAll: 'readonly',
+  beforeEach: 'readonly',
+  describe: 'readonly',
+  expect: 'readonly',
+  it: 'readonly',
+  jest: 'readonly',
+  test: 'readonly'
+}
+
 module.exports = [
   {
     ignores: ['coverage/**', 'dev/**', 'dist/**', 'node_modules/**']
@@ -21,12 +33,13 @@ module.exports = [
   js.configs.recommended,
   prettier,
   {
-    files: ['src/**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}', 'test/**/*.{js,jsx}', 'setupTests.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...browserGlobals,
+        ...jestGlobals,
         console: 'readonly'
       },
       parser: babelParser,
@@ -64,7 +77,7 @@ module.exports = [
       'import/no-extraneous-dependencies': [
         'error',
         {
-          devDependencies: ['src/docs/**']
+          devDependencies: ['src/docs/**', 'test/**', 'setupTests.js']
         }
       ],
       'import/prefer-default-export': 'off',
