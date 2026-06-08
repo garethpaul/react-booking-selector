@@ -237,4 +237,4 @@ corepack yarn verify
 corepack yarn build
 ```
 
-`corepack yarn verify` runs linting, TypeScript checks, Jest with coverage thresholds, a dependency audit, and a package dry run. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
+`corepack yarn verify` runs formatting checks, linting, TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
