@@ -239,9 +239,10 @@ corepack yarn build
 ```
 
 `make check` is the repository-standard wrapper around `corepack yarn verify`.
-`corepack yarn verify` checks the canonical completed plan under `docs/plans`, runs formatting checks, linting,
+`corepack yarn verify` checks every canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types
 Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and
 `LICENSE`.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
+See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.

@@ -2,6 +2,8 @@
 
 ## 2026-06-08
 
+- Expanded `docs:check` so every canonical plan under `docs/plans/` must
+  record completed status and verification commands.
 - Added direct regression coverage for the `renderDateCell` selected and blocked state arguments.
 - Confirmed the existing `corepack yarn verify` gate covers lint, type declarations, Jest tests, build output, and dependency audit.
 - Added package dry-run verification to `corepack yarn verify` with automatic tarball cleanup.

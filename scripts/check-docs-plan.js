@@ -1,24 +1,42 @@
 'use strict'
 
 const fs = require('node:fs')
+const path = require('node:path')
 
-const planPath = 'docs/plans/2026-06-08-react-booking-selector-baseline.md'
-const plan = fs.existsSync(planPath) ? fs.readFileSync(planPath, 'utf8') : ''
+const planDir = 'docs/plans'
+const baselinePlanPath = path.join(planDir, '2026-06-08-react-booking-selector-baseline.md')
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 
 const errors = []
-if (!plan) {
-  errors.push(`${planPath} is missing`)
+const planPaths = fs.existsSync(planDir)
+  ? fs
+      .readdirSync(planDir)
+      .filter((name) => name.endsWith('.md'))
+      .sort()
+      .map((name) => path.join(planDir, name))
+  : []
+
+if (planPaths.length === 0) {
+  errors.push(`${planDir} must contain completed plan markdown files`)
 }
-if (!plan.includes('Status: Completed')) {
-  errors.push(`${planPath} must record Status: Completed`)
+
+if (!planPaths.includes(baselinePlanPath)) {
+  errors.push(`${baselinePlanPath} is missing`)
 }
-if (!plan.includes('corepack yarn verify')) {
-  errors.push(`${planPath} must record corepack yarn verify`)
+
+for (const planPath of planPaths) {
+  const plan = fs.readFileSync(planPath, 'utf8')
+  if (!/^## Status: Completed$/mu.test(plan)) {
+    errors.push(`${planPath} must record Status: Completed`)
+  }
+  if (!plan.includes('corepack yarn verify')) {
+    errors.push(`${planPath} must record corepack yarn verify`)
+  }
+  if (!plan.includes('make check')) {
+    errors.push(`${planPath} must record make check`)
+  }
 }
-if (!plan.includes('make check')) {
-  errors.push(`${planPath} must record make check`)
-}
+
 if (!makefile.includes('corepack yarn verify')) {
   errors.push('Makefile must expose corepack yarn verify')
 }
@@ -28,4 +46,4 @@ if (errors.length > 0) {
   process.exit(1)
 }
 
-process.stdout.write('Docs plan check passed.\n')
+process.stdout.write(`Docs plan check passed for ${planPaths.length} plan(s).\n`)
