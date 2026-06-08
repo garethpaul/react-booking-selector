@@ -15,32 +15,25 @@ TypeScript declarations are included for both the default export and the named `
 Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6.
 
 ```js
-import React from 'react'
+import React, { useState } from 'react'
 import BookingSelector from 'react-booking-selector'
 // Or: import { BookingSelector } from 'react-booking-selector'
 
-class App extends React.Component {
-  state = {
-    selection: [],
-    blocked: []
-  }
+const blocked = []
 
-  handleChange = selection => {
-    this.setState({ selection })
-  }
+function App() {
+  const [selection, setSelection] = useState([])
 
-  render() {
-    return (
-      <BookingSelector
-        selection={this.state.selection}
-        blocked={this.state.blocked}
-        numDays={5}
-        minTime={8}
-        maxTime={22}
-        onChange={this.handleChange}
-      />
-    )
-  }
+  return (
+    <BookingSelector
+      selection={selection}
+      blocked={blocked}
+      numDays={5}
+      minTime={8}
+      maxTime={22}
+      onChange={setSelection}
+    />
+  )
 }
 ```
 
@@ -69,10 +62,10 @@ const renderDateCell = (time, selected, blocked) => (
 )
 
 <BookingSelector
-  selection={this.state.selection}
-  blocked={this.state.blocked}
+  selection={selection}
+  blocked={blocked}
   renderDateCell={renderDateCell}
-  onChange={this.handleChange}
+  onChange={setSelection}
 />
 ```
 
