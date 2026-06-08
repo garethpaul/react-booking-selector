@@ -55,6 +55,8 @@ Selection schemes:
 
 Each time slot is a focusable button unless it is blocked. Arrow keys move focus between adjacent slots, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
 
+If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
+
 ## Date and Time Behavior
 
 `BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
