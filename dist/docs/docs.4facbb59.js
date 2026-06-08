@@ -91,7 +91,7 @@ Example:
     background-color: ${e=>e.$blocked?e.$blockedColor:e.$selected?e.$selectedColor:e.$hoveredColor};
   }
 `,nI=tN(nd)`
-  height: 15px;
+  height: 20px;
   font-size: 19px;
   line-height: 1;
   margin: 0px;
@@ -101,6 +101,7 @@ Example:
   text-overflow: ellipsis;
   white-space: nowrap;
   @media (max-width: 699px) {
+    height: 15px;
     font-size: 12px;
   }
 `,nM=tN(nd)`

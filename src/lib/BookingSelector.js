@@ -236,7 +236,7 @@ const DateCell = styled.div`
 `
 
 const DateLabel = styled(Subtitle)`
-  height: 15px;
+  height: 20px;
   font-size: 19px;
   line-height: 1;
   margin: 0px;
@@ -246,6 +246,7 @@ const DateLabel = styled(Subtitle)`
   text-overflow: ellipsis;
   white-space: nowrap;
   @media (max-width: 699px) {
+    height: 15px;
     font-size: 12px;
   }
 `

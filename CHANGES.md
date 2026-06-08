@@ -53,3 +53,4 @@
 - Kept selected cells on their selected color while hovered so hover styling does not hide selection state.
 - Contained visual date header text so long formats and host heading styles cannot spill across columns.
 - Limited `touch-action: none` to interactive slot cells instead of decorative header cells.
+- Increased desktop date-number header height to avoid clipped glyphs under contained overflow.

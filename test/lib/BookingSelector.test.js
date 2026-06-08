@@ -1158,7 +1158,9 @@ describe('cell accessibility', () => {
       maxTime: 9,
       dateFormat: 'MMMM d',
     })
-    const labels = [getByText('MON'), getByText('January 1')]
+    const dayLabel = getByText('MON')
+    const dateLabel = getByText('January 1')
+    const labels = [dayLabel, dateLabel]
 
     labels.forEach((label) => {
       expect(label).toHaveStyleRule('line-height', '1')
@@ -1166,6 +1168,9 @@ describe('cell accessibility', () => {
       expect(label).toHaveStyleRule('text-overflow', 'ellipsis')
       expect(label).toHaveStyleRule('white-space', 'nowrap')
     })
+    expect(dayLabel).toHaveStyleRule('height', '15px')
+    expect(dateLabel).toHaveStyleRule('height', '20px')
+    expect(dateLabel).toHaveStyleRule('height', '15px', { media: '(max-width: 699px)' })
   })
 
   it('labels cells with their state and time', () => {
