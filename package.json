@@ -67,7 +67,7 @@
     "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && cp src/lib/index.d.ts dist/lib/index.d.ts",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html",
-    "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/\\n+$/u, '\\n'))\"",
+    "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "start": "yarn docs:dev"
   },
