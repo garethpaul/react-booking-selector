@@ -53,7 +53,7 @@ To customize the UI, you can either:
 
 `BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
 
-Values in `selection` and `blocked` are matched to grid slots at minute precision. For predictable results, pass dates that represent the same local timezone and hour/minute values as the rendered grid.
+Values in `selection` and `blocked` may be `Date` objects, timestamps, or date strings, and are normalized to `Date` objects before comparison. They are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
 
 ### Accessibility
 
@@ -63,7 +63,7 @@ Each time slot is rendered as a keyboard-focusable button unless it is blocked. 
 
 #### `selection`
 
-**type**: `Array<Date>`
+**type**: `Array<Date | string | number>`
 
 **description**: List of dates/times that should be filled in on the grid (reflect the start time of each cell).
 
@@ -73,7 +73,7 @@ Each time slot is rendered as a keyboard-focusable button unless it is blocked. 
 
 #### `blocked`
 
-**type**: `Array<Date>`
+**type**: `Array<Date | string | number>`
 
 **description**: These are blocked or unavailable dates/times on the calendar that will be filled in on the grid and unavailable to select.
 
