@@ -90,6 +90,7 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
 var dateKey = function dateKey(time) {
   return time.getTime();
 };
+var TOUCH_MOUSE_SUPPRESSION_MS = 500;
 var Wrapper = _styledComponents.default.div.withConfig({
   displayName: "Wrapper",
   componentId: "sc-1e1auar-0"
@@ -158,6 +159,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.cellToDate = void 0;
     _this.dateToCell = void 0;
     _this.gridRef = void 0;
+    _this.lastTouchEventTime = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
         $height: "40",
@@ -185,8 +187,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.renderDateCellWrapper = function (time) {
       var blocked = _this.isBlocked(time);
       var selected = !blocked && _this.isSelected(time);
-      var startHandler = function startHandler() {
-        if (!blocked) _this.handleSelectionStartEvent(time);
+      var mouseStartHandler = function mouseStartHandler() {
+        if (!blocked) _this.handleMouseDownEvent(time);
+      };
+      var touchStartHandler = function touchStartHandler() {
+        if (!blocked) _this.handleTouchStartEvent(time);
       };
       var currentDateCell = null;
       var refSetter = function refSetter(dateCell) {
@@ -211,7 +216,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         ref: refSetter
         // Mouse handlers
         ,
-        onMouseDown: startHandler,
+        onMouseDown: mouseStartHandler,
         onMouseEnter: function onMouseEnter() {
           _this.handleMouseEnterEvent(time);
         },
@@ -223,7 +228,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
         // parameters
         ,
-        onTouchStart: startHandler,
+        onTouchStart: touchStartHandler,
         onTouchMove: _this.handleTouchMoveEvent,
         onTouchEnd: _this.handleTouchEndEvent,
         onKeyDown: function onKeyDown(event) {
@@ -247,6 +252,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.dates = buildDates(props);
     _this.cellToDate = new Map();
     _this.dateToCell = new Map();
+    _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
     _this.state = {
@@ -263,8 +269,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       square: _selectionSchemes.default.square
     };
     _this.endSelection = _this.endSelection.bind(_this);
+    _this.handleMouseDownEvent = _this.handleMouseDownEvent.bind(_this);
     _this.handleMouseUpEvent = _this.handleMouseUpEvent.bind(_this);
     _this.handleMouseEnterEvent = _this.handleMouseEnterEvent.bind(_this);
+    _this.handleTouchStartEvent = _this.handleTouchStartEvent.bind(_this);
     _this.handleTouchMoveEvent = _this.handleTouchMoveEvent.bind(_this);
     _this.handleTouchEndEvent = _this.handleTouchEndEvent.bind(_this);
     _this.handleSelectionStartEvent = _this.handleSelectionStartEvent.bind(_this);
@@ -424,13 +432,26 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       selectionBase: this.state.selectionDraft
     });
   };
+  _proto.recordTouchEvent = function recordTouchEvent() {
+    this.lastTouchEventTime = Date.now();
+  };
+  _proto.shouldIgnoreMouseEvent = function shouldIgnoreMouseEvent() {
+    return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS;
+  };
+  _proto.handleMouseDownEvent = function handleMouseDownEvent(time) {
+    if (this.shouldIgnoreMouseEvent()) return;
+    this.handleSelectionStartEvent(time);
+  };
   _proto.handleMouseEnterEvent = function handleMouseEnterEvent(time) {
+    if (this.shouldIgnoreMouseEvent()) return;
+
     // Need to update selection draft on mouseup as well in order to catch the cases
     // where the user just clicks on a single cell (because no mouseenter events fire
     // in this scenario)
     this.updateAvailabilityDraft(time);
   };
   _proto.handleMouseUpEvent = function handleMouseUpEvent(time) {
+    if (this.shouldIgnoreMouseEvent()) return;
     this.updateAvailabilityDraft(time, this.endSelection);
   };
   _proto.getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
@@ -466,7 +487,12 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       _this3.updateAvailabilityDraft(time, _this3.endSelection);
     });
   };
+  _proto.handleTouchStartEvent = function handleTouchStartEvent(startTime) {
+    this.recordTouchEvent();
+    this.handleSelectionStartEvent(startTime);
+  };
   _proto.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
+    this.recordTouchEvent();
     this.setState({
       isTouchDragging: true
     });
@@ -477,6 +503,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.handleTouchEndEvent = function handleTouchEndEvent() {
     var _this4 = this;
+    this.recordTouchEvent();
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since

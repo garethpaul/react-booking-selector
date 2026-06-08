@@ -296,6 +296,24 @@ describe('touch handlers', () => {
     })
   })
 
+  it('ignores compatibility mouse events after a touch tap', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('[role="button"]')
+
+    fireEvent.touchStart(cell)
+    fireEvent.touchEnd(cell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+    })
+
+    fireEvent.mouseDown(cell)
+    fireEvent.mouseUp(cell)
+
+    expect(changeSpy).toHaveBeenCalledTimes(1)
+  })
+
   it('selects cells while touch dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })

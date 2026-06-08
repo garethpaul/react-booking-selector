@@ -102,6 +102,8 @@ const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): strin
 
 const dateKey = (time: Date): number => time.getTime()
 
+const TOUCH_MOUSE_SUPPRESSION_MS = 500
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -252,6 +254,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   cellToDate: Map<HTMLElement, Date>
   dateToCell: Map<number, HTMLElement>
   gridRef: ?HTMLElement
+  lastTouchEventTime: number
 
   static defaultProps = {
     selection: [],
@@ -275,6 +278,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.dates = buildDates(props)
     this.cellToDate = new Map()
     this.dateToCell = new Map()
+    this.lastTouchEventTime = 0
 
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
@@ -294,8 +298,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
 
     this.endSelection = this.endSelection.bind(this)
+    this.handleMouseDownEvent = this.handleMouseDownEvent.bind(this)
     this.handleMouseUpEvent = this.handleMouseUpEvent.bind(this)
     this.handleMouseEnterEvent = this.handleMouseEnterEvent.bind(this)
+    this.handleTouchStartEvent = this.handleTouchStartEvent.bind(this)
     this.handleTouchMoveEvent = this.handleTouchMoveEvent.bind(this)
     this.handleTouchEndEvent = this.handleTouchEndEvent.bind(this)
     this.handleSelectionStartEvent = this.handleSelectionStartEvent.bind(this)
@@ -448,7 +454,22 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
   }
 
+  recordTouchEvent() {
+    this.lastTouchEventTime = Date.now()
+  }
+
+  shouldIgnoreMouseEvent(): boolean {
+    return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS
+  }
+
+  handleMouseDownEvent(time: Date) {
+    if (this.shouldIgnoreMouseEvent()) return
+    this.handleSelectionStartEvent(time)
+  }
+
   handleMouseEnterEvent(time: Date) {
+    if (this.shouldIgnoreMouseEvent()) return
+
     // Need to update selection draft on mouseup as well in order to catch the cases
     // where the user just clicks on a single cell (because no mouseenter events fire
     // in this scenario)
@@ -456,6 +477,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleMouseUpEvent(time: Date) {
+    if (this.shouldIgnoreMouseEvent()) return
     this.updateAvailabilityDraft(time, this.endSelection)
   }
 
@@ -498,7 +520,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     )
   }
 
+  handleTouchStartEvent(startTime: Date) {
+    this.recordTouchEvent()
+    this.handleSelectionStartEvent(startTime)
+  }
+
   handleTouchMoveEvent(event: TouchSelectionEventType) {
+    this.recordTouchEvent()
     this.setState({ isTouchDragging: true })
     const cellTime = this.getTimeFromTouchEvent(event)
     if (cellTime) {
@@ -507,6 +535,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleTouchEndEvent() {
+    this.recordTouchEvent()
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since
@@ -547,8 +576,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   renderDateCellWrapper = (time: Date): React.Element<*> => {
     const blocked = this.isBlocked(time)
     const selected = !blocked && this.isSelected(time)
-    const startHandler = () => {
-      if (!blocked) this.handleSelectionStartEvent(time)
+    const mouseStartHandler = () => {
+      if (!blocked) this.handleMouseDownEvent(time)
+    }
+    const touchStartHandler = () => {
+      if (!blocked) this.handleTouchStartEvent(time)
     }
     let currentDateCell: ?HTMLElement = null
     const refSetter = (dateCell: ?HTMLElement) => {
@@ -574,7 +606,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         key={time.toISOString()}
         ref={refSetter}
         // Mouse handlers
-        onMouseDown={startHandler}
+        onMouseDown={mouseStartHandler}
         onMouseEnter={() => {
           this.handleMouseEnterEvent(time)
         }}
@@ -585,7 +617,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
         // parameters
-        onTouchStart={startHandler}
+        onTouchStart={touchStartHandler}
         onTouchMove={this.handleTouchMoveEvent}
         onTouchEnd={this.handleTouchEndEvent}
         onKeyDown={event => {
