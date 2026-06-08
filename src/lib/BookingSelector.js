@@ -2,7 +2,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import { addHours, addDays, startOfDay, isSameMinute, isValid, format as formatDate } from 'date-fns'
+import { addHours, addDays, startOfDay, isValid, format as formatDate } from 'date-fns'
 
 import { Text, Subtitle } from './typography'
 import colors from './colors'
@@ -43,21 +43,21 @@ const toDate = (value: DateValueType): Date => new Date(value.valueOf())
 
 const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate).filter(isValid)
 
-const dateIsSameMinute = (a: DateValueType, b: DateValueType): boolean => {
-  const dateA = toDate(a)
-  const dateB = toDate(b)
-  return isValid(dateA) && isValid(dateB) && isSameMinute(dateA, dateB)
-}
-
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
 const getDatesSignature = (dates: Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
-const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
-  dates.reduce((acc: Array<Date>, date): Array<Date> => {
-    if (acc.find(existingDate => dateIsSameMinute(existingDate, date))) return acc
+const getDateMinuteKeySet = (dates: Array<DateValueType>): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
+
+const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
+  const dateMinuteKeys = new Set()
+  return dates.reduce((acc: Array<Date>, date): Array<Date> => {
+    const key = dateMinuteKey(date)
+    if (dateMinuteKeys.has(key)) return acc
+    dateMinuteKeys.add(key)
     return [...acc, date]
   }, [])
+}
 
 const getStartDate = (startDate: ?Date): Date => startDate || new Date()
 
@@ -259,6 +259,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   dateToCell: Map<number, HTMLElement>
   gridRef: ?HTMLElement
   lastTouchEventTime: number
+  blockedMinuteKeys: Set<number>
+  selectedMinuteKeys: Set<number>
 
   static defaultProps = {
     selection: [],
@@ -286,6 +288,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
+    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
+    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey))
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
@@ -366,11 +370,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   isBlocked(time: Date): boolean {
-    return Boolean(this.props.blocked.find(blockedTime => dateIsSameMinute(blockedTime, time)))
+    return this.blockedMinuteKeys.has(dateMinuteKey(time))
   }
 
   isSelected(time: Date): boolean {
-    return Boolean(this.state.selectionDraft.find(selectedTime => dateIsSameMinute(selectedTime, time)))
+    return this.selectedMinuteKeys.has(dateMinuteKey(time))
   }
 
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {
@@ -437,9 +441,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
     } else {
-      nextDraft = nextDraft.filter(
-        date => !availableSelection.find(selectedDate => dateIsSameMinute(date, selectedDate))
-      )
+      const availableSelectionKeys = new Set(availableSelection.map(dateMinuteKey))
+      nextDraft = nextDraft.filter(date => !availableSelectionKeys.has(dateMinuteKey(date)))
     }
     this.setState({ selectionDraft: nextDraft }, callback)
   }
@@ -651,6 +654,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   render(): React.Element<*> {
+    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
+    this.selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
     this.dates = buildDates(this.props)
 
     return (

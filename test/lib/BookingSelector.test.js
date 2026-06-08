@@ -804,8 +804,8 @@ describe('cell accessibility', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)
     const { getByRole } = renderSelector({
-      selection: [selected.getTime()],
-      blocked: [blocked.toISOString()],
+      selection: [selected.getTime() + 30000],
+      blocked: [new Date(blocked.getTime() + 30000).toISOString()],
       startDate,
       numDays: 1,
       minTime: 9,

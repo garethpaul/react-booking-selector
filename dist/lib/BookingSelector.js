@@ -23,22 +23,21 @@ var toDate = function toDate(value) {
 var normalizeDates = function normalizeDates(dates) {
   return dates.map(toDate).filter(_dateFns.isValid);
 };
-var dateIsSameMinute = function dateIsSameMinute(a, b) {
-  var dateA = toDate(a);
-  var dateB = toDate(b);
-  return (0, _dateFns.isValid)(dateA) && (0, _dateFns.isValid)(dateB) && (0, _dateFns.isSameMinute)(dateA, dateB);
-};
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
 };
 var getDatesSignature = function getDatesSignature(dates) {
   return normalizeDates(dates).map(dateMinuteKey).join('|');
 };
+var getDateMinuteKeySet = function getDateMinuteKeySet(dates) {
+  return new Set(normalizeDates(dates).map(dateMinuteKey));
+};
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
+  var dateMinuteKeys = new Set();
   return dates.reduce(function (acc, date) {
-    if (acc.find(function (existingDate) {
-      return dateIsSameMinute(existingDate, date);
-    })) return acc;
+    var key = dateMinuteKey(date);
+    if (dateMinuteKeys.has(key)) return acc;
+    dateMinuteKeys.add(key);
     return [].concat(acc, [date]);
   }, []);
 };
@@ -162,6 +161,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.dateToCell = void 0;
     _this.gridRef = void 0;
     _this.lastTouchEventTime = void 0;
+    _this.blockedMinuteKeys = void 0;
+    _this.selectedMinuteKeys = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
         $height: "40",
@@ -257,6 +258,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
+    _this.blockedMinuteKeys = getDateMinuteKeySet(_this.props.blocked);
+    _this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey));
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
@@ -333,14 +336,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (time) this.dateToCell.delete(dateKey(time));
   };
   _proto.isBlocked = function isBlocked(time) {
-    return Boolean(this.props.blocked.find(function (blockedTime) {
-      return dateIsSameMinute(blockedTime, time);
-    }));
+    return this.blockedMinuteKeys.has(dateMinuteKey(time));
   };
   _proto.isSelected = function isSelected(time) {
-    return Boolean(this.state.selectionDraft.find(function (selectedTime) {
-      return dateIsSameMinute(selectedTime, time);
-    }));
+    return this.selectedMinuteKeys.has(dateMinuteKey(time));
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
     if (!(target instanceof Node)) return null;
@@ -409,10 +408,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
     } else {
+      var availableSelectionKeys = new Set(availableSelection.map(dateMinuteKey));
       nextDraft = nextDraft.filter(function (date) {
-        return !availableSelection.find(function (selectedDate) {
-          return dateIsSameMinute(date, selectedDate);
-        });
+        return !availableSelectionKeys.has(dateMinuteKey(date));
       });
     }
     this.setState({
@@ -524,6 +522,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.render = function render() {
     var _this5 = this;
+    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
+    this.selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
     this.dates = buildDates(this.props);
     return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
