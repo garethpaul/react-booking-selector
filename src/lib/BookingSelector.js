@@ -70,6 +70,11 @@ const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: Date): boolean => d
 
 const getDatesSignature = (dates: ?Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
+const getDateMinuteSetSignature = (dates: ?Array<DateValueType>): string =>
+  Array.from(new Set(normalizeDates(dates).map(dateMinuteKey)))
+    .sort((a, b) => a - b)
+    .join('|')
+
 const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> =>
   new Set(normalizeDates(dates).map(dateMinuteKey))
 
@@ -347,7 +352,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
-    const blockedPropSignature = getDatesSignature(this.props.blocked)
+    const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
@@ -378,7 +383,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
     const selectionPropSignature = getDatesSignature(props.selection)
-    const blockedPropSignature = getDatesSignature(props.blocked)
+    const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     if (
       selectionPropSignature === state.selectionPropSignature &&
       blockedPropSignature === state.blockedPropSignature

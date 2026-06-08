@@ -787,6 +787,43 @@ describe('prop updates', () => {
     expect(changeSpy).not.toHaveBeenCalled()
   })
 
+  it('keeps active selections when blocked props keep the same minute set', () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const blockedOne = addHours(startOfDay(startDate), 11)
+    const blockedTwo = addHours(startOfDay(startDate), 12)
+    const rendered = renderSelector({
+      onChange: changeSpy,
+      blocked: [blockedOne, blockedTwo],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 12,
+    })
+    const [firstCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(firstCell)
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      blocked: [blockedTwo, new Date(blockedOne.getTime() + 30000), blockedOne],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 12,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([selected])
+    expect(rendered.instance.state.selectionBase).toEqual([])
+    expect(rendered.instance.state.selectionType).toBe('add')
+    expect(rendered.instance.state.selectionStart).toEqual(selected)
+
+    fireEvent.mouseUp(firstCell)
+
+    expect(changeSpy).toHaveBeenCalledWith([selected])
+  })
+
   it('clones selection dates from props', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })
