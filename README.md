@@ -1,5 +1,8 @@
 # React Booking Selector
 
+<!-- README-OVERVIEW-IMAGE -->
+![Project overview](docs/readme-overview.svg)
+
 ![Screenshot](/screenshot.png?raw=true)
 
 ## Getting Started
