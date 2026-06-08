@@ -274,6 +274,29 @@ describe('mouse handlers', () => {
     expect(instance.state.selectionType).toBe(null)
   })
 
+  it('ends a drag when the mouse is released on a blocked cell', async () => {
+    const changeSpy = jest.fn()
+    const blocked = addHours(startOfDay(startDate), 10)
+    const { getByRole, instance } = renderSelector({
+      onChange: changeSpy,
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const availableCell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })
+
+    fireEvent.mouseDown(availableCell)
+    fireEvent.mouseUp(blockedCell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+    })
+    expect(instance.state.selectionType).toBe(null)
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach((spyName) => {
       spies[spyName].mockRestore()
