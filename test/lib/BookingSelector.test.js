@@ -382,6 +382,34 @@ describe('blocked cells', () => {
   })
 })
 
+describe('cell accessibility', () => {
+  it('labels cells with their state and time', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 10)
+    const { getByRole } = renderSelector({
+      selection: [selected],
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11
+    })
+
+    expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    )
+    expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
+})
+
 describe('keyboard interaction', () => {
   it('toggles a focused cell with Enter', async () => {
     const changeSpy = jest.fn()

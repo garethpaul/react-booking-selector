@@ -58,6 +58,10 @@ var formatHour = function formatHour(hour) {
   var abb = hour < 12 || hour === 24 ? 'am' : 'pm';
   return h + " " + abb;
 };
+var formatCellLabel = function formatCellLabel(time, selected, blocked) {
+  var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
+  return state + " " + (0, _dateFns.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
+};
 var Wrapper = _styledComponents.default.div.withConfig({
   displayName: "BookingSelector__Wrapper",
   componentId: "sc-1e1auar-0"
@@ -135,7 +139,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.renderDateColumn = function (dayOfTimes) {
       return /*#__PURE__*/React.createElement(Column, {
-        key: dayOfTimes[0]
+        key: dayOfTimes[0].toISOString()
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
@@ -163,6 +167,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         className: "rgdp__grid-cell",
         role: "button",
         "aria-disabled": blocked,
+        "aria-label": formatCellLabel(time, selected, blocked),
         "aria-pressed": selected,
         tabIndex: blocked ? -1 : 0,
         $height: "40px",

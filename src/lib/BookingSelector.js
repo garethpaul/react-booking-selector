@@ -72,6 +72,11 @@ const formatHour = (hour: number): string => {
   return `${h} ${abb}`
 }
 
+const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): string => {
+  const state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available'
+  return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(time.getHours())}`
+}
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
@@ -433,7 +438,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderDateColumn = (dayOfTimes: Array<Date>) => (
-    <Column key={dayOfTimes[0]}>
+    <Column key={dayOfTimes[0].toISOString()}>
       <GridCell $height="50" $margin={this.props.margin}>
         <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDate(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
@@ -464,6 +469,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         className="rgdp__grid-cell"
         role="button"
         aria-disabled={blocked}
+        aria-label={formatCellLabel(time, selected, blocked)}
         aria-pressed={selected}
         tabIndex={blocked ? -1 : 0}
         $height="40px"
