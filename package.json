@@ -74,6 +74,7 @@
     "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "cover": "jest --coverage",
+    "cover:check": "jest --coverage --runInBand; status=$?; rm -rf coverage; exit $status",
     "test": "jest",
     "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && BABEL_ENV=esm babel src/lib -d dist/esm --extensions .js,.jsx && cp src/lib/index.d.ts dist/lib/index.d.ts && cp src/lib/index.d.ts dist/esm/index.d.ts && node -e \"const fs = require('fs'); fs.writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}\\n')\"",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
@@ -81,7 +82,7 @@
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "pack:check": "npm pack --dry-run; status=$?; rm -f react-booking-selector-*.tgz; exit $status",
-    "verify": "yarn lint && yarn types:check && yarn test --runInBand && yarn audit --json && yarn pack:check",
+    "verify": "yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check",
     "start": "yarn docs:dev"
   },
   "engines": {
@@ -142,6 +143,14 @@
       "/node_modules/",
       "/dist/"
     ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 95,
+        "functions": 100,
+        "lines": 100
+      }
+    },
     "testEnvironment": "jsdom",
     "verbose": false
   }

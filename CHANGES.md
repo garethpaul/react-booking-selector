@@ -15,3 +15,5 @@
 - Added keyboard regression coverage showing custom-rendered slots still toggle through the accessible grid cell wrapper.
 - Improved mobile day, date, and time label legibility without changing grid dimensions.
 - Added a generated ESM build and package `import` condition while preserving the CommonJS entry point.
+- Enforced source coverage thresholds in the standard verification gate with automatic coverage cleanup.
+- Added direct coverage for styled-components CommonJS and ESM interop paths.
