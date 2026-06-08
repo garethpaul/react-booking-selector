@@ -202,35 +202,6 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       }, _this.renderDateCell(time, selected, blocked));
     };
     _this.renderDateCell = function (time, selected, blocked) {
-      /* WEEKEND
-      if (formatDate(time, 'd') === 0) {
-        return (
-          <DateCell
-            blocked={true}
-            selected={false}
-            innerRef={refSetter}
-            selectedColor={this.props.unselectedColor}
-            unselectedColor={this.props.selectedColor}
-            hoveredColor={this.props.hoveredColor}
-            blockedColor={this.props.blockedColor}
-          />
-        )
-      }
-      if (formatDate(time, 'd') === 6) {
-        return (
-          <DateCell
-            blocked={true}
-            selected={false}
-            innerRef={refSetter}
-            selectedColor={this.props.unselectedColor}
-            unselectedColor={this.props.selectedColor}
-            hoveredColor={this.props.hoveredColor}
-            blockedColor={this.props.blockedColor}
-          />
-        )
-      }
-      */
-
       if (_this.props.renderDateCell) {
         return _this.props.renderDateCell(time, selected, blocked);
       }

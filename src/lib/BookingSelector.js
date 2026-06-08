@@ -540,35 +540,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderDateCell = (time: Date, selected: boolean, blocked: boolean): React.Node => {
-    /* WEEKEND
-    if (formatDate(time, 'd') === 0) {
-      return (
-        <DateCell
-          blocked={true}
-          selected={false}
-          innerRef={refSetter}
-          selectedColor={this.props.unselectedColor}
-          unselectedColor={this.props.selectedColor}
-          hoveredColor={this.props.hoveredColor}
-          blockedColor={this.props.blockedColor}
-        />
-      )
-    }
-    if (formatDate(time, 'd') === 6) {
-      return (
-        <DateCell
-          blocked={true}
-          selected={false}
-          innerRef={refSetter}
-          selectedColor={this.props.unselectedColor}
-          unselectedColor={this.props.selectedColor}
-          hoveredColor={this.props.hoveredColor}
-          blockedColor={this.props.blockedColor}
-        />
-      )
-    }
-    */
-
     if (this.props.renderDateCell) {
       return this.props.renderDateCell(time, selected, blocked)
     }
