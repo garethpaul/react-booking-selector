@@ -408,7 +408,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       newSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates)
     }
     const availableSelection = newSelection.filter(time => !this.isBlocked(time))
-    let nextDraft = [...this.state.selectionBase]
+    let nextDraft = this.state.selectionBase.filter(time => !this.isBlocked(time))
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
     } else if (selectionType === 'remove') {
@@ -529,7 +529,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderDateCellWrapper = (time: Date): React.Element<*> => {
     const blocked = this.isBlocked(time)
-    const selected = this.isSelected(time)
+    const selected = !blocked && this.isSelected(time)
     const startHandler = () => {
       if (!blocked) this.handleSelectionStartEvent(time)
     }

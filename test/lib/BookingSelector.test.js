@@ -377,6 +377,31 @@ describe('updateAvailabilityDraft', () => {
     expect(instance.state.selectionDraft).toEqual([start])
   })
 
+  it('removes blocked values from the selection base before building a draft', async () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const available = addHours(startOfDay(startDate), 10)
+    const { instance } = renderSelector({
+      selection: [blocked],
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10
+    })
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: available,
+      selectionBase: [blocked]
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(available)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([available])
+  })
+
   it('falls back to square selection for unknown selection schemes', async () => {
     const start = addHours(startOfDay(startDate), 9)
     const end = addHours(startOfDay(startDate), 10)
@@ -624,6 +649,23 @@ describe('cell accessibility', () => {
       'true'
     )
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
+
+  it('treats blocked cells as unpressed when selection and blocked values overlap', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      selection: [blocked],
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
       'false'
     )

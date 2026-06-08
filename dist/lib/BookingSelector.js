@@ -178,7 +178,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.renderDateCellWrapper = function (time) {
       var blocked = _this.isBlocked(time);
-      var selected = _this.isSelected(time);
+      var selected = !blocked && _this.isSelected(time);
       var startHandler = function startHandler() {
         if (!blocked) _this.handleSelectionStartEvent(time);
       };
@@ -387,7 +387,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var availableSelection = newSelection.filter(function (time) {
       return !_this2.isBlocked(time);
     });
-    var nextDraft = [].concat(this.state.selectionBase);
+    var nextDraft = this.state.selectionBase.filter(function (time) {
+      return !_this2.isBlocked(time);
+    });
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
     } else if (selectionType === 'remove') {
