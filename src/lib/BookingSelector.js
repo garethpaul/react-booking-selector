@@ -623,13 +623,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       <GridCell
         as="button"
         className="rgdp__grid-cell"
-        role="button"
         type="button"
         disabled={blocked}
-        aria-disabled={blocked}
         aria-label={formatCellLabel(time, selected, blocked)}
         aria-pressed={selected}
-        tabIndex={blocked ? -1 : 0}
         $height="40px"
         $blocked={blocked}
         $interactive

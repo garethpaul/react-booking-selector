@@ -205,7 +205,7 @@ describe('mouse handlers', () => {
     ['onMouseUp', cell => fireEvent.mouseUp(cell)]
   ])('calls the handler for %s', (name, fireHandler) => {
     const { container } = renderSelector()
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireHandler(cell)
 
@@ -215,7 +215,7 @@ describe('mouse handlers', () => {
   it('selects cells while mouse dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
-    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
 
     fireEvent.mouseDown(firstCell)
     fireEvent.mouseEnter(secondCell)
@@ -229,7 +229,7 @@ describe('mouse handlers', () => {
   it('ends a drag when the mouse is released outside the grid', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
-    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
 
     fireEvent.mouseDown(firstCell)
     fireEvent.mouseEnter(secondCell)
@@ -243,7 +243,7 @@ describe('mouse handlers', () => {
   it('selects the start cell when the mouse is released outside before entering another cell', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireEvent.mouseDown(cell)
     fireEvent.mouseUp(document.body)
@@ -262,7 +262,7 @@ describe('mouse handlers', () => {
       minTime: 9,
       maxTime: 10
     })
-    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
 
     fireEvent.mouseDown(firstCell)
     fireEvent.mouseEnter(secondCell)
@@ -299,7 +299,7 @@ describe('touch handlers', () => {
     ['onTouchEnd', cell => fireEvent.touchEnd(cell)]
   ])('calls the handler for %s', (name, fireHandler) => {
     const { container } = renderSelector()
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireHandler(cell)
 
@@ -309,7 +309,7 @@ describe('touch handlers', () => {
   it('toggles a tapped cell', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireEvent.touchStart(cell)
     fireEvent.touchEnd(cell)
@@ -322,7 +322,7 @@ describe('touch handlers', () => {
   it('ignores compatibility mouse events after a touch tap', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireEvent.touchStart(cell)
     fireEvent.touchEnd(cell)
@@ -342,7 +342,7 @@ describe('touch handlers', () => {
     const changeSpy = jest.fn()
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1000)
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     try {
       fireEvent.touchStart(cell)
@@ -367,7 +367,7 @@ describe('touch handlers', () => {
   it('selects cells while touch dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
-    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
     document.elementFromPoint.mockReturnValue(secondCell)
 
     fireEvent.touchStart(firstCell)
@@ -382,7 +382,7 @@ describe('touch handlers', () => {
   it('selects the start cell when a touch drag ends before entering another cell', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
     document.elementFromPoint.mockReturnValue(document.body)
 
     fireEvent.touchStart(cell)
@@ -568,7 +568,7 @@ describe('updateAvailabilityDraft', () => {
   it('preserves the visible draft when adding another cell before parent rerender', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
-    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
 
     clickCell(firstCell)
     clickCell(secondCell)
@@ -579,7 +579,7 @@ describe('updateAvailabilityDraft', () => {
   it('removes a visibly selected draft cell before parent rerender', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     clickCell(cell)
     clickCell(cell)
@@ -739,7 +739,7 @@ describe('prop updates', () => {
   it('keeps the visible draft when unchanged selection props rerender', () => {
     const selection = []
     const rendered = renderSelector({ selection, startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = rendered.container.querySelector('[role="button"]')
+    const cell = rendered.container.querySelector('button.rgdp__grid-cell')
 
     clickCell(cell)
     rendered.rerenderWithProps({ selection, startDate, numDays: 1, minTime: 9, maxTime: 9 })
@@ -760,14 +760,14 @@ describe('prop updates', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: 10, maxTime: 9 })
 
     expect(rendered.instance.dates).toEqual([])
-    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
   })
 
   it('renders no date cells when time range values are outside 0 to 23', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: -1, maxTime: 24 })
 
     expect(rendered.instance.dates).toEqual([])
-    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
     expect(rendered.container).not.toHaveTextContent('-1 am')
   })
 
@@ -775,7 +775,7 @@ describe('prop updates', () => {
     const rendered = renderSelector({ startDate, numDays: 1.5, minTime: 8.5, maxTime: 9 })
 
     expect(rendered.instance.dates).toEqual([])
-    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
     expect(rendered.container).not.toHaveTextContent('8.5 am')
   })
 
@@ -801,7 +801,7 @@ describe('prop updates', () => {
 
   it('removes stale touchmove listeners when date cells remount', () => {
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
-    const cell = rendered.container.querySelector('[role="button"]')
+    const cell = rendered.container.querySelector('button.rgdp__grid-cell')
     const removeSpy = jest.spyOn(cell, 'removeEventListener')
 
     rendered.rerenderWithProps({
@@ -922,10 +922,7 @@ describe('cell accessibility', () => {
       'aria-pressed',
       'true'
     )
-    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toHaveAttribute(
-      'aria-disabled',
-      'true'
-    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })).toHaveAttribute(
       'aria-pressed',
       'false'
@@ -965,10 +962,7 @@ describe('cell accessibility', () => {
       'aria-pressed',
       'true'
     )
-    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toHaveAttribute(
-      'aria-disabled',
-      'true'
-    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
   })
 
   it('ignores invalid selection and blocked values', async () => {
@@ -1020,7 +1014,7 @@ describe('keyboard interaction', () => {
   it('toggles a focused cell with Enter', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
 
     fireEvent.keyDown(cell, { key: 'Enter' })
 
@@ -1042,7 +1036,7 @@ describe('keyboard interaction', () => {
       maxTime: 9
     })
     const customContent = getByTestId('custom-slot-9')
-    const cell = customContent.closest('[role="button"]')
+    const cell = customContent.closest('button.rgdp__grid-cell')
 
     expect(cell).toHaveAttribute('aria-label', 'Available Monday, January 1, 2018 at 9 am')
 
@@ -1078,7 +1072,7 @@ describe('keyboard interaction', () => {
   it('ignores non-action keys on focused cells', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy })
-    const cell = container.querySelector('[role="button"]')
+    const cell = container.querySelector('button.rgdp__grid-cell')
     const preventDefault = jest.fn()
 
     fireEvent.keyDown(cell, { key: 'Escape', preventDefault })
