@@ -72,9 +72,7 @@
       ]
     },
     "parcel": {
-      "presets": [
-        "@babel/preset-flow"
-      ],
+      "presets": ["@babel/preset-flow"],
       "plugins": [
         [
           "babel-plugin-styled-components",

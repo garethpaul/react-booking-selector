@@ -31,3 +31,4 @@
 - Added a CommonJS build wrapper so `require('react-booking-selector')` returns the component while keeping default and named access.
 - Removed render-time lookup cache mutation from the booking selector while preserving committed event-handler lookups.
 - Tightened linting to fail on warnings and removed stale lint suppressions.
+- Expanded Prettier coverage to include Babel config, editor settings, plan markdown, and docs HTML source.
