@@ -337,7 +337,7 @@ export const preventScroll = (e: TouchEvent) => {
 export default class BookingSelector extends React.Component<PropsType, StateType> {
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
-  cellToDate: Map<HTMLElement, Date>
+  cellToDate: Map<HTMLElement, ?Date>
   dateToCell: Map<number, HTMLElement>
   gridRef: ?HTMLElement
   lastTouchEventTime: number
@@ -452,12 +452,22 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey))
   }
 
+  clearDateCellLookup(dateCell: HTMLElement) {
+    this.dateToCell.forEach((registeredCell, registeredTime) => {
+      if (registeredCell === dateCell) {
+        this.dateToCell.delete(registeredTime)
+      }
+    })
+  }
+
   registerDateCell(dateCell: HTMLElement, time: Date) {
     const previousTime = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) {
       dateCell.addEventListener('touchmove', preventScroll, { passive: false })
     } else if (previousTime) {
       this.dateToCell.delete(dateKey(previousTime))
+    } else {
+      this.clearDateCellLookup(dateCell)
     }
     this.cellToDate.set(dateCell, time)
     this.dateToCell.set(dateKey(time), dateCell)
@@ -468,7 +478,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!this.cellToDate.has(dateCell)) return
     dateCell.removeEventListener('touchmove', preventScroll)
     this.cellToDate.delete(dateCell)
-    if (time) this.dateToCell.delete(dateKey(time))
+    if (time) {
+      this.dateToCell.delete(dateKey(time))
+    } else {
+      this.clearDateCellLookup(dateCell)
+    }
   }
 
   isBlocked(time: Date): boolean {

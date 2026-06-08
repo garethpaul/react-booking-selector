@@ -700,7 +700,7 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
-  it('keeps existing date lookup entries when a mounted cell has no previous time', () => {
+  it('removes stale date lookup entries when a mounted cell has no previous time', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')
     const addSpy = jest.spyOn(cell, 'addEventListener')
@@ -712,7 +712,7 @@ describe('componentDidMount', () => {
     instance.registerDateCell(cell, nextTime)
 
     expect(addSpy).not.toHaveBeenCalled()
-    expect(instance.dateToCell.get(staleTime.getTime())).toBe(cell)
+    expect(instance.dateToCell.has(staleTime.getTime())).toBe(false)
     expect(instance.dateToCell.get(nextTime.getTime())).toBe(cell)
     addSpy.mockRestore()
   })
@@ -784,7 +784,7 @@ describe('componentWillUnmount', () => {
 
     expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
     expect(instance.cellToDate.has(cell)).toBe(false)
-    expect(instance.dateToCell.get(staleTime.getTime())).toBe(cell)
+    expect(instance.dateToCell.has(staleTime.getTime())).toBe(false)
     removeSpy.mockRestore()
   })
 })

@@ -347,6 +347,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
     this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey));
   };
+  _proto.clearDateCellLookup = function clearDateCellLookup(dateCell) {
+    var _this2 = this;
+    this.dateToCell.forEach(function (registeredCell, registeredTime) {
+      if (registeredCell === dateCell) {
+        _this2.dateToCell.delete(registeredTime);
+      }
+    });
+  };
   _proto.registerDateCell = function registerDateCell(dateCell, time) {
     var previousTime = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) {
@@ -355,6 +363,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       });
     } else if (previousTime) {
       this.dateToCell.delete(dateKey(previousTime));
+    } else {
+      this.clearDateCellLookup(dateCell);
     }
     this.cellToDate.set(dateCell, time);
     this.dateToCell.set(dateKey(time), dateCell);
@@ -364,7 +374,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (!this.cellToDate.has(dateCell)) return;
     dateCell.removeEventListener('touchmove', preventScroll);
     this.cellToDate.delete(dateCell);
-    if (time) this.dateToCell.delete(dateKey(time));
+    if (time) {
+      this.dateToCell.delete(dateKey(time));
+    } else {
+      this.clearDateCellLookup(dateCell);
+    }
   };
   _proto.isBlocked = function isBlocked(time) {
     return hasDateMinuteKey(this.blockedMinuteKeys, time);
@@ -427,17 +441,17 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   // Given an ending Date, determines all the dates that should be selected in this draft
 ;
   _proto.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
-    var _this2 = this;
+    var _this3 = this;
     var _this$state = this.state,
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
     if (selectionType === null || selectionStart === null) return;
     var selectionSchemeHandler = this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square;
     var availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(function (time) {
-      return !_this2.isBlocked(time);
+      return !_this3.isBlocked(time);
     });
     var nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(function (time) {
-      return !_this2.isBlocked(time);
+      return !_this3.isBlocked(time);
     }));
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
@@ -496,7 +510,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return true;
   };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
-    var _this3 = this;
+    var _this4 = this;
     var navigationTarget = getKeyboardNavigationTarget(time, event.key);
     if (navigationTarget) {
       event.preventDefault();
@@ -511,7 +525,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       selectionStart: time,
       selectionBase: this.state.selectionDraft
     }, function () {
-      _this3.updateAvailabilityDraft(time, _this3.endSelection);
+      _this4.updateAvailabilityDraft(time, _this4.endSelection);
     });
   };
   _proto.handleTouchStartEvent = function handleTouchStartEvent(startTime) {
@@ -529,14 +543,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }
   };
   _proto.handleTouchEndEvent = function handleTouchEndEvent() {
-    var _this4 = this;
+    var _this5 = this;
     this.recordTouchEvent();
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since
       // handleTouchMoveEvent was never called) so we need to do it now
       this.updateAvailabilityDraft(null, function () {
-        _this4.endSelection();
+        _this5.endSelection();
       });
     } else if (this.state.selectionDraft === this.state.selectionBase) {
       this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
@@ -563,7 +577,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     });
   };
   _proto.render = function render() {
-    var _this5 = this;
+    var _this6 = this;
     var dates = buildDates(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
@@ -571,10 +585,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       role: "group",
       "aria-label": "Booking time slots",
       ref: function ref(el) {
-        _this5.gridRef = el;
+        _this6.gridRef = el;
       }
     }, this.renderTimeLabels(), dates.map(function (dayOfTimes) {
-      return _this5.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys);
+      return _this6.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };
   return BookingSelector;
