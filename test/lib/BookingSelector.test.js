@@ -402,6 +402,31 @@ describe('updateAvailabilityDraft', () => {
     expect(instance.state.selectionDraft).toEqual([available])
   })
 
+  it('removes duplicate values from the selection base before removing dates', async () => {
+    const duplicate = addHours(startOfDay(startDate), 9)
+    const removed = addHours(startOfDay(startDate), 10)
+    const duplicateSameMinute = new Date(duplicate.getTime() + 30000)
+    const { instance } = renderSelector({
+      selection: [duplicate, duplicateSameMinute, removed],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10
+    })
+
+    await setStateAsync(instance, {
+      selectionType: 'remove',
+      selectionStart: removed,
+      selectionBase: [duplicate, duplicateSameMinute, removed]
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(removed)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([duplicate])
+  })
+
   it('falls back to square selection for unknown selection schemes', async () => {
     const start = addHours(startOfDay(startDate), 9)
     const end = addHours(startOfDay(startDate), 10)

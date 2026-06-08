@@ -387,9 +387,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var availableSelection = newSelection.filter(function (time) {
       return !_this2.isBlocked(time);
     });
-    var nextDraft = this.state.selectionBase.filter(function (time) {
+    var nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(function (time) {
       return !_this2.isBlocked(time);
-    });
+    }));
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
     } else if (selectionType === 'remove') {
