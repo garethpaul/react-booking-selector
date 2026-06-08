@@ -7,4 +7,4 @@
 - Added package dry-run verification to `corepack yarn verify` with automatic tarball cleanup.
 - Documented custom cell rendering with the `selected` and `blocked` state arguments.
 - Updated README usage examples to use React hooks.
-- Added a package root `exports` map and runtime coverage for the root export.
+- Added a package root `exports` map, package metadata subpath, and runtime coverage for both exports.
