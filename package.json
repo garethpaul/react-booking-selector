@@ -135,6 +135,10 @@
     "setupFilesAfterEnv": [
       "./setupTests.js"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
     "testEnvironment": "jsdom",
     "verbose": false
   }
