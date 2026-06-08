@@ -1,8 +1,6 @@
 # Custom Render State Coverage
 
-## Status
-
-Completed
+## Status: Completed
 
 ## Context
 
@@ -20,6 +18,7 @@ selected and blocked booleans were not explicitly asserted.
 ## Verification
 
 - `corepack yarn verify`
+- `make check`
 - `corepack yarn test --runInBand`
 - `git diff --check`
 

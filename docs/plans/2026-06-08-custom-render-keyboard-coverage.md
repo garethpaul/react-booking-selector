@@ -1,8 +1,6 @@
 # Custom Render Keyboard Coverage
 
-## Status
-
-Completed
+## Status: Completed
 
 ## Context
 
@@ -22,4 +20,5 @@ whether keyboard toggles still operate through the owning cell wrapper.
 
 - `corepack yarn test --runInBand test/lib/BookingSelector.test.js`
 - `corepack yarn verify`
+- `make check`
 - `git diff --check`
