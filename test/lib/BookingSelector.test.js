@@ -97,6 +97,14 @@ it('getTimeFromTouchEvent returns null when the touch is inside the grid but not
   expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
 })
 
+it('getTimeFromTouchEvent returns null when there are no touches', () => {
+  const { instance } = renderSelector()
+
+  expect(instance.getTimeFromTouchEvent({ touches: [] })).toBe(null)
+  expect(instance.getTimeFromTouchEvent({})).toBe(null)
+  expect(document.elementFromPoint).not.toHaveBeenCalled()
+})
+
 it('endSelection calls the onChange prop and resets selection state', async () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })
@@ -550,6 +558,12 @@ describe('componentDidMount', () => {
     instance.registerDateCell(cell, startDate)
 
     expect(instance.getDateCellFromEventTarget(svg)).toBe(cell)
+  })
+
+  it('returns null for mouseup targets outside the DOM node tree', () => {
+    const { instance } = renderSelector()
+
+    expect(instance.getDateCellFromEventTarget(null)).toBe(null)
   })
 })
 
