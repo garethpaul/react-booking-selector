@@ -66,7 +66,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 }
 
 .c3 {
-  margin: px;
+  margin: 0px;
   height: 40px;
   touch-action: none;
 }
@@ -79,7 +79,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 
 .c11 {
   margin: 3px;
-  height: 40pxpx;
+  height: 40px;
   touch-action: none;
 }
 
@@ -100,25 +100,22 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 
 .c4 {
   position: relative;
-  display: block;
   width: 100%;
-  height: 25px;
+  height: 40px;
   padding-right: 15px;
-  text-align: center;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-align-items: right;
-  -webkit-box-align: right;
-  -ms-flex-align: right;
-  align-items: right;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   color: rgb(112,117,122);
-  display: block;
 }
 
 .c5 {
@@ -320,15 +317,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -337,15 +338,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -354,15 +359,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -371,15 +380,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={true}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="selected test-date-cell-renderer"
@@ -388,15 +401,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -405,15 +422,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -422,15 +443,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -439,15 +464,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -456,15 +485,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -473,15 +506,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -490,15 +527,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -507,15 +548,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -524,15 +569,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -541,15 +590,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -558,15 +611,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -594,15 +651,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -611,15 +672,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -628,15 +693,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -645,15 +714,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -662,15 +735,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={true}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="selected test-date-cell-renderer"
@@ -679,15 +756,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -696,15 +777,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -713,15 +798,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -730,15 +819,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -747,15 +840,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -764,15 +861,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -781,15 +882,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -798,15 +903,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -815,15 +924,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -832,15 +945,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -868,15 +985,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -885,15 +1006,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -902,15 +1027,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -919,15 +1048,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -936,15 +1069,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -953,15 +1090,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -970,15 +1111,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -987,15 +1132,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1004,15 +1153,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1021,15 +1174,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1038,15 +1195,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1055,15 +1216,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1072,15 +1237,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1089,15 +1258,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1106,15 +1279,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1142,15 +1319,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1159,15 +1340,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1176,15 +1361,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1193,15 +1382,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1210,15 +1403,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1227,15 +1424,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1244,15 +1445,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1261,15 +1466,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1278,15 +1487,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1295,15 +1508,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1312,15 +1529,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1329,15 +1550,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1346,15 +1571,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1363,15 +1592,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1380,15 +1613,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1416,15 +1653,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1433,15 +1674,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1450,15 +1695,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1467,15 +1716,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1484,15 +1737,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1501,15 +1758,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1518,15 +1779,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1535,15 +1800,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1552,15 +1821,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1569,15 +1842,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1586,15 +1863,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1603,15 +1884,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1620,15 +1905,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1637,15 +1926,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1654,15 +1947,19 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         </div>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="false test-date-cell-renderer"
@@ -1741,7 +2038,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 .c3 {
-  margin: px;
+  margin: 0px;
   height: 40px;
   touch-action: none;
 }
@@ -1754,14 +2051,18 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 
 .c11 {
   margin: 3px;
-  height: 40pxpx;
+  height: 40px;
   touch-action: none;
 }
 
 .c12 {
   width: 100%;
-  height: 35px;
-  background-color: rgba(89,154,242,1);
+  height: 100%;
+  border-radius: 4px;
+  -webkit-transition: background-color 120ms ease,-webkit-transform 120ms ease;
+  -webkit-transition: background-color 120ms ease,transform 120ms ease;
+  transition: background-color 120ms ease,transform 120ms ease;
+  background-color: #dbedff;
 }
 
 .c12:hover {
@@ -1771,8 +2072,12 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 
 .c13 {
   width: 100%;
-  height: 35px;
-  background-color: #dbedff;
+  height: 100%;
+  border-radius: 4px;
+  -webkit-transition: background-color 120ms ease,-webkit-transform 120ms ease;
+  -webkit-transition: background-color 120ms ease,transform 120ms ease;
+  transition: background-color 120ms ease,transform 120ms ease;
+  background-color: rgba(89,154,242,1);
 }
 
 .c13:hover {
@@ -1797,25 +2102,22 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 
 .c4 {
   position: relative;
-  display: block;
   width: 100%;
-  height: 25px;
+  height: 40px;
   padding-right: 15px;
-  text-align: center;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-align-items: right;
-  -webkit-box-align: right;
-  -ms-flex-align: right;
-  align-items: right;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   color: rgb(112,117,122);
-  display: block;
 }
 
 .c5 {
@@ -2017,15 +2319,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2033,15 +2339,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2049,15 +2359,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2065,15 +2379,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={true}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c13"
@@ -2081,15 +2399,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2097,15 +2419,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2113,15 +2439,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2129,15 +2459,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2145,15 +2479,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2161,15 +2499,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2177,15 +2519,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2193,15 +2539,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2209,15 +2559,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2225,15 +2579,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2241,15 +2599,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2276,15 +2638,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2292,15 +2658,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2308,15 +2678,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2324,15 +2698,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2340,15 +2718,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={true}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c13"
@@ -2356,15 +2738,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2372,15 +2758,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2388,15 +2778,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2404,15 +2798,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2420,15 +2818,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2436,15 +2838,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2452,15 +2858,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2468,15 +2878,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2484,15 +2898,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2500,15 +2918,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2535,15 +2957,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2551,15 +2977,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2567,15 +2997,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2583,15 +3017,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2599,15 +3037,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2615,15 +3057,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2631,15 +3077,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2647,15 +3097,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2663,15 +3117,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2679,15 +3137,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2695,15 +3157,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2711,15 +3177,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2727,15 +3197,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2743,15 +3217,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2759,15 +3237,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2794,15 +3276,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2810,15 +3296,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2826,15 +3316,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2842,15 +3336,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2858,15 +3356,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2874,15 +3376,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2890,15 +3396,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2906,15 +3416,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2922,15 +3436,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2938,15 +3456,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2954,15 +3476,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2970,15 +3496,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -2986,15 +3516,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3002,15 +3536,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3018,15 +3556,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3053,15 +3595,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         </h2>
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3069,15 +3615,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3085,15 +3635,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3101,15 +3655,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3117,15 +3675,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3133,15 +3695,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3149,15 +3715,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3165,15 +3735,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3181,15 +3755,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3197,15 +3775,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3213,15 +3795,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3229,15 +3815,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3245,15 +3835,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3261,15 +3855,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"
@@ -3277,15 +3875,19 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         />
       </div>
       <div
+        aria-disabled={false}
+        aria-pressed={false}
         className="rgdp__grid-cell c11"
         height="40px"
+        onKeyDown={[Function]}
         onMouseDown={[Function]}
         onMouseEnter={[Function]}
         onMouseUp={[Function]}
         onTouchEnd={[Function]}
         onTouchMove={[Function]}
         onTouchStart={[Function]}
-        role="presentation"
+        role="button"
+        tabIndex={0}
       >
         <div
           className="c12"

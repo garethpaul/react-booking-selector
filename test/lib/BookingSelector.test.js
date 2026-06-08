@@ -60,6 +60,8 @@ it('getTimeFromTouchEvent returns the time for that cell', () => {
   const mockEvent = {
     touches: [{ clientX: 1, clientY: 2 }]
   }
+  const mockElement = {}
+  document.elementFromPoint.mockReturnValue(mockElement)
   const cellToDateSpy = jest.spyOn(component.instance().cellToDate, 'get').mockReturnValue(mockCellTime)
 
   component.instance().getTimeFromTouchEvent(mockEvent)
@@ -77,6 +79,7 @@ it('endSelection calls the onChange prop and resets selection state', () => {
   const component = shallow(<BookingSelector onChange={changeSpy} />)
   const setStateSpy = jest.spyOn(component.instance(), 'setState')
 
+  component.setState({ selectionType: 'add' })
   component.instance().endSelection()
 
   expect(changeSpy).toHaveBeenCalledWith(component.state('selectionDraft'))
@@ -200,7 +203,6 @@ describe('updateAvailabilityDraft', () => {
   )
 
   it('updateAvailabilityDraft handles a single cell click correctly', done => {
-    const setStateSpy = jest.spyOn(BookingSelector.prototype, 'setState')
     const component = shallow(<BookingSelector />)
     const start = startDate
     component.setState(
@@ -210,8 +212,32 @@ describe('updateAvailabilityDraft', () => {
       },
       () => {
         component.instance().updateAvailabilityDraft(null, () => {
-          expect(setStateSpy).toHaveBeenCalledWith({ selectionDraft: expect.arrayContaining([]) })
-          setStateSpy.mockRestore()
+          expect(component.state('selectionDraft')).toEqual([start])
+          done()
+        })
+      }
+    )
+  })
+
+  it('keeps blocked cells out of selection drafts', done => {
+    const start = moment(startDate)
+      .add(5, 'hours')
+      .toDate()
+    const blocked = moment(start)
+      .add(1, 'hours')
+      .toDate()
+    const component = shallow(
+      <BookingSelector startDate={start} numDays={1} minTime={5} maxTime={6} blocked={[blocked]} />
+    )
+
+    component.setState(
+      {
+        selectionType: 'add',
+        selectionStart: start
+      },
+      () => {
+        component.instance().updateAvailabilityDraft(blocked, () => {
+          expect(component.state('selectionDraft')).toEqual([start])
           done()
         })
       }
@@ -228,7 +254,7 @@ describe('componentDidMount', () => {
 describe('componentWillUnmount', () => {
   it('removes the mouseup event listener', () => {
     const component = shallow(<BookingSelector />)
-    const endSelectionMethod = component.instance().endSelection
+    const endSelectionMethod = component.instance().handleDocumentMouseUpEvent
     component.unmount()
     expect(document.removeEventListener).toHaveBeenCalledWith('mouseup', endSelectionMethod)
   })
@@ -245,16 +271,53 @@ describe('componentWillUnmount', () => {
   })
 })
 
-describe('componentWillReceiveProps', () => {
+describe('componentDidUpdate', () => {
   it('makes the selection prop override the existing selection draft', () => {
-    const setStateSpy = jest.spyOn(BookingSelector.prototype, 'setState')
     const component = shallow(<BookingSelector />)
-    const mockNextProps = {
-      selection: ['foo', 'bar']
+    const nextSelection = [startDate]
+
+    component.setProps({ selection: nextSelection })
+
+    expect(component.state('selectionDraft')).toEqual(nextSelection)
+  })
+
+  it('rebuilds the date grid when range props change', () => {
+    const component = shallow(<BookingSelector startDate={startDate} numDays={1} minTime={9} maxTime={10} />)
+
+    component.setProps({ numDays: 2, minTime: 8, maxTime: 9 })
+
+    expect(component.instance().dates).toHaveLength(2)
+    expect(component.instance().dates[0]).toHaveLength(2)
+  })
+})
+
+describe('blocked cells', () => {
+  it('cannot start a selection', () => {
+    const component = shallow(<BookingSelector blocked={[startDate]} />)
+
+    component.instance().handleSelectionStartEvent(startDate)
+
+    expect(component.state('selectionType')).toBe(null)
+    expect(component.state('selectionStart')).toBe(null)
+  })
+})
+
+describe('keyboard interaction', () => {
+  it('toggles a focused cell with Enter', done => {
+    const changeSpy = jest.fn()
+    const component = shallow(<BookingSelector onChange={changeSpy} />)
+    const time = component.instance().dates[0][0]
+    const event = {
+      key: 'Enter',
+      preventDefault: jest.fn()
     }
-    component.instance().componentWillReceiveProps(mockNextProps)
-    expect(setStateSpy).toHaveBeenCalledWith({
-      selectionDraft: expect.arrayContaining(mockNextProps.selection)
+
+    component.instance().handleCellKeyDownEvent(event, time, false)
+
+    setImmediate(() => {
+      expect(event.preventDefault).toHaveBeenCalled()
+      expect(changeSpy).toHaveBeenCalledWith([time])
+      done()
     })
   })
 })

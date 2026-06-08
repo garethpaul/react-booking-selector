@@ -13,6 +13,46 @@ import { Text, Subtitle } from './typography'
 import colors from './colors'
 import selectionSchemes from './selection-schemes'
 
+type DateValueType = Date | string | number | { valueOf: () => number }
+
+type DateGridPropsType = {
+  startDate: Date,
+  numDays: number,
+  minTime: number,
+  maxTime: number
+}
+
+const toCssUnit = (value: ?(number | string)): string => {
+  if (value == null) return '0px'
+  if (typeof value === 'number') return `${value}px`
+  return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
+}
+
+const toDate = (value: DateValueType): Date => (value instanceof Date ? value : new Date(value.valueOf()))
+
+const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate)
+
+const dateIsSameMinute = (a: DateValueType, b: DateValueType): boolean => isSameMinute(toDate(a), toDate(b))
+
+const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
+  dates.reduce((acc: Array<Date>, date): Array<Date> => {
+    if (acc.find(existingDate => dateIsSameMinute(existingDate, date))) return acc
+    return [...acc, date]
+  }, [])
+
+const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
+  const startTime = startOfDay(startDate)
+  const dates = []
+  for (let d = 0; d < numDays; d += 1) {
+    const currentDay = []
+    for (let h = minTime; h <= maxTime; h += 1) {
+      currentDay.push(addHours(addDays(startTime, d), h))
+    }
+    dates.push(currentDay)
+  }
+  return dates
+}
+
 const formatHour = (hour: number): string => {
   const h = hour === 0 || hour === 12 || hour === 24 ? 12 : hour % 12
   const abb = hour < 12 || hour === 24 ? 'am' : 'pm'
@@ -41,21 +81,23 @@ const Column = styled.div`
 `
 
 export const GridCell = styled.div`
-  margin: ${props => props.margin}px;
-  height: ${props => props.height}px;
+  margin: ${props => toCssUnit(props.margin)};
+  height: ${props => toCssUnit(props.height)};
   touch-action: none;
 `
 
 // Style the Date Cell
 const DateCell = styled.div`
   width: 100%;
-  height: 35px;
-  ${props => props.selected && !props.blocked && `background-color:${props.selectedColor};`}
-  ${props => !props.selected && !props.blocked && `background-color: ${props.unselectedColor};`} 
-  ${props => props.blocked && `background-color:${props.blockedColor};`}
+  height: 100%;
+  border-radius: 4px;
+  transition: background-color 120ms ease, transform 120ms ease;
+  ${props => props.selected && !props.blocked && `background-color: ${props.selectedColor};`}
+  ${props => !props.selected && !props.blocked && `background-color: ${props.unselectedColor};`}
+  ${props => props.blocked && `background-color: ${props.blockedColor};`}
   &:hover {
-    cursor: pointer;
-    background-color: ${props => props.hoveredColor};
+    cursor: ${props => (props.blocked ? 'not-allowed' : 'pointer')};
+    background-color: ${props => (props.blocked ? props.blockedColor : props.hoveredColor)};
   }
 `
 
@@ -82,16 +124,13 @@ const DayLabel = styled(Subtitle)`
 
 const TimeLabelCell = styled.div`
   position: relative;
-  display: block;
   width: 100%;
-  height: 25px;
+  height: 40px;
   padding-right: 15px;
-  text-align: center;
   display: flex;
-  justify-content: center;
-  align-items: right;
+  justify-content: flex-end;
+  align-items: center;
   color: rgb(112, 117, 122);
-  display: block;
 `
 
 const TimeText = styled(Text)`
@@ -105,8 +144,8 @@ const TimeText = styled(Text)`
 `
 
 type PropsType = {
-  selection: Array<Date>,
-  blocked: Array<Date>,
+  selection: Array<DateValueType>,
+  blocked: Array<DateValueType>,
   selectionScheme: SelectionSchemeType,
   onChange: (Array<Date>) => void,
   startDate: Date,
@@ -118,16 +157,23 @@ type PropsType = {
   unselectedColor: string,
   selectedColor: string,
   hoveredColor: string,
-  renderDateCell?: (Date, boolean, (HTMLElement) => void) => React.Node
+  blockedColor: string,
+  renderDateCell?: (Date, boolean, boolean) => React.Node
 }
 
 type StateType = {
   // In the case that a user is drag-selecting, we don't want to call this.props.onChange() until they have completed
   // the drag-select. selectionDraft serves as a temporary copy during drag-selects.
   selectionDraft: Array<Date>,
+  selectionProp: Array<DateValueType>,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
   isTouchDragging: boolean
+}
+
+type DerivedStateType = {
+  selectionDraft: Array<Date>,
+  selectionProp: Array<DateValueType>
 }
 
 export const preventScroll = (e: TouchEvent) => {
@@ -136,15 +182,16 @@ export const preventScroll = (e: TouchEvent) => {
 
 export default class BookingSelector extends React.Component<PropsType, StateType> {
   dates: Array<Array<Date>>
-  selectionSchemeHandlers: { [string]: (Date, Date, Array<Array<Date>>) => Date[] }
+  selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
   cellToDate: Map<HTMLElement, Date>
-  documentMouseUpHandler: () => void
+  handleDocumentMouseUpEvent: MouseEvent => void
   endSelection: () => void
   handleTouchMoveEvent: (SyntheticTouchEvent<*>) => void
   handleTouchEndEvent: () => void
   handleMouseUpEvent: Date => void
   handleMouseEnterEvent: Date => void
   handleSelectionStartEvent: Date => void
+  handleCellKeyDownEvent: (SyntheticKeyboardEvent<*>, Date, boolean) => void
   gridRef: ?HTMLElement
 
   static defaultProps = {
@@ -167,21 +214,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   constructor(props: PropsType) {
     super(props)
 
-    // Generate list of dates to render cells for
-    const startTime = startOfDay(props.startDate)
-    this.dates = []
+    this.dates = buildDates(props)
     this.cellToDate = new Map()
-    for (let d = 0; d < props.numDays; d += 1) {
-      const currentDay = []
-      for (let h = props.minTime; h <= props.maxTime; h += 1) {
-        currentDay.push(addHours(addDays(startTime, d), h))
-      }
-      this.dates.push(currentDay)
-    }
 
     this.state = {
-      selectionDraft: [...this.props.selection], // copy it over
-      blockedDraft: [...this.props.blocked],
+      selectionDraft: normalizeDates(this.props.selection),
+      // eslint-disable-next-line react/no-unused-state
+      selectionProp: this.props.selection,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -198,6 +237,17 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.handleTouchMoveEvent = this.handleTouchMoveEvent.bind(this)
     this.handleTouchEndEvent = this.handleTouchEndEvent.bind(this)
     this.handleSelectionStartEvent = this.handleSelectionStartEvent.bind(this)
+    this.handleDocumentMouseUpEvent = this.handleDocumentMouseUpEvent.bind(this)
+    this.handleCellKeyDownEvent = this.handleCellKeyDownEvent.bind(this)
+  }
+
+  static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
+    if (props.selection === state.selectionProp) return null
+
+    return {
+      selectionDraft: normalizeDates(props.selection),
+      selectionProp: props.selection
+    }
   }
 
   componentDidMount() {
@@ -207,7 +257,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    document.addEventListener('mouseup', this.endSelection)
+    document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
 
     // Prevent page scrolling when user is dragging on the date cells
     this.cellToDate.forEach((value, dateCell) => {
@@ -218,7 +268,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mouseup', this.endSelection)
+    document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && dateCell.removeEventListener) {
         dateCell.removeEventListener('touchmove', preventScroll)
@@ -226,10 +276,20 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
   }
 
-  componentWillReceiveProps(nextProps: PropsType) {
-    this.setState({
-      selectionDraft: [...nextProps.selection]
-    })
+  isBlocked(time: Date): boolean {
+    return Boolean(this.props.blocked.find(blockedTime => dateIsSameMinute(blockedTime, time)))
+  }
+
+  isSelected(time: Date): boolean {
+    return Boolean(this.state.selectionDraft.find(selectedTime => dateIsSameMinute(selectedTime, time)))
+  }
+
+  handleDocumentMouseUpEvent(event: MouseEvent) {
+    if (this.state.selectionType === null) return
+    const { gridRef } = this
+    const { target } = event
+    if (gridRef && target instanceof Node && gridRef.contains(target)) return
+    this.endSelection()
   }
 
   // Performs a lookup into this.cellToDate to retrieve the Date that corresponds to
@@ -239,13 +299,20 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const { touches } = event
     if (!touches || touches.length === 0) return null
     const { clientX, clientY } = touches[0]
-    const targetElement = document.elementFromPoint(clientX, clientY)
-    const cellTime = this.cellToDate.get(targetElement)
-    return cellTime
+    let targetElement = document.elementFromPoint(clientX, clientY)
+    while (targetElement) {
+      const cellTime = this.cellToDate.get(targetElement)
+      if (cellTime) return cellTime
+      if (targetElement === this.gridRef) return null
+      targetElement = targetElement.parentElement
+    }
+    return null
   }
 
   endSelection() {
-    this.props.onChange(this.state.selectionDraft)
+    if (this.state.selectionType !== null) {
+      this.props.onChange(this.state.selectionDraft)
+    }
     this.setState({
       selectionType: null,
       selectionStart: null
@@ -259,26 +326,28 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (selectionType === null || selectionStart === null) return
 
     let newSelection = []
-    if (selectionStart && selectionEnd && selectionType) {
+    if (selectionStart && selectionType) {
       newSelection = this.selectionSchemeHandlers[this.props.selectionScheme](selectionStart, selectionEnd, this.dates)
     }
-    if (!this.props.blocked.includes(String(newSelection[0]))) {
-      let nextDraft = [...this.props.selection]
-      if (selectionType === 'add') {
-        // check if the data is in the arrray
-        nextDraft = Array.from(new Set([...nextDraft, ...newSelection]))
-      } else if (selectionType === 'remove') {
-        nextDraft = nextDraft.filter(a => !newSelection.find(b => isSameMinute(a, b)))
-      }
-      this.setState({ selectionDraft: nextDraft }, callback)
+    const availableSelection = newSelection.filter(time => !this.isBlocked(time))
+    let nextDraft = normalizeDates(this.props.selection)
+    if (selectionType === 'add') {
+      nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
+    } else if (selectionType === 'remove') {
+      nextDraft = nextDraft.filter(
+        date => !availableSelection.find(selectedDate => dateIsSameMinute(date, selectedDate))
+      )
     }
+    this.setState({ selectionDraft: nextDraft }, callback)
   }
 
   // Isomorphic (mouse and touch) handler since starting a selection works the same way for both classes of user input
   handleSelectionStartEvent(startTime: Date) {
+    if (this.isBlocked(startTime)) return
+
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    const timeSelected = this.props.selection.find(a => isSameMinute(a, startTime))
+    const timeSelected = this.props.selection.find(date => dateIsSameMinute(date, startTime))
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
       selectionStart: startTime
@@ -293,8 +362,22 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleMouseUpEvent(time: Date) {
-    this.updateAvailabilityDraft(time)
-    // Don't call this.endSelection() here because the document mouseup handler will do it
+    this.updateAvailabilityDraft(time, this.endSelection)
+  }
+
+  handleCellKeyDownEvent(event: SyntheticKeyboardEvent<*>, time: Date, blocked: boolean) {
+    if (blocked || (event.key !== 'Enter' && event.key !== ' ')) return
+    event.preventDefault()
+    const timeSelected = this.props.selection.find(date => dateIsSameMinute(date, time))
+    this.setState(
+      {
+        selectionType: timeSelected ? 'remove' : 'add',
+        selectionStart: time
+      },
+      () => {
+        this.updateAvailabilityDraft(time, this.endSelection)
+      }
+    )
   }
 
   handleTouchMoveEvent(event: SyntheticTouchEvent<*>) {
@@ -342,19 +425,26 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   )
 
   renderDateCellWrapper = (time: Date): React.Element<*> => {
+    const blocked = this.isBlocked(time)
+    const selected = this.isSelected(time)
     const startHandler = () => {
-      this.handleSelectionStartEvent(time)
+      if (!blocked) this.handleSelectionStartEvent(time)
     }
-    const blocked = Boolean(this.state.blockedDraft.find(a => isSameMinute(a, time)))
-    const selected = Boolean(this.state.selectionDraft.find(a => isSameMinute(a, time)))
+    const refSetter = (dateCell: ?HTMLElement) => {
+      if (dateCell) this.cellToDate.set(dateCell, time)
+    }
 
     return (
       <GridCell
         className="rgdp__grid-cell"
-        role="presentation"
+        role="button"
+        aria-disabled={blocked}
+        aria-pressed={selected}
+        tabIndex={blocked ? -1 : 0}
         height="40px"
         margin={this.props.margin}
         key={time.toISOString()}
+        innerRef={refSetter}
         // Mouse handlers
         onMouseDown={startHandler}
         onMouseEnter={() => {
@@ -370,6 +460,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         onTouchStart={startHandler}
         onTouchMove={this.handleTouchMoveEvent}
         onTouchEnd={this.handleTouchEndEvent}
+        onKeyDown={event => {
+          this.handleCellKeyDownEvent(event, time, blocked)
+        }}
       >
         {this.renderDateCell(time, selected, blocked)}
       </GridCell>
@@ -377,9 +470,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderDateCell = (time: Date, selected: boolean, blocked: boolean): React.Node => {
-    const refSetter = (dateCell: HTMLElement) => {
-      this.cellToDate.set(dateCell, time)
-    }
     /* WEEKEND
     if (formatDate(time, 'd') === 0) {
       return (
@@ -411,22 +501,23 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     if (this.props.renderDateCell) {
       return this.props.renderDateCell(time, selected, blocked)
-    } else {
-      return (
-        <DateCell
-          blocked={blocked}
-          selected={selected}
-          innerRef={refSetter}
-          selectedColor={this.props.unselectedColor}
-          unselectedColor={this.props.selectedColor}
-          hoveredColor={this.props.hoveredColor}
-          blockedColor={this.props.blockedColor}
-        />
-      )
     }
+
+    return (
+      <DateCell
+        blocked={blocked}
+        selected={selected}
+        selectedColor={this.props.selectedColor}
+        unselectedColor={this.props.unselectedColor}
+        hoveredColor={this.props.hoveredColor}
+        blockedColor={this.props.blockedColor}
+      />
+    )
   }
 
   render(): React.Element<*> {
+    this.dates = buildDates(this.props)
+
     return (
       <Wrapper>
         {

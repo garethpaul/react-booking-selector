@@ -54,6 +54,52 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // Import only the methods we need from date-fns in order to keep build size small
 
 
+var toCssUnit = function toCssUnit(value) {
+  if (value == null) return '0px';
+  if (typeof value === 'number') return value + 'px';
+  return (/^-?\d+(\.\d+)?$/.test(value) ? value + 'px' : value
+  );
+};
+
+var toDate = function toDate(value) {
+  return value instanceof Date ? value : new Date(value.valueOf());
+};
+
+var normalizeDates = function normalizeDates(dates) {
+  return dates.map(toDate);
+};
+
+var dateIsSameMinute = function dateIsSameMinute(a, b) {
+  return (0, _is_same_minute2.default)(toDate(a), toDate(b));
+};
+
+var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
+  return dates.reduce(function (acc, date) {
+    if (acc.find(function (existingDate) {
+      return dateIsSameMinute(existingDate, date);
+    })) return acc;
+    return [].concat(acc, [date]);
+  }, []);
+};
+
+var buildDates = function buildDates(_ref) {
+  var startDate = _ref.startDate,
+      numDays = _ref.numDays,
+      minTime = _ref.minTime,
+      maxTime = _ref.maxTime;
+
+  var startTime = (0, _start_of_day2.default)(startDate);
+  var dates = [];
+  for (var d = 0; d < numDays; d += 1) {
+    var currentDay = [];
+    for (var h = minTime; h <= maxTime; h += 1) {
+      currentDay.push((0, _add_hours2.default)((0, _add_days2.default)(startTime, d), h));
+    }
+    dates.push(currentDay);
+  }
+  return dates;
+};
+
 var formatHour = function formatHour(hour) {
   var h = hour === 0 || hour === 12 || hour === 24 ? 12 : hour % 12;
   var abb = hour < 12 || hour === 24 ? 'am' : 'pm';
@@ -78,24 +124,26 @@ var Column = (0, _styledComponents2.default)('div').withConfig({
 var GridCell = exports.GridCell = (0, _styledComponents2.default)('div').withConfig({
   displayName: 'BookingSelector__GridCell',
   componentId: 'sc-1e1auar-3'
-})(['margin:', 'px;height:', 'px;touch-action:none;'], function (props) {
-  return props.margin;
+})(['margin:', ';height:', ';touch-action:none;'], function (props) {
+  return toCssUnit(props.margin);
 }, function (props) {
-  return props.height;
+  return toCssUnit(props.height);
 });
 
 // Style the Date Cell
 var DateCell = (0, _styledComponents2.default)('div').withConfig({
   displayName: 'BookingSelector__DateCell',
   componentId: 'sc-1e1auar-4'
-})(['width:100%;height:35px;', ' ', '  ', ' &:hover{cursor:pointer;background-color:', ';}'], function (props) {
-  return props.selected && !props.blocked && 'background-color:' + props.selectedColor + ';';
+})(['width:100%;height:100%;border-radius:4px;transition:background-color 120ms ease,transform 120ms ease;', ' ', ' ', ' &:hover{cursor:', ';background-color:', ';}'], function (props) {
+  return props.selected && !props.blocked && 'background-color: ' + props.selectedColor + ';';
 }, function (props) {
   return !props.selected && !props.blocked && 'background-color: ' + props.unselectedColor + ';';
 }, function (props) {
-  return props.blocked && 'background-color:' + props.blockedColor + ';';
+  return props.blocked && 'background-color: ' + props.blockedColor + ';';
 }, function (props) {
-  return props.hoveredColor;
+  return props.blocked ? 'not-allowed' : 'pointer';
+}, function (props) {
+  return props.blocked ? props.blockedColor : props.hoveredColor;
 });
 
 var DateLabel = (0, _styledComponents2.default)(_typography.Subtitle).withConfig({
@@ -111,7 +159,7 @@ var DayLabel = (0, _styledComponents2.default)(_typography.Subtitle).withConfig(
 var TimeLabelCell = (0, _styledComponents2.default)('div').withConfig({
   displayName: 'BookingSelector__TimeLabelCell',
   componentId: 'sc-1e1auar-7'
-})(['position:relative;display:block;width:100%;height:25px;padding-right:15px;text-align:center;display:flex;justify-content:center;align-items:right;color:rgb(112,117,122);display:block;']);
+})(['position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);']);
 
 var TimeText = (0, _styledComponents2.default)(_typography.Text).withConfig({
   displayName: 'BookingSelector__TimeText',
@@ -128,7 +176,6 @@ var BookingSelector = function (_React$Component) {
   function BookingSelector(props) {
     _classCallCheck(this, BookingSelector);
 
-    // Generate list of dates to render cells for
     var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
     _this.renderTimeLabels = function () {
@@ -176,24 +223,27 @@ var BookingSelector = function (_React$Component) {
     };
 
     _this.renderDateCellWrapper = function (time) {
+      var blocked = _this.isBlocked(time);
+      var selected = _this.isSelected(time);
       var startHandler = function startHandler() {
-        _this.handleSelectionStartEvent(time);
+        if (!blocked) _this.handleSelectionStartEvent(time);
       };
-      var blocked = Boolean(_this.state.blockedDraft.find(function (a) {
-        return (0, _is_same_minute2.default)(a, time);
-      }));
-      var selected = Boolean(_this.state.selectionDraft.find(function (a) {
-        return (0, _is_same_minute2.default)(a, time);
-      }));
+      var refSetter = function refSetter(dateCell) {
+        if (dateCell) _this.cellToDate.set(dateCell, time);
+      };
 
       return React.createElement(
         GridCell,
         {
           className: 'rgdp__grid-cell',
-          role: 'presentation',
+          role: 'button',
+          'aria-disabled': blocked,
+          'aria-pressed': selected,
+          tabIndex: blocked ? -1 : 0,
           height: '40px',
           margin: _this.props.margin,
-          key: time.toISOString()
+          key: time.toISOString(),
+          innerRef: refSetter
           // Mouse handlers
           , onMouseDown: startHandler,
           onMouseEnter: function onMouseEnter() {
@@ -208,16 +258,16 @@ var BookingSelector = function (_React$Component) {
           // parameters
           , onTouchStart: startHandler,
           onTouchMove: _this.handleTouchMoveEvent,
-          onTouchEnd: _this.handleTouchEndEvent
+          onTouchEnd: _this.handleTouchEndEvent,
+          onKeyDown: function onKeyDown(event) {
+            _this.handleCellKeyDownEvent(event, time, blocked);
+          }
         },
         _this.renderDateCell(time, selected, blocked)
       );
     };
 
     _this.renderDateCell = function (time, selected, blocked) {
-      var refSetter = function refSetter(dateCell) {
-        _this.cellToDate.set(dateCell, time);
-      };
       /* WEEKEND
       if (formatDate(time, 'd') === 0) {
         return (
@@ -249,33 +299,25 @@ var BookingSelector = function (_React$Component) {
 
       if (_this.props.renderDateCell) {
         return _this.props.renderDateCell(time, selected, blocked);
-      } else {
-        return React.createElement(DateCell, {
-          blocked: blocked,
-          selected: selected,
-          innerRef: refSetter,
-          selectedColor: _this.props.unselectedColor,
-          unselectedColor: _this.props.selectedColor,
-          hoveredColor: _this.props.hoveredColor,
-          blockedColor: _this.props.blockedColor
-        });
       }
+
+      return React.createElement(DateCell, {
+        blocked: blocked,
+        selected: selected,
+        selectedColor: _this.props.selectedColor,
+        unselectedColor: _this.props.unselectedColor,
+        hoveredColor: _this.props.hoveredColor,
+        blockedColor: _this.props.blockedColor
+      });
     };
 
-    var startTime = (0, _start_of_day2.default)(props.startDate);
-    _this.dates = [];
+    _this.dates = buildDates(props);
     _this.cellToDate = new Map();
-    for (var d = 0; d < props.numDays; d += 1) {
-      var currentDay = [];
-      for (var h = props.minTime; h <= props.maxTime; h += 1) {
-        currentDay.push((0, _add_hours2.default)((0, _add_days2.default)(startTime, d), h));
-      }
-      _this.dates.push(currentDay);
-    }
 
     _this.state = {
-      selectionDraft: [].concat(_this.props.selection), // copy it over
-      blockedDraft: [].concat(_this.props.blocked),
+      selectionDraft: normalizeDates(_this.props.selection),
+      // eslint-disable-next-line react/no-unused-state
+      selectionProp: _this.props.selection,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -292,8 +334,19 @@ var BookingSelector = function (_React$Component) {
     _this.handleTouchMoveEvent = _this.handleTouchMoveEvent.bind(_this);
     _this.handleTouchEndEvent = _this.handleTouchEndEvent.bind(_this);
     _this.handleSelectionStartEvent = _this.handleSelectionStartEvent.bind(_this);
+    _this.handleDocumentMouseUpEvent = _this.handleDocumentMouseUpEvent.bind(_this);
+    _this.handleCellKeyDownEvent = _this.handleCellKeyDownEvent.bind(_this);
     return _this;
   }
+
+  BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
+    if (props.selection === state.selectionProp) return null;
+
+    return {
+      selectionDraft: normalizeDates(props.selection),
+      selectionProp: props.selection
+    };
+  };
 
   BookingSelector.prototype.componentDidMount = function componentDidMount() {
     // We need to add the endSelection event listener to the document itself in order
@@ -302,7 +355,7 @@ var BookingSelector = function (_React$Component) {
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    document.addEventListener('mouseup', this.endSelection);
+    document.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
 
     // Prevent page scrolling when user is dragging on the date cells
     this.cellToDate.forEach(function (value, dateCell) {
@@ -313,7 +366,7 @@ var BookingSelector = function (_React$Component) {
   };
 
   BookingSelector.prototype.componentWillUnmount = function componentWillUnmount() {
-    document.removeEventListener('mouseup', this.endSelection);
+    document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && dateCell.removeEventListener) {
         dateCell.removeEventListener('touchmove', preventScroll);
@@ -321,10 +374,25 @@ var BookingSelector = function (_React$Component) {
     });
   };
 
-  BookingSelector.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-    this.setState({
-      selectionDraft: [].concat(nextProps.selection)
-    });
+  BookingSelector.prototype.isBlocked = function isBlocked(time) {
+    return Boolean(this.props.blocked.find(function (blockedTime) {
+      return dateIsSameMinute(blockedTime, time);
+    }));
+  };
+
+  BookingSelector.prototype.isSelected = function isSelected(time) {
+    return Boolean(this.state.selectionDraft.find(function (selectedTime) {
+      return dateIsSameMinute(selectedTime, time);
+    }));
+  };
+
+  BookingSelector.prototype.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
+    if (this.state.selectionType === null) return;
+    var gridRef = this.gridRef;
+    var target = event.target;
+
+    if (gridRef && target instanceof Node && gridRef.contains(target)) return;
+    this.endSelection();
   };
 
   // Performs a lookup into this.cellToDate to retrieve the Date that corresponds to
@@ -341,12 +409,19 @@ var BookingSelector = function (_React$Component) {
         clientY = _touches$.clientY;
 
     var targetElement = document.elementFromPoint(clientX, clientY);
-    var cellTime = this.cellToDate.get(targetElement);
-    return cellTime;
+    while (targetElement) {
+      var cellTime = this.cellToDate.get(targetElement);
+      if (cellTime) return cellTime;
+      if (targetElement === this.gridRef) return null;
+      targetElement = targetElement.parentElement;
+    }
+    return null;
   };
 
   BookingSelector.prototype.endSelection = function endSelection() {
-    this.props.onChange(this.state.selectionDraft);
+    if (this.state.selectionType !== null) {
+      this.props.onChange(this.state.selectionDraft);
+    }
     this.setState({
       selectionType: null,
       selectionStart: null
@@ -357,6 +432,8 @@ var BookingSelector = function (_React$Component) {
 
 
   BookingSelector.prototype.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
+    var _this2 = this;
+
     var _state = this.state,
         selectionType = _state.selectionType,
         selectionStart = _state.selectionStart;
@@ -365,33 +442,35 @@ var BookingSelector = function (_React$Component) {
     if (selectionType === null || selectionStart === null) return;
 
     var newSelection = [];
-    if (selectionStart && selectionEnd && selectionType) {
+    if (selectionStart && selectionType) {
       newSelection = this.selectionSchemeHandlers[this.props.selectionScheme](selectionStart, selectionEnd, this.dates);
     }
-    if (!this.props.blocked.includes(String(newSelection[0]))) {
-      var nextDraft = [].concat(this.props.selection);
-      if (selectionType === 'add') {
-        // check if the data is in the arrray
-        nextDraft = Array.from(new Set([].concat(nextDraft, newSelection)));
-      } else if (selectionType === 'remove') {
-        nextDraft = nextDraft.filter(function (a) {
-          return !newSelection.find(function (b) {
-            return (0, _is_same_minute2.default)(a, b);
-          });
+    var availableSelection = newSelection.filter(function (time) {
+      return !_this2.isBlocked(time);
+    });
+    var nextDraft = normalizeDates(this.props.selection);
+    if (selectionType === 'add') {
+      nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
+    } else if (selectionType === 'remove') {
+      nextDraft = nextDraft.filter(function (date) {
+        return !availableSelection.find(function (selectedDate) {
+          return dateIsSameMinute(date, selectedDate);
         });
-      }
-      this.setState({ selectionDraft: nextDraft }, callback);
+      });
     }
+    this.setState({ selectionDraft: nextDraft }, callback);
   };
 
   // Isomorphic (mouse and touch) handler since starting a selection works the same way for both classes of user input
 
 
   BookingSelector.prototype.handleSelectionStartEvent = function handleSelectionStartEvent(startTime) {
+    if (this.isBlocked(startTime)) return;
+
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    var timeSelected = this.props.selection.find(function (a) {
-      return (0, _is_same_minute2.default)(a, startTime);
+    var timeSelected = this.props.selection.find(function (date) {
+      return dateIsSameMinute(date, startTime);
     });
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
@@ -407,8 +486,23 @@ var BookingSelector = function (_React$Component) {
   };
 
   BookingSelector.prototype.handleMouseUpEvent = function handleMouseUpEvent(time) {
-    this.updateAvailabilityDraft(time);
-    // Don't call this.endSelection() here because the document mouseup handler will do it
+    this.updateAvailabilityDraft(time, this.endSelection);
+  };
+
+  BookingSelector.prototype.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
+    var _this3 = this;
+
+    if (blocked || event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    var timeSelected = this.props.selection.find(function (date) {
+      return dateIsSameMinute(date, time);
+    });
+    this.setState({
+      selectionType: timeSelected ? 'remove' : 'add',
+      selectionStart: time
+    }, function () {
+      _this3.updateAvailabilityDraft(time, _this3.endSelection);
+    });
   };
 
   BookingSelector.prototype.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
@@ -420,14 +514,14 @@ var BookingSelector = function (_React$Component) {
   };
 
   BookingSelector.prototype.handleTouchEndEvent = function handleTouchEndEvent() {
-    var _this2 = this;
+    var _this4 = this;
 
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since
       // handleTouchMoveEvent was never called) so we need to do it now
       this.updateAvailabilityDraft(null, function () {
-        _this2.endSelection();
+        _this4.endSelection();
       });
     } else {
       this.endSelection();
@@ -436,7 +530,9 @@ var BookingSelector = function (_React$Component) {
   };
 
   BookingSelector.prototype.render = function render() {
-    var _this3 = this;
+    var _this5 = this;
+
+    this.dates = buildDates(this.props);
 
     return React.createElement(
       Wrapper,
@@ -445,7 +541,7 @@ var BookingSelector = function (_React$Component) {
         Grid,
         {
           innerRef: function innerRef(el) {
-            _this3.gridRef = el;
+            _this5.gridRef = el;
           }
         },
         this.renderTimeLabels(),
