@@ -600,7 +600,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       ref: function ref(el) {
         _this6.gridRef = el;
       }
-    }, this.renderTimeLabels(), dates.map(function (dayOfTimes) {
+    }, dates.length > 0 && this.renderTimeLabels(), dates.map(function (dayOfTimes) {
       return _this6.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };

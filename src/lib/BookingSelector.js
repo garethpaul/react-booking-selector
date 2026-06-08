@@ -816,7 +816,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
               this.gridRef = el
             }}
           >
-            {this.renderTimeLabels()}
+            {dates.length > 0 && this.renderTimeLabels()}
             {dates.map((dayOfTimes) => this.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys))}
           </Grid>
         }

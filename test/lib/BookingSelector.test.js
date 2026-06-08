@@ -1011,6 +1011,15 @@ describe('prop updates', () => {
     expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
   })
 
+  it('renders no orphaned time labels when there are no date columns', () => {
+    const rendered = renderSelector({ startDate, numDays: 0, minTime: 9, maxTime: 10 })
+
+    expect(rendered.instance.dates).toEqual([])
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
+    expect(rendered.container).not.toHaveTextContent('9 am')
+    expect(rendered.container).not.toHaveTextContent('10 am')
+  })
+
   it('renders no date cells when time range values are outside 0 to 23', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: -1, maxTime: 24 })
 
