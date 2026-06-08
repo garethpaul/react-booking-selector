@@ -11,6 +11,19 @@ it('exports package metadata', () => {
   expect(packageJson.name).toBe('react-booking-selector')
 })
 
+it('supports direct CommonJS require interop', () => {
+  const output = execFileSync(
+    process.execPath,
+    [
+      '-e',
+      "const BookingSelector = require('react-booking-selector'); console.log(`${typeof BookingSelector}:${BookingSelector.default === BookingSelector}:${BookingSelector.BookingSelector === BookingSelector}`)",
+    ],
+    { cwd: process.cwd(), encoding: 'utf8' },
+  )
+
+  expect(output.trim()).toBe('function:true:true')
+})
+
 it('supports the package ESM import condition', () => {
   const output = execFileSync(
     process.execPath,

@@ -28,3 +28,4 @@
 - Added `publint` and `attw` package validation to the standard verification gate.
 - Expanded the clean script to remove local caches, coverage output, and package tarballs.
 - Optimized selection de-duplication to preserve order without reallocating the accumulator on every unique slot.
+- Added a CommonJS build wrapper so `require('react-booking-selector')` returns the component while keeping default and named access.

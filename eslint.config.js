@@ -35,7 +35,7 @@ module.exports = [
   js.configs.recommended,
   prettier,
   {
-    files: ['src/**/*.{js,jsx}', 'test/**/*.{js,jsx}', 'setupTests.js'],
+    files: ['src/**/*.{js,jsx}', 'test/**/*.{js,jsx}', 'scripts/**/*.js', 'setupTests.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
