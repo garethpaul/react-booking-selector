@@ -33,6 +33,9 @@ var normalizeDates = function normalizeDates(dates) {
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
 };
+var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
+  return dateMinuteKeys.has(dateMinuteKey(time));
+};
 var getDatesSignature = function getDatesSignature(dates) {
   return normalizeDates(dates).map(dateMinuteKey).join('|');
 };
@@ -156,19 +159,22 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         "aria-hidden": "true"
       }, labels);
     };
-    _this.renderDateColumn = function (dayOfTimes) {
+    _this.renderDateColumn = function (dayOfTimes, blockedMinuteKeys, selectedMinuteKeys) {
       return /*#__PURE__*/React.createElement(Column, {
         key: dayOfTimes[0].toISOString()
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
       }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, (0, _dateFns.format)(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
-        return _this.renderDateCellWrapper(time);
+        return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
       }));
     };
     _this.renderDateCellWrapper = function (time) {
-      var blocked = _this.isBlocked(time);
-      var selected = !blocked && _this.isSelected(time);
+      return _this.renderDateCellWrapperWithLookups(time, _this.blockedMinuteKeys, _this.selectedMinuteKeys);
+    };
+    _this.renderDateCellWrapperWithLookups = function (time, blockedMinuteKeys, selectedMinuteKeys) {
+      var blocked = hasDateMinuteKey(blockedMinuteKeys, time);
+      var selected = !blocked && hasDateMinuteKey(selectedMinuteKeys, time);
       var mouseStartHandler = function mouseStartHandler() {
         if (!blocked) _this.handleMouseDownEvent(time);
       };
@@ -233,14 +239,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         $blockedColor: _this.props.blockedColor
       });
     };
-    _this.dates = buildDates(props);
     _this.cellToDate = new Map();
     _this.dateToCell = new Map();
     _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
-    _this.blockedMinuteKeys = getDateMinuteKeySet(_this.props.blocked);
-    _this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey));
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
@@ -254,6 +257,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       linear: _index.default.linear,
       square: _index.default.square
     };
+    _this.refreshInstanceLookups(_this.props, selectionDraft);
     _this.endSelection = _this.endSelection.bind(_this);
     _this.handleMouseDownEvent = _this.handleMouseDownEvent.bind(_this);
     _this.handleMouseUpEvent = _this.handleMouseUpEvent.bind(_this);
@@ -287,6 +291,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     // the element where the touch/drag started so it's always caught.
     document.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
   };
+  _proto.componentDidUpdate = function componentDidUpdate() {
+    this.refreshInstanceLookups(this.props, this.state.selectionDraft);
+  };
   _proto.componentWillUnmount = function componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
     this.cellToDate.forEach(function (value, dateCell) {
@@ -296,6 +303,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     });
     this.cellToDate.clear();
     this.dateToCell.clear();
+  };
+  _proto.refreshInstanceLookups = function refreshInstanceLookups(props, selectionDraft) {
+    this.dates = buildDates(props);
+    this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
+    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey));
   };
   _proto.registerDateCell = function registerDateCell(dateCell, time) {
     var previousTime = this.cellToDate.get(dateCell);
@@ -317,10 +329,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (time) this.dateToCell.delete(dateKey(time));
   };
   _proto.isBlocked = function isBlocked(time) {
-    return this.blockedMinuteKeys.has(dateMinuteKey(time));
+    return hasDateMinuteKey(this.blockedMinuteKeys, time);
   };
   _proto.isSelected = function isSelected(time) {
-    return this.selectedMinuteKeys.has(dateMinuteKey(time));
+    return hasDateMinuteKey(this.selectedMinuteKeys, time);
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
     if (!(target instanceof Node)) return null;
@@ -503,16 +515,18 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.render = function render() {
     var _this5 = this;
-    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
-    this.selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
-    this.dates = buildDates(this.props);
+    var dates = buildDates(this.props);
+    var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
+    var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
     return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
       "aria-label": "Booking time slots",
       ref: function ref(el) {
         _this5.gridRef = el;
       }
-    }, this.renderTimeLabels(), this.dates.map(this.renderDateColumn)));
+    }, this.renderTimeLabels(), dates.map(function (dayOfTimes) {
+      return _this5.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys);
+    })));
   };
   return BookingSelector;
 }(React.Component);

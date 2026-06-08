@@ -54,6 +54,8 @@ const normalizeDates = (dates: ?Array<DateValueType>): Array<Date> =>
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
+const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: Date): boolean => dateMinuteKeys.has(dateMinuteKey(time))
+
 const getDatesSignature = (dates: ?Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
 const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> =>
@@ -306,15 +308,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   constructor(props: PropsType) {
     super(props)
 
-    this.dates = buildDates(props)
     this.cellToDate = new Map()
     this.dateToCell = new Map()
     this.lastTouchEventTime = 0
 
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
-    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
-    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey))
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
@@ -329,6 +328,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       linear: selectionSchemes.linear,
       square: selectionSchemes.square,
     }
+    this.refreshInstanceLookups(this.props, selectionDraft)
 
     this.endSelection = this.endSelection.bind(this)
     this.handleMouseDownEvent = this.handleMouseDownEvent.bind(this)
@@ -364,6 +364,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
   }
 
+  componentDidUpdate() {
+    this.refreshInstanceLookups(this.props, this.state.selectionDraft)
+  }
+
   componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
     this.cellToDate.forEach((value, dateCell) => {
@@ -373,6 +377,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
     this.cellToDate.clear()
     this.dateToCell.clear()
+  }
+
+  refreshInstanceLookups(props: PropsType, selectionDraft: Array<Date>) {
+    this.dates = buildDates(props)
+    this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked)
+    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey))
   }
 
   registerDateCell(dateCell: HTMLElement, time: Date) {
@@ -395,11 +405,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   isBlocked(time: Date): boolean {
-    return this.blockedMinuteKeys.has(dateMinuteKey(time))
+    return hasDateMinuteKey(this.blockedMinuteKeys, time)
   }
 
   isSelected(time: Date): boolean {
-    return this.selectedMinuteKeys.has(dateMinuteKey(time))
+    return hasDateMinuteKey(this.selectedMinuteKeys, time)
   }
 
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {
@@ -595,19 +605,30 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return <TimeColumn aria-hidden="true">{labels}</TimeColumn>
   }
 
-  renderDateColumn = (dayOfTimes: Array<Date>) => (
+  renderDateColumn = (
+    dayOfTimes: Array<Date>,
+    blockedMinuteKeys: Set<number>,
+    selectedMinuteKeys: Set<number>,
+  ): React.Element<*> => (
     <Column key={dayOfTimes[0].toISOString()}>
       <GridCell $height="50" $margin={this.props.margin}>
         <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDate(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
       </GridCell>
-      {dayOfTimes.map((time) => this.renderDateCellWrapper(time))}
+      {dayOfTimes.map((time) => this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys))}
     </Column>
   )
 
-  renderDateCellWrapper = (time: Date): React.Element<*> => {
-    const blocked = this.isBlocked(time)
-    const selected = !blocked && this.isSelected(time)
+  renderDateCellWrapper = (time: Date): React.Element<*> =>
+    this.renderDateCellWrapperWithLookups(time, this.blockedMinuteKeys, this.selectedMinuteKeys)
+
+  renderDateCellWrapperWithLookups = (
+    time: Date,
+    blockedMinuteKeys: Set<number>,
+    selectedMinuteKeys: Set<number>,
+  ): React.Element<*> => {
+    const blocked = hasDateMinuteKey(blockedMinuteKeys, time)
+    const selected = !blocked && hasDateMinuteKey(selectedMinuteKeys, time)
     const mouseStartHandler = () => {
       if (!blocked) this.handleMouseDownEvent(time)
     }
@@ -681,9 +702,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   render(): React.Element<*> {
-    this.blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
-    this.selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
-    this.dates = buildDates(this.props)
+    const dates = buildDates(this.props)
+    const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
+    const selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
 
     return (
       <Wrapper>
@@ -696,7 +717,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
             }}
           >
             {this.renderTimeLabels()}
-            {this.dates.map(this.renderDateColumn)}
+            {dates.map((dayOfTimes) => this.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys))}
           </Grid>
         }
       </Wrapper>
