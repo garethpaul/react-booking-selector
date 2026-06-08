@@ -23,3 +23,4 @@
 - Added branch coverage for date-cell cleanup paths and blocked wrapper pointer guards, raising the branch gate to 100%.
 - Removed redundant button role, disabled ARIA, and tab-index attributes from native slot buttons.
 - Normalized first-party source and tests with Prettier, then added format checking to the standard verification gate.
+- Added ESM-specific TypeScript declarations and NodeNext type coverage for the package import condition.
