@@ -1,19 +1,13 @@
-"use strict";
-
-exports.__esModule = true;
-exports.preventScroll = exports.default = exports.GridCell = void 0;
-var React = _interopRequireWildcard(require("react"));
-var _dateFns = require("date-fns");
-var _styled = _interopRequireDefault(require("./styled.js"));
-var _typography = require("./typography.js");
-var _colors = _interopRequireDefault(require("./colors.js"));
-var _index = _interopRequireDefault(require("./selection-schemes/index.js"));
 var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject0;
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prototype.constructor = t, _setPrototypeOf(t, o); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
+import * as React from 'react';
+import { addHours, addDays, startOfDay, isValid, format as formatDate } from 'date-fns';
+import styled from './styled.js';
+import { Text, Subtitle } from './typography.js';
+import colors from './colors.js';
+import selectionSchemes from './selection-schemes/index.js';
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
   if (typeof value === 'number') return value + "px";
@@ -28,7 +22,7 @@ var toDate = function toDate(value) {
   }
 };
 var normalizeDates = function normalizeDates(dates) {
-  return (Array.isArray(dates) ? dates : []).map(toDate).filter(_dateFns.isValid);
+  return (Array.isArray(dates) ? dates : []).map(toDate).filter(isValid);
 };
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
@@ -49,7 +43,7 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   }, []);
 };
 var getStartDate = function getStartDate(startDate) {
-  return startDate && (0, _dateFns.isValid)(startDate) ? startDate : new Date();
+  return startDate && isValid(startDate) ? startDate : new Date();
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
@@ -70,14 +64,14 @@ var buildDates = function buildDates(_ref) {
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
   if (!isWholeNumber(numDays) || numDays <= 0) return [];
-  var startTime = (0, _dateFns.startOfDay)(getStartDate(startDate));
+  var startTime = startOfDay(getStartDate(startDate));
   var visibleHours = getVisibleHours(minTime, maxTime);
   if (visibleHours.length === 0) return [];
   var dates = [];
   var _loop = function _loop(d) {
     var currentDay = [];
     visibleHours.forEach(function (h) {
-      currentDay.push((0, _dateFns.addHours)((0, _dateFns.addDays)(startTime, d), h));
+      currentDay.push(addHours(addDays(startTime, d), h));
     });
     dates.push(currentDay);
   };
@@ -93,24 +87,24 @@ var formatHour = function formatHour(hour) {
 };
 var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
-  return state + " " + (0, _dateFns.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
+  return state + " " + formatDate(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
 var dateKey = function dateKey(time) {
   return time.getTime();
 };
 var TOUCH_MOUSE_SUPPRESSION_MS = 500;
-var Wrapper = _styled.default.div(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["\n  display: flex;\n  align-items: center;\n  width: 100%;\n  user-select: none;\n"])));
-var Grid = _styled.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  width: 100%;\n"])));
-var Column = _styled.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: column;\n  justify-content: space-evenly;\n  flex: 1 1 0;\n  min-width: 0;\n"])));
-var TimeColumn = (0, _styled.default)(Column)(_templateObject4 || (_templateObject4 = _taggedTemplateLiteralLoose(["\n  flex: 0 0 52px;\n  max-width: 52px;\n  @media (max-width: 699px) {\n    flex-basis: 32px;\n    max-width: 32px;\n  }\n"])));
-var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: block;\n  margin: ", ";\n  height: ", ";\n  padding: 0;\n  border: 0;\n  appearance: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  opacity: 1;\n  touch-action: none;\n  &:focus {\n    outline: none;\n  }\n  &:focus-visible {\n    outline: 2px solid ", ";\n    outline-offset: 2px;\n    border-radius: 6px;\n  }\n"])), function (props) {
+var Wrapper = styled.div(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["\n  display: flex;\n  align-items: center;\n  width: 100%;\n  user-select: none;\n"])));
+var Grid = styled.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  width: 100%;\n"])));
+var Column = styled.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: column;\n  justify-content: space-evenly;\n  flex: 1 1 0;\n  min-width: 0;\n"])));
+var TimeColumn = styled(Column)(_templateObject4 || (_templateObject4 = _taggedTemplateLiteralLoose(["\n  flex: 0 0 52px;\n  max-width: 52px;\n  @media (max-width: 699px) {\n    flex-basis: 32px;\n    max-width: 32px;\n  }\n"])));
+export var GridCell = styled.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: block;\n  margin: ", ";\n  height: ", ";\n  padding: 0;\n  border: 0;\n  appearance: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  opacity: 1;\n  touch-action: none;\n  &:focus {\n    outline: none;\n  }\n  &:focus-visible {\n    outline: 2px solid ", ";\n    outline-offset: 2px;\n    border-radius: 6px;\n  }\n"])), function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
   return toCssUnit(props.$height);
-}, _colors.default.blue);
+}, colors.blue);
 
 // Style the Date Cell
-var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition: background-color 120ms ease, transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    cursor: ", ";\n    background-color: ", ";\n  }\n"])), function (props) {
+var DateCell = styled.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition: background-color 120ms ease, transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    cursor: ", ";\n    background-color: ", ";\n  }\n"])), function (props) {
   return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
 }, function (props) {
   return !props.$selected && !props.$blocked && "background-color: " + props.$unselectedColor + ";";
@@ -121,14 +115,14 @@ var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _tagg
 }, function (props) {
   return props.$blocked ? props.$blockedColor : props.$hoveredColor;
 });
-var DateLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject7 || (_templateObject7 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 19px;\n  margin: 0px;\n  margin-top: 5px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 12px;\n  }\n"])));
-var DayLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject8 || (_templateObject8 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 10px;\n  margin: 0px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n"])));
-var TimeLabelCell = _styled.default.div(_templateObject9 || (_templateObject9 = _taggedTemplateLiteralLoose(["\n  position: relative;\n  width: 100%;\n  height: 40px;\n  padding-right: 15px;\n  display: flex;\n  justify-content: flex-end;\n  align-items: center;\n  color: rgb(112, 117, 122);\n  @media (max-width: 699px) {\n    padding-right: 6px;\n  }\n"])));
-var TimeText = (0, _styled.default)(_typography.Text)(_templateObject0 || (_templateObject0 = _taggedTemplateLiteralLoose(["\n  margin: 0;\n  font-size: 11px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n  text-align: right;\n  text-transform: uppercase;\n"])));
-var preventScroll = exports.preventScroll = function preventScroll(e) {
+var DateLabel = styled(Subtitle)(_templateObject7 || (_templateObject7 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 19px;\n  margin: 0px;\n  margin-top: 5px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 12px;\n  }\n"])));
+var DayLabel = styled(Subtitle)(_templateObject8 || (_templateObject8 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 10px;\n  margin: 0px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n"])));
+var TimeLabelCell = styled.div(_templateObject9 || (_templateObject9 = _taggedTemplateLiteralLoose(["\n  position: relative;\n  width: 100%;\n  height: 40px;\n  padding-right: 15px;\n  display: flex;\n  justify-content: flex-end;\n  align-items: center;\n  color: rgb(112, 117, 122);\n  @media (max-width: 699px) {\n    padding-right: 6px;\n  }\n"])));
+var TimeText = styled(Text)(_templateObject0 || (_templateObject0 = _taggedTemplateLiteralLoose(["\n  margin: 0;\n  font-size: 11px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n  text-align: right;\n  text-transform: uppercase;\n"])));
+export var preventScroll = function preventScroll(e) {
   e.preventDefault();
 };
-var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component) {
+var BookingSelector = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
     var _this;
     _this = _React$Component.call(this, props) || this;
@@ -160,7 +154,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
-      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, (0, _dateFns.format)(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
+      }, /*#__PURE__*/React.createElement(DayLabel, null, formatDate(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDate(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
         return _this.renderDateCellWrapper(time);
       }));
     };
@@ -250,8 +244,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       isTouchDragging: false
     };
     _this.selectionSchemeHandlers = {
-      linear: _index.default.linear,
-      square: _index.default.square
+      linear: selectionSchemes.linear,
+      square: selectionSchemes.square
     };
     _this.endSelection = _this.endSelection.bind(_this);
     _this.handleMouseDownEvent = _this.handleMouseDownEvent.bind(_this);
@@ -435,10 +429,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     this.updateAvailabilityDraft(time, this.endSelection);
   };
   _proto.getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
-    if (key === 'ArrowRight') return (0, _dateFns.addDays)(time, 1);
-    if (key === 'ArrowLeft') return (0, _dateFns.addDays)(time, -1);
-    if (key === 'ArrowDown') return (0, _dateFns.addHours)(time, 1);
-    if (key === 'ArrowUp') return (0, _dateFns.addHours)(time, -1);
+    if (key === 'ArrowRight') return addDays(time, 1);
+    if (key === 'ArrowLeft') return addDays(time, -1);
+    if (key === 'ArrowDown') return addHours(time, 1);
+    if (key === 'ArrowUp') return addHours(time, -1);
     return null;
   };
   _proto.focusDateCell = function focusDateCell(time) {
@@ -524,9 +518,10 @@ BookingSelector.defaultProps = {
   maxTime: 23,
   dateFormat: 'd',
   margin: 3,
-  selectedColor: _colors.default.blue,
-  unselectedColor: _colors.default.paleBlue,
-  hoveredColor: _colors.default.lightBlue,
-  blockedColor: _colors.default.black,
+  selectedColor: colors.blue,
+  unselectedColor: colors.paleBlue,
+  hoveredColor: colors.lightBlue,
+  blockedColor: colors.black,
   onChange: function onChange() {}
 };
+export { BookingSelector as default };

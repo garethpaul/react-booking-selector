@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react'
-import styled from 'styled-components'
 
 import { addHours, addDays, startOfDay, isValid, format as formatDate } from 'date-fns'
 
-import { Text, Subtitle } from './typography'
-import colors from './colors'
-import selectionSchemes from './selection-schemes'
+import styled from './styled.js'
+import { Text, Subtitle } from './typography.js'
+import colors from './colors.js'
+import selectionSchemes from './selection-schemes/index.js'
 
 type DateValueType = Date | string | number | { valueOf: () => number } | null | void
 

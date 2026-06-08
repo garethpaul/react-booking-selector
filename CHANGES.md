@@ -14,3 +14,4 @@
 - Reset native button appearance and opacity so slot colors remain consistent across browsers.
 - Added keyboard regression coverage showing custom-rendered slots still toggle through the accessible grid cell wrapper.
 - Improved mobile day, date, and time label legibility without changing grid dimensions.
+- Added a generated ESM build and package `import` condition while preserving the CommonJS entry point.

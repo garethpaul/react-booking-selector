@@ -15,16 +15,19 @@
     "grid"
   ],
   "main": "dist/lib/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
       "types": "./dist/lib/index.d.ts",
+      "import": "./dist/esm/index.js",
       "require": "./dist/lib/index.js",
-      "default": "./dist/lib/index.js"
+      "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
   },
   "files": [
     "dist/lib",
+    "dist/esm",
     "docs/readme-overview.svg",
     "LICENSE",
     "README.md"
@@ -63,16 +66,16 @@
   "scripts": {
     "prepack": "corepack yarn build",
     "postpublish": "corepack yarn docs:deploy",
-    "clean": "rm -rf dist/lib dist/docs dev/docs .parcel-cache",
+    "clean": "rm -rf dist/lib dist/esm dist/docs dev/docs .parcel-cache",
     "clean:docs": "rm -rf dist/docs",
-    "clean:lib": "rm -rf dist/lib",
+    "clean:lib": "rm -rf dist/lib dist/esm",
     "build": "yarn lib:build && yarn docs:build",
     "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} setupTests.js --quiet",
     "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "cover": "jest --coverage",
     "test": "jest",
-    "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && cp src/lib/index.d.ts dist/lib/index.d.ts",
+    "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && BABEL_ENV=esm babel src/lib -d dist/esm --extensions .js,.jsx && cp src/lib/index.d.ts dist/lib/index.d.ts && cp src/lib/index.d.ts dist/esm/index.d.ts && node -e \"const fs = require('fs'); fs.writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}\\n')\"",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html",
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",

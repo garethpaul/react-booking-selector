@@ -1,7 +1,7 @@
 // @flow
 
-import styled from 'styled-components'
-import colors from './colors'
+import colors from './colors.js'
+import styled from './styled.js'
 
 export const Subtitle = styled.h2`
   font-size: 20px;

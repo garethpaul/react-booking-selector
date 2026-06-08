@@ -141,7 +141,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  color: rgb(112,117,122);
+  color: rgb(112, 117, 122);
 }
 
 .c7 {
@@ -151,38 +151,38 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   text-transform: uppercase;
 }
 
-@media (max-width:700px) {
+@media (max-width: 700px) {
   .c9 {
     font-size: 18px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c3 {
     flex-basis: 32px;
     max-width: 32px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c11 {
     font-size: 12px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c10 {
     font-size: 8px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c5 {
     padding-right: 6px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c7 {
     font-size: 8px;
   }
@@ -1725,7 +1725,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  color: rgb(112,117,122);
+  color: rgb(112, 117, 122);
 }
 
 .c7 {
@@ -1735,38 +1735,38 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   text-transform: uppercase;
 }
 
-@media (max-width:700px) {
+@media (max-width: 700px) {
   .c9 {
     font-size: 18px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c3 {
     flex-basis: 32px;
     max-width: 32px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c11 {
     font-size: 12px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c10 {
     font-size: 8px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c5 {
     padding-right: 6px;
   }
 }
 
-@media (max-width:699px) {
+@media (max-width: 699px) {
   .c7 {
     font-size: 8px;
   }

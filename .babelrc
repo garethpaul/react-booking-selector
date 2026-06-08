@@ -35,6 +35,42 @@
         ]
       ]
     },
+    "esm": {
+      "presets": [
+        "@babel/preset-react",
+        "@babel/preset-flow",
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "browsers": "last 2 versions"
+            },
+            "loose": true,
+            "modules": false
+          }
+        ]
+      ],
+      "plugins": [
+        [
+          "@babel/plugin-transform-class-properties",
+          {
+            "loose": true
+          }
+        ],
+        [
+          "@babel/plugin-transform-object-rest-spread",
+          {
+            "loose": true
+          }
+        ],
+        [
+          "babel-plugin-styled-components",
+          {
+            "fileName": false
+          }
+        ]
+      ]
+    },
     "parcel": {
       "presets": [
         "@babel/preset-flow"

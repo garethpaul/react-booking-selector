@@ -12,7 +12,7 @@ yarn add react-booking-selector styled-components
 
 TypeScript declarations are included for both the default export and the named `BookingSelector` export.
 
-The package exposes a root `exports` map and keeps `main` and `types` fields for compatibility. Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6.
+The package exposes a root `exports` map with CommonJS and ESM entry points, and keeps `main`, `module`, and `types` fields for compatibility. Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6.
 
 ```js
 import React, { useState } from 'react'
@@ -234,4 +234,4 @@ corepack yarn verify
 corepack yarn build
 ```
 
-`corepack yarn verify` runs linting, TypeScript checks, the Jest suite, a dependency audit, and a package dry run. The package intentionally publishes `dist/lib`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
+`corepack yarn verify` runs linting, TypeScript checks, the Jest suite, a dependency audit, and a package dry run. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.

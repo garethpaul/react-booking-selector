@@ -2,8 +2,8 @@
 
 exports.__esModule = true;
 exports.default = void 0;
-var _linear = _interopRequireDefault(require("./linear"));
-var _square = _interopRequireDefault(require("./square"));
+var _linear = _interopRequireDefault(require("./linear.js"));
+var _square = _interopRequireDefault(require("./square.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 var _default = exports.default = {
   linear: _linear.default,

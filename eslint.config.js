@@ -10,6 +10,7 @@ const browserGlobals = {
   HTMLElement: 'readonly',
   MouseEvent: 'readonly',
   Node: 'readonly',
+  process: 'readonly',
   TouchEvent: 'readonly',
   window: 'readonly'
 }
@@ -66,14 +67,7 @@ module.exports = [
       ...jsxA11y.configs.recommended.rules,
       'arrow-body-style': ['error', 'as-needed'],
       'class-methods-use-this': 'warn',
-      'import/extensions': [
-        'error',
-        'ignorePackages',
-        {
-          js: 'never',
-          jsx: 'never'
-        }
-      ],
+      'import/extensions': 'off',
       'import/no-extraneous-dependencies': [
         'error',
         {
