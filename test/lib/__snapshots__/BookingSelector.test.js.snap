@@ -146,7 +146,9 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   class="c0"
 >
   <div
+    aria-label="Booking time slots"
     class="c1"
+    role="group"
   >
     <div
       class="c2"
@@ -1606,7 +1608,9 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   class="c0"
 >
   <div
+    aria-label="Booking time slots"
     class="c1"
+    role="group"
   >
     <div
       class="c2"

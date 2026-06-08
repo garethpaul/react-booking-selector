@@ -484,6 +484,12 @@ describe('blocked cells', () => {
 })
 
 describe('cell accessibility', () => {
+  it('labels the slot group', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(getByRole('group', { name: 'Booking time slots' })).toBeInTheDocument()
+  })
+
   it('labels cells with their state and time', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)

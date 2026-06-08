@@ -453,6 +453,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var _this5 = this;
     this.dates = buildDates(this.props);
     return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
+      role: "group",
+      "aria-label": "Booking time slots",
       ref: function ref(el) {
         _this5.gridRef = el;
       }

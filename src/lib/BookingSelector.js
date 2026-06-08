@@ -571,6 +571,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       <Wrapper>
         {
           <Grid
+            role="group"
+            aria-label="Booking time slots"
             ref={el => {
               this.gridRef = el
             }}
