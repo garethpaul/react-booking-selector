@@ -1141,6 +1141,24 @@ describe('cell accessibility', () => {
     expect(getByText('1').closest('[aria-hidden="true"]')).toBeInTheDocument()
   })
 
+  it('contains visual date header text within a single line', () => {
+    const { getByText } = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      dateFormat: 'MMMM d',
+    })
+    const labels = [getByText('MON'), getByText('January 1')]
+
+    labels.forEach((label) => {
+      expect(label).toHaveStyleRule('line-height', '1')
+      expect(label).toHaveStyleRule('overflow', 'hidden')
+      expect(label).toHaveStyleRule('text-overflow', 'ellipsis')
+      expect(label).toHaveStyleRule('white-space', 'nowrap')
+    })
+  })
+
   it('labels cells with their state and time', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)

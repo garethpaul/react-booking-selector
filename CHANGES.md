@@ -51,3 +51,4 @@
 - Cancelled active touch drafts when the browser emits `touchcancel`.
 - Reset grid-cell width and height constraints so host button styles cannot shrink or stretch slots.
 - Kept selected cells on their selected color while hovered so hover styling does not hide selection state.
+- Contained visual date header text so long formats and host heading styles cannot spill across columns.

@@ -238,9 +238,13 @@ const DateCell = styled.div`
 const DateLabel = styled(Subtitle)`
   height: 15px;
   font-size: 19px;
+  line-height: 1;
   margin: 0px;
   margin-top: 5px;
   padding: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   @media (max-width: 699px) {
     font-size: 12px;
   }
@@ -249,8 +253,12 @@ const DateLabel = styled(Subtitle)`
 const DayLabel = styled(Subtitle)`
   height: 15px;
   font-size: 10px;
+  line-height: 1;
   margin: 0px;
   padding: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   @media (max-width: 699px) {
     font-size: 8px;
   }
