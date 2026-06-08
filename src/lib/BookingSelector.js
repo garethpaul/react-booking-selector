@@ -1,7 +1,11 @@
 // @flow
 import * as React from 'react'
 
-import { addHours, addDays, startOfDay, isValid, format as formatDate } from 'date-fns'
+import { addDays } from 'date-fns/addDays'
+import { addHours } from 'date-fns/addHours'
+import { format as formatDate } from 'date-fns/format'
+import { isValid } from 'date-fns/isValid'
+import { startOfDay } from 'date-fns/startOfDay'
 
 import styled from './styled.js'
 import { Text, Subtitle } from './typography.js'

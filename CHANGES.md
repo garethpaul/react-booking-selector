@@ -37,3 +37,4 @@
 - Added CommonJS-specific TypeScript declarations and NodeNext coverage for direct `require` interop.
 - Included source `.cts` and `.mts` files in Prettier coverage.
 - Hardened selection and blocked date normalization so unsupported values are ignored instead of being coerced into valid dates.
+- Switched date-fns usage to subpath imports so CommonJS builds avoid loading the full package barrel.

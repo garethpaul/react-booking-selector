@@ -3,7 +3,11 @@
 exports.__esModule = true;
 exports.preventScroll = exports.default = exports.GridCell = void 0;
 var React = _interopRequireWildcard(require("react"));
-var _dateFns = require("date-fns");
+var _addDays = require("date-fns/addDays");
+var _addHours = require("date-fns/addHours");
+var _format = require("date-fns/format");
+var _isValid = require("date-fns/isValid");
+var _startOfDay = require("date-fns/startOfDay");
 var _styled = _interopRequireDefault(require("./styled.js"));
 var _typography = require("./typography.js");
 var _colors = _interopRequireDefault(require("./colors.js"));
@@ -36,7 +40,7 @@ var toDate = function toDate(value) {
   }
 };
 var normalizeDates = function normalizeDates(dates) {
-  return (Array.isArray(dates) ? dates : []).map(toDate).filter(_dateFns.isValid);
+  return (Array.isArray(dates) ? dates : []).map(toDate).filter(_isValid.isValid);
 };
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
@@ -62,7 +66,7 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   return uniqueDates;
 };
 var getStartDate = function getStartDate(startDate) {
-  return startDate && (0, _dateFns.isValid)(startDate) ? startDate : new Date();
+  return startDate && (0, _isValid.isValid)(startDate) ? startDate : new Date();
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
@@ -83,14 +87,14 @@ var buildDates = function buildDates(_ref) {
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
   if (!isWholeNumber(numDays) || numDays <= 0) return [];
-  var startTime = (0, _dateFns.startOfDay)(getStartDate(startDate));
+  var startTime = (0, _startOfDay.startOfDay)(getStartDate(startDate));
   var visibleHours = getVisibleHours(minTime, maxTime);
   if (visibleHours.length === 0) return [];
   var dates = [];
   var _loop = function _loop(d) {
     var currentDay = [];
     visibleHours.forEach(function (h) {
-      currentDay.push((0, _dateFns.addHours)((0, _dateFns.addDays)(startTime, d), h));
+      currentDay.push((0, _addHours.addHours)((0, _addDays.addDays)(startTime, d), h));
     });
     dates.push(currentDay);
   };
@@ -106,20 +110,20 @@ var formatHour = function formatHour(hour) {
 };
 var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
-  return state + " " + (0, _dateFns.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
+  return state + " " + (0, _format.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
-    return (0, _dateFns.format)(time, dateFormat);
+    return (0, _format.format)(time, dateFormat);
   } catch (_unused2) {
-    return (0, _dateFns.format)(time, DEFAULT_DATE_FORMAT);
+    return (0, _format.format)(time, DEFAULT_DATE_FORMAT);
   }
 };
 var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
-  if (key === 'ArrowRight') return (0, _dateFns.addDays)(time, 1);
-  if (key === 'ArrowLeft') return (0, _dateFns.addDays)(time, -1);
-  if (key === 'ArrowDown') return (0, _dateFns.addHours)(time, 1);
-  if (key === 'ArrowUp') return (0, _dateFns.addHours)(time, -1);
+  if (key === 'ArrowRight') return (0, _addDays.addDays)(time, 1);
+  if (key === 'ArrowLeft') return (0, _addDays.addDays)(time, -1);
+  if (key === 'ArrowDown') return (0, _addHours.addHours)(time, 1);
+  if (key === 'ArrowUp') return (0, _addHours.addHours)(time, -1);
   return null;
 };
 var dateKey = function dateKey(time) {
@@ -187,7 +191,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
-      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
+      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _format.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
         return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
       }));
     };
