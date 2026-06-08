@@ -47,6 +47,16 @@ To customize the UI, you can either:
 1.  Specify values for the color, margin, format, etc. props
 2.  Use the `renderDateCell` render prop to handle rendering yourself.
 
+### Date and time behavior
+
+`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
+
+Values in `selection` and `blocked` are matched to grid slots at minute precision. For predictable results, pass dates that represent the same local timezone and hour/minute values as the rendered grid.
+
+### Accessibility
+
+Each time slot is rendered as a keyboard-focusable button unless it is blocked. Users can toggle a focused slot with `Enter` or `Space`, and every slot exposes an accessible label with its selected, blocked, or available state plus the full date and hour.
+
 ### `Props`
 
 #### `selection`
@@ -193,6 +203,8 @@ To customize the UI, you can either:
 
 **type**: `(time: Date, selected: boolean, blocked: boolean) => React.Node`
 
-**description**: A render prop function that receives the time represented by the cell, whether the cell is selected, and whether the cell is blocked. If you choose to use this custom render function, the color props above have no effect.
+**description**: A render prop function that receives the time represented by the cell, whether the cell is selected, and whether the cell is blocked. If you choose to use this custom render function, the color props above have no effect. The outer grid cell still supplies selection handlers, keyboard handlers, and accessibility attributes.
 
 **required**: no
+
+**default value**: default colored cell
