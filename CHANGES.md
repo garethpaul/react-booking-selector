@@ -49,3 +49,4 @@
 - Hid redundant visual date headers from assistive technology while preserving full slot labels.
 - Removed the unused `react-dom` peer dependency from the published package contract.
 - Cancelled active touch drafts when the browser emits `touchcancel`.
+- Reset grid-cell width and height constraints so host button styles cannot shrink or stretch slots.

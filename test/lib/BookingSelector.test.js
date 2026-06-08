@@ -1098,6 +1098,18 @@ describe('cell accessibility', () => {
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }).tagName).toBe('BUTTON')
   })
 
+  it('resets host button sizing constraints on grid cells', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    expect(cell).toHaveStyleRule('align-self', 'stretch')
+    expect(cell).toHaveStyleRule('width', 'auto')
+    expect(cell).toHaveStyleRule('max-width', 'none')
+    expect(cell).toHaveStyleRule('min-width', '0')
+    expect(cell).toHaveStyleRule('max-height', 'none')
+    expect(cell).toHaveStyleRule('min-height', '0')
+  })
+
   it('hides visual time labels from assistive technology', () => {
     const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

@@ -191,7 +191,12 @@ const TimeColumn = styled(Column)`
 export const GridCell = styled.div`
   box-sizing: border-box;
   display: block;
+  align-self: stretch;
+  width: auto;
+  max-width: none;
   min-width: 0;
+  max-height: none;
+  min-height: 0;
   margin: ${(props) => toCssUnit(props.$margin)};
   height: ${(props) => toCssUnit(props.$height)};
   padding: 0;
