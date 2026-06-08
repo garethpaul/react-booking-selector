@@ -156,9 +156,11 @@ export const GridCell = styled.div`
   height: ${props => toCssUnit(props.$height)};
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
   &:focus {
     outline: none;

@@ -11,3 +11,4 @@
 - Rendered selectable slots as native buttons while preserving the existing grid styling.
 - Aligned TypeScript date value declarations with the runtime handling of nullish selection and blocked entries.
 - Kept coverage reports focused on source files by excluding generated `dist` artifacts.
+- Reset native button appearance and opacity so slot colors remain consistent across browsers.

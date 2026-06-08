@@ -50,9 +50,11 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   height: 40px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 
@@ -73,9 +75,11 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   height: 50px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 
@@ -96,9 +100,11 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   height: 40px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 
@@ -1602,9 +1608,11 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   height: 40px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 
@@ -1625,9 +1633,11 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   height: 50px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 
@@ -1648,9 +1658,11 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   height: 40px;
   padding: 0;
   border: 0;
+  appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
+  opacity: 1;
   touch-action: none;
 }
 

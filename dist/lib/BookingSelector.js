@@ -116,7 +116,7 @@ var TimeColumn = (0, _styledComponents.default)(Column).withConfig({
 var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
   displayName: "GridCell",
   componentId: "sc-1e1auar-4"
-})(["box-sizing:border-box;display:block;margin:", ";height:", ";padding:0;border:0;background:transparent;color:inherit;font:inherit;touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
+})(["box-sizing:border-box;display:block;margin:", ";height:", ";padding:0;border:0;appearance:none;background:transparent;color:inherit;font:inherit;opacity:1;touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
   return toCssUnit(props.$height);
