@@ -94,6 +94,13 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
   return state + " " + formatDate(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
+var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
+  if (key === 'ArrowRight') return addDays(time, 1);
+  if (key === 'ArrowLeft') return addDays(time, -1);
+  if (key === 'ArrowDown') return addHours(time, 1);
+  if (key === 'ArrowUp') return addHours(time, -1);
+  return null;
+};
 var dateKey = function dateKey(time) {
   return time.getTime();
 };
@@ -241,7 +248,6 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
-      // eslint-disable-next-line react/no-unused-state
       selectionPropSignature: selectionPropSignature,
       selectionType: null,
       selectionStart: null,
@@ -441,13 +447,6 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (this.shouldIgnoreMouseEvent()) return;
     this.updateAvailabilityDraft(time, this.endSelection);
   };
-  _proto.getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
-    if (key === 'ArrowRight') return addDays(time, 1);
-    if (key === 'ArrowLeft') return addDays(time, -1);
-    if (key === 'ArrowDown') return addHours(time, 1);
-    if (key === 'ArrowUp') return addHours(time, -1);
-    return null;
-  };
   _proto.focusDateCell = function focusDateCell(time) {
     if (this.isBlocked(time)) return false;
     var dateCell = this.dateToCell.get(dateKey(time));
@@ -457,7 +456,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this3 = this;
-    var navigationTarget = this.getKeyboardNavigationTarget(time, event.key);
+    var navigationTarget = getKeyboardNavigationTarget(time, event.key);
     if (navigationTarget) {
       event.preventDefault();
       this.focusDateCell(navigationTarget);

@@ -120,6 +120,14 @@ const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): strin
   return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(time.getHours())}`
 }
 
+const getKeyboardNavigationTarget = (time: Date, key: string): ?Date => {
+  if (key === 'ArrowRight') return addDays(time, 1)
+  if (key === 'ArrowLeft') return addDays(time, -1)
+  if (key === 'ArrowDown') return addHours(time, 1)
+  if (key === 'ArrowUp') return addHours(time, -1)
+  return null
+}
+
 const dateKey = (time: Date): number => time.getTime()
 
 const TOUCH_MOUSE_SUPPRESSION_MS = 500
@@ -317,7 +325,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
-      // eslint-disable-next-line react/no-unused-state
       selectionPropSignature,
       selectionType: null,
       selectionStart: null,
@@ -523,14 +530,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.updateAvailabilityDraft(time, this.endSelection)
   }
 
-  getKeyboardNavigationTarget(time: Date, key: string): ?Date {
-    if (key === 'ArrowRight') return addDays(time, 1)
-    if (key === 'ArrowLeft') return addDays(time, -1)
-    if (key === 'ArrowDown') return addHours(time, 1)
-    if (key === 'ArrowUp') return addHours(time, -1)
-    return null
-  }
-
   focusDateCell(time: Date): boolean {
     if (this.isBlocked(time)) return false
     const dateCell = this.dateToCell.get(dateKey(time))
@@ -540,7 +539,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
-    const navigationTarget = this.getKeyboardNavigationTarget(time, event.key)
+    const navigationTarget = getKeyboardNavigationTarget(time, event.key)
     if (navigationTarget) {
       event.preventDefault()
       this.focusDateCell(navigationTarget)

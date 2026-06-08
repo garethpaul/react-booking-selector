@@ -79,7 +79,7 @@
     "clean:docs": "rm -rf dist/docs",
     "clean:lib": "rm -rf dist/lib dist/esm",
     "build": "yarn lib:build && yarn docs:build",
-    "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} scripts/**/*.js setupTests.js --quiet",
+    "lint": "eslint \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\" \"scripts/**/*.js\" setupTests.js --max-warnings=0",
     "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx && tsc --noEmit --skipLibCheck --module NodeNext --moduleResolution NodeNext test/types/esm.mts",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx,mts,cts}\" \"scripts/**/*.js\" \"*.{js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx,mts,cts}\" \"scripts/**/*.js\" \"*.{js,json,md}\"",
