@@ -821,6 +821,29 @@ describe('cell accessibility', () => {
       'true'
     )
   })
+
+  it('ignores invalid selection and blocked values', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      onChange: changeSpy,
+      selection: [new Date('invalid')],
+      blocked: ['not-a-date'],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    expect(cell).toHaveAttribute('aria-pressed', 'false')
+
+    clickCell(cell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([selected])
+    })
+  })
 })
 
 describe('keyboard interaction', () => {

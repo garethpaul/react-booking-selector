@@ -2,7 +2,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import { addHours, addDays, startOfDay, isSameMinute, format as formatDate } from 'date-fns'
+import { addHours, addDays, startOfDay, isSameMinute, isValid, format as formatDate } from 'date-fns'
 
 import { Text, Subtitle } from './typography'
 import colors from './colors'
@@ -41,13 +41,17 @@ const toCssUnit = (value: ?(number | string)): string => {
 
 const toDate = (value: DateValueType): Date => new Date(value.valueOf())
 
-const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate)
+const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate).filter(isValid)
 
-const dateIsSameMinute = (a: DateValueType, b: DateValueType): boolean => isSameMinute(toDate(a), toDate(b))
+const dateIsSameMinute = (a: DateValueType, b: DateValueType): boolean => {
+  const dateA = toDate(a)
+  const dateB = toDate(b)
+  return isValid(dateA) && isValid(dateB) && isSameMinute(dateA, dateB)
+}
 
-const dateMinuteKey = (value: DateValueType): number => Math.floor(toDate(value).getTime() / 60000)
+const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
-const getDatesSignature = (dates: Array<DateValueType>): string => dates.map(dateMinuteKey).join('|')
+const getDatesSignature = (dates: Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
   dates.reduce((acc: Array<Date>, date): Array<Date> => {

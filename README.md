@@ -61,7 +61,7 @@ If the same slot appears in both `selection` and `blocked`, blocked state takes 
 
 `BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
 
-Values in `selection` and `blocked` may be `Date` objects, timestamps, date strings, or date-like objects with a numeric `valueOf()`, and are normalized to `Date` objects before comparison. They are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
+Values in `selection` and `blocked` may be `Date` objects, timestamps, date strings, or date-like objects with a numeric `valueOf()`, and are normalized to `Date` objects before comparison. Invalid date values are ignored. Valid values are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
 
 ## Props
 

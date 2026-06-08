@@ -21,16 +21,18 @@ var toDate = function toDate(value) {
   return new Date(value.valueOf());
 };
 var normalizeDates = function normalizeDates(dates) {
-  return dates.map(toDate);
+  return dates.map(toDate).filter(_dateFns.isValid);
 };
 var dateIsSameMinute = function dateIsSameMinute(a, b) {
-  return (0, _dateFns.isSameMinute)(toDate(a), toDate(b));
+  var dateA = toDate(a);
+  var dateB = toDate(b);
+  return (0, _dateFns.isValid)(dateA) && (0, _dateFns.isValid)(dateB) && (0, _dateFns.isSameMinute)(dateA, dateB);
 };
 var dateMinuteKey = function dateMinuteKey(value) {
-  return Math.floor(toDate(value).getTime() / 60000);
+  return Math.floor(value.getTime() / 60000);
 };
 var getDatesSignature = function getDatesSignature(dates) {
-  return dates.map(dateMinuteKey).join('|');
+  return normalizeDates(dates).map(dateMinuteKey).join('|');
 };
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   return dates.reduce(function (acc, date) {
