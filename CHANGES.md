@@ -52,3 +52,4 @@
 - Reset grid-cell width and height constraints so host button styles cannot shrink or stretch slots.
 - Kept selected cells on their selected color while hovered so hover styling does not hide selection state.
 - Contained visual date header text so long formats and host heading styles cannot spill across columns.
+- Limited `touch-action: none` to interactive slot cells instead of decorative header cells.

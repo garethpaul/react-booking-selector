@@ -1110,6 +1110,15 @@ describe('cell accessibility', () => {
     expect(cell).toHaveStyleRule('min-height', '0')
   })
 
+  it('limits touch-action suppression to interactive cells', () => {
+    const { getByRole, getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const dateHeaderCell = getByText('MON').closest('[aria-hidden="true"]')
+
+    expect(cell).toHaveStyleRule('touch-action', 'none')
+    expect(dateHeaderCell).not.toHaveStyleRule('touch-action', 'none')
+  })
+
   it('keeps selected cells visually selected on hover', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const { getByRole } = renderSelector({

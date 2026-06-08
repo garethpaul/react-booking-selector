@@ -207,7 +207,7 @@ export const GridCell = styled.div`
   ${(props) => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}
   font: inherit;
   opacity: 1;
-  touch-action: none;
+  ${(props) => props.$interactive && 'touch-action: none;'}
   &:focus {
     outline: none;
   }

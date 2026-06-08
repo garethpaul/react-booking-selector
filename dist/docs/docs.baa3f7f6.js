@@ -68,7 +68,7 @@ Example:
   ${e=>e.$interactive&&`cursor: ${e.$blocked?"not-allowed":"pointer"};`}
   font: inherit;
   opacity: 1;
-  touch-action: none;
+  ${e=>e.$interactive&&"touch-action: none;"}
   &:focus {
     outline: none;
   }
