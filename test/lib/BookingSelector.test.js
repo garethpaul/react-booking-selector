@@ -446,6 +446,34 @@ describe('touch handlers', () => {
     })
   })
 
+  it('ignores late touch moves after controlled props cancel the selection', () => {
+    const changeSpy = jest.fn()
+    const controlledSelection = addHours(startOfDay(startDate), 10)
+    const rendered = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell, secondCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+    document.elementFromPoint.mockReturnValue(secondCell)
+    const getTimeSpy = jest.spyOn(rendered.instance, 'getTimeFromTouchEvent')
+
+    fireEvent.touchStart(firstCell)
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [controlledSelection],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    fireEvent.touchMove(firstCell, mockEvent)
+
+    expect(rendered.instance.state.selectionDraft).toEqual([controlledSelection])
+    expect(rendered.instance.state.selectionType).toBe(null)
+    expect(rendered.instance.state.isTouchDragging).toBe(false)
+    expect(getTimeSpy).not.toHaveBeenCalled()
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    getTimeSpy.mockRestore()
+  })
+
   it('cancels touch drags without committing the draft', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
@@ -490,10 +518,14 @@ it('handleTouchMoveEvent updates the availability draft', () => {
   const { instance } = renderSelector()
 
   act(() => {
+    instance.setState({ selectionType: 'add', selectionStart: mockCellTime })
+  })
+  act(() => {
     instance.handleTouchMoveEvent({})
   })
 
   expect(updateDraftSpy).toHaveBeenCalledWith(mockCellTime)
+  expect(instance.state.isTouchDragging).toBe(true)
 
   getTimeSpy.mockRestore()
   updateDraftSpy.mockRestore()

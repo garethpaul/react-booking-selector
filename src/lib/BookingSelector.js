@@ -645,6 +645,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   handleTouchMoveEvent(event: TouchSelectionEventType) {
     this.recordTouchEvent()
+    if (this.state.selectionType === null) return
+
     this.setState({ isTouchDragging: true })
     const cellTime = this.getTimeFromTouchEvent(event)
     if (cellTime) {
