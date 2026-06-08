@@ -27,6 +27,10 @@ describe('square selection scheme', () => {
     expect(square(null, null, dates)).toHaveLength(0)
   })
 
+  test('it handles a null start with a selectionEnd', () => {
+    expect(square(null, dates[0][1], dates)).toHaveLength(0)
+  })
+
   test('it handles a cross-day selection', () => {
     const expected = []
     const START = { DATE: 1, TIME: 10 }

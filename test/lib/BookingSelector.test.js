@@ -90,6 +90,13 @@ it('getTimeFromTouchEvent returns the time for that cell', () => {
   cellToDateSpy.mockRestore()
 })
 
+it('getTimeFromTouchEvent returns null when the touch is inside the grid but not on a date cell', () => {
+  const { getByText, instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+  document.elementFromPoint.mockReturnValue(getByText('9 am'))
+
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+})
+
 it('endSelection calls the onChange prop and resets selection state', async () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })
@@ -427,6 +434,22 @@ describe('componentDidMount', () => {
     renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
     expect(addSpy).toHaveBeenCalledWith('touchmove', preventScroll, { passive: false })
+    addSpy.mockRestore()
+  })
+
+  it('updates date lookup maps when a mounted date cell receives a new time', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const addSpy = jest.spyOn(cell, 'addEventListener')
+    const firstTime = addHours(startOfDay(startDate), 9)
+    const secondTime = addHours(startOfDay(startDate), 10)
+
+    instance.registerDateCell(cell, firstTime)
+    instance.registerDateCell(cell, secondTime)
+
+    expect(addSpy).toHaveBeenCalledTimes(1)
+    expect(instance.dateToCell.has(firstTime.getTime())).toBe(false)
+    expect(instance.dateToCell.get(secondTime.getTime())).toBe(cell)
     addSpy.mockRestore()
   })
 })
