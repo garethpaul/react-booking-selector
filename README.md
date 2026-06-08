@@ -1,8 +1,5 @@
 # React Booking Selector
 
-<!-- README-OVERVIEW-IMAGE -->
-![Project overview](docs/readme-overview.svg)
-
 ![React Booking Selector overview](docs/readme-overview.svg)
 
 `react-booking-selector` is a controlled React component for selecting date and time slots on a day-by-hour booking grid. It supports blocked slots, square or linear drag selection, keyboard navigation, custom colors, and custom cell rendering.
