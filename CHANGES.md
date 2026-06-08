@@ -32,3 +32,4 @@
 - Removed render-time lookup cache mutation from the booking selector while preserving committed event-handler lookups.
 - Tightened linting to fail on warnings and removed stale lint suppressions.
 - Expanded Prettier coverage to include Babel config, editor settings, plan markdown, and docs HTML source.
+- Lowered the published package Node engine floor to Node 16 while documenting the Node 20 development verification requirement.
