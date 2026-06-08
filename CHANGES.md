@@ -35,3 +35,4 @@
 - Lowered the published package Node engine floor to Node 16 while documenting the Node 20 development verification requirement.
 - Guarded date column header formatting so invalid `dateFormat` props fall back to the default header format instead of crashing render.
 - Added CommonJS-specific TypeScript declarations and NodeNext coverage for direct `require` interop.
+- Included source `.cts` and `.mts` files in Prettier coverage.
