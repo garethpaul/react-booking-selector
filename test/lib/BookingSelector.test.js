@@ -131,6 +131,34 @@ describe('mouse handlers', () => {
     expect(spies[name]).toHaveBeenCalled()
   })
 
+  it('selects cells while mouse dragging', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(secondCell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+  })
+
+  it('ends a drag when the mouse is released outside the grid', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(document.body)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()
