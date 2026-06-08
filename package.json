@@ -17,6 +17,7 @@
   "main": "dist/lib/index.js",
   "files": [
     "dist/lib",
+    "docs/readme-overview.svg",
     "LICENSE",
     "README.md"
   ],
