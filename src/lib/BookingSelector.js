@@ -418,17 +418,15 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     if (selectionType === null || selectionStart === null) return
 
-    let newSelection = []
-    if (selectionStart && selectionType) {
-      const selectionSchemeHandler =
-        this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square
-      newSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates)
-    }
-    const availableSelection = newSelection.filter(time => !this.isBlocked(time))
+    const selectionSchemeHandler =
+      this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square
+    const availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(
+      time => !this.isBlocked(time)
+    )
     let nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(time => !this.isBlocked(time)))
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
-    } else if (selectionType === 'remove') {
+    } else {
       nextDraft = nextDraft.filter(
         date => !availableSelection.find(selectedDate => dateIsSameMinute(date, selectedDate))
       )

@@ -389,12 +389,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
     if (selectionType === null || selectionStart === null) return;
-    var newSelection = [];
-    if (selectionStart && selectionType) {
-      var selectionSchemeHandler = this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square;
-      newSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates);
-    }
-    var availableSelection = newSelection.filter(function (time) {
+    var selectionSchemeHandler = this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square;
+    var availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(function (time) {
       return !_this2.isBlocked(time);
     });
     var nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(function (time) {
@@ -402,7 +398,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     }));
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
-    } else if (selectionType === 'remove') {
+    } else {
       nextDraft = nextDraft.filter(function (date) {
         return !availableSelection.find(function (selectedDate) {
           return dateIsSameMinute(date, selectedDate);
