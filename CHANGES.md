@@ -8,3 +8,4 @@
 - Documented custom cell rendering with the `selected` and `blocked` state arguments.
 - Updated README usage examples to use React hooks.
 - Added a package root `exports` map, package metadata subpath, and runtime coverage for both exports.
+- Rendered selectable slots as native buttons while preserving the existing grid styling.

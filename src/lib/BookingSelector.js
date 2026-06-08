@@ -150,8 +150,15 @@ const TimeColumn = styled(Column)`
 `
 
 export const GridCell = styled.div`
+  box-sizing: border-box;
+  display: block;
   margin: ${props => toCssUnit(props.$margin)};
   height: ${props => toCssUnit(props.$height)};
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   touch-action: none;
   &:focus {
     outline: none;
@@ -612,8 +619,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     return (
       <GridCell
+        as="button"
         className="rgdp__grid-cell"
         role="button"
+        type="button"
+        disabled={blocked}
         aria-disabled={blocked}
         aria-label={formatCellLabel(time, selected, blocked)}
         aria-pressed={selected}

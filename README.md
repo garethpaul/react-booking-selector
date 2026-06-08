@@ -46,7 +46,7 @@ Selection schemes:
 - `square` selects a rectangular block between the start and end cells.
 - `linear` selects every chronological slot between the start and end cells.
 
-Each time slot is a focusable button unless it is blocked. Arrow keys move focus between adjacent slots, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
+Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. Arrow keys move focus between adjacent slots, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 

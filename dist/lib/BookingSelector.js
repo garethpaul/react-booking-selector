@@ -116,7 +116,7 @@ var TimeColumn = (0, _styledComponents.default)(Column).withConfig({
 var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
   displayName: "GridCell",
   componentId: "sc-1e1auar-4"
-})(["margin:", ";height:", ";touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
+})(["box-sizing:border-box;display:block;margin:", ";height:", ";padding:0;border:0;background:transparent;color:inherit;font:inherit;touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
   return toCssUnit(props.$height);
@@ -212,8 +212,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         currentDateCell = dateCell;
       };
       return /*#__PURE__*/React.createElement(GridCell, {
+        as: "button",
         className: "rgdp__grid-cell",
         role: "button",
+        type: "button",
+        disabled: blocked,
         "aria-disabled": blocked,
         "aria-label": formatCellLabel(time, selected, blocked),
         "aria-pressed": selected,

@@ -828,6 +828,12 @@ describe('cell accessibility', () => {
     expect(getByRole('group', { name: 'Booking time slots' })).toBeInTheDocument()
   })
 
+  it('renders cells as native buttons', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }).tagName).toBe('BUTTON')
+  })
+
   it('hides visual time labels from assistive technology', () => {
     const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
