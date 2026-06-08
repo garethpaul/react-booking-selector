@@ -10,6 +10,8 @@ yarn add react-booking-selector styled-components
 
 TypeScript declarations are included for both the default export and the named `BookingSelector` export.
 
+Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6.
+
 ```js
 import React from 'react'
 import BookingSelector from 'react-booking-selector'
