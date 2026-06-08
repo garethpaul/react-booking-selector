@@ -116,6 +116,17 @@ it('endSelection calls the onChange prop and resets selection state', async () =
   setStateSpy.mockRestore()
 })
 
+it('endSelection does not call onChange when no selection is active', () => {
+  const changeSpy = jest.fn()
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(changeSpy).not.toHaveBeenCalled()
+})
+
 it('endSelection passes cloned selection dates to onChange', async () => {
   const changeSpy = jest.fn()
   const selected = addHours(startOfDay(startDate), 9)
@@ -755,6 +766,18 @@ describe('keyboard interaction', () => {
     })
   })
 
+  it('ignores non-action keys on focused cells', () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy })
+    const cell = container.querySelector('[role="button"]')
+    const preventDefault = jest.fn()
+
+    fireEvent.keyDown(cell, { key: 'Escape', preventDefault })
+
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(preventDefault).not.toHaveBeenCalled()
+  })
+
   it('moves focus between adjacent cells with arrow keys', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 10 })
     const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
@@ -785,6 +808,34 @@ describe('keyboard interaction', () => {
     fireEvent.keyDown(mondayNine, { key: 'ArrowRight' })
 
     expect(mondayNine).toHaveFocus()
+  })
+
+  it('does not move focus outside the rendered grid with arrow keys', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    mondayNine.focus()
+    fireEvent.keyDown(mondayNine, { key: 'ArrowUp' })
+
+    expect(mondayNine).toHaveFocus()
+  })
+
+  it('does not toggle blocked cells with Enter', () => {
+    const changeSpy = jest.fn()
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      onChange: changeSpy,
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
+
+    fireEvent.keyDown(blockedCell, { key: 'Enter' })
+
+    expect(changeSpy).not.toHaveBeenCalled()
   })
 })
 
