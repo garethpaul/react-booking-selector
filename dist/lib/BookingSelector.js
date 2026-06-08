@@ -81,11 +81,11 @@ var Column = _styledComponents.default.div.withConfig({
 var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
   displayName: "BookingSelector__GridCell",
   componentId: "sc-1e1auar-3"
-})(["margin:", ";height:", ";touch-action:none;"], function (props) {
+})(["margin:", ";height:", ";touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
   return toCssUnit(props.$height);
-});
+}, _colors.default.blue);
 
 // Style the Date Cell
 var DateCell = _styledComponents.default.div.withConfig({

@@ -106,6 +106,14 @@ export const GridCell = styled.div`
   margin: ${props => toCssUnit(props.$margin)};
   height: ${props => toCssUnit(props.$height)};
   touch-action: none;
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid ${colors.blue};
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 `
 
 // Style the Date Cell

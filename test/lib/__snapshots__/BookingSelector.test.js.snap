@@ -43,16 +43,46 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   touch-action: none;
 }
 
+.c3:focus {
+  outline: none;
+}
+
+.c3:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .c7 {
   margin: 3px;
   height: 50px;
   touch-action: none;
 }
 
+.c7:focus {
+  outline: none;
+}
+
+.c7:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .c11 {
   margin: 3px;
   height: 40px;
   touch-action: none;
+}
+
+.c11:focus {
+  outline: none;
+}
+
+.c11:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .c10 {
@@ -1447,16 +1477,46 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   touch-action: none;
 }
 
+.c3:focus {
+  outline: none;
+}
+
+.c3:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .c7 {
   margin: 3px;
   height: 50px;
   touch-action: none;
 }
 
+.c7:focus {
+  outline: none;
+}
+
+.c7:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .c11 {
   margin: 3px;
   height: 40px;
   touch-action: none;
+}
+
+.c11:focus {
+  outline: none;
+}
+
+.c11:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .c12 {
