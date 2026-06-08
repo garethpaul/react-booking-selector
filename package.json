@@ -60,7 +60,7 @@
     "clean:lib": "rm -rf dist/lib",
     "build": "yarn lib:build && yarn docs:build",
     "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} setupTests.js --quiet",
-    "types:check": "tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx",
+    "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "cover": "jest --coverage",
     "test": "jest",
