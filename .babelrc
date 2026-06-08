@@ -30,7 +30,7 @@
         [
           "babel-plugin-styled-components",
           {
-            "fileName": "false"
+            "fileName": false
           }
         ]
       ]
@@ -43,7 +43,7 @@
         [
           "babel-plugin-styled-components",
           {
-            "fileName": "false"
+            "fileName": false
           }
         ]
       ]
@@ -78,7 +78,7 @@
         [
           "babel-plugin-styled-components",
           {
-            "fileName": "false"
+            "fileName": false
           }
         ]
       ]

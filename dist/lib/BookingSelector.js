@@ -91,19 +91,19 @@ var dateKey = function dateKey(time) {
   return time.getTime();
 };
 var Wrapper = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__Wrapper",
+  displayName: "Wrapper",
   componentId: "sc-1e1auar-0"
 })(["display:flex;align-items:center;width:100%;user-select:none;"]);
 var Grid = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__Grid",
+  displayName: "Grid",
   componentId: "sc-1e1auar-1"
 })(["display:flex;flex-direction:row;align-items:stretch;width:100%;"]);
 var Column = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__Column",
+  displayName: "Column",
   componentId: "sc-1e1auar-2"
 })(["display:flex;flex-direction:column;justify-content:space-evenly;flex-grow:1;"]);
 var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__GridCell",
+  displayName: "GridCell",
   componentId: "sc-1e1auar-3"
 })(["margin:", ";height:", ";touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
   return toCssUnit(props.$margin);
@@ -113,7 +113,7 @@ var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
 
 // Style the Date Cell
 var DateCell = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__DateCell",
+  displayName: "DateCell",
   componentId: "sc-1e1auar-4"
 })(["width:100%;height:100%;border-radius:4px;transition:background-color 120ms ease,transform 120ms ease;", " ", " ", " &:hover{cursor:", ";background-color:", ";}"], function (props) {
   return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
@@ -127,19 +127,19 @@ var DateCell = _styledComponents.default.div.withConfig({
   return props.$blocked ? props.$blockedColor : props.$hoveredColor;
 });
 var DateLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
-  displayName: "BookingSelector__DateLabel",
+  displayName: "DateLabel",
   componentId: "sc-1e1auar-5"
 })(["height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:10px;}"]);
 var DayLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
-  displayName: "BookingSelector__DayLabel",
+  displayName: "DayLabel",
   componentId: "sc-1e1auar-6"
 })(["height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:6px;}"]);
 var TimeLabelCell = _styledComponents.default.div.withConfig({
-  displayName: "BookingSelector__TimeLabelCell",
+  displayName: "TimeLabelCell",
   componentId: "sc-1e1auar-7"
 })(["position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);"]);
 var TimeText = (0, _styledComponents.default)(_typography.Text).withConfig({
-  displayName: "BookingSelector__TimeText",
+  displayName: "TimeText",
   componentId: "sc-1e1auar-8"
 })(["margin:0;font-size:11px;@media (max-width:699px){font-size:7px;}text-align:right;text-transform:uppercase;"]);
 var preventScroll = exports.preventScroll = function preventScroll(e) {
