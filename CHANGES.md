@@ -64,3 +64,4 @@
 - Ignored late touchmove events after controlled props cancel an active touch selection.
 - Ignored late touchend events after controlled props cancel an active touch selection.
 - Hid orphaned time labels when no date columns are rendered.
+- Added black-box coverage for the docs-plan checker success and failure paths.
