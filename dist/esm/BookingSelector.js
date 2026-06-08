@@ -8,6 +8,7 @@ import styled from './styled.js';
 import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
 import selectionSchemes from './selection-schemes/index.js';
+var DEFAULT_DATE_FORMAT = 'd';
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
   if (typeof value === 'number') return value + "px";
@@ -94,6 +95,13 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
   return state + " " + formatDate(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
+var formatDateHeader = function formatDateHeader(time, dateFormat) {
+  try {
+    return formatDate(time, dateFormat);
+  } catch (_unused2) {
+    return formatDate(time, DEFAULT_DATE_FORMAT);
+  }
+};
 var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
   if (key === 'ArrowRight') return addDays(time, 1);
   if (key === 'ArrowLeft') return addDays(time, -1);
@@ -166,7 +174,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
-      }, /*#__PURE__*/React.createElement(DayLabel, null, formatDate(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDate(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
+      }, /*#__PURE__*/React.createElement(DayLabel, null, formatDate(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
         return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
       }));
     };
@@ -530,7 +538,7 @@ BookingSelector.defaultProps = {
   numDays: 7,
   minTime: 9,
   maxTime: 23,
-  dateFormat: 'd',
+  dateFormat: DEFAULT_DATE_FORMAT,
   margin: 3,
   selectedColor: colors.blue,
   unselectedColor: colors.paleBlue,

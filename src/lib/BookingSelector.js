@@ -33,6 +33,8 @@ type DateGridPropsType = {
   maxTime: number,
 }
 
+const DEFAULT_DATE_FORMAT = 'd'
+
 const toCssUnit = (value: ?(number | string)): string => {
   if (value == null) return '0px'
   if (typeof value === 'number') return `${value}px`
@@ -118,6 +120,14 @@ const formatHour = (hour: number): string => {
 const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): string => {
   const state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available'
   return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(time.getHours())}`
+}
+
+const formatDateHeader = (time: Date, dateFormat: string): string => {
+  try {
+    return formatDate(time, dateFormat)
+  } catch {
+    return formatDate(time, DEFAULT_DATE_FORMAT)
+  }
 }
 
 const getKeyboardNavigationTarget = (time: Date, key: string): ?Date => {
@@ -304,7 +314,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     numDays: 7,
     minTime: 9,
     maxTime: 23,
-    dateFormat: 'd',
+    dateFormat: DEFAULT_DATE_FORMAT,
     margin: 3,
     selectedColor: colors.blue,
     unselectedColor: colors.paleBlue,
@@ -612,7 +622,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     <Column key={dayOfTimes[0].toISOString()}>
       <GridCell $height="50" $margin={this.props.margin}>
         <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
-        <DateLabel>{formatDate(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
+        <DateLabel>{formatDateHeader(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
       </GridCell>
       {dayOfTimes.map((time) => this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys))}
     </Column>

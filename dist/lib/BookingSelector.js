@@ -14,6 +14,7 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
 function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prototype.constructor = t, _setPrototypeOf(t, o); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
+var DEFAULT_DATE_FORMAT = 'd';
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
   if (typeof value === 'number') return value + "px";
@@ -100,6 +101,13 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
   return state + " " + (0, _dateFns.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
 };
+var formatDateHeader = function formatDateHeader(time, dateFormat) {
+  try {
+    return (0, _dateFns.format)(time, dateFormat);
+  } catch (_unused2) {
+    return (0, _dateFns.format)(time, DEFAULT_DATE_FORMAT);
+  }
+};
 var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
   if (key === 'ArrowRight') return (0, _dateFns.addDays)(time, 1);
   if (key === 'ArrowLeft') return (0, _dateFns.addDays)(time, -1);
@@ -172,7 +180,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin
-      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, (0, _dateFns.format)(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
+      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
         return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
       }));
     };
@@ -536,7 +544,7 @@ BookingSelector.defaultProps = {
   numDays: 7,
   minTime: 9,
   maxTime: 23,
-  dateFormat: 'd',
+  dateFormat: DEFAULT_DATE_FORMAT,
   margin: 3,
   selectedColor: _colors.default.blue,
   unselectedColor: _colors.default.paleBlue,

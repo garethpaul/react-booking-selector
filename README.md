@@ -164,6 +164,7 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 **type**: `string`
 
 **description**: date-fns `format` token string used for column headers.
+Invalid format strings fall back to the default day-of-month header format.
 
 **required**: no
 

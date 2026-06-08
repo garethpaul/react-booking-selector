@@ -802,6 +802,18 @@ describe('prop updates', () => {
     expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
   })
 
+  it('falls back to the default date header format when dateFormat is invalid', () => {
+    const rendered = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      dateFormat: 'bad token',
+    })
+
+    expect(rendered.getByText('1')).toBeInTheDocument()
+  })
+
   it('removes stale touchmove listeners when date cells remount', () => {
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = rendered.container.querySelector('button.rgdp__grid-cell')
