@@ -502,6 +502,16 @@ describe('componentDidMount', () => {
     expect(instance.dateToCell.get(secondTime.getTime())).toBe(cell)
     addSpy.mockRestore()
   })
+
+  it('finds a registered date cell from SVG content inside it', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    cell.appendChild(svg)
+    instance.registerDateCell(cell, startDate)
+
+    expect(instance.getDateCellFromEventTarget(svg)).toBe(cell)
+  })
 })
 
 describe('componentWillUnmount', () => {

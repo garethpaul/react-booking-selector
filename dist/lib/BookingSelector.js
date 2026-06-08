@@ -327,8 +327,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     }));
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
-    if (!(target instanceof HTMLElement)) return null;
-    var targetElement = target;
+    if (!(target instanceof Node)) return null;
+    var targetElement = target instanceof HTMLElement ? target : target.parentElement;
     while (targetElement) {
       if (this.cellToDate.has(targetElement)) return targetElement;
       if (targetElement === this.gridRef) return null;

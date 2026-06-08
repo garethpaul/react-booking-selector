@@ -351,9 +351,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {
-    if (!(target instanceof HTMLElement)) return null
+    if (!(target instanceof Node)) return null
 
-    let targetElement = target
+    let targetElement = target instanceof HTMLElement ? target : target.parentElement
     while (targetElement) {
       if (this.cellToDate.has(targetElement)) return targetElement
       if (targetElement === this.gridRef) return null
