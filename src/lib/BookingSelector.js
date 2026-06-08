@@ -10,6 +10,22 @@ import selectionSchemes from './selection-schemes'
 
 type DateValueType = Date | string | number | { valueOf: () => number }
 
+type SelectionType = 'add' | 'remove'
+
+type SelectionSchemeType = 'linear' | 'square'
+
+type TouchSelectionEventType = {
+  touches?: Array<{
+    clientX: number,
+    clientY: number
+  }>
+}
+
+type KeyboardSelectionEventType = {
+  key: string,
+  preventDefault: () => void
+}
+
 type DateGridPropsType = {
   startDate: Date,
   numDays: number,
@@ -282,7 +298,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   // Performs a lookup into this.cellToDate to retrieve the Date that corresponds to
   // the cell where this touch event is right now. Note that this method will only work
   // if the event is a `touchmove` event since it's the only one that has a `touches` list.
-  getTimeFromTouchEvent(event: SyntheticTouchEvent<*>): ?Date {
+  getTimeFromTouchEvent(event: TouchSelectionEventType): ?Date {
     const { touches } = event
     if (!touches || touches.length === 0) return null
     const { clientX, clientY } = touches[0]
@@ -352,7 +368,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.updateAvailabilityDraft(time, this.endSelection)
   }
 
-  handleCellKeyDownEvent(event: SyntheticKeyboardEvent<*>, time: Date, blocked: boolean) {
+  handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
     if (blocked || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
     const timeSelected = this.props.selection.find(date => dateIsSameMinute(date, time))
@@ -367,7 +383,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     )
   }
 
-  handleTouchMoveEvent(event: SyntheticTouchEvent<*>) {
+  handleTouchMoveEvent(event: TouchSelectionEventType) {
     this.setState({ isTouchDragging: true })
     const cellTime = this.getTimeFromTouchEvent(event)
     if (cellTime) {
