@@ -38,3 +38,4 @@
 - Included source `.cts` and `.mts` files in Prettier coverage.
 - Hardened selection and blocked date normalization so unsupported values are ignored instead of being coerced into valid dates.
 - Switched date-fns usage to subpath imports so CommonJS builds avoid loading the full package barrel.
+- Completed date-fns subpath imports for date utilities and selection schemes.

@@ -1,6 +1,7 @@
 // @flow
 
-import { isBefore, startOfDay } from 'date-fns'
+import { isBefore } from 'date-fns/isBefore'
+import { startOfDay } from 'date-fns/startOfDay'
 
 import * as dateUtils from '../date-utils.js'
 

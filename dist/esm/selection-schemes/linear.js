@@ -1,4 +1,4 @@
-import { isBefore } from 'date-fns';
+import { isBefore } from 'date-fns/isBefore';
 import * as dateUtils from '../date-utils.js';
 var linear = function linear(selectionStart, selectionEnd, dateList) {
   var selected = [];
