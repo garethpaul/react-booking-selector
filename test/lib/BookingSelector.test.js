@@ -27,6 +27,11 @@ const setStateAsync = (instance, state) =>
     instance.setState(state)
   })
 
+const clickCell = cell => {
+  fireEvent.mouseDown(cell)
+  fireEvent.mouseUp(cell)
+}
+
 beforeEach(() => {
   document.elementFromPoint = jest.fn()
 })
@@ -252,6 +257,28 @@ describe('updateAvailabilityDraft', () => {
     })
 
     expect(instance.state.selectionDraft).toEqual([start])
+  })
+
+  it('preserves the visible draft when adding another cell before parent rerender', () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+
+    clickCell(firstCell)
+    clickCell(secondCell)
+
+    expect(changeSpy).toHaveBeenLastCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+  })
+
+  it('removes a visibly selected draft cell before parent rerender', () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('[role="button"]')
+
+    clickCell(cell)
+    clickCell(cell)
+
+    expect(changeSpy).toHaveBeenLastCalledWith([])
   })
 })
 

@@ -235,8 +235,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.dates = buildDates(props);
     _this.cellToDate = new Map();
+    var selectionDraft = normalizeDates(_this.props.selection);
     _this.state = {
-      selectionDraft: normalizeDates(_this.props.selection),
+      selectionDraft: selectionDraft,
+      selectionBase: selectionDraft,
       // eslint-disable-next-line react/no-unused-state
       selectionProp: _this.props.selection,
       selectionType: null,
@@ -260,8 +262,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _inheritsLoose(BookingSelector, _React$Component);
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
     if (props.selection === state.selectionProp) return null;
+    var selectionDraft = normalizeDates(props.selection);
     return {
-      selectionDraft: normalizeDates(props.selection),
+      selectionDraft: selectionDraft,
+      selectionBase: selectionDraft,
       selectionProp: props.selection
     };
   };
@@ -358,7 +362,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var availableSelection = newSelection.filter(function (time) {
       return !_this2.isBlocked(time);
     });
-    var nextDraft = normalizeDates(this.props.selection);
+    var nextDraft = [].concat(this.state.selectionBase);
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
     } else if (selectionType === 'remove') {
@@ -380,12 +384,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
 
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    var timeSelected = this.props.selection.find(function (date) {
-      return dateIsSameMinute(date, startTime);
-    });
+    var timeSelected = this.isSelected(startTime);
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: startTime
+      selectionStart: startTime,
+      selectionBase: this.state.selectionDraft
     });
   };
   _proto.handleMouseEnterEvent = function handleMouseEnterEvent(time) {
@@ -401,12 +404,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var _this3 = this;
     if (blocked || event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
-    var timeSelected = this.props.selection.find(function (date) {
-      return dateIsSameMinute(date, time);
-    });
+    var timeSelected = this.isSelected(time);
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: time
+      selectionStart: time,
+      selectionBase: this.state.selectionDraft
     }, function () {
       _this3.updateAvailabilityDraft(time, _this3.endSelection);
     });

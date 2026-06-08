@@ -178,6 +178,7 @@ type StateType = {
   // In the case that a user is drag-selecting, we don't want to call this.props.onChange() until they have completed
   // the drag-select. selectionDraft serves as a temporary copy during drag-selects.
   selectionDraft: Array<Date>,
+  selectionBase: Array<Date>,
   selectionProp: Array<DateValueType>,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
@@ -186,6 +187,7 @@ type StateType = {
 
 type DerivedStateType = {
   selectionDraft: Array<Date>,
+  selectionBase: Array<Date>,
   selectionProp: Array<DateValueType>
 }
 
@@ -221,8 +223,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.dates = buildDates(props)
     this.cellToDate = new Map()
 
+    const selectionDraft = normalizeDates(this.props.selection)
     this.state = {
-      selectionDraft: normalizeDates(this.props.selection),
+      selectionDraft,
+      selectionBase: selectionDraft,
       // eslint-disable-next-line react/no-unused-state
       selectionProp: this.props.selection,
       selectionType: null,
@@ -248,8 +252,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
     if (props.selection === state.selectionProp) return null
 
+    const selectionDraft = normalizeDates(props.selection)
     return {
-      selectionDraft: normalizeDates(props.selection),
+      selectionDraft,
+      selectionBase: selectionDraft,
       selectionProp: props.selection
     }
   }
@@ -340,7 +346,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       newSelection = this.selectionSchemeHandlers[this.props.selectionScheme](selectionStart, selectionEnd, this.dates)
     }
     const availableSelection = newSelection.filter(time => !this.isBlocked(time))
-    let nextDraft = normalizeDates(this.props.selection)
+    let nextDraft = [...this.state.selectionBase]
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
     } else if (selectionType === 'remove') {
@@ -357,10 +363,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    const timeSelected = this.props.selection.find(date => dateIsSameMinute(date, startTime))
+    const timeSelected = this.isSelected(startTime)
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: startTime
+      selectionStart: startTime,
+      selectionBase: this.state.selectionDraft
     })
   }
 
@@ -378,11 +385,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
     if (blocked || (event.key !== 'Enter' && event.key !== ' ')) return
     event.preventDefault()
-    const timeSelected = this.props.selection.find(date => dateIsSameMinute(date, time))
+    const timeSelected = this.isSelected(time)
     this.setState(
       {
         selectionType: timeSelected ? 'remove' : 'add',
-        selectionStart: time
+        selectionStart: time,
+        selectionBase: this.state.selectionDraft
       },
       () => {
         this.updateAvailabilityDraft(time, this.endSelection)
