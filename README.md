@@ -1,217 +1,87 @@
-# React Booking Selector
+# react-booking-selector
 
-<!-- README-OVERVIEW-IMAGE -->
-![Project overview](docs/readme-overview.svg)
+## Overview
 
-![Screenshot](/screenshot.png?raw=true)
+`garethpaul/react-booking-selector` is a JavaScript web application or frontend sample. React Booking Selector
+
+This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: JavaScript (16), React TSX (1), TypeScript (1).
+
+## Repository Contents
+
+- `README.md` - project overview and local usage notes
+- `package.json` - JavaScript dependency and script metadata
+- `.vscode` - source or example code
+- `SECURITY.md` - security reporting and disclosure guidance
+- `src` - source or example code
+- `test` - source or example code
+- `VISION.md` - project direction and maintenance guardrails
+- `yarn.lock` - JavaScript dependency and script metadata
+
+Additional scan context:
+
+- Source directories: .vscode, src, test
+- Dependency and build manifests: package.json, yarn.lock
+- Entry points or build surfaces: package.json
+- Test-looking files: setupTests.js, test/lib/BookingSelector.test.js, test/lib/date-utils.test.js, test/lib/index.test.js, test/lib/selection-schemes/linear.test.js, test/lib/selection-schemes/square.test.js, test/types/index.tsx
 
 ## Getting Started
 
-```
-yarn add react-booking-selector styled-components
-```
+### Prerequisites
 
-TypeScript declarations are included for both the default export and the named `BookingSelector` export.
+- Git
+- Node.js and npm
 
-Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6.
+### Setup
 
-```js
-import React from 'react'
-import BookingSelector from 'react-booking-selector'
-// Or: import { BookingSelector } from 'react-booking-selector'
-
-class App extends React.Component {
-  state = {
-    selection: [],
-    blocked: []
-  }
-
-  handleChange = selection => {
-    this.setState({ selection })
-  }
-
-  render() {
-    return (
-      <BookingSelector
-        selection={this.state.selection}
-        blocked={this.state.blocked}
-        numDays={5}
-        minTime={8}
-        maxTime={22}
-        onChange={this.handleChange}
-      />
-    )
-  }
-}
+```bash
+git clone https://github.com/garethpaul/react-booking-selector.git
+cd react-booking-selector
+npm install
 ```
 
-## `<BookingSelector />`
+The setup commands above are derived from repository files. Legacy mobile, Python, or JavaScript samples may require older SDKs or package versions than a modern workstation uses by default.
 
-`BookingSelector` is a controlled component that can be used with the default settings. Provide values for `selection` and `blocked`, pass an `onChange` handler, and customize the UI with the props below.
+## Running or Using the Project
 
-To customize the UI, you can either:
+- Run `npm start` for the default development command.
 
-1.  Specify values for the color, margin, format, etc. props
-2.  Use the `renderDateCell` render prop to handle rendering yourself.
+Detected npm scripts:
 
-### Date and time behavior
+- `npm run build` - `yarn lib:build && yarn docs:build`
+- `npm run clean` - `rm -rf dist/lib dist/docs dev/docs .parcel-cache`
+- `npm run clean:docs` - `rm -rf dist/docs`
+- `npm run clean:lib` - `rm -rf dist/lib`
+- `npm run cover` - `jest --coverage`
+- `npm run docs:build` - `yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html`
+- `npm run docs:deploy` - `yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh`
+- `npm run docs:dev` - `BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs`
 
-`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
+## Testing and Verification
 
-Values in `selection` and `blocked` may be `Date` objects, timestamps, or date strings, and are normalized to `Date` objects before comparison. They are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
+- `npm test`
 
-### Accessibility
+When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
-Each time slot is rendered as a keyboard-focusable button unless it is blocked. Users can move between adjacent slots with the arrow keys, toggle a focused slot with `Enter` or `Space`, and every slot exposes an accessible label with its selected, blocked, or available state plus the full date and hour.
+## Configuration and Secrets
 
-### `Props`
+- No required secret or credential file was identified in the repository scan. If you add integrations later, keep secrets out of git.
 
-#### `selection`
+## Security and Privacy Notes
 
-**type**: `Array<Date | string | number>`
+- Review changes touching network requests, sockets, or service endpoints; examples from the scan include package.json, src/docs/App.js.
 
-**description**: List of dates/times that should be filled in on the grid (reflect the start time of each cell).
+## Maintenance Notes
 
-**required**: no
+- See `SECURITY.md` for vulnerability reporting and safe research guidance.
+- See `VISION.md` for project direction and contribution guardrails.
 
-**default value**: `[]`
+## Contributing
 
-#### `blocked`
+Keep changes small and tied to the project that is already present in this repository. For code changes, document the toolchain used, avoid committing generated dependency directories or local configuration, and update this README when setup or verification steps change.
 
-**type**: `Array<Date | string | number>`
+## Existing Project Notes
 
-**description**: These are blocked or unavailable dates/times on the calendar that will be filled in on the grid and unavailable to select.
+Prior README summary:
 
-**required**: no
+> React Booking Selector <!-- README-OVERVIEW-IMAGE --> Getting Started TypeScript declarations are included for both the default export and the named `BookingSelector` export. Supported peer dependency majors are React 18 or 19, React DOM 18 or 19, and styled-components 5 or 6. `<BookingSelector />` `BookingSelector` is a controlled component that can be used with the default settings. Provide values for `selection` and `blocked`, pass an `onChange` handler, and customize the 
 
-**default value**: `[]`
-
-#### `selectionScheme`
-
-**type**: `'square'` | `'linear'`
-
-**description**: The behavior for selection when dragging. `square` selects a square with the start and end cells at opposite corners. `linear` selects all the cells that are chronologically between the start and end cells.
-
-**required**: no
-
-**default value**: `'square'`
-
-#### `onChange`
-
-**type**: `(Array<Date>) => void`
-
-**description**: Called when selected availability is changed. The new list of selected dates is passed in as the first parameter.
-
-**required**: no
-
-**default value**: no-op function
-
-#### `startDate`
-
-**type**: `Date`
-
-**description**: The date on which the grid should start. The time portion is ignored; specify start time with `minTime`.
-
-**required**: no
-
-**default value**: today
-
-#### `numDays`
-
-**type**: `number`
-
-**description**: The number of days to show, starting from `startDate`
-
-**required**: no
-
-**default value**: `7`
-
-#### `minTime`
-
-**type**: `number`
-
-**description**: The minimum hour to show (0-23). Slots render only when `maxTime` is greater than or equal to `minTime`.
-
-**required**: no
-
-**default value**: `9`
-
-#### `maxTime`
-
-**type**: `number`
-
-**description**: The maximum hour to show (0-23). Slots render only when `maxTime` is greater than or equal to `minTime`.
-
-**required**: no
-
-**default value**: `23`
-
-#### `dateFormat`
-
-**type**: `string`
-
-**description**: The date-fns `format` token string used for the column headers
-
-**required**: no
-
-**default value**: `'d'`
-
-#### `margin`
-
-**type**: `number`
-
-**description**: The margin between grid cells (in pixels)
-
-**required**: no
-
-**default value**: `3`
-
-#### `unselectedColor`
-
-**type**: `string`
-
-**description**: The color of an unselected cell
-
-**required**: no
-
-**default value**: `'#dbedff'`
-
-#### `selectedColor`
-
-**type**: `string`
-
-**description**: The color of a selected cell
-
-**required**: no
-
-**default value**: `'rgba(89, 154, 242, 1)'`
-
-#### `hoveredColor`
-
-**type**: `string`
-
-**description**: The color of a hovered cell
-
-**required**: no
-
-**default value**: `'rgba(162, 198, 248, 1)'`
-
-#### `blockedColor`
-
-**type**: `string`
-
-**description**: The color of a blocked cell
-
-**required**: no
-
-**default value**: `'rgba(79, 79, 79, 1)'`
-
-#### `renderDateCell`
-
-**type**: `(time: Date, selected: boolean, blocked: boolean) => React.Node`
-
-**description**: A render prop function that receives the time represented by the cell, whether the cell is selected, and whether the cell is blocked. If you choose to use this custom render function, the color props above have no effect. The outer grid cell still supplies selection handlers, keyboard handlers, and accessibility attributes.
-
-**required**: no
-
-**default value**: default colored cell
