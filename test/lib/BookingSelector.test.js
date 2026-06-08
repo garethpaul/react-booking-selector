@@ -254,6 +254,8 @@ describe('updateAvailabilityDraft', () => {
       const start = addHours(startDate, 5)
       const end = addHours(start, amount)
       const outOfRangeOne = addHours(start, amount + 5)
+      const selectedRange = amount > 0 ? [start, end] : [end, start]
+      const expectedSelection = type === 'add' ? [outOfRangeOne, ...selectedRange] : [outOfRangeOne]
 
       const { instance } = renderSelector({
         selection: type === 'remove' ? [start, end, outOfRangeOne] : [outOfRangeOne],
@@ -272,7 +274,7 @@ describe('updateAvailabilityDraft', () => {
         instance.updateAvailabilityDraft(end)
       })
 
-      expect(instance.state.selectionDraft).toEqual(expect.arrayContaining([]))
+      expect(instance.state.selectionDraft).toEqual(expectedSelection)
     }
   )
 
