@@ -308,6 +308,7 @@ describe('touch handlers', () => {
       expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
     })
 
+    fireEvent.mouseEnter(cell)
     fireEvent.mouseDown(cell)
     fireEvent.mouseUp(cell)
 
@@ -738,6 +739,23 @@ describe('blocked cells', () => {
     const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
 
     fireEvent.mouseDown(blockedCell)
+
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
+  })
+
+  it('ignores touch starts on blocked cells', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { getByRole, instance } = renderSelector({
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
+
+    fireEvent.touchStart(blockedCell)
 
     expect(instance.state.selectionType).toBe(null)
     expect(instance.state.selectionStart).toBe(null)
