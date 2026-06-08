@@ -478,6 +478,27 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
   })
 
+  it('detects selection prop updates when the array is mutated in place', () => {
+    const selection = []
+    const rendered = renderSelector({ selection })
+
+    selection.push(startDate)
+    rendered.rerenderWithProps({ selection })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([startDate])
+  })
+
+  it('keeps the visible draft when unchanged selection props rerender', () => {
+    const selection = []
+    const rendered = renderSelector({ selection, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = rendered.container.querySelector('[role="button"]')
+
+    clickCell(cell)
+    rendered.rerenderWithProps({ selection, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
+  })
+
   it('rebuilds the date grid when range props change', () => {
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
 

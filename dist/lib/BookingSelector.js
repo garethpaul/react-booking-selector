@@ -26,6 +26,12 @@ var normalizeDates = function normalizeDates(dates) {
 var dateIsSameMinute = function dateIsSameMinute(a, b) {
   return (0, _dateFns.isSameMinute)(toDate(a), toDate(b));
 };
+var dateMinuteKey = function dateMinuteKey(value) {
+  return Math.floor(toDate(value).getTime() / 60000);
+};
+var getDatesSignature = function getDatesSignature(dates) {
+  return dates.map(dateMinuteKey).join('|');
+};
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   return dates.reduce(function (acc, date) {
     if (acc.find(function (existingDate) {
@@ -236,11 +242,12 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.cellToDate = new Map();
     _this.dateToCell = new Map();
     var selectionDraft = normalizeDates(_this.props.selection);
+    var selectionPropSignature = getDatesSignature(_this.props.selection);
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
       // eslint-disable-next-line react/no-unused-state
-      selectionProp: _this.props.selection,
+      selectionPropSignature: selectionPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -261,12 +268,13 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   }
   _inheritsLoose(BookingSelector, _React$Component);
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
-    if (props.selection === state.selectionProp) return null;
+    var selectionPropSignature = getDatesSignature(props.selection);
+    if (selectionPropSignature === state.selectionPropSignature) return null;
     var selectionDraft = normalizeDates(props.selection);
     return {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
-      selectionProp: props.selection
+      selectionPropSignature: selectionPropSignature
     };
   };
   var _proto = BookingSelector.prototype;

@@ -45,6 +45,10 @@ const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(t
 
 const dateIsSameMinute = (a: DateValueType, b: DateValueType): boolean => isSameMinute(toDate(a), toDate(b))
 
+const dateMinuteKey = (value: DateValueType): number => Math.floor(toDate(value).getTime() / 60000)
+
+const getDatesSignature = (dates: Array<DateValueType>): string => dates.map(dateMinuteKey).join('|')
+
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
   dates.reduce((acc: Array<Date>, date): Array<Date> => {
     if (acc.find(existingDate => dateIsSameMinute(existingDate, date))) return acc
@@ -213,7 +217,7 @@ type StateType = {
   // the drag-select. selectionDraft serves as a temporary copy during drag-selects.
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
-  selectionProp: Array<DateValueType>,
+  selectionPropSignature: string,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
   isTouchDragging: boolean
@@ -222,7 +226,7 @@ type StateType = {
 type DerivedStateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
-  selectionProp: Array<DateValueType>
+  selectionPropSignature: string
 }
 
 export const preventScroll = (e: TouchEvent) => {
@@ -260,11 +264,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.dateToCell = new Map()
 
     const selectionDraft = normalizeDates(this.props.selection)
+    const selectionPropSignature = getDatesSignature(this.props.selection)
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
       // eslint-disable-next-line react/no-unused-state
-      selectionProp: this.props.selection,
+      selectionPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -286,13 +291,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
-    if (props.selection === state.selectionProp) return null
+    const selectionPropSignature = getDatesSignature(props.selection)
+    if (selectionPropSignature === state.selectionPropSignature) return null
 
     const selectionDraft = normalizeDates(props.selection)
     return {
       selectionDraft,
       selectionBase: selectionDraft,
-      selectionProp: props.selection
+      selectionPropSignature
     }
   }
 
