@@ -895,6 +895,27 @@ describe('cell accessibility', () => {
       expect(changeSpy).toHaveBeenCalledWith([selected])
     })
   })
+
+  it('ignores nullish props and malformed date-like values', () => {
+    const throwingDateLike = {
+      valueOf: () => {
+        throw new Error('Invalid date-like value')
+      }
+    }
+    const { getByRole } = renderSelector({
+      selection: [null, void 0, throwingDateLike],
+      blocked: null,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+
+    expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
 })
 
 describe('keyboard interaction', () => {

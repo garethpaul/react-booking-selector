@@ -8,7 +8,7 @@ import { Text, Subtitle } from './typography'
 import colors from './colors'
 import selectionSchemes from './selection-schemes'
 
-type DateValueType = Date | string | number | { valueOf: () => number }
+type DateValueType = Date | string | number | { valueOf: () => number } | null | void
 
 type SelectionType = 'add' | 'remove'
 
@@ -39,15 +39,25 @@ const toCssUnit = (value: ?(number | string)): string => {
   return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
 }
 
-const toDate = (value: DateValueType): Date => new Date(value.valueOf())
+const toDate = (value: DateValueType): Date => {
+  if (value == null) return new Date(NaN)
 
-const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate).filter(isValid)
+  try {
+    return new Date(value.valueOf())
+  } catch {
+    return new Date(NaN)
+  }
+}
+
+const normalizeDates = (dates: ?Array<DateValueType>): Array<Date> => (Array.isArray(dates) ? dates : [])
+  .map(toDate)
+  .filter(isValid)
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
-const getDatesSignature = (dates: Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
+const getDatesSignature = (dates: ?Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
-const getDateMinuteKeySet = (dates: Array<DateValueType>): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
+const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   const dateMinuteKeys = new Set()

@@ -18,10 +18,15 @@ var toCssUnit = function toCssUnit(value) {
   return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };
 var toDate = function toDate(value) {
-  return new Date(value.valueOf());
+  if (value == null) return new Date(NaN);
+  try {
+    return new Date(value.valueOf());
+  } catch (_unused) {
+    return new Date(NaN);
+  }
 };
 var normalizeDates = function normalizeDates(dates) {
-  return dates.map(toDate).filter(_dateFns.isValid);
+  return (Array.isArray(dates) ? dates : []).map(toDate).filter(_dateFns.isValid);
 };
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
