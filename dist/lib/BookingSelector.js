@@ -41,12 +41,14 @@ var getDateMinuteKeySet = function getDateMinuteKeySet(dates) {
 };
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   var dateMinuteKeys = new Set();
-  return dates.reduce(function (acc, date) {
+  var uniqueDates = [];
+  dates.forEach(function (date) {
     var key = dateMinuteKey(date);
-    if (dateMinuteKeys.has(key)) return acc;
+    if (dateMinuteKeys.has(key)) return;
     dateMinuteKeys.add(key);
-    return [].concat(acc, [date]);
-  }, []);
+    uniqueDates.push(date);
+  });
+  return uniqueDates;
 };
 var getStartDate = function getStartDate(startDate) {
   return startDate && (0, _dateFns.isValid)(startDate) ? startDate : new Date();

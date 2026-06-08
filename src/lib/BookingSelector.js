@@ -61,12 +61,16 @@ const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> =>
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   const dateMinuteKeys = new Set()
-  return dates.reduce((acc: Array<Date>, date): Array<Date> => {
+  const uniqueDates: Array<Date> = []
+
+  dates.forEach((date) => {
     const key = dateMinuteKey(date)
-    if (dateMinuteKeys.has(key)) return acc
+    if (dateMinuteKeys.has(key)) return
     dateMinuteKeys.add(key)
-    return [...acc, date]
-  }, [])
+    uniqueDates.push(date)
+  })
+
+  return uniqueDates
 }
 
 const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
