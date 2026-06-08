@@ -24,15 +24,15 @@ Helpful reports include:
 
 ## Project Security Posture
 
-- This repository appears to be a JavaScript web application or frontend sample. The active security scope is the code and documentation on the default branch.
-- Review found authentication, token, or session-related code paths; changes in those areas should receive security-focused review before merge.
-- Review found network clients, sockets, web APIs, or service endpoints; changes in those areas should receive security-focused review before merge.
-- Review found mobile permission or privacy-sensitive data handling; changes in those areas should receive security-focused review before merge.
+- This repository is a React component library with a static documentation/demo bundle. The active security scope is the code and documentation on the default branch.
+- The library should not contain authentication, token, session, server-side request handling, secret storage, or mobile permission code. Changes adding any of those areas should receive security-focused review before merge.
+- The demo is static client-side code. Changes that introduce new remote scripts, network calls, analytics, embeds, or deployment credentials should receive security-focused review before merge.
+- Interaction code should preserve safe browser behavior, including blocked-cell handling, keyboard access, touch event cleanup, and avoiding denial-of-service-prone input processing.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
 
 ## Service and API Notes
 
-For web services, APIs, sockets, or scraping workflows, prioritize reports involving authentication bypass, authorization errors, injection, server-side request forgery, unsafe deserialization, credential leakage, data exposure, or denial-of-service conditions. Use test accounts and minimal proof-of-concept traffic only.
+This repository does not maintain a backend service, API, socket server, scraping workflow, or account system. If such code is added later, prioritize reports involving authentication bypass, authorization errors, injection, server-side request forgery, unsafe deserialization, credential leakage, data exposure, or denial-of-service conditions. Use test accounts and minimal proof-of-concept traffic only.
 
 ## Dependency and Supply Chain Security
 
