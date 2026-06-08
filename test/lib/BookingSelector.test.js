@@ -702,6 +702,12 @@ describe('cell accessibility', () => {
     expect(getByRole('group', { name: 'Booking time slots' })).toBeInTheDocument()
   })
 
+  it('hides visual time labels from assistive technology', () => {
+    const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(getByText('9 am').closest('[aria-hidden="true"]')).toBeInTheDocument()
+  })
+
   it('labels cells with their state and time', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)

@@ -120,7 +120,17 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-width: 0;
+`
+
+const TimeColumn = styled(Column)`
+  flex: 0 0 52px;
+  max-width: 52px;
+  @media (max-width: 699px) {
+    flex-basis: 32px;
+    max-width: 32px;
+  }
 `
 
 export const GridCell = styled.div`
@@ -182,6 +192,9 @@ const TimeLabelCell = styled.div`
   justify-content: flex-end;
   align-items: center;
   color: rgb(112, 117, 122);
+  @media (max-width: 699px) {
+    padding-right: 6px;
+  }
 `
 
 const TimeText = styled(Text)`
@@ -520,7 +533,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         </TimeLabelCell>
       )
     })
-    return <Column>{labels}</Column>
+    return <TimeColumn aria-hidden="true">{labels}</TimeColumn>
   }
 
   renderDateColumn = (dayOfTimes: Array<Date>) => (

@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`snapshot tests renders correctly with custom render prop 1`] = `
-.c8 {
+.c9 {
   font-size: 20px;
   font-weight: 400;
   color: rgba(79, 79, 79, 1);
   text-align: center;
 }
 
-.c5 {
+.c6 {
   font-size: 14px;
   font-weight: 300;
   line-height: 19.18px;
@@ -34,58 +34,64 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .c3 {
+  flex: 0 0 52px;
+  max-width: 52px;
+}
+
+.c4 {
   margin: 0px;
   height: 40px;
   touch-action: none;
 }
 
-.c3:focus {
+.c4:focus {
   outline: none;
 }
 
-.c3:focus-visible {
+.c4:focus-visible {
   outline: 2px solid rgba(89, 154, 242, 1);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-.c7 {
+.c8 {
   margin: 3px;
   height: 50px;
   touch-action: none;
 }
 
-.c7:focus {
+.c8:focus {
   outline: none;
 }
 
-.c7:focus-visible {
+.c8:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.c12 {
+  margin: 3px;
+  height: 40px;
+  touch-action: none;
+}
+
+.c12:focus {
+  outline: none;
+}
+
+.c12:focus-visible {
   outline: 2px solid rgba(89, 154, 242, 1);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
 .c11 {
-  margin: 3px;
-  height: 40px;
-  touch-action: none;
-}
-
-.c11:focus {
-  outline: none;
-}
-
-.c11:focus-visible {
-  outline: 2px solid rgba(89, 154, 242, 1);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-.c10 {
   height: 15px;
   font-size: 19px;
   margin: 0px;
@@ -93,14 +99,14 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   padding: 0px;
 }
 
-.c9 {
+.c10 {
   height: 15px;
   font-size: 10px;
   margin: 0px;
   padding: 0px;
 }
 
-.c4 {
+.c5 {
   position: relative;
   width: 100%;
   height: 40px;
@@ -111,7 +117,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   color: rgb(112,117,122);
 }
 
-.c6 {
+.c7 {
   margin: 0;
   font-size: 11px;
   text-align: right;
@@ -119,25 +125,38 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 }
 
 @media (max-width:700px) {
-  .c8 {
+  .c9 {
     font-size: 18px;
   }
 }
 
 @media (max-width:699px) {
-  .c10 {
+  .c3 {
+    flex-basis: 32px;
+    max-width: 32px;
+  }
+}
+
+@media (max-width:699px) {
+  .c11 {
     font-size: 10px;
   }
 }
 
 @media (max-width:699px) {
-  .c9 {
+  .c10 {
     font-size: 6px;
   }
 }
 
 @media (max-width:699px) {
-  .c6 {
+  .c5 {
+    padding-right: 6px;
+  }
+}
+
+@media (max-width:699px) {
+  .c7 {
     font-size: 7px;
   }
 }
@@ -151,142 +170,143 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
     role="group"
   >
     <div
-      class="c2"
+      aria-hidden="true"
+      class="c2 c3"
     >
       <div
-        class="c3"
+        class="c4"
       />
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           9 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           10 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           11 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           12 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           1 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           2 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           3 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           4 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           5 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           6 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           7 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           8 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           9 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           10 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           11 pm
         </p>
@@ -296,15 +316,15 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           MON
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           1
         </h2>
@@ -313,7 +333,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -327,7 +347,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -341,7 +361,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -355,7 +375,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Selected Monday, January 1, 2018 at 12 pm"
         aria-pressed="true"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -369,7 +389,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -383,7 +403,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -397,7 +417,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -411,7 +431,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -425,7 +445,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -439,7 +459,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -453,7 +473,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -467,7 +487,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -481,7 +501,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -495,7 +515,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -509,7 +529,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -524,15 +544,15 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           TUE
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           2
         </h2>
@@ -541,7 +561,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -555,7 +575,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -569,7 +589,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -583,7 +603,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -597,7 +617,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Selected Tuesday, January 2, 2018 at 1 pm"
         aria-pressed="true"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -611,7 +631,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -625,7 +645,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -639,7 +659,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -653,7 +673,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -667,7 +687,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -681,7 +701,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -695,7 +715,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -709,7 +729,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -723,7 +743,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -737,7 +757,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -752,15 +772,15 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           WED
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           3
         </h2>
@@ -769,7 +789,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -783,7 +803,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -797,7 +817,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -811,7 +831,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -825,7 +845,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -839,7 +859,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -853,7 +873,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -867,7 +887,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -881,7 +901,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -895,7 +915,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -909,7 +929,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -923,7 +943,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -937,7 +957,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -951,7 +971,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -965,7 +985,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -980,15 +1000,15 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           THU
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           4
         </h2>
@@ -997,7 +1017,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1011,7 +1031,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1025,7 +1045,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1039,7 +1059,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1053,7 +1073,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1067,7 +1087,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1081,7 +1101,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1095,7 +1115,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1109,7 +1129,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1123,7 +1143,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1137,7 +1157,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1151,7 +1171,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1165,7 +1185,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1179,7 +1199,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1193,7 +1213,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1208,15 +1228,15 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           FRI
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           5
         </h2>
@@ -1225,7 +1245,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1239,7 +1259,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1253,7 +1273,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1267,7 +1287,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1281,7 +1301,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1295,7 +1315,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1309,7 +1329,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1323,7 +1343,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1337,7 +1357,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1351,7 +1371,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1365,7 +1385,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1379,7 +1399,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1393,7 +1413,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1407,7 +1427,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1421,7 +1441,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1437,14 +1457,14 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 `;
 
 exports[`snapshot tests renders correctly with default render logic 1`] = `
-.c8 {
+.c9 {
   font-size: 20px;
   font-weight: 400;
   color: rgba(79, 79, 79, 1);
   text-align: center;
 }
 
-.c5 {
+.c6 {
   font-size: 14px;
   font-weight: 300;
   line-height: 19.18px;
@@ -1470,68 +1490,61 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .c3 {
+  flex: 0 0 52px;
+  max-width: 52px;
+}
+
+.c4 {
   margin: 0px;
   height: 40px;
   touch-action: none;
 }
 
-.c3:focus {
+.c4:focus {
   outline: none;
 }
 
-.c3:focus-visible {
+.c4:focus-visible {
   outline: 2px solid rgba(89, 154, 242, 1);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-.c7 {
+.c8 {
   margin: 3px;
   height: 50px;
   touch-action: none;
 }
 
-.c7:focus {
+.c8:focus {
   outline: none;
 }
 
-.c7:focus-visible {
-  outline: 2px solid rgba(89, 154, 242, 1);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-.c11 {
-  margin: 3px;
-  height: 40px;
-  touch-action: none;
-}
-
-.c11:focus {
-  outline: none;
-}
-
-.c11:focus-visible {
+.c8:focus-visible {
   outline: 2px solid rgba(89, 154, 242, 1);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
 .c12 {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  transition: background-color 120ms ease,transform 120ms ease;
-  background-color: #dbedff;
+  margin: 3px;
+  height: 40px;
+  touch-action: none;
 }
 
-.c12:hover {
-  cursor: pointer;
-  background-color: rgba(162, 198, 248, 1);
+.c12:focus {
+  outline: none;
+}
+
+.c12:focus-visible {
+  outline: 2px solid rgba(89, 154, 242, 1);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 .c13 {
@@ -1539,7 +1552,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   height: 100%;
   border-radius: 4px;
   transition: background-color 120ms ease,transform 120ms ease;
-  background-color: rgba(89, 154, 242, 1);
+  background-color: #dbedff;
 }
 
 .c13:hover {
@@ -1547,7 +1560,20 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   background-color: rgba(162, 198, 248, 1);
 }
 
-.c10 {
+.c14 {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  transition: background-color 120ms ease,transform 120ms ease;
+  background-color: rgba(89, 154, 242, 1);
+}
+
+.c14:hover {
+  cursor: pointer;
+  background-color: rgba(162, 198, 248, 1);
+}
+
+.c11 {
   height: 15px;
   font-size: 19px;
   margin: 0px;
@@ -1555,14 +1581,14 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   padding: 0px;
 }
 
-.c9 {
+.c10 {
   height: 15px;
   font-size: 10px;
   margin: 0px;
   padding: 0px;
 }
 
-.c4 {
+.c5 {
   position: relative;
   width: 100%;
   height: 40px;
@@ -1573,7 +1599,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   color: rgb(112,117,122);
 }
 
-.c6 {
+.c7 {
   margin: 0;
   font-size: 11px;
   text-align: right;
@@ -1581,25 +1607,38 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 @media (max-width:700px) {
-  .c8 {
+  .c9 {
     font-size: 18px;
   }
 }
 
 @media (max-width:699px) {
-  .c10 {
+  .c3 {
+    flex-basis: 32px;
+    max-width: 32px;
+  }
+}
+
+@media (max-width:699px) {
+  .c11 {
     font-size: 10px;
   }
 }
 
 @media (max-width:699px) {
-  .c9 {
+  .c10 {
     font-size: 6px;
   }
 }
 
 @media (max-width:699px) {
-  .c6 {
+  .c5 {
+    padding-right: 6px;
+  }
+}
+
+@media (max-width:699px) {
+  .c7 {
     font-size: 7px;
   }
 }
@@ -1613,142 +1652,143 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
     role="group"
   >
     <div
-      class="c2"
+      aria-hidden="true"
+      class="c2 c3"
     >
       <div
-        class="c3"
+        class="c4"
       />
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           9 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           10 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           11 am
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           12 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           1 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           2 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           3 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           4 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           5 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           6 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           7 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           8 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           9 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           10 pm
         </p>
       </div>
       <div
-        class="c4"
+        class="c5"
       >
         <p
-          class="c5 c6"
+          class="c6 c7"
         >
           11 pm
         </p>
@@ -1758,15 +1798,15 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           MON
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           1
         </h2>
@@ -1775,43 +1815,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Available Monday, January 1, 2018 at 10 am"
-        aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Available Monday, January 1, 2018 at 11 am"
-        aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Selected Monday, January 1, 2018 at 12 pm"
-        aria-pressed="true"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -1821,134 +1825,170 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       </div>
       <div
         aria-disabled="false"
-        aria-label="Available Monday, January 1, 2018 at 1 pm"
+        aria-label="Available Monday, January 1, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Available Monday, January 1, 2018 at 11 am"
+        aria-pressed="false"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c13"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Selected Monday, January 1, 2018 at 12 pm"
+        aria-pressed="true"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c14"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Available Monday, January 1, 2018 at 1 pm"
+        aria-pressed="false"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Monday, January 1, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
     </div>
@@ -1956,15 +1996,15 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           TUE
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           2
         </h2>
@@ -1973,55 +2013,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Available Tuesday, January 2, 2018 at 10 am"
-        aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Available Tuesday, January 2, 2018 at 11 am"
-        aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Available Tuesday, January 2, 2018 at 12 pm"
-        aria-pressed="false"
-        class="c11 rgdp__grid-cell"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="c12"
-        />
-      </div>
-      <div
-        aria-disabled="false"
-        aria-label="Selected Tuesday, January 2, 2018 at 1 pm"
-        aria-pressed="true"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
@@ -2031,122 +2023,170 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       </div>
       <div
         aria-disabled="false"
-        aria-label="Available Tuesday, January 2, 2018 at 2 pm"
+        aria-label="Available Tuesday, January 2, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Available Tuesday, January 2, 2018 at 11 am"
+        aria-pressed="false"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c13"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Available Tuesday, January 2, 2018 at 12 pm"
+        aria-pressed="false"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c13"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Selected Tuesday, January 2, 2018 at 1 pm"
+        aria-pressed="true"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c14"
+        />
+      </div>
+      <div
+        aria-disabled="false"
+        aria-label="Available Tuesday, January 2, 2018 at 2 pm"
+        aria-pressed="false"
+        class="c12 rgdp__grid-cell"
+        role="button"
+        tabindex="0"
+      >
+        <div
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Tuesday, January 2, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
     </div>
@@ -2154,15 +2194,15 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           WED
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           3
         </h2>
@@ -2171,180 +2211,180 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Wednesday, January 3, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
     </div>
@@ -2352,15 +2392,15 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           THU
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           4
         </h2>
@@ -2369,180 +2409,180 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Thursday, January 4, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
     </div>
@@ -2550,15 +2590,15 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
-        class="c7"
+        class="c8"
       >
         <h2
-          class="c8 c9"
+          class="c9 c10"
         >
           FRI
         </h2>
         <h2
-          class="c8 c10"
+          class="c9 c11"
         >
           5
         </h2>
@@ -2567,180 +2607,180 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 9 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 10 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 11 am"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 12 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 1 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 2 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 3 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 4 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 5 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 6 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 7 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 8 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 9 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 10 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
       <div
         aria-disabled="false"
         aria-label="Available Friday, January 5, 2018 at 11 pm"
         aria-pressed="false"
-        class="c11 rgdp__grid-cell"
+        class="c12 rgdp__grid-cell"
         role="button"
         tabindex="0"
       >
         <div
-          class="c12"
+          class="c13"
         />
       </div>
     </div>

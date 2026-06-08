@@ -101,10 +101,14 @@ var Grid = _styledComponents.default.div.withConfig({
 var Column = _styledComponents.default.div.withConfig({
   displayName: "Column",
   componentId: "sc-1e1auar-2"
-})(["display:flex;flex-direction:column;justify-content:space-evenly;flex-grow:1;"]);
+})(["display:flex;flex-direction:column;justify-content:space-evenly;flex:1 1 0;min-width:0;"]);
+var TimeColumn = (0, _styledComponents.default)(Column).withConfig({
+  displayName: "TimeColumn",
+  componentId: "sc-1e1auar-3"
+})(["flex:0 0 52px;max-width:52px;@media (max-width:699px){flex-basis:32px;max-width:32px;}"]);
 var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
   displayName: "GridCell",
-  componentId: "sc-1e1auar-3"
+  componentId: "sc-1e1auar-4"
 })(["margin:", ";height:", ";touch-action:none;&:focus{outline:none;}&:focus-visible{outline:2px solid ", ";outline-offset:2px;border-radius:6px;}"], function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
@@ -114,7 +118,7 @@ var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
 // Style the Date Cell
 var DateCell = _styledComponents.default.div.withConfig({
   displayName: "DateCell",
-  componentId: "sc-1e1auar-4"
+  componentId: "sc-1e1auar-5"
 })(["width:100%;height:100%;border-radius:4px;transition:background-color 120ms ease,transform 120ms ease;", " ", " ", " &:hover{cursor:", ";background-color:", ";}"], function (props) {
   return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
 }, function (props) {
@@ -128,19 +132,19 @@ var DateCell = _styledComponents.default.div.withConfig({
 });
 var DateLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
   displayName: "DateLabel",
-  componentId: "sc-1e1auar-5"
+  componentId: "sc-1e1auar-6"
 })(["height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:10px;}"]);
 var DayLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
   displayName: "DayLabel",
-  componentId: "sc-1e1auar-6"
+  componentId: "sc-1e1auar-7"
 })(["height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:6px;}"]);
 var TimeLabelCell = _styledComponents.default.div.withConfig({
   displayName: "TimeLabelCell",
-  componentId: "sc-1e1auar-7"
-})(["position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);"]);
+  componentId: "sc-1e1auar-8"
+})(["position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);@media (max-width:699px){padding-right:6px;}"]);
 var TimeText = (0, _styledComponents.default)(_typography.Text).withConfig({
   displayName: "TimeText",
-  componentId: "sc-1e1auar-8"
+  componentId: "sc-1e1auar-9"
 })(["margin:0;font-size:11px;@media (max-width:699px){font-size:7px;}text-align:right;text-transform:uppercase;"]);
 var preventScroll = exports.preventScroll = function preventScroll(e) {
   e.preventDefault();
@@ -164,7 +168,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
           key: t
         }, /*#__PURE__*/React.createElement(TimeText, null, formatHour(t))));
       });
-      return /*#__PURE__*/React.createElement(Column, null, labels);
+      return /*#__PURE__*/React.createElement(TimeColumn, {
+        "aria-hidden": "true"
+      }, labels);
     };
     _this.renderDateColumn = function (dayOfTimes) {
       return /*#__PURE__*/React.createElement(Column, {
