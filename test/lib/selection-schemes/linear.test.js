@@ -2,6 +2,8 @@ import { addDays, addHours, startOfDay } from 'date-fns'
 
 import linear from '../../../src/lib/selection-schemes/linear'
 
+const toTimeValues = dates => dates.map(date => date.getTime())
+
 describe('linear selection scheme', () => {
   const dates = []
   const startDate = startOfDay(new Date())
@@ -18,8 +20,7 @@ describe('linear selection scheme', () => {
 
   test('it handles a null selectionEnd', () => {
     const selectionStart = dates[0][1]
-    const result = linear(selectionStart, null, dates).map(d => d.toString())
-    expect(result).toContain(selectionStart.toString())
+    expect(linear(selectionStart, null, dates)).toEqual([selectionStart])
   })
 
   test('it handles a null start and end', () => {
@@ -33,7 +34,18 @@ describe('linear selection scheme', () => {
     dates[START.DATE].slice(START.TIME).forEach(d => expected.push(d))
     dates[END.DATE].slice(0, END.TIME + 1).forEach(d => expected.push(d))
 
-    const result = linear(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates).map(d => d.toString())
-    expect(result).toEqual(expect.arrayContaining(expected.map(d => d.toString())))
+    const result = linear(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates)
+    expect(toTimeValues(result)).toEqual(toTimeValues(expected))
+  })
+
+  test('it handles a reversed cross-day selection', () => {
+    const expected = []
+    const START = { DATE: 2, TIME: 5 }
+    const END = { DATE: 1, TIME: 10 }
+    dates[END.DATE].slice(END.TIME).forEach(d => expected.push(d))
+    dates[START.DATE].slice(0, START.TIME + 1).forEach(d => expected.push(d))
+
+    const result = linear(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates)
+    expect(toTimeValues(result)).toEqual(toTimeValues(expected))
   })
 })
