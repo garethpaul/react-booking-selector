@@ -166,13 +166,13 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 
 @media (max-width:699px) {
   .c11 {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 
 @media (max-width:699px) {
   .c10 {
-    font-size: 6px;
+    font-size: 8px;
   }
 }
 
@@ -184,7 +184,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 
 @media (max-width:699px) {
   .c7 {
-    font-size: 7px;
+    font-size: 8px;
   }
 }
 
@@ -1750,13 +1750,13 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 
 @media (max-width:699px) {
   .c11 {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 
 @media (max-width:699px) {
   .c10 {
-    font-size: 6px;
+    font-size: 8px;
   }
 }
 
@@ -1768,7 +1768,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 
 @media (max-width:699px) {
   .c7 {
-    font-size: 7px;
+    font-size: 8px;
   }
 }
 

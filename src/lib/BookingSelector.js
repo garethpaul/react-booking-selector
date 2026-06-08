@@ -194,7 +194,7 @@ const DateLabel = styled(Subtitle)`
   margin-top: 5px;
   padding: 0px;
   @media (max-width: 699px) {
-    font-size: 10px;
+    font-size: 12px;
   }
 `
 
@@ -204,7 +204,7 @@ const DayLabel = styled(Subtitle)`
   margin: 0px;
   padding: 0px;
   @media (max-width: 699px) {
-    font-size: 6px;
+    font-size: 8px;
   }
 `
 
@@ -226,7 +226,7 @@ const TimeText = styled(Text)`
   margin: 0;
   font-size: 11px;
   @media (max-width: 699px) {
-    font-size: 7px;
+    font-size: 8px;
   }
   text-align: right;
   text-transform: uppercase;

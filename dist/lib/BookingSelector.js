@@ -140,11 +140,11 @@ var DateCell = _styledComponents.default.div.withConfig({
 var DateLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
   displayName: "DateLabel",
   componentId: "sc-1e1auar-6"
-})(["height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:10px;}"]);
+})(["height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:12px;}"]);
 var DayLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
   displayName: "DayLabel",
   componentId: "sc-1e1auar-7"
-})(["height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:6px;}"]);
+})(["height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:8px;}"]);
 var TimeLabelCell = _styledComponents.default.div.withConfig({
   displayName: "TimeLabelCell",
   componentId: "sc-1e1auar-8"
@@ -152,7 +152,7 @@ var TimeLabelCell = _styledComponents.default.div.withConfig({
 var TimeText = (0, _styledComponents.default)(_typography.Text).withConfig({
   displayName: "TimeText",
   componentId: "sc-1e1auar-9"
-})(["margin:0;font-size:11px;@media (max-width:699px){font-size:7px;}text-align:right;text-transform:uppercase;"]);
+})(["margin:0;font-size:11px;@media (max-width:699px){font-size:8px;}text-align:right;text-transform:uppercase;"]);
 var preventScroll = exports.preventScroll = function preventScroll(e) {
   e.preventDefault();
 };

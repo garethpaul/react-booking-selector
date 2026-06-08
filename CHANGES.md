@@ -13,3 +13,4 @@
 - Kept coverage reports focused on source files by excluding generated `dist` artifacts.
 - Reset native button appearance and opacity so slot colors remain consistent across browsers.
 - Added keyboard regression coverage showing custom-rendered slots still toggle through the accessible grid cell wrapper.
+- Improved mobile day, date, and time label legibility without changing grid dimensions.
