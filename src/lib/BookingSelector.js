@@ -344,11 +344,21 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return Boolean(this.state.selectionDraft.find(selectedTime => dateIsSameMinute(selectedTime, time)))
   }
 
+  getDateCellFromEventTarget(target: mixed): ?HTMLElement {
+    if (!(target instanceof HTMLElement)) return null
+
+    let targetElement = target
+    while (targetElement) {
+      if (this.cellToDate.has(targetElement)) return targetElement
+      if (targetElement === this.gridRef) return null
+      targetElement = targetElement.parentElement
+    }
+    return null
+  }
+
   handleDocumentMouseUpEvent(event: MouseEvent) {
     if (this.state.selectionType === null) return
-    const { gridRef } = this
-    const { target } = event
-    if (gridRef && target instanceof Node && gridRef.contains(target)) return
+    if (this.getDateCellFromEventTarget(event.target)) return
     this.endSelection()
   }
 

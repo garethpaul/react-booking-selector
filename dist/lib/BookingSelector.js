@@ -318,11 +318,19 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       return dateIsSameMinute(selectedTime, time);
     }));
   };
+  _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
+    if (!(target instanceof HTMLElement)) return null;
+    var targetElement = target;
+    while (targetElement) {
+      if (this.cellToDate.has(targetElement)) return targetElement;
+      if (targetElement === this.gridRef) return null;
+      targetElement = targetElement.parentElement;
+    }
+    return null;
+  };
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (this.state.selectionType === null) return;
-    var gridRef = this.gridRef;
-    var target = event.target;
-    if (gridRef && target instanceof Node && gridRef.contains(target)) return;
+    if (this.getDateCellFromEventTarget(event.target)) return;
     this.endSelection();
   }
 

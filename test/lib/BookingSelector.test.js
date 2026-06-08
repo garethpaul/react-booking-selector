@@ -191,6 +191,27 @@ describe('mouse handlers', () => {
     })
   })
 
+  it('ends a drag when the mouse is released on a grid label', async () => {
+    const changeSpy = jest.fn()
+    const { container, getByText, instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10
+    })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(getByText('9 am'))
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+    expect(instance.state.selectionType).toBe(null)
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()
