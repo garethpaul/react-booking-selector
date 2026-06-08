@@ -52,17 +52,6 @@ const ExternalLink = styled.a`
   margin: 5px;
 `
 
-const ActionButton = styled.button`
-  background-color: ${props => props.color};
-  border: 0;
-  color: white;
-  padding: 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font: inherit;
-  margin: 5px;
-`
-
 type StateType = {
   schedule: Array<Date>,
   blocked: Array<Date>
@@ -79,16 +68,10 @@ class App extends React.Component<{}, StateType> {
         new Date('2020-04-10T10:00:00.000-07:00')
       ]
     }
-    this.save = this.save.bind(this)
   }
 
   handleDateChange = newSchedule => {
     this.setState({ schedule: newSchedule })
-  }
-
-  save = () => {
-    const list = this.state.schedule
-    console.log(list)
   }
 
   render(): React.Element<*> {
@@ -115,9 +98,6 @@ class App extends React.Component<{}, StateType> {
             <ExternalLink color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
               GitHub
             </ExternalLink>
-            <ActionButton color="red" onClick={this.save} type="button">
-              Save
-            </ActionButton>
           </Links>
         </MainDiv>
       </React.Fragment>
