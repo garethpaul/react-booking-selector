@@ -103,6 +103,7 @@ Example:
   }
 `,nF=tN.div`
   position: relative;
+  box-sizing: border-box;
   width: 100%;
   height: 40px;
   padding-right: 15px;

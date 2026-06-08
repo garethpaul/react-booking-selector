@@ -43,3 +43,4 @@
 - Cancelled in-progress selections and restored the controlled draft when controlled `blocked` props change.
 - Preserved in-progress selections when controlled `blocked` props are reordered or duplicated without changing slots.
 - Ended active mouse selections when the pointer is released over a disabled blocked slot.
+- Kept time labels inside their fixed column in apps without a global border-box reset.
