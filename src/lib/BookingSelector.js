@@ -59,7 +59,7 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   }, [])
 }
 
-const getStartDate = (startDate: ?Date): Date => startDate || new Date()
+const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
 
 const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
 

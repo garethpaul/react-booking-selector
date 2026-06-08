@@ -696,6 +696,16 @@ describe('prop updates', () => {
     expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
   })
 
+  it('uses the current day when startDate is invalid', () => {
+    const currentDate = new Date('2032-05-15T12:00:00.000Z')
+    jest.useFakeTimers()
+    jest.setSystemTime(currentDate)
+
+    const rendered = renderSelector({ startDate: new Date('invalid'), numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
+  })
+
   it('removes stale touchmove listeners when date cells remount', () => {
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = rendered.container.querySelector('[role="button"]')

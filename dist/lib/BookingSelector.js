@@ -42,7 +42,7 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   }, []);
 };
 var getStartDate = function getStartDate(startDate) {
-  return startDate || new Date();
+  return startDate && (0, _dateFns.isValid)(startDate) ? startDate : new Date();
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
