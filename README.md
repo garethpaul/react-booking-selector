@@ -127,7 +127,7 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, or date s
 
 **type**: `number`
 
-**description**: Minimum hour to show, from `0` to `23`. Slots render only when `maxTime` is greater than or equal to `minTime`.
+**description**: Minimum whole hour to show, from `0` to `23`. Slots render only when `minTime` and `maxTime` are whole hours in that range and `maxTime` is greater than or equal to `minTime`.
 
 **required**: no
 
@@ -137,7 +137,7 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, or date s
 
 **type**: `number`
 
-**description**: Maximum hour to show, from `0` to `23`. Slots render only when `maxTime` is greater than or equal to `minTime`.
+**description**: Maximum whole hour to show, from `0` to `23`. Slots render only when `minTime` and `maxTime` are whole hours in that range and `maxTime` is greater than or equal to `minTime`.
 
 **required**: no
 

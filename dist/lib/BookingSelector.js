@@ -37,20 +37,38 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
 var getStartDate = function getStartDate(startDate) {
   return startDate || new Date();
 };
+var isWholeNumber = function isWholeNumber(value) {
+  return Number.isFinite(value) && Math.floor(value) === value;
+};
+var getVisibleHours = function getVisibleHours(minTime, maxTime) {
+  if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {
+    return [];
+  }
+  var hours = [];
+  for (var h = minTime; h <= maxTime; h += 1) {
+    hours.push(h);
+  }
+  return hours;
+};
 var buildDates = function buildDates(_ref) {
   var startDate = _ref.startDate,
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
-  if (numDays <= 0 || minTime > maxTime) return [];
+  if (!isWholeNumber(numDays) || numDays <= 0) return [];
   var startTime = (0, _dateFns.startOfDay)(getStartDate(startDate));
+  var visibleHours = getVisibleHours(minTime, maxTime);
+  if (visibleHours.length === 0) return [];
   var dates = [];
-  for (var d = 0; d < numDays; d += 1) {
+  var _loop = function _loop(d) {
     var currentDay = [];
-    for (var h = minTime; h <= maxTime; h += 1) {
+    visibleHours.forEach(function (h) {
       currentDay.push((0, _dateFns.addHours)((0, _dateFns.addDays)(startTime, d), h));
-    }
+    });
     dates.push(currentDay);
+  };
+  for (var d = 0; d < numDays; d += 1) {
+    _loop(d);
   }
   return dates;
 };
@@ -135,11 +153,11 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         $height: "40",
         key: -1
       })]; // Ensures time labels start at correct location
-      for (var t = _this.props.minTime; t <= _this.props.maxTime; t += 1) {
+      getVisibleHours(_this.props.minTime, _this.props.maxTime).forEach(function (t) {
         labels.push(/*#__PURE__*/React.createElement(TimeLabelCell, {
           key: t
         }, /*#__PURE__*/React.createElement(TimeText, null, formatHour(t))));
-      }
+      });
       return /*#__PURE__*/React.createElement(Column, null, labels);
     };
     _this.renderDateColumn = function (dayOfTimes) {

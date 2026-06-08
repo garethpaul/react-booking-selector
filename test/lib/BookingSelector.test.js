@@ -473,6 +473,22 @@ describe('prop updates', () => {
     expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
   })
 
+  it('renders no date cells when time range values are outside 0 to 23', () => {
+    const rendered = renderSelector({ startDate, numDays: 2, minTime: -1, maxTime: 24 })
+
+    expect(rendered.instance.dates).toEqual([])
+    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+    expect(rendered.container).not.toHaveTextContent('-1 am')
+  })
+
+  it('renders no date cells when range values are fractional', () => {
+    const rendered = renderSelector({ startDate, numDays: 1.5, minTime: 8.5, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([])
+    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+    expect(rendered.container).not.toHaveTextContent('8.5 am')
+  })
+
   it('uses the current day when startDate is omitted', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()

@@ -53,16 +53,33 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
 
 const getStartDate = (startDate: ?Date): Date => startDate || new Date()
 
+const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
+
+const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
+  if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {
+    return []
+  }
+
+  const hours = []
+  for (let h = minTime; h <= maxTime; h += 1) {
+    hours.push(h)
+  }
+  return hours
+}
+
 const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
-  if (numDays <= 0 || minTime > maxTime) return []
+  if (!isWholeNumber(numDays) || numDays <= 0) return []
 
   const startTime = startOfDay(getStartDate(startDate))
+  const visibleHours = getVisibleHours(minTime, maxTime)
+  if (visibleHours.length === 0) return []
+
   const dates = []
   for (let d = 0; d < numDays; d += 1) {
     const currentDay = []
-    for (let h = minTime; h <= maxTime; h += 1) {
+    visibleHours.forEach(h => {
       currentDay.push(addHours(addDays(startTime, d), h))
-    }
+    })
     dates.push(currentDay)
   }
   return dates
@@ -474,13 +491,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderTimeLabels = (): React.Element<*> => {
     const labels = [<GridCell $height="40" key={-1} />] // Ensures time labels start at correct location
-    for (let t = this.props.minTime; t <= this.props.maxTime; t += 1) {
+    getVisibleHours(this.props.minTime, this.props.maxTime).forEach(t => {
       labels.push(
         <TimeLabelCell key={t}>
           <TimeText>{formatHour(t)}</TimeText>
         </TimeLabelCell>
       )
-    }
+    })
     return <Column>{labels}</Column>
   }
 
