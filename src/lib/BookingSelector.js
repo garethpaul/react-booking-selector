@@ -657,7 +657,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     selectedMinuteKeys: Set<number>,
   ): React.Element<*> => (
     <Column key={dayOfTimes[0].toISOString()}>
-      <GridCell $height="50" $margin={this.props.margin}>
+      <GridCell $height="50" $margin={this.props.margin} aria-hidden="true">
         <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDateHeader(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
       </GridCell>

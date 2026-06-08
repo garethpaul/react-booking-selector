@@ -46,3 +46,4 @@
 - Kept time labels inside their fixed column in apps without a global border-box reset.
 - Reset grid-cell minimum widths so host button styles cannot force columns to overflow.
 - Ignored document-level compatibility mouseup events immediately after touch input.
+- Hid redundant visual date headers from assistive technology while preserving full slot labels.

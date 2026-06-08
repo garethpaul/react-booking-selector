@@ -348,6 +348,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -546,6 +547,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -744,6 +746,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -942,6 +945,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -1140,6 +1144,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -1710,6 +1715,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -1878,6 +1884,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -2046,6 +2053,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -2214,6 +2222,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2
@@ -2382,6 +2391,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
       class="c2"
     >
       <div
+        aria-hidden="true"
         class="c8"
       >
         <h2

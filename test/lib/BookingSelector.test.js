@@ -1072,6 +1072,13 @@ describe('cell accessibility', () => {
     expect(getByText('9 am').closest('[aria-hidden="true"]')).toBeInTheDocument()
   })
 
+  it('hides visual date headers from assistive technology', () => {
+    const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(getByText('MON').closest('[aria-hidden="true"]')).toBeInTheDocument()
+    expect(getByText('1').closest('[aria-hidden="true"]')).toBeInTheDocument()
+  })
+
   it('labels cells with their state and time', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)

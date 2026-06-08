@@ -189,7 +189,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         key: dayOfTimes[0].toISOString()
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
-        $margin: _this.props.margin
+        $margin: _this.props.margin,
+        "aria-hidden": "true"
       }, /*#__PURE__*/React.createElement(DayLabel, null, formatDate(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
         return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
       }));
