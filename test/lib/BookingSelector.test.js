@@ -163,6 +163,34 @@ describe('touch handlers', () => {
     expect(spies[name]).toHaveBeenCalled()
   })
 
+  it('toggles a tapped cell', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('[role="button"]')
+
+    fireEvent.touchStart(cell)
+    fireEvent.touchEnd(cell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+    })
+  })
+
+  it('selects cells while touch dragging', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('[role="button"]'))
+    document.elementFromPoint.mockReturnValue(secondCell)
+
+    fireEvent.touchStart(firstCell)
+    fireEvent.touchMove(firstCell, mockEvent)
+    fireEvent.touchEnd(firstCell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()
