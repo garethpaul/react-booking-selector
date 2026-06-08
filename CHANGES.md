@@ -62,3 +62,4 @@
   `corepack yarn verify`.
 - Removed stale reverse date-cell lookup entries when cell registration state is incomplete.
 - Ignored late touchmove events after controlled props cancel an active touch selection.
+- Ignored late touchend events after controlled props cancel an active touch selection.

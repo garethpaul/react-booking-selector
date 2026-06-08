@@ -656,6 +656,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   handleTouchEndEvent() {
     this.recordTouchEvent()
+    if (this.state.selectionType === null) {
+      this.setState({ isTouchDragging: false })
+      return
+    }
+
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since

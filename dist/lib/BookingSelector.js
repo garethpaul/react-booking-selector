@@ -552,6 +552,12 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.handleTouchEndEvent = function handleTouchEndEvent() {
     var _this5 = this;
     this.recordTouchEvent();
+    if (this.state.selectionType === null) {
+      this.setState({
+        isTouchDragging: false
+      });
+      return;
+    }
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since

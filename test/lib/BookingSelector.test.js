@@ -474,6 +474,36 @@ describe('touch handlers', () => {
     getTimeSpy.mockRestore()
   })
 
+  it('ignores late touch ends after controlled props cancel the selection', () => {
+    const changeSpy = jest.fn()
+    const controlledSelection = addHours(startOfDay(startDate), 10)
+    const rendered = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.touchStart(firstCell)
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [controlledSelection],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const updateDraftSpy = jest.spyOn(rendered.instance, 'updateAvailabilityDraft')
+    const endSelectionSpy = jest.spyOn(rendered.instance, 'endSelection')
+    fireEvent.touchEnd(firstCell)
+
+    expect(rendered.instance.state.selectionDraft).toEqual([controlledSelection])
+    expect(rendered.instance.state.selectionType).toBe(null)
+    expect(rendered.instance.state.isTouchDragging).toBe(false)
+    expect(updateDraftSpy).not.toHaveBeenCalled()
+    expect(endSelectionSpy).not.toHaveBeenCalled()
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    updateDraftSpy.mockRestore()
+    endSelectionSpy.mockRestore()
+  })
+
   it('cancels touch drags without committing the draft', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
