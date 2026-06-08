@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export type BookingSelectorDateValue = Date | string | number | { valueOf(): number }
+export type BookingSelectorDateValue = Date | string | number | { valueOf(): number } | null | undefined
 
 export type BookingSelectorSelectionScheme = 'linear' | 'square'
 

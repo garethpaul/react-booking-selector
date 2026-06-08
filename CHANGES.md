@@ -9,3 +9,4 @@
 - Updated README usage examples to use React hooks.
 - Added a package root `exports` map, package metadata subpath, and runtime coverage for both exports.
 - Rendered selectable slots as native buttons while preserving the existing grid styling.
+- Aligned TypeScript date value declarations with the runtime handling of nullish selection and blocked entries.

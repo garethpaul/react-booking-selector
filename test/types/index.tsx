@@ -8,9 +8,11 @@ const dateLike = { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime()
 const selection: BookingSelectorProps['selection'] = [
   new Date('2026-06-08T09:00:00.000Z'),
   '2026-06-08T10:00:00.000Z',
-  dateLike
+  dateLike,
+  null,
+  undefined
 ]
-const blocked: BookingSelectorProps['blocked'] = [new Date('2026-06-08T12:00:00.000Z').getTime()]
+const blocked: BookingSelectorProps['blocked'] = [new Date('2026-06-08T12:00:00.000Z').getTime(), null, undefined]
 
 const renderDateCell: BookingSelectorProps['renderDateCell'] = (time, selected, blockedCell) => (
   <span data-time={time.toISOString()} data-selected={selected} data-blocked={blockedCell} />
