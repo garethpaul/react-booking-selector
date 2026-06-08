@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "A grid based booking selector.",
   "author": "Gareth Paul Jones",
+  "types": "dist/lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/garethpaul/react-booking-selector.git"
@@ -58,10 +59,11 @@
     "clean:lib": "rm -rf dist/lib",
     "build": "yarn lib:build && yarn docs:build",
     "lint": "eslint src/**/*.{js,jsx} test/**/*.{js,jsx} setupTests.js --quiet",
+    "types:check": "tsc --noEmit --skipLibCheck src/lib/index.d.ts",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "cover": "jest --coverage",
     "test": "jest",
-    "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx",
+    "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && cp src/lib/index.d.ts dist/lib/index.d.ts",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html",
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/\\n+$/u, '\\n'))\"",
@@ -94,6 +96,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.17",
     "babel-jest": "^30.4.1",
     "babel-plugin-styled-components": "^2.3.0",
     "eslint": "^9.39.4",
@@ -109,7 +112,8 @@
     "prettier": "^3.8.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "styled-components": "^6.4.2"
+    "styled-components": "^6.4.2",
+    "typescript": "^6.0.3"
   },
   "prettier": {
     "singleQuote": true,

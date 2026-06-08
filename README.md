@@ -8,6 +8,8 @@
 yarn add react-booking-selector styled-components
 ```
 
+TypeScript declarations are included for both the default export and the named `BookingSelector` export.
+
 ```js
 import React from 'react'
 import BookingSelector from 'react-booking-selector'
