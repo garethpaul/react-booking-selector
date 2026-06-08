@@ -20,3 +20,4 @@
 - Made standalone test and coverage scripts rebuild package entry artifacts before running package-root tests.
 - Updated TypeScript verification to exercise package-name imports through the published export map.
 - Moved slot cursor affordance to the outer interactive button so custom-rendered cells look clickable.
+- Added branch coverage for date-cell cleanup paths and blocked wrapper pointer guards, raising the branch gate to 100%.

@@ -618,6 +618,23 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
+  it('keeps existing date lookup entries when a mounted cell has no previous time', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const addSpy = jest.spyOn(cell, 'addEventListener')
+    const staleTime = addHours(startOfDay(startDate), 8)
+    const nextTime = addHours(startOfDay(startDate), 9)
+    instance.cellToDate.set(cell, null)
+    instance.dateToCell.set(staleTime.getTime(), cell)
+
+    instance.registerDateCell(cell, nextTime)
+
+    expect(addSpy).not.toHaveBeenCalled()
+    expect(instance.dateToCell.get(staleTime.getTime())).toBe(cell)
+    expect(instance.dateToCell.get(nextTime.getTime())).toBe(cell)
+    addSpy.mockRestore()
+  })
+
   it('finds a registered date cell from SVG content inside it', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')
@@ -660,6 +677,33 @@ describe('componentWillUnmount', () => {
     expect(mockDateCell.removeEventListener).toHaveBeenCalledWith('touchmove', expect.anything())
     expect(instance.cellToDate.size).toBe(0)
     expect(instance.dateToCell.size).toBe(0)
+  })
+
+  it('ignores registered date cell entries that cannot remove listeners', () => {
+    const { instance, unmount } = renderSelector()
+    const mockDateCell = {}
+    instance.cellToDate.set(mockDateCell, new Date())
+
+    expect(() => {
+      unmount()
+    }).not.toThrow()
+    expect(instance.cellToDate.size).toBe(0)
+  })
+
+  it('unregisters cells even when no previous time is tracked', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const removeSpy = jest.spyOn(cell, 'removeEventListener')
+    const staleTime = addHours(startOfDay(startDate), 8)
+    instance.cellToDate.set(cell, null)
+    instance.dateToCell.set(staleTime.getTime(), cell)
+
+    instance.unregisterDateCell(cell)
+
+    expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
+    expect(instance.cellToDate.has(cell)).toBe(false)
+    expect(instance.dateToCell.get(staleTime.getTime())).toBe(cell)
+    removeSpy.mockRestore()
   })
 })
 
@@ -818,6 +862,28 @@ describe('blocked cells', () => {
 
     expect(instance.state.selectionType).toBe(null)
     expect(instance.state.selectionStart).toBe(null)
+  })
+
+  it('does not call pointer start handlers for blocked cell wrappers', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const mouseSpy = jest.spyOn(instance, 'handleMouseDownEvent')
+    const touchSpy = jest.spyOn(instance, 'handleTouchStartEvent')
+    const blockedCellWrapper = instance.renderDateCellWrapper(blocked)
+
+    blockedCellWrapper.props.onMouseDown()
+    blockedCellWrapper.props.onTouchStart()
+
+    expect(mouseSpy).not.toHaveBeenCalled()
+    expect(touchSpy).not.toHaveBeenCalled()
+    mouseSpy.mockRestore()
+    touchSpy.mockRestore()
   })
 })
 
