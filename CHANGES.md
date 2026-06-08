@@ -47,3 +47,4 @@
 - Reset grid-cell minimum widths so host button styles cannot force columns to overflow.
 - Ignored document-level compatibility mouseup events immediately after touch input.
 - Hid redundant visual date headers from assistive technology while preserving full slot labels.
+- Removed the unused `react-dom` peer dependency from the published package contract.
