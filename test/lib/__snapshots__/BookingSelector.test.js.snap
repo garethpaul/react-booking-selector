@@ -103,6 +103,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   appearance: none;
   background: transparent;
   color: inherit;
+  cursor: pointer;
   font: inherit;
   opacity: 1;
   touch-action: none;
@@ -1661,6 +1662,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   appearance: none;
   background: transparent;
   color: inherit;
+  cursor: pointer;
   font: inherit;
   opacity: 1;
   touch-action: none;
@@ -1685,7 +1687,6 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 .c13:hover {
-  cursor: pointer;
   background-color: rgba(162, 198, 248, 1);
 }
 
@@ -1698,7 +1699,6 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 .c14:hover {
-  cursor: pointer;
   background-color: rgba(162, 198, 248, 1);
 }
 

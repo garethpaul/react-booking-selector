@@ -159,6 +159,7 @@ export const GridCell = styled.div`
   appearance: none;
   background: transparent;
   color: inherit;
+  ${props => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}
   font: inherit;
   opacity: 1;
   touch-action: none;
@@ -182,7 +183,6 @@ const DateCell = styled.div`
   ${props => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
   ${props => props.$blocked && `background-color: ${props.$blockedColor};`}
   &:hover {
-    cursor: ${props => (props.$blocked ? 'not-allowed' : 'pointer')};
     background-color: ${props => (props.$blocked ? props.$blockedColor : props.$hoveredColor)};
   }
 `
@@ -631,6 +631,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         aria-pressed={selected}
         tabIndex={blocked ? -1 : 0}
         $height="40px"
+        $blocked={blocked}
+        $interactive
         $margin={this.props.margin}
         key={time.toISOString()}
         ref={refSetter}

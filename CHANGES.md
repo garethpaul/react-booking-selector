@@ -19,3 +19,4 @@
 - Added direct coverage for styled-components CommonJS and ESM interop paths.
 - Made standalone test and coverage scripts rebuild package entry artifacts before running package-root tests.
 - Updated TypeScript verification to exercise package-name imports through the published export map.
+- Moved slot cursor affordance to the outer interactive button so custom-rendered cells look clickable.

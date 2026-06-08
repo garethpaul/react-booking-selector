@@ -103,21 +103,21 @@ var Wrapper = _styled.default.div(_templateObject || (_templateObject = _taggedT
 var Grid = _styled.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  width: 100%;\n"])));
 var Column = _styled.default.div(_templateObject3 || (_templateObject3 = _taggedTemplateLiteralLoose(["\n  display: flex;\n  flex-direction: column;\n  justify-content: space-evenly;\n  flex: 1 1 0;\n  min-width: 0;\n"])));
 var TimeColumn = (0, _styled.default)(Column)(_templateObject4 || (_templateObject4 = _taggedTemplateLiteralLoose(["\n  flex: 0 0 52px;\n  max-width: 52px;\n  @media (max-width: 699px) {\n    flex-basis: 32px;\n    max-width: 32px;\n  }\n"])));
-var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: block;\n  margin: ", ";\n  height: ", ";\n  padding: 0;\n  border: 0;\n  appearance: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  opacity: 1;\n  touch-action: none;\n  &:focus {\n    outline: none;\n  }\n  &:focus-visible {\n    outline: 2px solid ", ";\n    outline-offset: 2px;\n    border-radius: 6px;\n  }\n"])), function (props) {
+var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_templateObject5 = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: block;\n  margin: ", ";\n  height: ", ";\n  padding: 0;\n  border: 0;\n  appearance: none;\n  background: transparent;\n  color: inherit;\n  ", "\n  font: inherit;\n  opacity: 1;\n  touch-action: none;\n  &:focus {\n    outline: none;\n  }\n  &:focus-visible {\n    outline: 2px solid ", ";\n    outline-offset: 2px;\n    border-radius: 6px;\n  }\n"])), function (props) {
   return toCssUnit(props.$margin);
 }, function (props) {
   return toCssUnit(props.$height);
+}, function (props) {
+  return props.$interactive && "cursor: " + (props.$blocked ? 'not-allowed' : 'pointer') + ";";
 }, _colors.default.blue);
 
 // Style the Date Cell
-var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition: background-color 120ms ease, transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    cursor: ", ";\n    background-color: ", ";\n  }\n"])), function (props) {
+var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition: background-color 120ms ease, transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    background-color: ", ";\n  }\n"])), function (props) {
   return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
 }, function (props) {
   return !props.$selected && !props.$blocked && "background-color: " + props.$unselectedColor + ";";
 }, function (props) {
   return props.$blocked && "background-color: " + props.$blockedColor + ";";
-}, function (props) {
-  return props.$blocked ? 'not-allowed' : 'pointer';
 }, function (props) {
   return props.$blocked ? props.$blockedColor : props.$hoveredColor;
 });
@@ -194,6 +194,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         "aria-pressed": selected,
         tabIndex: blocked ? -1 : 0,
         $height: "40px",
+        $blocked: blocked,
+        $interactive: true,
         $margin: _this.props.margin,
         key: time.toISOString(),
         ref: refSetter
