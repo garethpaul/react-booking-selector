@@ -339,6 +339,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (this.state.selectionType === null) return;
     if (this.getDateCellFromEventTarget(event.target)) return;
+    if (this.state.selectionDraft === this.state.selectionBase) {
+      this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
+      return;
+    }
     this.endSelection();
   }
 

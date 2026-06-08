@@ -365,6 +365,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   handleDocumentMouseUpEvent(event: MouseEvent) {
     if (this.state.selectionType === null) return
     if (this.getDateCellFromEventTarget(event.target)) return
+    if (this.state.selectionDraft === this.state.selectionBase) {
+      this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection)
+      return
+    }
     this.endSelection()
   }
 
