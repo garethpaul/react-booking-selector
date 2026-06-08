@@ -23,7 +23,7 @@ selected and blocked booleans were not explicitly asserted.
 - `corepack yarn test --runInBand`
 - `git diff --check`
 
-## Follow-Up Candidates
+## Follow-Up Status
 
-- Add examples for custom renderers in the README.
-- Add package dry-run checks to the verify gate if release automation needs it.
+- Custom renderer examples were added to the README.
+- Package dry-run checks were added to `corepack yarn verify`.
