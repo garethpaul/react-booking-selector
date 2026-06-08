@@ -416,6 +416,15 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionDraft).toEqual(nextSelection)
   })
 
+  it('clones selection dates from props', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    selected.setHours(10)
+
+    expect(rendered.instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
+  })
+
   it('rebuilds the date grid when range props change', () => {
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
 

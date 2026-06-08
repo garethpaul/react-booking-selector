@@ -39,7 +39,7 @@ const toCssUnit = (value: ?(number | string)): string => {
   return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
 }
 
-const toDate = (value: DateValueType): Date => (value instanceof Date ? value : new Date(value.valueOf()))
+const toDate = (value: DateValueType): Date => new Date(value.valueOf())
 
 const normalizeDates = (dates: Array<DateValueType>): Array<Date> => dates.map(toDate)
 

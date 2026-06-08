@@ -18,7 +18,7 @@ var toCssUnit = function toCssUnit(value) {
   return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };
 var toDate = function toDate(value) {
-  return value instanceof Date ? value : new Date(value.valueOf());
+  return new Date(value.valueOf());
 };
 var normalizeDates = function normalizeDates(dates) {
   return dates.map(toDate);
