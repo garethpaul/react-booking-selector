@@ -41,13 +41,19 @@ const toCssUnit = (value: ?(number | string)): string => {
   return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
 }
 
+const invalidDate = (): Date => new Date(NaN)
+
 const toDate = (value: DateValueType): Date => {
-  if (value == null) return new Date(NaN)
+  if (value == null) return invalidDate()
+  if (value instanceof Date) return new Date(value.getTime())
+  if (typeof value === 'string' || typeof value === 'number') return new Date(value)
+  if (typeof value !== 'object') return invalidDate()
 
   try {
-    return new Date(value.valueOf())
+    const primitiveValue = value.valueOf()
+    return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate()
   } catch {
-    return new Date(NaN)
+    return invalidDate()
   }
 }
 

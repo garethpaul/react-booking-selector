@@ -20,12 +20,19 @@ var toCssUnit = function toCssUnit(value) {
   if (typeof value === 'number') return value + "px";
   return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };
+var invalidDate = function invalidDate() {
+  return new Date(NaN);
+};
 var toDate = function toDate(value) {
-  if (value == null) return new Date(NaN);
+  if (value == null) return invalidDate();
+  if (value instanceof Date) return new Date(value.getTime());
+  if (typeof value === 'string' || typeof value === 'number') return new Date(value);
+  if (typeof value !== 'object') return invalidDate();
   try {
-    return new Date(value.valueOf());
+    var primitiveValue = value.valueOf();
+    return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate();
   } catch (_unused) {
-    return new Date(NaN);
+    return invalidDate();
   }
 };
 var normalizeDates = function normalizeDates(dates) {

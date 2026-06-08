@@ -965,7 +965,7 @@ describe('cell accessibility', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const blocked = addHours(startOfDay(startDate), 10)
     const { getByRole } = renderSelector({
-      selection: [selected.getTime() + 30000],
+      selection: [{ valueOf: () => selected.getTime() + 30000 }],
       blocked: [new Date(blocked.getTime() + 30000).toISOString()],
       startDate,
       numDays: 1,
@@ -978,6 +978,22 @@ describe('cell accessibility', () => {
       'true',
     )
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
+  })
+
+  it('ignores unsupported values instead of coercing them into dates', () => {
+    const epoch = new Date(0)
+    const { getByRole } = renderSelector({
+      selection: [false, { valueOf: () => epoch.toISOString() }],
+      blocked: [true, [0]],
+      startDate: epoch,
+      numDays: 1,
+      minTime: 0,
+      maxTime: 0,
+    })
+
+    const cell = getByRole('button', { name: 'Available Thursday, January 1, 1970 at 12 am' })
+    expect(cell).toHaveAttribute('aria-pressed', 'false')
+    expect(cell).not.toBeDisabled()
   })
 
   it('ignores invalid selection and blocked values', async () => {

@@ -36,3 +36,4 @@
 - Guarded date column header formatting so invalid `dateFormat` props fall back to the default header format instead of crashing render.
 - Added CommonJS-specific TypeScript declarations and NodeNext coverage for direct `require` interop.
 - Included source `.cts` and `.mts` files in Prettier coverage.
+- Hardened selection and blocked date normalization so unsupported values are ignored instead of being coerced into valid dates.
