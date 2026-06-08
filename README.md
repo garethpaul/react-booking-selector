@@ -220,7 +220,6 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 ```bash
 corepack yarn verify
 corepack yarn build
-npm pack --dry-run
 ```
 
-`corepack yarn verify` runs linting, TypeScript checks, the Jest suite, and a dependency audit. `npm pack --dry-run` exercises the `prepack` build and verifies the published file list. The package intentionally publishes `dist/lib`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
+`corepack yarn verify` runs linting, TypeScript checks, the Jest suite, a dependency audit, and a package dry run. The package intentionally publishes `dist/lib`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
