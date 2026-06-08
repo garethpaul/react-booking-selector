@@ -93,16 +93,14 @@ type StateType = {
   blocked: Array<Date>
 }
 
+const getDemoDate = (day: number, hour: number = 0): Date => new Date(2020, 3, day, hour)
+
 class App extends React.Component<{}, StateType> {
   constructor() {
     super()
     this.state = {
       schedule: [],
-      blocked: [
-        new Date('2020-04-08T10:00:00.000-07:00'),
-        new Date('2020-04-09T10:00:00.000-07:00'),
-        new Date('2020-04-10T10:00:00.000-07:00')
-      ]
+      blocked: [getDemoDate(8, 10), getDemoDate(9, 10), getDemoDate(10, 10)]
     }
   }
 
@@ -126,7 +124,7 @@ class App extends React.Component<{}, StateType> {
           </IntroText>
           <BookingSelectorCard>
             <BookingSelector
-              startDate={new Date('2020-04-06T00:00:00.000-07:00')}
+              startDate={getDemoDate(6)}
               minTime={8}
               maxTime={17}
               numDays={7}
