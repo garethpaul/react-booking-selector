@@ -233,8 +233,15 @@ Invalid format strings fall back to the default day-of-month header format.
 ## Development
 
 ```bash
+make check
 corepack yarn verify
 corepack yarn build
 ```
 
-`corepack yarn verify` runs formatting checks, linting, TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
+`make check` is the repository-standard wrapper around `corepack yarn verify`.
+`corepack yarn verify` checks the canonical completed plan under `docs/plans`, runs formatting checks, linting,
+TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types
+Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and
+`LICENSE`.
+
+See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.

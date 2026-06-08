@@ -10,6 +10,10 @@ linear drag-selection schemes.
 The goal is to keep the component predictable, accessible, and easy to package
 for modern React applications.
 
+Current baseline: `make check` wraps `corepack yarn verify`, which checks canonical `docs/plans`
+coverage, linting, TypeScript declarations, Jest behavior coverage, dependency
+audit output, and npm package dry-run contents.
+
 The current focus is:
 
 Priority:
@@ -18,6 +22,7 @@ Priority:
 - Keep square and linear selection behavior deterministic
 - Maintain package build, docs, lint, and test scripts
 - Keep styling customizable without hiding selection state
+- Keep completed maintenance plans under `docs/plans`
 
 Next priorities:
 

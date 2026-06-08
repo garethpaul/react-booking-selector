@@ -54,3 +54,7 @@
 - Contained visual date header text so long formats and host heading styles cannot spill across columns.
 - Limited `touch-action: none` to interactive slot cells instead of decorative header cells.
 - Increased desktop date-number header height to avoid clipped glyphs under contained overflow.
+- Added canonical `docs/plans` coverage and made `corepack yarn verify` require
+  the completed package baseline plan.
+- Added `make check` as the repository-standard wrapper around
+  `corepack yarn verify`.
