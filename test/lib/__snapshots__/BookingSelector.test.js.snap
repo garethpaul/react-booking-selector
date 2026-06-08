@@ -1516,7 +1516,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 .c14:hover {
-  background-color: rgba(162, 198, 248, 1);
+  background-color: rgba(89, 154, 242, 1);
 }
 
 .c11 {

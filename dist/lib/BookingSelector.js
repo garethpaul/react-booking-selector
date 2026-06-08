@@ -155,7 +155,7 @@ var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _tagg
 }, function (props) {
   return props.$blocked && "background-color: " + props.$blockedColor + ";";
 }, function (props) {
-  return props.$blocked ? props.$blockedColor : props.$hoveredColor;
+  return props.$blocked ? props.$blockedColor : props.$selected ? props.$selectedColor : props.$hoveredColor;
 });
 var DateLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject7 || (_templateObject7 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 19px;\n  margin: 0px;\n  margin-top: 5px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 12px;\n  }\n"])));
 var DayLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject8 || (_templateObject8 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 10px;\n  margin: 0px;\n  padding: 0px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n"])));

@@ -88,7 +88,7 @@ Example:
   ${e=>!e.$selected&&!e.$blocked&&`background-color: ${e.$unselectedColor};`}
   ${e=>e.$blocked&&`background-color: ${e.$blockedColor};`}
   &:hover {
-    background-color: ${e=>e.$blocked?e.$blockedColor:e.$hoveredColor};
+    background-color: ${e=>e.$blocked?e.$blockedColor:e.$selected?e.$selectedColor:e.$hoveredColor};
   }
 `,nI=tN(nd)`
   height: 15px;

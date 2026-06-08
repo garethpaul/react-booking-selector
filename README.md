@@ -204,7 +204,7 @@ Invalid format strings fall back to the default day-of-month header format.
 
 **type**: `string`
 
-**description**: Color of a hovered cell.
+**description**: Color of a hovered unselected, available cell. Selected and blocked cells keep their state colors on hover.
 
 **required**: no
 

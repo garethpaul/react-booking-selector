@@ -1110,6 +1110,24 @@ describe('cell accessibility', () => {
     expect(cell).toHaveStyleRule('min-height', '0')
   })
 
+  it('keeps selected cells visually selected on hover', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      selection: [selected],
+      selectedColor: '#123456',
+      hoveredColor: '#abcdef',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const selectedContent = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' }).firstChild
+    const availableContent = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' }).firstChild
+
+    expect(selectedContent).toHaveStyleRule('background-color', '#123456', { modifier: ':hover' })
+    expect(availableContent).toHaveStyleRule('background-color', '#abcdef', { modifier: ':hover' })
+  })
+
   it('hides visual time labels from assistive technology', () => {
     const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

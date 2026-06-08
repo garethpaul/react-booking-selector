@@ -230,7 +230,8 @@ const DateCell = styled.div`
   ${(props) => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
   ${(props) => props.$blocked && `background-color: ${props.$blockedColor};`}
   &:hover {
-    background-color: ${(props) => (props.$blocked ? props.$blockedColor : props.$hoveredColor)};
+    background-color: ${(props) =>
+      props.$blocked ? props.$blockedColor : props.$selected ? props.$selectedColor : props.$hoveredColor};
   }
 `
 
