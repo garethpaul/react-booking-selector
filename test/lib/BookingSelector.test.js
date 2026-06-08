@@ -1,6 +1,6 @@
 import React, { act } from 'react'
 import { addDays, addHours, startOfDay } from 'date-fns'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { createEvent, fireEvent, render, waitFor } from '@testing-library/react'
 
 import BookingSelector, { preventScroll } from '../../src/lib/BookingSelector'
 
@@ -785,6 +785,28 @@ describe('keyboard interaction', () => {
     await waitFor(() => {
       expect(changeSpy).toHaveBeenCalled()
     })
+  })
+
+  it('removes a selected focused cell with Space', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      onChange: changeSpy,
+      selection: [selected],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+    const cell = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })
+    const event = createEvent.keyDown(cell, { key: ' ' })
+
+    fireEvent(cell, event)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([])
+    })
+    expect(event.defaultPrevented).toBe(true)
   })
 
   it('ignores non-action keys on focused cells', () => {
