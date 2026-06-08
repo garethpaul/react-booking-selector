@@ -25,3 +25,4 @@
 - Normalized first-party source and tests with Prettier, then added format checking to the standard verification gate.
 - Added ESM-specific TypeScript declarations and NodeNext type coverage for the package import condition.
 - Added explicit package metadata for CommonJS type, repository URL format, and side-effect-free bundling.
+- Added `publint` and `attw` package validation to the standard verification gate.

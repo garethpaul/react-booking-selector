@@ -92,7 +92,8 @@
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "pack:check": "npm pack --dry-run; status=$?; rm -f react-booking-selector-*.tgz; exit $status",
-    "verify": "yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check",
+    "package:lint": "publint --pack npm --strict && attw --pack .",
+    "verify": "yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check && yarn package:lint",
     "start": "yarn docs:dev"
   },
   "engines": {
@@ -107,12 +108,13 @@
     "date-fns": "^4.4.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.3",
     "@babel/cli": "^7.29.7",
     "@babel/core": "^7.29.7",
     "@babel/eslint-parser": "^7.29.7",
+    "@babel/plugin-syntax-flow": "^7.29.7",
     "@babel/plugin-transform-class-properties": "^7.29.7",
     "@babel/plugin-transform-object-rest-spread": "^7.29.7",
-    "@babel/plugin-syntax-flow": "^7.29.7",
     "@babel/plugin-transform-react-jsx": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-flow": "^7.29.7",
@@ -134,6 +136,7 @@
     "jest-styled-components": "^7.4.0",
     "parcel": "^2.16.4",
     "prettier": "^3.8.3",
+    "publint": "^0.3.21",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "styled-components": "^6.4.2",
