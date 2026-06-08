@@ -72,7 +72,7 @@ const Links = styled.div`
 `
 
 const ExternalLink = styled.a`
-  background-color: ${props => props.color};
+  background-color: ${props => props.$color};
   color: white;
   padding: 10px 12px;
   border-radius: 3px;
@@ -136,7 +136,7 @@ class App extends React.Component<{}, StateType> {
             />
           </BookingSelectorCard>
           <Links>
-            <ExternalLink color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
+            <ExternalLink $color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
               GitHub
             </ExternalLink>
           </Links>
