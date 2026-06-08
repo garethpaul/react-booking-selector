@@ -338,6 +338,32 @@ describe('touch handlers', () => {
     expect(changeSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('allows mouse events after the touch suppression window', async () => {
+    const changeSpy = jest.fn()
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1000)
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('[role="button"]')
+
+    try {
+      fireEvent.touchStart(cell)
+      fireEvent.touchEnd(cell)
+
+      await waitFor(() => {
+        expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+      })
+
+      nowSpy.mockReturnValue(1501)
+      fireEvent.mouseDown(cell)
+      fireEvent.mouseUp(cell)
+
+      await waitFor(() => {
+        expect(changeSpy).toHaveBeenLastCalledWith([])
+      })
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
   it('selects cells while touch dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
