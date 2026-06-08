@@ -67,6 +67,29 @@ describe('snapshot tests', () => {
 
     expect(container.firstChild).toMatchSnapshot()
   })
+
+  it('passes selected and blocked state to custom renderers', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 10)
+    const customDateCellRenderer = (date, selectedCell, blockedCell) => (
+      <span data-testid={`slot-${date.getHours()}`} data-selected={selectedCell} data-blocked={blockedCell} />
+    )
+
+    const { getByTestId } = renderSelector({
+      selection: [selected],
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+      renderDateCell: customDateCellRenderer
+    })
+
+    expect(getByTestId('slot-9')).toHaveAttribute('data-selected', 'true')
+    expect(getByTestId('slot-9')).toHaveAttribute('data-blocked', 'false')
+    expect(getByTestId('slot-10')).toHaveAttribute('data-selected', 'false')
+    expect(getByTestId('slot-10')).toHaveAttribute('data-blocked', 'true')
+  })
 })
 
 it('getTimeFromTouchEvent returns the time for that cell', () => {
