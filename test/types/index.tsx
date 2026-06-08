@@ -2,7 +2,7 @@ import * as React from 'react'
 import BookingSelector, {
   BookingSelector as NamedBookingSelector,
   type BookingSelectorProps
-} from '../../src/lib'
+} from '../..'
 
 const selection = [new Date('2026-06-08T09:00:00.000Z')]
 const blocked = [new Date('2026-06-08T10:00:00.000Z').getTime()]
