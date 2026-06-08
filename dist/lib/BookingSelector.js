@@ -149,8 +149,15 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       var startHandler = function startHandler() {
         if (!blocked) _this.handleSelectionStartEvent(time);
       };
+      var currentDateCell = null;
       var refSetter = function refSetter(dateCell) {
-        if (dateCell) _this.cellToDate.set(dateCell, time);
+        if (currentDateCell && currentDateCell !== dateCell) {
+          _this.unregisterDateCell(currentDateCell);
+        }
+        if (dateCell) {
+          _this.registerDateCell(dateCell, time);
+        }
+        currentDateCell = dateCell;
       };
       return /*#__PURE__*/React.createElement(GridCell, {
         className: "rgdp__grid-cell",
@@ -267,15 +274,6 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
     document.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-
-    // Prevent page scrolling when user is dragging on the date cells
-    this.cellToDate.forEach(function (value, dateCell) {
-      if (dateCell && dateCell.addEventListener) {
-        dateCell.addEventListener('touchmove', preventScroll, {
-          passive: false
-        });
-      }
-    });
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
@@ -284,6 +282,19 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         dateCell.removeEventListener('touchmove', preventScroll);
       }
     });
+  };
+  _proto.registerDateCell = function registerDateCell(dateCell, time) {
+    if (!this.cellToDate.has(dateCell)) {
+      dateCell.addEventListener('touchmove', preventScroll, {
+        passive: false
+      });
+    }
+    this.cellToDate.set(dateCell, time);
+  };
+  _proto.unregisterDateCell = function unregisterDateCell(dateCell) {
+    if (!this.cellToDate.has(dateCell)) return;
+    dateCell.removeEventListener('touchmove', preventScroll);
+    this.cellToDate.delete(dateCell);
   };
   _proto.isBlocked = function isBlocked(time) {
     return Boolean(this.props.blocked.find(function (blockedTime) {

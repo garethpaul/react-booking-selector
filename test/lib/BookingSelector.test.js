@@ -259,6 +259,15 @@ describe('componentDidMount', () => {
   it('runs properly on a full mount', () => {
     renderSelector()
   })
+
+  it('attaches non-passive touchmove listeners as date cells mount', () => {
+    const addSpy = jest.spyOn(HTMLElement.prototype, 'addEventListener')
+
+    renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(addSpy).toHaveBeenCalledWith('touchmove', preventScroll, { passive: false })
+    addSpy.mockRestore()
+  })
 })
 
 describe('componentWillUnmount', () => {
@@ -313,6 +322,23 @@ describe('prop updates', () => {
     const rendered = renderSelector({ numDays: 1, minTime: 9, maxTime: 9 })
 
     expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
+  })
+
+  it('removes stale touchmove listeners when date cells remount', () => {
+    const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = rendered.container.querySelector('[role="button"]')
+    const removeSpy = jest.spyOn(cell, 'removeEventListener')
+
+    rendered.rerenderWithProps({
+      startDate: addDays(startDate, 1),
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9
+    })
+
+    expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
+    expect(rendered.instance.cellToDate.has(cell)).toBe(false)
+    removeSpy.mockRestore()
   })
 })
 

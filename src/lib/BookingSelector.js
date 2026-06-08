@@ -262,13 +262,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
     document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
-
-    // Prevent page scrolling when user is dragging on the date cells
-    this.cellToDate.forEach((value, dateCell) => {
-      if (dateCell && dateCell.addEventListener) {
-        dateCell.addEventListener('touchmove', preventScroll, { passive: false })
-      }
-    })
   }
 
   componentWillUnmount() {
@@ -278,6 +271,19 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         dateCell.removeEventListener('touchmove', preventScroll)
       }
     })
+  }
+
+  registerDateCell(dateCell: HTMLElement, time: Date) {
+    if (!this.cellToDate.has(dateCell)) {
+      dateCell.addEventListener('touchmove', preventScroll, { passive: false })
+    }
+    this.cellToDate.set(dateCell, time)
+  }
+
+  unregisterDateCell(dateCell: HTMLElement) {
+    if (!this.cellToDate.has(dateCell)) return
+    dateCell.removeEventListener('touchmove', preventScroll)
+    this.cellToDate.delete(dateCell)
   }
 
   isBlocked(time: Date): boolean {
@@ -434,8 +440,15 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const startHandler = () => {
       if (!blocked) this.handleSelectionStartEvent(time)
     }
+    let currentDateCell: ?HTMLElement = null
     const refSetter = (dateCell: ?HTMLElement) => {
-      if (dateCell) this.cellToDate.set(dateCell, time)
+      if (currentDateCell && currentDateCell !== dateCell) {
+        this.unregisterDateCell(currentDateCell)
+      }
+      if (dateCell) {
+        this.registerDateCell(dateCell, time)
+      }
+      currentDateCell = dateCell
     }
 
     return (
