@@ -329,7 +329,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.endSelection = function endSelection() {
     if (this.state.selectionType !== null) {
-      this.props.onChange(this.state.selectionDraft);
+      this.props.onChange(normalizeDates(this.state.selectionDraft));
     }
     this.setState({
       selectionType: null,

@@ -100,13 +100,45 @@ it('endSelection calls the onChange prop and resets selection state', async () =
     instance.endSelection()
   })
 
-  expect(changeSpy).toHaveBeenCalledWith(instance.state.selectionDraft)
+  expect(changeSpy).toHaveBeenCalledWith([])
   expect(setStateSpy).toHaveBeenCalledWith({
     selectionType: null,
     selectionStart: null
   })
 
   setStateSpy.mockRestore()
+})
+
+it('endSelection passes cloned selection dates to onChange', async () => {
+  const changeSpy = jest.fn()
+  const selected = addHours(startOfDay(startDate), 9)
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, { selectionDraft: [selected], selectionType: 'add' })
+  act(() => {
+    instance.endSelection()
+  })
+
+  const [nextSelection] = changeSpy.mock.calls[0]
+  expect(nextSelection).toEqual([selected])
+  expect(nextSelection).not.toBe(instance.state.selectionDraft)
+  expect(nextSelection[0]).not.toBe(instance.state.selectionDraft[0])
+})
+
+it('keeps internal selection state isolated from onChange mutations', async () => {
+  const selected = addHours(startOfDay(startDate), 9)
+  const changeSpy = jest.fn(nextSelection => {
+    nextSelection[0].setHours(10)
+    nextSelection.pop()
+  })
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, { selectionDraft: [selected], selectionType: 'add' })
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
 })
 
 describe('mouse handlers', () => {

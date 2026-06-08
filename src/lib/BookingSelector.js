@@ -354,7 +354,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   endSelection() {
     if (this.state.selectionType !== null) {
-      this.props.onChange(this.state.selectionDraft)
+      this.props.onChange(normalizeDates(this.state.selectionDraft))
     }
     this.setState({
       selectionType: null,
