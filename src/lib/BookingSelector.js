@@ -301,6 +301,9 @@ type DerivedStateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
   selectionPropSignature: string,
+  selectionType: null,
+  selectionStart: null,
+  isTouchDragging: boolean,
 }
 
 export const preventScroll = (e: TouchEvent) => {
@@ -378,6 +381,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
+      selectionType: null,
+      selectionStart: null,
+      isTouchDragging: false,
     }
   }
 

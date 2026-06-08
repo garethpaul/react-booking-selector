@@ -303,7 +303,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     return {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
-      selectionPropSignature: selectionPropSignature
+      selectionPropSignature: selectionPropSignature,
+      selectionType: null,
+      selectionStart: null,
+      isTouchDragging: false
     };
   };
   var _proto = BookingSelector.prototype;

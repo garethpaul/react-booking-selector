@@ -720,6 +720,34 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionDraft).toEqual(nextSelection)
   })
 
+  it('cancels active selections when selection props change', () => {
+    const changeSpy = jest.fn()
+    const externalSelection = addHours(startOfDay(startDate), 10)
+    const rendered = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const [firstCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    expect(rendered.instance.state.selectionType).toBe('add')
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [externalSelection],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([externalSelection])
+    expect(rendered.instance.state.selectionType).toBe(null)
+    expect(rendered.instance.state.selectionStart).toBe(null)
+    expect(rendered.instance.state.isTouchDragging).toBe(false)
+
+    fireEvent.mouseUp(firstCell)
+
+    expect(changeSpy).not.toHaveBeenCalled()
+  })
+
   it('clones selection dates from props', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })
