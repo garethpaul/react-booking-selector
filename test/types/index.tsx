@@ -2,7 +2,7 @@ import * as React from 'react'
 import BookingSelector, {
   BookingSelector as NamedBookingSelector,
   type BookingSelectorProps
-} from '../..'
+} from 'react-booking-selector'
 
 const dateLike = { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() }
 const selection: BookingSelectorProps['selection'] = [

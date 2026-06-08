@@ -18,3 +18,4 @@
 - Enforced source coverage thresholds in the standard verification gate with automatic coverage cleanup.
 - Added direct coverage for styled-components CommonJS and ESM interop paths.
 - Made standalone test and coverage scripts rebuild package entry artifacts before running package-root tests.
+- Updated TypeScript verification to exercise package-name imports through the published export map.
