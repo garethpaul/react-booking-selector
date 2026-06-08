@@ -45,3 +45,6 @@ tracking, or storage concerns.
 - Public prop changes without migration guidance
 - Selection algorithm rewrites without tests
 - Generated build artifacts unrelated to a release
+
+This list is a roadmap guardrail, not a permanent rule.
+Strong user demand and strong technical rationale can change it.
