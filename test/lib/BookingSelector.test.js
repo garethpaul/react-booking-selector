@@ -303,6 +303,21 @@ describe('touch handlers', () => {
     })
   })
 
+  it('selects the start cell when a touch drag ends before entering another cell', async () => {
+    const changeSpy = jest.fn()
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('[role="button"]')
+    document.elementFromPoint.mockReturnValue(document.body)
+
+    fireEvent.touchStart(cell)
+    fireEvent.touchMove(cell, mockEvent)
+    fireEvent.touchEnd(cell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+    })
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()

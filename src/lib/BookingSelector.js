@@ -503,6 +503,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       this.updateAvailabilityDraft(null, () => {
         this.endSelection()
       })
+    } else if (this.state.selectionDraft === this.state.selectionBase) {
+      this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection)
     } else {
       this.endSelection()
     }

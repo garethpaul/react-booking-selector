@@ -482,6 +482,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       this.updateAvailabilityDraft(null, function () {
         _this4.endSelection();
       });
+    } else if (this.state.selectionDraft === this.state.selectionBase) {
+      this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
     } else {
       this.endSelection();
     }
