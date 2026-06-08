@@ -4,8 +4,13 @@ import BookingSelector, {
   type BookingSelectorProps
 } from '../..'
 
-const selection = [new Date('2026-06-08T09:00:00.000Z')]
-const blocked = [new Date('2026-06-08T10:00:00.000Z').getTime()]
+const dateLike = { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() }
+const selection: BookingSelectorProps['selection'] = [
+  new Date('2026-06-08T09:00:00.000Z'),
+  '2026-06-08T10:00:00.000Z',
+  dateLike
+]
+const blocked: BookingSelectorProps['blocked'] = [new Date('2026-06-08T12:00:00.000Z').getTime()]
 
 const renderDateCell: BookingSelectorProps['renderDateCell'] = (time, selected, blockedCell) => (
   <span data-time={time.toISOString()} data-selected={selected} data-blocked={blockedCell} />
