@@ -39,7 +39,6 @@ Canonical security policy and reporting:
 
 - [`SECURITY.md`](SECURITY.md)
 
-
 Booking grids often represent availability and scheduling data. The component
 should remain a local UI primitive and should not introduce network behavior,
 tracking, or storage concerns.
