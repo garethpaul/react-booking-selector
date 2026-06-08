@@ -17,3 +17,4 @@
 - Added a generated ESM build and package `import` condition while preserving the CommonJS entry point.
 - Enforced source coverage thresholds in the standard verification gate with automatic coverage cleanup.
 - Added direct coverage for styled-components CommonJS and ESM interop paths.
+- Made standalone test and coverage scripts rebuild package entry artifacts before running package-root tests.
