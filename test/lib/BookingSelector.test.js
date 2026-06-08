@@ -364,6 +364,30 @@ describe('touch handlers', () => {
     expect(changeSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('ignores document mouseup compatibility events after touch start', async () => {
+    const changeSpy = jest.fn()
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1000)
+    const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = container.querySelector('button.rgdp__grid-cell')
+
+    try {
+      fireEvent.touchStart(cell)
+      fireEvent.mouseUp(document.body)
+
+      expect(changeSpy).not.toHaveBeenCalled()
+      expect(cell).toHaveAttribute('aria-pressed', 'false')
+
+      fireEvent.touchEnd(cell)
+
+      await waitFor(() => {
+        expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+      })
+      expect(changeSpy).toHaveBeenCalledTimes(1)
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
   it('allows mouse events after the touch suppression window', async () => {
     const changeSpy = jest.fn()
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1000)

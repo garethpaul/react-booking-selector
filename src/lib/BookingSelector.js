@@ -477,6 +477,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   handleDocumentMouseUpEvent(event: MouseEvent) {
     if (this.state.selectionType === null) return
+    if (this.shouldIgnoreMouseEvent()) return
     const dateCell = this.getDateCellFromEventTarget(event.target)
     const dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null
     if (dateCellTime && !this.isBlocked(dateCellTime)) return

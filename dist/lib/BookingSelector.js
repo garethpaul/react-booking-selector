@@ -385,6 +385,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (this.state.selectionType === null) return;
+    if (this.shouldIgnoreMouseEvent()) return;
     var dateCell = this.getDateCellFromEventTarget(event.target);
     var dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null;
     if (dateCellTime && !this.isBlocked(dateCellTime)) return;

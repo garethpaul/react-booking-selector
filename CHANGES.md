@@ -45,3 +45,4 @@
 - Ended active mouse selections when the pointer is released over a disabled blocked slot.
 - Kept time labels inside their fixed column in apps without a global border-box reset.
 - Reset grid-cell minimum widths so host button styles cannot force columns to overflow.
+- Ignored document-level compatibility mouseup events immediately after touch input.
