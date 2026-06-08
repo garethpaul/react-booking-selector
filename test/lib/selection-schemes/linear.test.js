@@ -6,7 +6,7 @@ const toTimeValues = dates => dates.map(date => date.getTime())
 
 describe('linear selection scheme', () => {
   const dates = []
-  const startDate = startOfDay(new Date())
+  const startDate = startOfDay(new Date('2018-01-01T00:00:00.000'))
   beforeAll(() => {
     for (let i = 0; i < 5; i += 1) {
       const dayBuffer = []

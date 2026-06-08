@@ -2,15 +2,22 @@ import { addDays, subDays } from 'date-fns'
 
 import { dateIsBetween, timeIsBetween, dateHourIsBetween } from '../../src/lib/date-utils'
 
-describe('dateHourIsBetween', () => {
+const baseDate = new Date('2018-01-01T00:00:00.000')
+
+const getHourlyDates = () => {
   const today = {}
   const tomorrow = {}
   for (let i = 0; i < 24; i += 1) {
-    today[i] = new Date()
+    today[i] = new Date(baseDate.getTime())
     today[i].setHours(i)
     tomorrow[i] = new Date(today[i].getTime())
     tomorrow[i].setDate(today[i].getDate() + 1)
   }
+  return { today, tomorrow }
+}
+
+describe('dateHourIsBetween', () => {
+  const { today, tomorrow } = getHourlyDates()
 
   test.each([
     ['in between today', [today[1], today[3], today[4]], true],
@@ -25,7 +32,7 @@ describe('dateHourIsBetween', () => {
 })
 
 describe('dateIsBetween', () => {
-  const today = new Date()
+  const today = new Date('2018-01-02T12:00:00.000')
   const tomorrow = addDays(today, 1)
   const yesterday = subDays(today, 1)
 
@@ -41,14 +48,7 @@ describe('dateIsBetween', () => {
 })
 
 describe('timeIsBetween', () => {
-  const today = {}
-  const tomorrow = {}
-  for (let i = 0; i < 24; i += 1) {
-    today[i] = new Date()
-    today[i].setHours(i)
-    tomorrow[i] = new Date(today[i].getTime())
-    tomorrow[i].setDate(today[i].getDate() + 1)
-  }
+  const { today, tomorrow } = getHourlyDates()
 
   test.each([
     ['increasing times', [today[1], today[2], today[3]], true],
