@@ -40,3 +40,4 @@
 - Switched date-fns usage to subpath imports so CommonJS builds avoid loading the full package barrel.
 - Completed date-fns subpath imports for date utilities and selection schemes.
 - Cancelled in-progress pointer or touch selections when controlled `selection` props change.
+- Cancelled in-progress selections and restored the controlled draft when controlled `blocked` props change.

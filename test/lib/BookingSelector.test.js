@@ -748,6 +748,45 @@ describe('prop updates', () => {
     expect(changeSpy).not.toHaveBeenCalled()
   })
 
+  it('cancels active selections and restores controlled selection when blocked props change', () => {
+    const changeSpy = jest.fn()
+    const controlledSelection = addHours(startOfDay(startDate), 10)
+    const newlyBlocked = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({
+      onChange: changeSpy,
+      selection: [controlledSelection],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const [firstCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(firstCell)
+    expect(rendered.instance.state.selectionType).toBe('add')
+    expect(rendered.instance.state.selectionDraft).toEqual([controlledSelection, newlyBlocked])
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [controlledSelection],
+      blocked: [newlyBlocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([controlledSelection])
+    expect(rendered.instance.state.selectionBase).toEqual([controlledSelection])
+    expect(rendered.instance.state.selectionType).toBe(null)
+    expect(rendered.instance.state.selectionStart).toBe(null)
+
+    fireEvent.mouseUp(rendered.getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' }))
+
+    expect(changeSpy).not.toHaveBeenCalled()
+  })
+
   it('clones selection dates from props', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })

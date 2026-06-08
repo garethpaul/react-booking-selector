@@ -292,6 +292,7 @@ type StateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
   selectionPropSignature: string,
+  blockedPropSignature: string,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
   isTouchDragging: boolean,
@@ -301,6 +302,7 @@ type DerivedStateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
   selectionPropSignature: string,
+  blockedPropSignature: string,
   selectionType: null,
   selectionStart: null,
   isTouchDragging: boolean,
@@ -345,10 +347,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
+    const blockedPropSignature = getDatesSignature(this.props.blocked)
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
+      blockedPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,
@@ -374,13 +378,20 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
     const selectionPropSignature = getDatesSignature(props.selection)
-    if (selectionPropSignature === state.selectionPropSignature) return null
+    const blockedPropSignature = getDatesSignature(props.blocked)
+    if (
+      selectionPropSignature === state.selectionPropSignature &&
+      blockedPropSignature === state.blockedPropSignature
+    ) {
+      return null
+    }
 
     const selectionDraft = normalizeDates(props.selection)
     return {
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
+      blockedPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,

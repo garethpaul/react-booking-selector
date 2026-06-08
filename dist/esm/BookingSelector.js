@@ -264,10 +264,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
+    var blockedPropSignature = getDatesSignature(_this.props.blocked);
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature: selectionPropSignature,
+      blockedPropSignature: blockedPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -292,12 +294,16 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(BookingSelector, _React$Component);
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
     var selectionPropSignature = getDatesSignature(props.selection);
-    if (selectionPropSignature === state.selectionPropSignature) return null;
+    var blockedPropSignature = getDatesSignature(props.blocked);
+    if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature) {
+      return null;
+    }
     var selectionDraft = normalizeDates(props.selection);
     return {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature: selectionPropSignature,
+      blockedPropSignature: blockedPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
