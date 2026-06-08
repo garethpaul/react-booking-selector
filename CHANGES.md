@@ -44,3 +44,4 @@
 - Preserved in-progress selections when controlled `blocked` props are reordered or duplicated without changing slots.
 - Ended active mouse selections when the pointer is released over a disabled blocked slot.
 - Kept time labels inside their fixed column in apps without a global border-box reset.
+- Reset grid-cell minimum widths so host button styles cannot force columns to overflow.

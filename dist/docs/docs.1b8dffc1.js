@@ -52,6 +52,7 @@ Example:
 `,nL=tN.div`
   box-sizing: border-box;
   display: block;
+  min-width: 0;
   margin: ${e=>ng(e.$margin)};
   height: ${e=>ng(e.$height)};
   padding: 0;
