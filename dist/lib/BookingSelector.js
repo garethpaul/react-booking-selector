@@ -253,6 +253,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         onTouchStart: touchStartHandler,
         onTouchMove: _this.handleTouchMoveEvent,
         onTouchEnd: _this.handleTouchEndEvent,
+        onTouchCancel: _this.handleTouchCancelEvent,
         onKeyDown: function onKeyDown(event) {
           _this.handleCellKeyDownEvent(event, time, blocked);
         }
@@ -298,6 +299,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.handleTouchStartEvent = _this.handleTouchStartEvent.bind(_this);
     _this.handleTouchMoveEvent = _this.handleTouchMoveEvent.bind(_this);
     _this.handleTouchEndEvent = _this.handleTouchEndEvent.bind(_this);
+    _this.handleTouchCancelEvent = _this.handleTouchCancelEvent.bind(_this);
     _this.handleSelectionStartEvent = _this.handleSelectionStartEvent.bind(_this);
     _this.handleDocumentMouseUpEvent = _this.handleDocumentMouseUpEvent.bind(_this);
     _this.handleCellKeyDownEvent = _this.handleCellKeyDownEvent.bind(_this);
@@ -546,6 +548,21 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       this.endSelection();
     }
     this.setState({
+      isTouchDragging: false
+    });
+  };
+  _proto.handleTouchCancelEvent = function handleTouchCancelEvent() {
+    this.recordTouchEvent();
+    if (this.state.selectionType === null) {
+      this.setState({
+        isTouchDragging: false
+      });
+      return;
+    }
+    this.setState({
+      selectionDraft: this.state.selectionBase,
+      selectionType: null,
+      selectionStart: null,
       isTouchDragging: false
     });
   };

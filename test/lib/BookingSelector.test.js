@@ -317,12 +317,14 @@ describe('touch handlers', () => {
     spies.onTouchStart = jest.spyOn(BookingSelector.prototype, 'handleSelectionStartEvent')
     spies.onTouchMove = jest.spyOn(BookingSelector.prototype, 'handleTouchMoveEvent')
     spies.onTouchEnd = jest.spyOn(BookingSelector.prototype, 'handleTouchEndEvent')
+    spies.onTouchCancel = jest.spyOn(BookingSelector.prototype, 'handleTouchCancelEvent')
   })
 
   test.each([
     ['onTouchStart', (cell) => fireEvent.touchStart(cell)],
     ['onTouchMove', (cell) => fireEvent.touchMove(cell, mockEvent)],
     ['onTouchEnd', (cell) => fireEvent.touchEnd(cell)],
+    ['onTouchCancel', (cell) => fireEvent.touchCancel(cell)],
   ])('calls the handler for %s', (name, fireHandler) => {
     const { container } = renderSelector()
     const cell = container.querySelector('button.rgdp__grid-cell')
@@ -442,6 +444,36 @@ describe('touch handlers', () => {
     await waitFor(() => {
       expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
     })
+  })
+
+  it('cancels touch drags without committing the draft', () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { getByRole, instance } = renderSelector({
+      onChange: changeSpy,
+      selection: [selected],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const selectedCell = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })
+    const availableCell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+    document.elementFromPoint.mockReturnValue(availableCell)
+
+    fireEvent.touchStart(selectedCell)
+    fireEvent.touchMove(selectedCell, mockEvent)
+
+    expect(instance.state.selectionDraft).toEqual([])
+
+    fireEvent.touchCancel(selectedCell)
+
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionDraft).toEqual([selected])
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
+    expect(instance.state.isTouchDragging).toBe(false)
+    expect(selectedCell).toHaveAttribute('aria-pressed', 'true')
   })
 
   afterEach(() => {

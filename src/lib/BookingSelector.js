@@ -378,6 +378,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.handleTouchStartEvent = this.handleTouchStartEvent.bind(this)
     this.handleTouchMoveEvent = this.handleTouchMoveEvent.bind(this)
     this.handleTouchEndEvent = this.handleTouchEndEvent.bind(this)
+    this.handleTouchCancelEvent = this.handleTouchCancelEvent.bind(this)
     this.handleSelectionStartEvent = this.handleSelectionStartEvent.bind(this)
     this.handleDocumentMouseUpEvent = this.handleDocumentMouseUpEvent.bind(this)
     this.handleCellKeyDownEvent = this.handleCellKeyDownEvent.bind(this)
@@ -639,6 +640,22 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.setState({ isTouchDragging: false })
   }
 
+  handleTouchCancelEvent() {
+    this.recordTouchEvent()
+
+    if (this.state.selectionType === null) {
+      this.setState({ isTouchDragging: false })
+      return
+    }
+
+    this.setState({
+      selectionDraft: this.state.selectionBase,
+      selectionType: null,
+      selectionStart: null,
+      isTouchDragging: false,
+    })
+  }
+
   renderTimeLabels = (): React.Element<*> => {
     const labels = [<GridCell $height="40" key={-1} />] // Ensures time labels start at correct location
     getVisibleHours(this.props.minTime, this.props.maxTime).forEach((t) => {
@@ -721,6 +738,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         onTouchStart={touchStartHandler}
         onTouchMove={this.handleTouchMoveEvent}
         onTouchEnd={this.handleTouchEndEvent}
+        onTouchCancel={this.handleTouchCancelEvent}
         onKeyDown={(event) => {
           this.handleCellKeyDownEvent(event, time, blocked)
         }}
