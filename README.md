@@ -11,6 +11,7 @@ yarn add react-booking-selector styled-components
 ```js
 import React from 'react'
 import BookingSelector from 'react-booking-selector'
+// Or: import { BookingSelector } from 'react-booking-selector'
 
 class App extends React.Component {
   state = {
