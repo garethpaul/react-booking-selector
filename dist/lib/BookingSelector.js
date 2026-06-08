@@ -34,12 +34,15 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
     return [].concat(acc, [date]);
   }, []);
 };
+var getStartDate = function getStartDate(startDate) {
+  return startDate || new Date();
+};
 var buildDates = function buildDates(_ref) {
   var startDate = _ref.startDate,
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
-  var startTime = (0, _dateFns.startOfDay)(startDate);
+  var startTime = (0, _dateFns.startOfDay)(getStartDate(startDate));
   var dates = [];
   for (var d = 0; d < numDays; d += 1) {
     var currentDay = [];
@@ -440,7 +443,6 @@ BookingSelector.defaultProps = {
   numDays: 7,
   minTime: 9,
   maxTime: 23,
-  startDate: new Date(),
   dateFormat: 'd',
   margin: 3,
   selectedColor: _colors.default.blue,

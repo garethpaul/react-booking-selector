@@ -33,6 +33,10 @@ beforeEach(() => {
   document.elementFromPoint = jest.fn()
 })
 
+afterEach(() => {
+  jest.useRealTimers()
+})
+
 describe('snapshot tests', () => {
   it('renders correctly with default render logic', () => {
     const { container } = renderSelector({
@@ -301,6 +305,16 @@ describe('prop updates', () => {
 
     expect(rendered.instance.dates).toHaveLength(2)
     expect(rendered.instance.dates[0]).toHaveLength(2)
+  })
+
+  it('uses the current day when startDate is omitted', () => {
+    const currentDate = new Date('2032-05-15T12:00:00.000Z')
+    jest.useFakeTimers()
+    jest.setSystemTime(currentDate)
+
+    const rendered = renderSelector({ numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
   })
 })
 

@@ -27,7 +27,7 @@ type KeyboardSelectionEventType = {
 }
 
 type DateGridPropsType = {
-  startDate: Date,
+  startDate?: Date,
   numDays: number,
   minTime: number,
   maxTime: number
@@ -51,8 +51,10 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
     return [...acc, date]
   }, [])
 
+const getStartDate = (startDate: ?Date): Date => startDate || new Date()
+
 const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
-  const startTime = startOfDay(startDate)
+  const startTime = startOfDay(getStartDate(startDate))
   const dates = []
   for (let d = 0; d < numDays; d += 1) {
     const currentDay = []
@@ -159,7 +161,7 @@ type PropsType = {
   blocked: Array<DateValueType>,
   selectionScheme: SelectionSchemeType,
   onChange: (Array<Date>) => void,
-  startDate: Date,
+  startDate?: Date,
   numDays: number,
   minTime: number,
   maxTime: number,
@@ -204,7 +206,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     numDays: 7,
     minTime: 9,
     maxTime: 23,
-    startDate: new Date(),
     dateFormat: 'd',
     margin: 3,
     selectedColor: colors.blue,
