@@ -57,6 +57,25 @@ Each time slot is a focusable button unless it is blocked. Arrow keys move focus
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 
+## Custom Cell Rendering
+
+Use `renderDateCell` when a slot needs custom content. The outer grid cell still owns pointer, touch, keyboard, focus, and accessibility behavior, so custom content should be presentational rather than another interactive control.
+
+```js
+const renderDateCell = (time, selected, blocked) => (
+  <span className={`slot-content ${selected ? 'selected' : ''} ${blocked ? 'blocked' : ''}`}>
+    {time.getHours()}:00
+  </span>
+)
+
+<BookingSelector
+  selection={this.state.selection}
+  blocked={this.state.blocked}
+  renderDateCell={renderDateCell}
+  onChange={this.handleChange}
+/>
+```
+
 ## Date and Time Behavior
 
 `BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. If `startDate` is omitted or invalid, the grid starts from today. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`.
