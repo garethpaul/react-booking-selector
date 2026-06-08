@@ -341,6 +341,13 @@ describe('prop updates', () => {
     expect(rendered.instance.dates[0]).toHaveLength(2)
   })
 
+  it('renders no date cells when the time range has no slots', () => {
+    const rendered = renderSelector({ startDate, numDays: 2, minTime: 10, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([])
+    expect(rendered.container.querySelectorAll('[role="button"]')).toHaveLength(0)
+  })
+
   it('uses the current day when startDate is omitted', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()

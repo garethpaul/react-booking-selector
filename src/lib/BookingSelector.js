@@ -54,6 +54,8 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> =>
 const getStartDate = (startDate: ?Date): Date => startDate || new Date()
 
 const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
+  if (numDays <= 0 || minTime > maxTime) return []
+
   const startTime = startOfDay(getStartDate(startDate))
   const dates = []
   for (let d = 0; d < numDays; d += 1) {

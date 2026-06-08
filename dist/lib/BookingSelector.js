@@ -42,6 +42,7 @@ var buildDates = function buildDates(_ref) {
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
+  if (numDays <= 0 || minTime > maxTime) return [];
   var startTime = (0, _dateFns.startOfDay)(getStartDate(startDate));
   var dates = [];
   for (var d = 0; d < numDays; d += 1) {

@@ -125,7 +125,7 @@ Each time slot is rendered as a keyboard-focusable button unless it is blocked. 
 
 **type**: `number`
 
-**description**: The minimum hour to show (0-23)
+**description**: The minimum hour to show (0-23). Slots render only when `maxTime` is greater than or equal to `minTime`.
 
 **required**: no
 
@@ -135,7 +135,7 @@ Each time slot is rendered as a keyboard-focusable button unless it is blocked. 
 
 **type**: `number`
 
-**description**: The maximum hour to show (0-23)
+**description**: The maximum hour to show (0-23). Slots render only when `maxTime` is greater than or equal to `minTime`.
 
 **required**: no
 
