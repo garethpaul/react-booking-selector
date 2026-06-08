@@ -1,21 +1,16 @@
-import moment from 'moment'
+import { addDays, addHours, startOfDay } from 'date-fns'
 
 import square from '../../../src/lib/selection-schemes/square'
 
 describe('square selection scheme', () => {
   const dates = []
-  const startDate = moment().startOf('day')
+  const startDate = startOfDay(new Date())
   beforeAll(() => {
     for (let i = 0; i < 5; i += 1) {
       const dayBuffer = []
       // Use 0 as the start so index lines up for ease of testing
       for (let j = 0; j < 20; j += 1) {
-        dayBuffer.push(
-          moment(startDate)
-            .add(i, 'days')
-            .add(j, 'hours')
-            .toDate()
-        )
+        dayBuffer.push(addHours(addDays(startDate, i), j))
       }
       dates.push(dayBuffer)
     }

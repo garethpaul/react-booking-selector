@@ -1,7 +1,6 @@
 // @flow
 
-import isBefore from 'date-fns/is_before'
-import startOfDay from 'date-fns/start_of_day'
+import { isBefore, startOfDay } from 'date-fns'
 
 import * as dateUtils from '../date-utils'
 

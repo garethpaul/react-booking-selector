@@ -1,9 +1,9 @@
 {
   "presets": [
-    "react",
-    "flow",
+    "@babel/preset-react",
+    "@babel/preset-flow",
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
           "browsers": "last 2 versions"
@@ -13,8 +13,12 @@
     ]
   ],
   "plugins": [
-    "transform-class-properties",
-    "transform-object-rest-spread",
+    ["@babel/plugin-transform-class-properties", {
+      "loose": true
+    }],
+    ["@babel/plugin-transform-object-rest-spread", {
+      "loose": true
+    }],
     ["babel-plugin-styled-components", {
       "fileName": "false"
     }]

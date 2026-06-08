@@ -1,13 +1,11 @@
 // @flow
 
 import * as React from 'react'
-import styled, { injectGlobal } from 'styled-components'
-// eslint-disable-next-line
-import * as ReactDOM from 'react-dom'
+import styled, { createGlobalStyle } from 'styled-components'
+import { createRoot } from 'react-dom/client'
 import BookingSelector from '../lib'
 
-// eslint-disable-next-line
-injectGlobal`
+const GlobalStyle = createGlobalStyle`
   body {
     font-family: sans-serif;
   }
@@ -29,8 +27,8 @@ const IntroText = styled.div`
 `
 
 const BookingSelectorCard = styled.div`
-  border-radius: 25px;
-  box-shadow: 10px 2px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
   padding: 20px;
   width: 90%;
   max-width: 800px;
@@ -55,7 +53,8 @@ const ExternalLink = styled.a`
 `
 
 type StateType = {
-  schedule: Array<Date>
+  schedule: Array<Date>,
+  blocked: Array<Date>
 }
 
 class App extends React.Component<{}, StateType> {
@@ -64,9 +63,9 @@ class App extends React.Component<{}, StateType> {
     this.state = {
       schedule: [],
       blocked: [
-        'Wed Apr 08 2020 10:00:00 GMT-0700 (Pacific Daylight Time)',
-        'Thu Apr 09 2020 10:00:00 GMT-0700 (Pacific Daylight Time)',
-        'Fri Apr 10 2020 10:00:00 GMT-0700 (Pacific Daylight Time)'
+        new Date('2020-04-08T10:00:00.000-07:00'),
+        new Date('2020-04-09T10:00:00.000-07:00'),
+        new Date('2020-04-10T10:00:00.000-07:00')
       ]
     }
     this.save = this.save.bind(this)
@@ -83,33 +82,39 @@ class App extends React.Component<{}, StateType> {
 
   render(): React.Element<*> {
     return (
-      <MainDiv>
-        <IntroText>
-          <h1>React Booking Selector</h1>
-          <p>Tap to select one time or drag to select multiple times at once.</p>
-        </IntroText>
-        <BookingSelectorCard>
-          <BookingSelector
-            minTime={8}
-            maxTime={17}
-            numDays={7}
-            selection={this.state.schedule}
-            blocked={this.state.blocked}
-            onChange={this.handleDateChange}
-          />
-        </BookingSelectorCard>
-        <Links>
-          <ExternalLink color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
-            GitHub
-          </ExternalLink>
-          <ExternalLink color="red" onClick={this.save}>
-            Save (see console.log)
-          </ExternalLink>
-        </Links>
-      </MainDiv>
+      <React.Fragment>
+        <GlobalStyle />
+        <MainDiv>
+          <IntroText>
+            <h1>React Booking Selector</h1>
+            <p>Tap to select one time or drag to select multiple times at once.</p>
+          </IntroText>
+          <BookingSelectorCard>
+            <BookingSelector
+              startDate={new Date('2020-04-06T00:00:00.000-07:00')}
+              minTime={8}
+              maxTime={17}
+              numDays={7}
+              selection={this.state.schedule}
+              blocked={this.state.blocked}
+              onChange={this.handleDateChange}
+            />
+          </BookingSelectorCard>
+          <Links>
+            <ExternalLink color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
+              GitHub
+            </ExternalLink>
+            <ExternalLink color="red" onClick={this.save}>
+              Save (see console.log)
+            </ExternalLink>
+          </Links>
+        </MainDiv>
+      </React.Fragment>
     )
   }
 }
 
-// flow-disable-next-line
-ReactDOM.render(<App />, document.getElementById('app'))
+const container = document.getElementById('app')
+if (container) {
+  createRoot(container).render(<App />)
+}

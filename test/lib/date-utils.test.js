@@ -1,4 +1,4 @@
-import moment from 'moment'
+import { addDays, subDays } from 'date-fns'
 
 import { dateIsBetween, timeIsBetween, dateHourIsBetween } from '../../src/lib/date-utils'
 
@@ -25,13 +25,9 @@ describe('dateHourIsBetween', () => {
 })
 
 describe('dateIsBetween', () => {
-  const today = moment().toDate()
-  const tomorrow = moment(today)
-    .add(1, 'day')
-    .toDate()
-  const yesterday = moment(today)
-    .subtract(1, 'day')
-    .toDate()
+  const today = new Date()
+  const tomorrow = addDays(today, 1)
+  const yesterday = subDays(today, 1)
 
   test.each([
     ['today between yesterday and tomorrow', [yesterday, today, tomorrow], true],

@@ -86,6 +86,14 @@
     "react/require-default-props": 0,
     "react/prop-types": 0,
     "react/no-unused-prop-types": 0,
+    "import/extensions": [
+      2,
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never"
+      }
+    ],
     "no-else-return": 0,
     "no-param-reassign": 0,
     "react/jsx-filename-extension": 0

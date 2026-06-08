@@ -1,39 +1,23 @@
-'use strict';
+"use strict";
 
 exports.__esModule = true;
-
-var _is_before = require('date-fns/is_before');
-
-var _is_before2 = _interopRequireDefault(_is_before);
-
-var _start_of_day = require('date-fns/start_of_day');
-
-var _start_of_day2 = _interopRequireDefault(_start_of_day);
-
-var _dateUtils = require('../date-utils');
-
-var dateUtils = _interopRequireWildcard(_dateUtils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+exports.default = void 0;
+var _dateFns = require("date-fns");
+var dateUtils = _interopRequireWildcard(require("../date-utils"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var square = function square(selectionStart, selectionEnd, dateList) {
   var selected = [];
   if (selectionEnd == null) {
     if (selectionStart) selected = [selectionStart];
   } else if (selectionStart) {
-    var dateIsReversed = (0, _is_before2.default)((0, _start_of_day2.default)(selectionEnd), (0, _start_of_day2.default)(selectionStart));
+    var dateIsReversed = (0, _dateFns.isBefore)((0, _dateFns.startOfDay)(selectionEnd), (0, _dateFns.startOfDay)(selectionStart));
     var timeIsReversed = selectionStart.getHours() > selectionEnd.getHours();
-
     selected = dateList.reduce(function (acc, dayOfTimes) {
       return acc.concat(dayOfTimes.filter(function (t) {
         return selectionStart && selectionEnd && dateUtils.dateIsBetween(dateIsReversed ? selectionEnd : selectionStart, t, dateIsReversed ? selectionStart : selectionEnd) && dateUtils.timeIsBetween(timeIsReversed ? selectionEnd : selectionStart, t, timeIsReversed ? selectionStart : selectionEnd);
       }));
     }, []);
   }
-
   return selected;
 };
-
-exports.default = square;
+var _default = exports.default = square;

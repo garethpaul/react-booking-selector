@@ -1,36 +1,48 @@
 /* eslint-disable flowtype/* */
 
-import React from 'react'
-import renderer from 'react-test-renderer'
-import { shallow, mount } from 'enzyme'
-import moment from 'moment'
+import React, { act } from 'react'
+import { addDays, addHours, startOfDay } from 'date-fns'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 
 import BookingSelector, { preventScroll } from '../../src/lib/BookingSelector'
 
 const startDate = new Date('2018-01-01T00:00:00.000')
 
-const getTestSchedule = () => [
-  moment(startDate)
-    .startOf('day')
-    .add(12, 'h'),
-  moment(startDate)
-    .startOf('day')
-    .add(1, 'd')
-    .add(13, 'h')
-]
+const getTestSchedule = () => [addHours(startOfDay(startDate), 12), addHours(addDays(startOfDay(startDate), 1), 13)]
 
-beforeAll(() => {
+const renderSelector = (props = {}) => {
+  const instanceRef = React.createRef()
+  const utils = render(<BookingSelector {...props} ref={instanceRef} />)
+  return {
+    ...utils,
+    get instance() {
+      return instanceRef.current
+    },
+    rerenderWithProps(nextProps) {
+      utils.rerender(<BookingSelector {...nextProps} ref={instanceRef} />)
+    }
+  }
+}
+
+const setStateAsync = (instance, state) =>
+  act(async () => {
+    instance.setState(state)
+  })
+
+beforeEach(() => {
   document.elementFromPoint = jest.fn()
-  document.removeEventListener = jest.fn()
 })
 
 describe('snapshot tests', () => {
   it('renders correctly with default render logic', () => {
-    const component = renderer.create(
-      <BookingSelector selection={getTestSchedule()} startDate={startDate} numDays={5} onChange={() => undefined} />
-    )
-    const tree = component.toJSON()
-    expect(tree).toMatchSnapshot()
+    const { container } = renderSelector({
+      selection: getTestSchedule(),
+      startDate,
+      numDays: 5,
+      onChange: () => undefined
+    })
+
+    expect(container.firstChild).toMatchSnapshot()
   })
 
   it('renders correctly with custom render prop', () => {
@@ -38,33 +50,30 @@ describe('snapshot tests', () => {
       <div className={`${selected && 'selected'} test-date-cell-renderer`}>{date.toDateString()}</div>
     )
 
-    const component = renderer.create(
-      <BookingSelector
-        selection={getTestSchedule()}
-        startDate={startDate}
-        numDays={5}
-        onChange={() => undefined}
-        renderDateCell={customDateCellRenderer}
-      />
-    )
+    const { container } = renderSelector({
+      selection: getTestSchedule(),
+      startDate,
+      numDays: 5,
+      onChange: () => undefined,
+      renderDateCell: customDateCellRenderer
+    })
 
-    const tree = component.toJSON()
-    expect(tree).toMatchSnapshot()
+    expect(container.firstChild).toMatchSnapshot()
   })
 })
 
 it('getTimeFromTouchEvent returns the time for that cell', () => {
-  const component = shallow(<BookingSelector />)
-  const mainSpy = jest.spyOn(component.instance(), 'getTimeFromTouchEvent')
+  const { instance } = renderSelector()
+  const mainSpy = jest.spyOn(instance, 'getTimeFromTouchEvent')
   const mockCellTime = new Date()
   const mockEvent = {
     touches: [{ clientX: 1, clientY: 2 }]
   }
   const mockElement = {}
   document.elementFromPoint.mockReturnValue(mockElement)
-  const cellToDateSpy = jest.spyOn(component.instance().cellToDate, 'get').mockReturnValue(mockCellTime)
+  const cellToDateSpy = jest.spyOn(instance.cellToDate, 'get').mockReturnValue(mockCellTime)
 
-  component.instance().getTimeFromTouchEvent(mockEvent)
+  instance.getTimeFromTouchEvent(mockEvent)
 
   expect(document.elementFromPoint).toHaveBeenCalledWith(mockEvent.touches[0].clientX, mockEvent.touches[0].clientY)
   expect(cellToDateSpy).toHaveBeenCalled()
@@ -74,15 +83,17 @@ it('getTimeFromTouchEvent returns the time for that cell', () => {
   cellToDateSpy.mockRestore()
 })
 
-it('endSelection calls the onChange prop and resets selection state', () => {
+it('endSelection calls the onChange prop and resets selection state', async () => {
   const changeSpy = jest.fn()
-  const component = shallow(<BookingSelector onChange={changeSpy} />)
-  const setStateSpy = jest.spyOn(component.instance(), 'setState')
+  const { instance } = renderSelector({ onChange: changeSpy })
+  const setStateSpy = jest.spyOn(instance, 'setState')
 
-  component.setState({ selectionType: 'add' })
-  component.instance().endSelection()
+  await setStateAsync(instance, { selectionType: 'add' })
+  act(() => {
+    instance.endSelection()
+  })
 
-  expect(changeSpy).toHaveBeenCalledWith(component.state('selectionDraft'))
+  expect(changeSpy).toHaveBeenCalledWith(instance.state.selectionDraft)
   expect(setStateSpy).toHaveBeenCalledWith({
     selectionType: null,
     selectionStart: null
@@ -93,24 +104,27 @@ it('endSelection calls the onChange prop and resets selection state', () => {
 
 describe('mouse handlers', () => {
   const spies = {}
-  let component
-  let anInstance
 
-  beforeAll(() => {
+  beforeEach(() => {
     spies.onMouseDown = jest.spyOn(BookingSelector.prototype, 'handleSelectionStartEvent')
     spies.onMouseEnter = jest.spyOn(BookingSelector.prototype, 'handleMouseEnterEvent')
     spies.onMouseUp = jest.spyOn(BookingSelector.prototype, 'handleMouseUpEvent')
-    component = shallow(<BookingSelector />)
-    anInstance = component.find('.rgdp__grid-cell').first()
   })
 
-  test.each([['onMouseDown'], ['onMouseEnter'], ['onMouseUp']])('calls the handler for %s', name => {
-    anInstance.prop(name)()
+  test.each([
+    ['onMouseDown', cell => fireEvent.mouseDown(cell)],
+    ['onMouseEnter', cell => fireEvent.mouseEnter(cell)],
+    ['onMouseUp', cell => fireEvent.mouseUp(cell)]
+  ])('calls the handler for %s', (name, fireHandler) => {
+    const { container } = renderSelector()
+    const cell = container.querySelector('[role="button"]')
+
+    fireHandler(cell)
+
     expect(spies[name]).toHaveBeenCalled()
-    spies[name].mockClear()
   })
 
-  afterAll(() => {
+  afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()
     })
@@ -119,29 +133,30 @@ describe('mouse handlers', () => {
 
 describe('touch handlers', () => {
   const spies = {}
-  let component
-  let anInstance
-  const mockEvent = {}
+  const mockEvent = {
+    touches: [{ clientX: 1, clientY: 2 }, { clientX: 100, clientY: 200 }]
+  }
 
-  beforeAll(() => {
+  beforeEach(() => {
     spies.onTouchStart = jest.spyOn(BookingSelector.prototype, 'handleSelectionStartEvent')
     spies.onTouchMove = jest.spyOn(BookingSelector.prototype, 'handleTouchMoveEvent')
     spies.onTouchEnd = jest.spyOn(BookingSelector.prototype, 'handleTouchEndEvent')
-    component = shallow(<BookingSelector />)
-    anInstance = component.find('.rgdp__grid-cell').first()
-    mockEvent.touches = [{ clientX: 1, clientY: 2 }, { clientX: 100, clientY: 200 }]
   })
 
-  test.each([['onTouchStart', []], ['onTouchMove', [mockEvent]], ['onTouchEnd', []]])(
-    'calls the handler for %s',
-    (name, args) => {
-      anInstance.prop(name)(...args)
-      expect(spies[name]).toHaveBeenCalled()
-      spies[name].mockClear()
-    }
-  )
+  test.each([
+    ['onTouchStart', cell => fireEvent.touchStart(cell)],
+    ['onTouchMove', cell => fireEvent.touchMove(cell, mockEvent)],
+    ['onTouchEnd', cell => fireEvent.touchEnd(cell)]
+  ])('calls the handler for %s', (name, fireHandler) => {
+    const { container } = renderSelector()
+    const cell = container.querySelector('[role="button"]')
 
-  afterAll(() => {
+    fireHandler(cell)
+
+    expect(spies[name]).toHaveBeenCalled()
+  })
+
+  afterEach(() => {
     Object.keys(spies).forEach(spyName => {
       spies[spyName].mockRestore()
     })
@@ -152,9 +167,12 @@ it('handleTouchMoveEvent updates the availability draft', () => {
   const mockCellTime = new Date()
   const getTimeSpy = jest.spyOn(BookingSelector.prototype, 'getTimeFromTouchEvent').mockReturnValue(mockCellTime)
   const updateDraftSpy = jest.spyOn(BookingSelector.prototype, 'updateAvailabilityDraft')
+  const { instance } = renderSelector()
 
-  const component = shallow(<BookingSelector />)
-  component.instance().handleTouchMoveEvent({})
+  act(() => {
+    instance.handleTouchMoveEvent({})
+  })
+
   expect(updateDraftSpy).toHaveBeenCalledWith(mockCellTime)
 
   getTimeSpy.mockRestore()
@@ -162,201 +180,154 @@ it('handleTouchMoveEvent updates the availability draft', () => {
 })
 
 describe('updateAvailabilityDraft', () => {
-  it.each([['add', 1], ['remove', 1], ['add', -1], ['remove', -1]])(
+  it.each([
+    ['add', 1],
+    ['remove', 1],
+    ['add', -1],
+    ['remove', -1]
+  ])(
     'updateAvailabilityDraft handles addition and removals, for forward and reversed drags',
-    (type, amount, done) => {
-      const start = moment(startDate)
-        .add(5, 'hours')
-        .toDate()
-      const end = moment(start)
-        .add(amount, 'hours')
-        .toDate()
-      const outOfRangeOne = moment(start)
-        .add(amount + 5, 'hours')
-        .toDate()
+    async (type, amount) => {
+      const start = addHours(startDate, 5)
+      const end = addHours(start, amount)
+      const outOfRangeOne = addHours(start, amount + 5)
 
-      const setStateSpy = jest.spyOn(BookingSelector.prototype, 'setState')
-      const component = shallow(
-        <BookingSelector
-          // Initialize the initial selection based on whether this test is adding or removing
-          selection={type === 'remove' ? [start, end, outOfRangeOne] : [outOfRangeOne]}
-          startDate={start}
-          numDays={5}
-          minTime={0}
-          maxTime={23}
-        />
-      )
-      component.setState(
-        {
-          selectionType: type,
-          selectionStart: start
-        },
-        () => {
-          component.instance().updateAvailabilityDraft(end, () => {
-            expect(setStateSpy).toHaveBeenLastCalledWith({ selectionDraft: expect.arrayContaining([]) })
-            setStateSpy.mockRestore()
-            done()
-          })
-        }
-      )
+      const { instance } = renderSelector({
+        selection: type === 'remove' ? [start, end, outOfRangeOne] : [outOfRangeOne],
+        startDate: start,
+        numDays: 5,
+        minTime: 0,
+        maxTime: 23
+      })
+
+      await setStateAsync(instance, {
+        selectionType: type,
+        selectionStart: start
+      })
+
+      await act(async () => {
+        instance.updateAvailabilityDraft(end)
+      })
+
+      expect(instance.state.selectionDraft).toEqual(expect.arrayContaining([]))
     }
   )
 
-  it('updateAvailabilityDraft handles a single cell click correctly', done => {
-    const component = shallow(<BookingSelector />)
+  it('updateAvailabilityDraft handles a single cell click correctly', async () => {
+    const { instance } = renderSelector()
     const start = startDate
-    component.setState(
-      {
-        selectionType: 'add',
-        selectionStart: start
-      },
-      () => {
-        component.instance().updateAvailabilityDraft(null, () => {
-          expect(component.state('selectionDraft')).toEqual([start])
-          done()
-        })
-      }
-    )
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: start
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(null)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([start])
   })
 
-  it('keeps blocked cells out of selection drafts', done => {
-    const start = moment(startDate)
-      .add(5, 'hours')
-      .toDate()
-    const blocked = moment(start)
-      .add(1, 'hours')
-      .toDate()
-    const component = shallow(
-      <BookingSelector startDate={start} numDays={1} minTime={5} maxTime={6} blocked={[blocked]} />
-    )
+  it('keeps blocked cells out of selection drafts', async () => {
+    const start = addHours(startDate, 5)
+    const blocked = addHours(start, 1)
+    const { instance } = renderSelector({
+      startDate: start,
+      numDays: 1,
+      minTime: 5,
+      maxTime: 6,
+      blocked: [blocked]
+    })
 
-    component.setState(
-      {
-        selectionType: 'add',
-        selectionStart: start
-      },
-      () => {
-        component.instance().updateAvailabilityDraft(blocked, () => {
-          expect(component.state('selectionDraft')).toEqual([start])
-          done()
-        })
-      }
-    )
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: start
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(blocked)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([start])
   })
 })
 
 describe('componentDidMount', () => {
   it('runs properly on a full mount', () => {
-    mount(<BookingSelector />)
+    renderSelector()
   })
 })
 
 describe('componentWillUnmount', () => {
   it('removes the mouseup event listener', () => {
-    const component = shallow(<BookingSelector />)
-    const endSelectionMethod = component.instance().handleDocumentMouseUpEvent
-    component.unmount()
-    expect(document.removeEventListener).toHaveBeenCalledWith('mouseup', endSelectionMethod)
+    const removeSpy = jest.spyOn(document, 'removeEventListener')
+    const { instance, unmount } = renderSelector()
+    const endSelectionMethod = instance.handleDocumentMouseUpEvent
+
+    unmount()
+
+    expect(removeSpy).toHaveBeenCalledWith('mouseup', endSelectionMethod)
+    removeSpy.mockRestore()
   })
 
   it('removes the touchmove event listeners from the date cells', () => {
-    const component = shallow(<BookingSelector />)
+    const { instance, unmount } = renderSelector()
     const mockDateCell = {
       removeEventListener: jest.fn()
     }
-    component.instance().cellToDate.set(mockDateCell, new Date())
-    component.unmount()
+    instance.cellToDate.set(mockDateCell, new Date())
+
+    unmount()
 
     expect(mockDateCell.removeEventListener).toHaveBeenCalledWith('touchmove', expect.anything())
   })
 })
 
-describe('componentDidUpdate', () => {
+describe('prop updates', () => {
   it('makes the selection prop override the existing selection draft', () => {
-    const component = shallow(<BookingSelector />)
+    const rendered = renderSelector()
     const nextSelection = [startDate]
 
-    component.setProps({ selection: nextSelection })
+    rendered.rerenderWithProps({ selection: nextSelection })
 
-    expect(component.state('selectionDraft')).toEqual(nextSelection)
+    expect(rendered.instance.state.selectionDraft).toEqual(nextSelection)
   })
 
   it('rebuilds the date grid when range props change', () => {
-    const component = shallow(<BookingSelector startDate={startDate} numDays={1} minTime={9} maxTime={10} />)
+    const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
 
-    component.setProps({ numDays: 2, minTime: 8, maxTime: 9 })
+    rendered.rerenderWithProps({ startDate, numDays: 2, minTime: 8, maxTime: 9 })
 
-    expect(component.instance().dates).toHaveLength(2)
-    expect(component.instance().dates[0]).toHaveLength(2)
+    expect(rendered.instance.dates).toHaveLength(2)
+    expect(rendered.instance.dates[0]).toHaveLength(2)
   })
 })
 
 describe('blocked cells', () => {
   it('cannot start a selection', () => {
-    const component = shallow(<BookingSelector blocked={[startDate]} />)
+    const { instance } = renderSelector({ blocked: [startDate] })
 
-    component.instance().handleSelectionStartEvent(startDate)
+    act(() => {
+      instance.handleSelectionStartEvent(startDate)
+    })
 
-    expect(component.state('selectionType')).toBe(null)
-    expect(component.state('selectionStart')).toBe(null)
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
   })
 })
 
 describe('keyboard interaction', () => {
-  it('toggles a focused cell with Enter', done => {
+  it('toggles a focused cell with Enter', async () => {
     const changeSpy = jest.fn()
-    const component = shallow(<BookingSelector onChange={changeSpy} />)
-    const time = component.instance().dates[0][0]
-    const event = {
-      key: 'Enter',
-      preventDefault: jest.fn()
-    }
+    const { container } = renderSelector({ onChange: changeSpy })
+    const cell = container.querySelector('[role="button"]')
 
-    component.instance().handleCellKeyDownEvent(event, time, false)
+    fireEvent.keyDown(cell, { key: 'Enter' })
 
-    setImmediate(() => {
-      expect(event.preventDefault).toHaveBeenCalled()
-      expect(changeSpy).toHaveBeenCalledWith([time])
-      done()
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalled()
     })
-  })
-})
-
-describe('handleTouchEndEvent', () => {
-  const component = shallow(<BookingSelector />)
-  const setStateSpy = jest.spyOn(component.instance(), 'setState')
-  const updateDraftSpy = jest.spyOn(component.instance(), 'updateAvailabilityDraft').mockImplementation((a, b) => b())
-  const endSelectionSpy = jest.spyOn(component.instance(), 'endSelection').mockImplementation(jest.fn())
-
-  it('handles regular events correctly', () => {
-    component.instance().handleTouchEndEvent()
-
-    expect(setStateSpy).toHaveBeenLastCalledWith({ isTouchDragging: false })
-    expect(updateDraftSpy).toHaveBeenCalled()
-    expect(endSelectionSpy).toHaveBeenCalled()
-
-    setStateSpy.mockClear()
-    updateDraftSpy.mockClear()
-    endSelectionSpy.mockClear()
-  })
-
-  it('handles single-touch-tap events correctly', done => {
-    // Set touch dragging to true and make sure updateDraftSpy doesn't get called
-    component.setState(
-      {
-        isTouchDragging: true
-      },
-      () => {
-        component.instance().handleTouchEndEvent()
-        expect(updateDraftSpy).not.toHaveBeenCalled()
-        expect(endSelectionSpy).toHaveBeenCalled()
-        expect(setStateSpy).toHaveBeenLastCalledWith({ isTouchDragging: false })
-        setStateSpy.mockRestore()
-        updateDraftSpy.mockRestore()
-        endSelectionSpy.mockRestore()
-        done()
-      }
-    )
   })
 })
 

@@ -11,5 +11,6 @@
 	<div class="container">
 		<div id="app"></div>
 	</div>
-	<script src="./App.js"></script>
+	<script>window.process = window.process || { env: { NODE_ENV: 'production' } };</script>
+	<script type="module" src="./App.js"></script>
 </body>

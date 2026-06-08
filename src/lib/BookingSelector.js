@@ -2,12 +2,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-// Import only the methods we need from date-fns in order to keep build size small
-import addHours from 'date-fns/add_hours'
-import addDays from 'date-fns/add_days'
-import startOfDay from 'date-fns/start_of_day'
-import isSameMinute from 'date-fns/is_same_minute'
-import formatDate from 'date-fns/format'
+import { addHours, addDays, startOfDay, isSameMinute, format as formatDate } from 'date-fns'
 
 import { Text, Subtitle } from './typography'
 import colors from './colors'
@@ -81,8 +76,8 @@ const Column = styled.div`
 `
 
 export const GridCell = styled.div`
-  margin: ${props => toCssUnit(props.margin)};
-  height: ${props => toCssUnit(props.height)};
+  margin: ${props => toCssUnit(props.$margin)};
+  height: ${props => toCssUnit(props.$height)};
   touch-action: none;
 `
 
@@ -92,12 +87,12 @@ const DateCell = styled.div`
   height: 100%;
   border-radius: 4px;
   transition: background-color 120ms ease, transform 120ms ease;
-  ${props => props.selected && !props.blocked && `background-color: ${props.selectedColor};`}
-  ${props => !props.selected && !props.blocked && `background-color: ${props.unselectedColor};`}
-  ${props => props.blocked && `background-color: ${props.blockedColor};`}
+  ${props => props.$selected && !props.$blocked && `background-color: ${props.$selectedColor};`}
+  ${props => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
+  ${props => props.$blocked && `background-color: ${props.$blockedColor};`}
   &:hover {
-    cursor: ${props => (props.blocked ? 'not-allowed' : 'pointer')};
-    background-color: ${props => (props.blocked ? props.blockedColor : props.hoveredColor)};
+    cursor: ${props => (props.$blocked ? 'not-allowed' : 'pointer')};
+    background-color: ${props => (props.$blocked ? props.$blockedColor : props.$hoveredColor)};
   }
 `
 
@@ -184,14 +179,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
   cellToDate: Map<HTMLElement, Date>
-  handleDocumentMouseUpEvent: MouseEvent => void
-  endSelection: () => void
-  handleTouchMoveEvent: (SyntheticTouchEvent<*>) => void
-  handleTouchEndEvent: () => void
-  handleMouseUpEvent: Date => void
-  handleMouseEnterEvent: Date => void
-  handleSelectionStartEvent: Date => void
-  handleCellKeyDownEvent: (SyntheticKeyboardEvent<*>, Date, boolean) => void
   gridRef: ?HTMLElement
 
   static defaultProps = {
@@ -202,7 +189,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     minTime: 9,
     maxTime: 23,
     startDate: new Date(),
-    dateFormat: 'D',
+    dateFormat: 'd',
     margin: 3,
     selectedColor: colors.blue,
     unselectedColor: colors.paleBlue,
@@ -403,7 +390,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderTimeLabels = (): React.Element<*> => {
-    const labels = [<GridCell height="40" key={-1} />] // Ensures time labels start at correct location
+    const labels = [<GridCell $height="40" key={-1} />] // Ensures time labels start at correct location
     for (let t = this.props.minTime; t <= this.props.maxTime; t += 1) {
       labels.push(
         <TimeLabelCell key={t}>
@@ -411,13 +398,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         </TimeLabelCell>
       )
     }
-    return <Column margin={this.props.margin}>{labels}</Column>
+    return <Column>{labels}</Column>
   }
 
   renderDateColumn = (dayOfTimes: Array<Date>) => (
-    <Column key={dayOfTimes[0]} margin={this.props.margin}>
-      <GridCell height="50" margin={this.props.margin}>
-        <DayLabel>{formatDate(dayOfTimes[0], 'ddd').toUpperCase()}</DayLabel>
+    <Column key={dayOfTimes[0]}>
+      <GridCell $height="50" $margin={this.props.margin}>
+        <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDate(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
       </GridCell>
       {dayOfTimes.map(time => this.renderDateCellWrapper(time))}
@@ -441,10 +428,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         aria-disabled={blocked}
         aria-pressed={selected}
         tabIndex={blocked ? -1 : 0}
-        height="40px"
-        margin={this.props.margin}
+        $height="40px"
+        $margin={this.props.margin}
         key={time.toISOString()}
-        innerRef={refSetter}
+        ref={refSetter}
         // Mouse handlers
         onMouseDown={startHandler}
         onMouseEnter={() => {
@@ -505,12 +492,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     return (
       <DateCell
-        blocked={blocked}
-        selected={selected}
-        selectedColor={this.props.selectedColor}
-        unselectedColor={this.props.unselectedColor}
-        hoveredColor={this.props.hoveredColor}
-        blockedColor={this.props.blockedColor}
+        $blocked={blocked}
+        $selected={selected}
+        $selectedColor={this.props.selectedColor}
+        $unselectedColor={this.props.unselectedColor}
+        $hoveredColor={this.props.hoveredColor}
+        $blockedColor={this.props.blockedColor}
       />
     )
   }
@@ -522,7 +509,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       <Wrapper>
         {
           <Grid
-            innerRef={el => {
+            ref={el => {
               this.gridRef = el
             }}
           >

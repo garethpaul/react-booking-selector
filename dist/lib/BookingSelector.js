@@ -1,78 +1,31 @@
-'use strict';
+"use strict";
 
 exports.__esModule = true;
-exports.preventScroll = exports.GridCell = undefined;
-
-var _react = require('react');
-
-var React = _interopRequireWildcard(_react);
-
-var _styledComponents = require('styled-components');
-
-var _styledComponents2 = _interopRequireDefault(_styledComponents);
-
-var _add_hours = require('date-fns/add_hours');
-
-var _add_hours2 = _interopRequireDefault(_add_hours);
-
-var _add_days = require('date-fns/add_days');
-
-var _add_days2 = _interopRequireDefault(_add_days);
-
-var _start_of_day = require('date-fns/start_of_day');
-
-var _start_of_day2 = _interopRequireDefault(_start_of_day);
-
-var _is_same_minute = require('date-fns/is_same_minute');
-
-var _is_same_minute2 = _interopRequireDefault(_is_same_minute);
-
-var _format = require('date-fns/format');
-
-var _format2 = _interopRequireDefault(_format);
-
-var _typography = require('./typography');
-
-var _colors = require('./colors');
-
-var _colors2 = _interopRequireDefault(_colors);
-
-var _selectionSchemes = require('./selection-schemes');
-
-var _selectionSchemes2 = _interopRequireDefault(_selectionSchemes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// Import only the methods we need from date-fns in order to keep build size small
-
-
+exports.preventScroll = exports.default = exports.GridCell = void 0;
+var React = _interopRequireWildcard(require("react"));
+var _styledComponents = _interopRequireDefault(require("styled-components"));
+var _dateFns = require("date-fns");
+var _typography = require("./typography");
+var _colors = _interopRequireDefault(require("./colors"));
+var _selectionSchemes = _interopRequireDefault(require("./selection-schemes"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prototype.constructor = t, _setPrototypeOf(t, o); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
-  if (typeof value === 'number') return value + 'px';
-  return (/^-?\d+(\.\d+)?$/.test(value) ? value + 'px' : value
-  );
+  if (typeof value === 'number') return value + "px";
+  return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };
-
 var toDate = function toDate(value) {
   return value instanceof Date ? value : new Date(value.valueOf());
 };
-
 var normalizeDates = function normalizeDates(dates) {
   return dates.map(toDate);
 };
-
 var dateIsSameMinute = function dateIsSameMinute(a, b) {
-  return (0, _is_same_minute2.default)(toDate(a), toDate(b));
+  return (0, _dateFns.isSameMinute)(toDate(a), toDate(b));
 };
-
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   return dates.reduce(function (acc, date) {
     if (acc.find(function (existingDate) {
@@ -81,147 +34,112 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
     return [].concat(acc, [date]);
   }, []);
 };
-
 var buildDates = function buildDates(_ref) {
   var startDate = _ref.startDate,
-      numDays = _ref.numDays,
-      minTime = _ref.minTime,
-      maxTime = _ref.maxTime;
-
-  var startTime = (0, _start_of_day2.default)(startDate);
+    numDays = _ref.numDays,
+    minTime = _ref.minTime,
+    maxTime = _ref.maxTime;
+  var startTime = (0, _dateFns.startOfDay)(startDate);
   var dates = [];
   for (var d = 0; d < numDays; d += 1) {
     var currentDay = [];
     for (var h = minTime; h <= maxTime; h += 1) {
-      currentDay.push((0, _add_hours2.default)((0, _add_days2.default)(startTime, d), h));
+      currentDay.push((0, _dateFns.addHours)((0, _dateFns.addDays)(startTime, d), h));
     }
     dates.push(currentDay);
   }
   return dates;
 };
-
 var formatHour = function formatHour(hour) {
   var h = hour === 0 || hour === 12 || hour === 24 ? 12 : hour % 12;
   var abb = hour < 12 || hour === 24 ? 'am' : 'pm';
-  return h + ' ' + abb;
+  return h + " " + abb;
 };
-
-var Wrapper = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__Wrapper',
-  componentId: 'sc-1e1auar-0'
-})(['display:flex;align-items:center;width:100%;user-select:none;']);
-
-var Grid = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__Grid',
-  componentId: 'sc-1e1auar-1'
-})(['display:flex;flex-direction:row;align-items:stretch;width:100%;']);
-
-var Column = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__Column',
-  componentId: 'sc-1e1auar-2'
-})(['display:flex;flex-direction:column;justify-content:space-evenly;flex-grow:1;']);
-
-var GridCell = exports.GridCell = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__GridCell',
-  componentId: 'sc-1e1auar-3'
-})(['margin:', ';height:', ';touch-action:none;'], function (props) {
-  return toCssUnit(props.margin);
+var Wrapper = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__Wrapper",
+  componentId: "sc-1e1auar-0"
+})(["display:flex;align-items:center;width:100%;user-select:none;"]);
+var Grid = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__Grid",
+  componentId: "sc-1e1auar-1"
+})(["display:flex;flex-direction:row;align-items:stretch;width:100%;"]);
+var Column = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__Column",
+  componentId: "sc-1e1auar-2"
+})(["display:flex;flex-direction:column;justify-content:space-evenly;flex-grow:1;"]);
+var GridCell = exports.GridCell = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__GridCell",
+  componentId: "sc-1e1auar-3"
+})(["margin:", ";height:", ";touch-action:none;"], function (props) {
+  return toCssUnit(props.$margin);
 }, function (props) {
-  return toCssUnit(props.height);
+  return toCssUnit(props.$height);
 });
 
 // Style the Date Cell
-var DateCell = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__DateCell',
-  componentId: 'sc-1e1auar-4'
-})(['width:100%;height:100%;border-radius:4px;transition:background-color 120ms ease,transform 120ms ease;', ' ', ' ', ' &:hover{cursor:', ';background-color:', ';}'], function (props) {
-  return props.selected && !props.blocked && 'background-color: ' + props.selectedColor + ';';
+var DateCell = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__DateCell",
+  componentId: "sc-1e1auar-4"
+})(["width:100%;height:100%;border-radius:4px;transition:background-color 120ms ease,transform 120ms ease;", " ", " ", " &:hover{cursor:", ";background-color:", ";}"], function (props) {
+  return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
 }, function (props) {
-  return !props.selected && !props.blocked && 'background-color: ' + props.unselectedColor + ';';
+  return !props.$selected && !props.$blocked && "background-color: " + props.$unselectedColor + ";";
 }, function (props) {
-  return props.blocked && 'background-color: ' + props.blockedColor + ';';
+  return props.$blocked && "background-color: " + props.$blockedColor + ";";
 }, function (props) {
-  return props.blocked ? 'not-allowed' : 'pointer';
+  return props.$blocked ? 'not-allowed' : 'pointer';
 }, function (props) {
-  return props.blocked ? props.blockedColor : props.hoveredColor;
+  return props.$blocked ? props.$blockedColor : props.$hoveredColor;
 });
-
-var DateLabel = (0, _styledComponents2.default)(_typography.Subtitle).withConfig({
-  displayName: 'BookingSelector__DateLabel',
-  componentId: 'sc-1e1auar-5'
-})(['height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:10px;}']);
-
-var DayLabel = (0, _styledComponents2.default)(_typography.Subtitle).withConfig({
-  displayName: 'BookingSelector__DayLabel',
-  componentId: 'sc-1e1auar-6'
-})(['height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:6px;}']);
-
-var TimeLabelCell = (0, _styledComponents2.default)('div').withConfig({
-  displayName: 'BookingSelector__TimeLabelCell',
-  componentId: 'sc-1e1auar-7'
-})(['position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);']);
-
-var TimeText = (0, _styledComponents2.default)(_typography.Text).withConfig({
-  displayName: 'BookingSelector__TimeText',
-  componentId: 'sc-1e1auar-8'
-})(['margin:0;font-size:11px;@media (max-width:699px){font-size:7px;}text-align:right;text-transform:uppercase;']);
-
+var DateLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
+  displayName: "BookingSelector__DateLabel",
+  componentId: "sc-1e1auar-5"
+})(["height:15px;font-size:19px;margin:0px;margin-top:5px;padding:0px;@media (max-width:699px){font-size:10px;}"]);
+var DayLabel = (0, _styledComponents.default)(_typography.Subtitle).withConfig({
+  displayName: "BookingSelector__DayLabel",
+  componentId: "sc-1e1auar-6"
+})(["height:15px;font-size:10px;margin:0px;padding:0px;@media (max-width:699px){font-size:6px;}"]);
+var TimeLabelCell = _styledComponents.default.div.withConfig({
+  displayName: "BookingSelector__TimeLabelCell",
+  componentId: "sc-1e1auar-7"
+})(["position:relative;width:100%;height:40px;padding-right:15px;display:flex;justify-content:flex-end;align-items:center;color:rgb(112,117,122);"]);
+var TimeText = (0, _styledComponents.default)(_typography.Text).withConfig({
+  displayName: "BookingSelector__TimeText",
+  componentId: "sc-1e1auar-8"
+})(["margin:0;font-size:11px;@media (max-width:699px){font-size:7px;}text-align:right;text-transform:uppercase;"]);
 var preventScroll = exports.preventScroll = function preventScroll(e) {
   e.preventDefault();
 };
-
-var BookingSelector = function (_React$Component) {
-  _inherits(BookingSelector, _React$Component);
-
+var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
-    _classCallCheck(this, BookingSelector);
-
-    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
-
+    var _this;
+    _this = _React$Component.call(this, props) || this;
+    _this.dates = void 0;
+    _this.selectionSchemeHandlers = void 0;
+    _this.cellToDate = void 0;
+    _this.gridRef = void 0;
     _this.renderTimeLabels = function () {
-      var labels = [React.createElement(GridCell, { height: '40', key: -1 })]; // Ensures time labels start at correct location
+      var labels = [/*#__PURE__*/React.createElement(GridCell, {
+        $height: "40",
+        key: -1
+      })]; // Ensures time labels start at correct location
       for (var t = _this.props.minTime; t <= _this.props.maxTime; t += 1) {
-        labels.push(React.createElement(
-          TimeLabelCell,
-          { key: t },
-          React.createElement(
-            TimeText,
-            null,
-            formatHour(t)
-          )
-        ));
+        labels.push(/*#__PURE__*/React.createElement(TimeLabelCell, {
+          key: t
+        }, /*#__PURE__*/React.createElement(TimeText, null, formatHour(t))));
       }
-      return React.createElement(
-        Column,
-        { margin: _this.props.margin },
-        labels
-      );
+      return /*#__PURE__*/React.createElement(Column, null, labels);
     };
-
     _this.renderDateColumn = function (dayOfTimes) {
-      return React.createElement(
-        Column,
-        { key: dayOfTimes[0], margin: _this.props.margin },
-        React.createElement(
-          GridCell,
-          { height: '50', margin: _this.props.margin },
-          React.createElement(
-            DayLabel,
-            null,
-            (0, _format2.default)(dayOfTimes[0], 'ddd').toUpperCase()
-          ),
-          React.createElement(
-            DateLabel,
-            null,
-            (0, _format2.default)(dayOfTimes[0], _this.props.dateFormat)
-          )
-        ),
-        dayOfTimes.map(function (time) {
-          return _this.renderDateCellWrapper(time);
-        })
-      );
+      return /*#__PURE__*/React.createElement(Column, {
+        key: dayOfTimes[0]
+      }, /*#__PURE__*/React.createElement(GridCell, {
+        $height: "50",
+        $margin: _this.props.margin
+      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _dateFns.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, (0, _dateFns.format)(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
+        return _this.renderDateCellWrapper(time);
+      }));
     };
-
     _this.renderDateCellWrapper = function (time) {
       var blocked = _this.isBlocked(time);
       var selected = _this.isSelected(time);
@@ -231,42 +149,38 @@ var BookingSelector = function (_React$Component) {
       var refSetter = function refSetter(dateCell) {
         if (dateCell) _this.cellToDate.set(dateCell, time);
       };
-
-      return React.createElement(
-        GridCell,
-        {
-          className: 'rgdp__grid-cell',
-          role: 'button',
-          'aria-disabled': blocked,
-          'aria-pressed': selected,
-          tabIndex: blocked ? -1 : 0,
-          height: '40px',
-          margin: _this.props.margin,
-          key: time.toISOString(),
-          innerRef: refSetter
-          // Mouse handlers
-          , onMouseDown: startHandler,
-          onMouseEnter: function onMouseEnter() {
-            _this.handleMouseEnterEvent(time);
-          },
-          onMouseUp: function onMouseUp() {
-            _this.handleMouseUpEvent(time);
-          }
-          // Touch handlers
-          // Since touch events fire on the event where the touch-drag started, there's no point in passing
-          // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
-          // parameters
-          , onTouchStart: startHandler,
-          onTouchMove: _this.handleTouchMoveEvent,
-          onTouchEnd: _this.handleTouchEndEvent,
-          onKeyDown: function onKeyDown(event) {
-            _this.handleCellKeyDownEvent(event, time, blocked);
-          }
+      return /*#__PURE__*/React.createElement(GridCell, {
+        className: "rgdp__grid-cell",
+        role: "button",
+        "aria-disabled": blocked,
+        "aria-pressed": selected,
+        tabIndex: blocked ? -1 : 0,
+        $height: "40px",
+        $margin: _this.props.margin,
+        key: time.toISOString(),
+        ref: refSetter
+        // Mouse handlers
+        ,
+        onMouseDown: startHandler,
+        onMouseEnter: function onMouseEnter() {
+          _this.handleMouseEnterEvent(time);
         },
-        _this.renderDateCell(time, selected, blocked)
-      );
+        onMouseUp: function onMouseUp() {
+          _this.handleMouseUpEvent(time);
+        }
+        // Touch handlers
+        // Since touch events fire on the event where the touch-drag started, there's no point in passing
+        // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
+        // parameters
+        ,
+        onTouchStart: startHandler,
+        onTouchMove: _this.handleTouchMoveEvent,
+        onTouchEnd: _this.handleTouchEndEvent,
+        onKeyDown: function onKeyDown(event) {
+          _this.handleCellKeyDownEvent(event, time, blocked);
+        }
+      }, _this.renderDateCell(time, selected, blocked));
     };
-
     _this.renderDateCell = function (time, selected, blocked) {
       /* WEEKEND
       if (formatDate(time, 'd') === 0) {
@@ -300,20 +214,17 @@ var BookingSelector = function (_React$Component) {
       if (_this.props.renderDateCell) {
         return _this.props.renderDateCell(time, selected, blocked);
       }
-
-      return React.createElement(DateCell, {
-        blocked: blocked,
-        selected: selected,
-        selectedColor: _this.props.selectedColor,
-        unselectedColor: _this.props.unselectedColor,
-        hoveredColor: _this.props.hoveredColor,
-        blockedColor: _this.props.blockedColor
+      return /*#__PURE__*/React.createElement(DateCell, {
+        $blocked: blocked,
+        $selected: selected,
+        $selectedColor: _this.props.selectedColor,
+        $unselectedColor: _this.props.unselectedColor,
+        $hoveredColor: _this.props.hoveredColor,
+        $blockedColor: _this.props.blockedColor
       });
     };
-
     _this.dates = buildDates(props);
     _this.cellToDate = new Map();
-
     _this.state = {
       selectionDraft: normalizeDates(_this.props.selection),
       // eslint-disable-next-line react/no-unused-state
@@ -322,12 +233,10 @@ var BookingSelector = function (_React$Component) {
       selectionStart: null,
       isTouchDragging: false
     };
-
     _this.selectionSchemeHandlers = {
-      linear: _selectionSchemes2.default.linear,
-      square: _selectionSchemes2.default.square
+      linear: _selectionSchemes.default.linear,
+      square: _selectionSchemes.default.square
     };
-
     _this.endSelection = _this.endSelection.bind(_this);
     _this.handleMouseUpEvent = _this.handleMouseUpEvent.bind(_this);
     _this.handleMouseEnterEvent = _this.handleMouseEnterEvent.bind(_this);
@@ -338,17 +247,16 @@ var BookingSelector = function (_React$Component) {
     _this.handleCellKeyDownEvent = _this.handleCellKeyDownEvent.bind(_this);
     return _this;
   }
-
+  _inheritsLoose(BookingSelector, _React$Component);
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
     if (props.selection === state.selectionProp) return null;
-
     return {
       selectionDraft: normalizeDates(props.selection),
       selectionProp: props.selection
     };
   };
-
-  BookingSelector.prototype.componentDidMount = function componentDidMount() {
+  var _proto = BookingSelector.prototype;
+  _proto.componentDidMount = function componentDidMount() {
     // We need to add the endSelection event listener to the document itself in order
     // to catch the cases where the users ends their mouse-click somewhere besides
     // the date cells (in which case none of the DateCell's onMouseUp handlers would fire)
@@ -360,12 +268,13 @@ var BookingSelector = function (_React$Component) {
     // Prevent page scrolling when user is dragging on the date cells
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && dateCell.addEventListener) {
-        dateCell.addEventListener('touchmove', preventScroll, { passive: false });
+        dateCell.addEventListener('touchmove', preventScroll, {
+          passive: false
+        });
       }
     });
   };
-
-  BookingSelector.prototype.componentWillUnmount = function componentWillUnmount() {
+  _proto.componentWillUnmount = function componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && dateCell.removeEventListener) {
@@ -373,41 +282,34 @@ var BookingSelector = function (_React$Component) {
       }
     });
   };
-
-  BookingSelector.prototype.isBlocked = function isBlocked(time) {
+  _proto.isBlocked = function isBlocked(time) {
     return Boolean(this.props.blocked.find(function (blockedTime) {
       return dateIsSameMinute(blockedTime, time);
     }));
   };
-
-  BookingSelector.prototype.isSelected = function isSelected(time) {
+  _proto.isSelected = function isSelected(time) {
     return Boolean(this.state.selectionDraft.find(function (selectedTime) {
       return dateIsSameMinute(selectedTime, time);
     }));
   };
-
-  BookingSelector.prototype.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
+  _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (this.state.selectionType === null) return;
     var gridRef = this.gridRef;
     var target = event.target;
-
     if (gridRef && target instanceof Node && gridRef.contains(target)) return;
     this.endSelection();
-  };
+  }
 
   // Performs a lookup into this.cellToDate to retrieve the Date that corresponds to
   // the cell where this touch event is right now. Note that this method will only work
   // if the event is a `touchmove` event since it's the only one that has a `touches` list.
-
-
-  BookingSelector.prototype.getTimeFromTouchEvent = function getTimeFromTouchEvent(event) {
+;
+  _proto.getTimeFromTouchEvent = function getTimeFromTouchEvent(event) {
     var touches = event.touches;
-
     if (!touches || touches.length === 0) return null;
     var _touches$ = touches[0],
-        clientX = _touches$.clientX,
-        clientY = _touches$.clientY;
-
+      clientX = _touches$.clientX,
+      clientY = _touches$.clientY;
     var targetElement = document.elementFromPoint(clientX, clientY);
     while (targetElement) {
       var cellTime = this.cellToDate.get(targetElement);
@@ -417,8 +319,7 @@ var BookingSelector = function (_React$Component) {
     }
     return null;
   };
-
-  BookingSelector.prototype.endSelection = function endSelection() {
+  _proto.endSelection = function endSelection() {
     if (this.state.selectionType !== null) {
       this.props.onChange(this.state.selectionDraft);
     }
@@ -426,21 +327,16 @@ var BookingSelector = function (_React$Component) {
       selectionType: null,
       selectionStart: null
     });
-  };
+  }
 
   // Given an ending Date, determines all the dates that should be selected in this draft
-
-
-  BookingSelector.prototype.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
+;
+  _proto.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
     var _this2 = this;
-
-    var _state = this.state,
-        selectionType = _state.selectionType,
-        selectionStart = _state.selectionStart;
-
-
+    var _this$state = this.state,
+      selectionType = _this$state.selectionType,
+      selectionStart = _this$state.selectionStart;
     if (selectionType === null || selectionStart === null) return;
-
     var newSelection = [];
     if (selectionStart && selectionType) {
       newSelection = this.selectionSchemeHandlers[this.props.selectionScheme](selectionStart, selectionEnd, this.dates);
@@ -458,13 +354,14 @@ var BookingSelector = function (_React$Component) {
         });
       });
     }
-    this.setState({ selectionDraft: nextDraft }, callback);
-  };
+    this.setState({
+      selectionDraft: nextDraft
+    }, callback);
+  }
 
   // Isomorphic (mouse and touch) handler since starting a selection works the same way for both classes of user input
-
-
-  BookingSelector.prototype.handleSelectionStartEvent = function handleSelectionStartEvent(startTime) {
+;
+  _proto.handleSelectionStartEvent = function handleSelectionStartEvent(startTime) {
     if (this.isBlocked(startTime)) return;
 
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
@@ -477,21 +374,17 @@ var BookingSelector = function (_React$Component) {
       selectionStart: startTime
     });
   };
-
-  BookingSelector.prototype.handleMouseEnterEvent = function handleMouseEnterEvent(time) {
+  _proto.handleMouseEnterEvent = function handleMouseEnterEvent(time) {
     // Need to update selection draft on mouseup as well in order to catch the cases
     // where the user just clicks on a single cell (because no mouseenter events fire
     // in this scenario)
     this.updateAvailabilityDraft(time);
   };
-
-  BookingSelector.prototype.handleMouseUpEvent = function handleMouseUpEvent(time) {
+  _proto.handleMouseUpEvent = function handleMouseUpEvent(time) {
     this.updateAvailabilityDraft(time, this.endSelection);
   };
-
-  BookingSelector.prototype.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
+  _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this3 = this;
-
     if (blocked || event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
     var timeSelected = this.props.selection.find(function (date) {
@@ -504,18 +397,17 @@ var BookingSelector = function (_React$Component) {
       _this3.updateAvailabilityDraft(time, _this3.endSelection);
     });
   };
-
-  BookingSelector.prototype.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
-    this.setState({ isTouchDragging: true });
+  _proto.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
+    this.setState({
+      isTouchDragging: true
+    });
     var cellTime = this.getTimeFromTouchEvent(event);
     if (cellTime) {
       this.updateAvailabilityDraft(cellTime);
     }
   };
-
-  BookingSelector.prototype.handleTouchEndEvent = function handleTouchEndEvent() {
+  _proto.handleTouchEndEvent = function handleTouchEndEvent() {
     var _this4 = this;
-
     if (!this.state.isTouchDragging) {
       // Going down this branch means the user tapped but didn't drag -- which
       // means the availability draft hasn't yet been updated (since
@@ -526,33 +418,21 @@ var BookingSelector = function (_React$Component) {
     } else {
       this.endSelection();
     }
-    this.setState({ isTouchDragging: false });
+    this.setState({
+      isTouchDragging: false
+    });
   };
-
-  BookingSelector.prototype.render = function render() {
+  _proto.render = function render() {
     var _this5 = this;
-
     this.dates = buildDates(this.props);
-
-    return React.createElement(
-      Wrapper,
-      null,
-      React.createElement(
-        Grid,
-        {
-          innerRef: function innerRef(el) {
-            _this5.gridRef = el;
-          }
-        },
-        this.renderTimeLabels(),
-        this.dates.map(this.renderDateColumn)
-      )
-    );
+    return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
+      ref: function ref(el) {
+        _this5.gridRef = el;
+      }
+    }, this.renderTimeLabels(), this.dates.map(this.renderDateColumn)));
   };
-
   return BookingSelector;
 }(React.Component);
-
 BookingSelector.defaultProps = {
   selection: [],
   blocked: [],
@@ -561,12 +441,11 @@ BookingSelector.defaultProps = {
   minTime: 9,
   maxTime: 23,
   startDate: new Date(),
-  dateFormat: 'D',
+  dateFormat: 'd',
   margin: 3,
-  selectedColor: _colors2.default.blue,
-  unselectedColor: _colors2.default.paleBlue,
-  hoveredColor: _colors2.default.lightBlue,
-  blockedColor: _colors2.default.black,
+  selectedColor: _colors.default.blue,
+  unselectedColor: _colors.default.paleBlue,
+  hoveredColor: _colors.default.lightBlue,
+  blockedColor: _colors.default.black,
   onChange: function onChange() {}
 };
-exports.default = BookingSelector;
