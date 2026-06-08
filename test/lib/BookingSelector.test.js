@@ -394,10 +394,13 @@ describe('componentWillUnmount', () => {
       removeEventListener: jest.fn()
     }
     instance.cellToDate.set(mockDateCell, new Date())
+    instance.dateToCell.set(startDate.getTime(), mockDateCell)
 
     unmount()
 
     expect(mockDateCell.removeEventListener).toHaveBeenCalledWith('touchmove', expect.anything())
+    expect(instance.cellToDate.size).toBe(0)
+    expect(instance.dateToCell.size).toBe(0)
   })
 })
 
@@ -451,6 +454,7 @@ describe('prop updates', () => {
 
     expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
     expect(rendered.instance.cellToDate.has(cell)).toBe(false)
+    expect(rendered.instance.dateToCell.has(addHours(startOfDay(startDate), 9).getTime())).toBe(false)
     removeSpy.mockRestore()
   })
 })
