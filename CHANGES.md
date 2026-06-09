@@ -27,6 +27,8 @@
   letting malformed percent-encoding crash the smoke process.
 - Tightened `docs:check` so README cannot keep stale links to deleted
   `docs/plans` files.
+- Avoided redundant `isTouchDragging` state writes during repeated touchmove
+  events in an active touch drag.
 
 ## 2026-06-08
 

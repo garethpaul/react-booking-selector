@@ -670,9 +670,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
     this.recordTouchEvent();
     if (this.state.selectionType === null) return;
-    this.setState({
-      isTouchDragging: true
-    });
+    if (!this.state.isTouchDragging) {
+      this.setState({
+        isTouchDragging: true
+      });
+    }
     var cellTime = this.getTimeFromTouchEvent(event);
     if (cellTime && !this.isBlocked(cellTime)) {
       this.updateAvailabilityDraft(cellTime);

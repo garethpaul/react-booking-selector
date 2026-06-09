@@ -774,6 +774,27 @@ it('handleTouchMoveEvent updates the availability draft', () => {
   updateDraftSpy.mockRestore()
 })
 
+it('handleTouchMoveEvent avoids redundant drag-state updates while already dragging', async () => {
+  const getTimeSpy = jest.spyOn(BookingSelector.prototype, 'getTimeFromTouchEvent').mockReturnValue(null)
+  const { instance } = renderSelector()
+
+  await setStateAsync(instance, {
+    selectionType: 'add',
+    selectionStart: startDate,
+    isTouchDragging: true,
+  })
+  const setStateSpy = jest.spyOn(instance, 'setState')
+
+  act(() => {
+    instance.handleTouchMoveEvent({})
+  })
+
+  expect(setStateSpy).not.toHaveBeenCalled()
+
+  setStateSpy.mockRestore()
+  getTimeSpy.mockRestore()
+})
+
 describe('updateAvailabilityDraft', () => {
   it.each([
     ['add', 1],
