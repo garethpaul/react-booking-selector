@@ -12,7 +12,8 @@ for modern React applications.
 
 Current baseline: `make check` wraps `corepack yarn verify`, which checks every
 canonical `docs/plans` record, linting, TypeScript declarations, Jest behavior
-coverage, dependency audit output, and npm package dry-run contents.
+coverage, dependency audit output, strict npm package dry-run contents, and
+package contract linting.
 
 The current focus is:
 
@@ -30,8 +31,9 @@ Priority:
 
 Next priorities:
 
-- Keep `docs:smoke` in the gate for layout-sensitive changes, and add baseline
-  visual regression coverage before larger styling changes.
+- Keep `docs:smoke` in the gate for layout-sensitive changes, including its
+  screenshot, DOM, and horizontal overflow checks, and add baseline visual
+  regression coverage before larger styling changes.
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
   as the day/hour grid evolves.
 - Keep peer dependency ranges aligned with supported React and styled-components
