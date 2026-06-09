@@ -7,6 +7,8 @@ declare namespace BookingSelectorComponent {
 
   export type BookingSelectorDateList = ReadonlyArray<BookingSelectorDateValue> | null | undefined
 
+  export type BookingSelectorCssLength = number | string
+
   export type BookingSelectorSelectionScheme = 'linear' | 'square'
 
   export interface BookingSelectorProps {
@@ -19,7 +21,7 @@ declare namespace BookingSelectorComponent {
     minTime?: number
     maxTime?: number
     dateFormat?: string
-    margin?: number
+    margin?: BookingSelectorCssLength
     unselectedColor?: string
     selectedColor?: string
     hoveredColor?: string

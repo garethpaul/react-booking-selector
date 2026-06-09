@@ -302,7 +302,7 @@ type PropsType = {
   minTime: number,
   maxTime: number,
   dateFormat: string,
-  margin: number,
+  margin: number | string,
   unselectedColor: string,
   selectedColor: string,
   hoveredColor: string,

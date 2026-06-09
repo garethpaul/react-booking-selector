@@ -1,6 +1,7 @@
 import BookingSelector, {
   BookingSelector as NamedBookingSelector,
   type BookingSelectorProps,
+  type BookingSelectorCssLength,
 } from 'react-booking-selector'
 
 const selection: BookingSelectorProps['selection'] = [
@@ -9,6 +10,7 @@ const selection: BookingSelectorProps['selection'] = [
   { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() },
 ]
 const blocked: BookingSelectorProps['blocked'] = null
+const margin: BookingSelectorCssLength = '0.25rem'
 
 const onChange: NonNullable<BookingSelectorProps['onChange']> = (nextSelection) => {
   nextSelection.forEach((time) => {
@@ -20,4 +22,5 @@ void BookingSelector
 void NamedBookingSelector
 void selection
 void blocked
+void margin
 void onChange

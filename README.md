@@ -172,9 +172,9 @@ Invalid format strings fall back to the default day-of-month header format.
 
 ### `margin`
 
-**type**: `number`
+**type**: `number | string`
 
-**description**: Margin between grid cells in pixels.
+**description**: Margin between grid cells. Numbers are treated as pixels; strings may use any valid CSS length.
 
 **required**: no
 

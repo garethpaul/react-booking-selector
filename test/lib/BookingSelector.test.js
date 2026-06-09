@@ -1211,6 +1211,21 @@ describe('cell accessibility', () => {
     expect(cell).toHaveStyleRule('min-height', '0')
   })
 
+  it('allows CSS length strings for grid cell margins', () => {
+    const { getByRole, getByText } = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: '0.25rem',
+    })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const dateHeaderCell = getByText('MON').closest('[aria-hidden="true"]')
+
+    expect(cell).toHaveStyleRule('margin', '0.25rem')
+    expect(dateHeaderCell).toHaveStyleRule('margin', '0.25rem')
+  })
+
   it('limits touch-action suppression to interactive cells', () => {
     const { getByRole, getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })

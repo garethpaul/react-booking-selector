@@ -4,6 +4,8 @@ export type BookingSelectorDateValue = Date | string | number | { valueOf(): num
 
 export type BookingSelectorDateList = ReadonlyArray<BookingSelectorDateValue> | null | undefined
 
+export type BookingSelectorCssLength = number | string
+
 export type BookingSelectorSelectionScheme = 'linear' | 'square'
 
 export interface BookingSelectorProps {
@@ -16,7 +18,7 @@ export interface BookingSelectorProps {
   minTime?: number
   maxTime?: number
   dateFormat?: string
-  margin?: number
+  margin?: BookingSelectorCssLength
   unselectedColor?: string
   selectedColor?: string
   hoveredColor?: string

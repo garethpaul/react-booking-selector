@@ -9,6 +9,7 @@ const selection: BookingSelector.BookingSelectorProps['selection'] = [
   { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() },
 ]
 const blocked: BookingSelector.BookingSelectorProps['blocked'] = null
+const margin: BookingSelector.BookingSelectorCssLength = '0.25rem'
 
 const onChange: NonNullable<BookingSelector.BookingSelectorProps['onChange']> = (nextSelection) => {
   nextSelection.forEach((time) => {
@@ -20,4 +21,5 @@ void defaultExport
 void namedExport
 void selection
 void blocked
+void margin
 void onChange
