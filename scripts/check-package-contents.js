@@ -34,6 +34,8 @@ const expectedPackageFiles = [
   'package.json',
 ]
 
+const expectedPackageManifestFiles = ['dist/lib', 'dist/esm', 'docs/readme-overview.svg', 'LICENSE', 'README.md']
+
 const forbiddenPackagePathPrefixes = [
   '.cache/',
   '.parcel-cache/',
@@ -106,6 +108,14 @@ const assertPackageContents = (actualPackageFiles, expectedFiles = expectedPacka
   }
 }
 
+const assertPackageManifestFiles = (packageJson) => {
+  if (!packageJson || !Array.isArray(packageJson.files)) {
+    throw new Error('package.json must define a files allowlist')
+  }
+
+  assertPackageContents(packageJson.files, expectedPackageManifestFiles)
+}
+
 const removePackArtifacts = (cwd, filenames = []) => {
   const knownFilenames = new Set(filenames.filter(Boolean))
   fs.readdirSync(cwd)
@@ -139,6 +149,7 @@ const main = () => {
   let packOutput = null
 
   try {
+    assertPackageManifestFiles(JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')))
     const output = runNpmPackDryRun()
     packOutput = parsePackOutput(output)
     assertPackageContents(packOutput.files)
@@ -160,7 +171,9 @@ if (require.main === module) {
 
 module.exports = {
   assertPackageContents,
+  assertPackageManifestFiles,
   expectedPackageFiles,
+  expectedPackageManifestFiles,
   parsePackOutput,
   removePackArtifacts,
 }

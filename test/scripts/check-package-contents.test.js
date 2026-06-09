@@ -4,7 +4,9 @@ import path from 'path'
 
 import {
   assertPackageContents,
+  assertPackageManifestFiles,
   expectedPackageFiles,
+  expectedPackageManifestFiles,
   parsePackOutput,
   removePackArtifacts,
 } from '../../scripts/check-package-contents'
@@ -72,6 +74,24 @@ describe('check-package-contents script', () => {
     expect(() => {
       assertPackageContents(expectedPackageFiles)
     }).not.toThrow()
+  })
+
+  it('accepts the expected package manifest files allowlist', () => {
+    expect(() => {
+      assertPackageManifestFiles({ files: expectedPackageManifestFiles })
+    }).not.toThrow()
+  })
+
+  it('requires a package manifest files allowlist', () => {
+    expect(() => {
+      assertPackageManifestFiles({})
+    }).toThrow(/package\.json must define a files allowlist/)
+  })
+
+  it('reports package manifest allowlist drift', () => {
+    expect(() => {
+      assertPackageManifestFiles({ files: [...expectedPackageManifestFiles, 'src'] })
+    }).toThrow(/Unexpected package files:[\s\S]*src/)
   })
 
   it('reports missing and unexpected package files', () => {

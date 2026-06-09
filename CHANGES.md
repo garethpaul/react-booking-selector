@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Added package manifest allowlist checks so `pack:check` fails if
+  `package.json` broadens published files beyond the intended package surface.
 - Removed tracked VS Code editor settings from verification inputs and added
   package-root coverage for the `.vscode/` ignore rule.
 - Pinned the Makefile default goal to `check` so future target reordering cannot

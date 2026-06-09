@@ -29,6 +29,8 @@ Priority:
 - Keep every canonical maintenance plan linked exactly once from README with
   slash-separated `docs/plans` paths
 - Keep local editor metadata out of package verification inputs
+- Keep the package manifest files allowlist aligned with the intended published
+  package surface
 - Keep canonical maintenance plan filenames dated and sortable
 - Keep date, selection, touch, and docs-smoke helpers defensive against
   malformed or invalid inputs
