@@ -1309,6 +1309,45 @@ describe('prop updates', () => {
     expect(changeSpy).not.toHaveBeenCalled()
   })
 
+  it('cancels active selections when the selection scheme changes', () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({
+      onChange: changeSpy,
+      selectionScheme: 'square',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const [firstCell] = Array.from(rendered.container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(firstCell)
+    expect(rendered.instance.state.selectionType).toBe('add')
+    expect(rendered.instance.state.selectionDraft).toEqual([selected])
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selectionScheme: 'linear',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([])
+    expect(rendered.instance.state.selectionBase).toEqual([])
+    expect(rendered.instance.state.selectionSchemePropSignature).toBe('linear')
+    expect(rendered.instance.state.selectionType).toBe(null)
+    expect(rendered.instance.state.selectionStart).toBe(null)
+    expect(rendered.instance.state.isTouchDragging).toBe(false)
+
+    fireEvent.mouseUp(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }))
+
+    expect(changeSpy).not.toHaveBeenCalled()
+  })
+
   it('clones selection dates from props', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })

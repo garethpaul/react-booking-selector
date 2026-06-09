@@ -375,12 +375,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(_this.props.blocked);
     var dateGridPropSignature = getDateGridSignature(_this.props);
+    var selectionSchemePropSignature = _this.props.selectionScheme;
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature: selectionPropSignature,
       blockedPropSignature: blockedPropSignature,
       dateGridPropSignature: dateGridPropSignature,
+      selectionSchemePropSignature: selectionSchemePropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -408,7 +410,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var selectionPropSignature = getDateMinuteSetSignature(props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
     var dateGridPropSignature = getDateGridSignature(props);
-    if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature) {
+    var selectionSchemePropSignature = props.selectionScheme;
+    if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature && selectionSchemePropSignature === state.selectionSchemePropSignature) {
       return null;
     }
     var selectionDraft = normalizeSelectionDraft(props.selection);
@@ -418,6 +421,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       selectionPropSignature: selectionPropSignature,
       blockedPropSignature: blockedPropSignature,
       dateGridPropSignature: dateGridPropSignature,
+      selectionSchemePropSignature: selectionSchemePropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false

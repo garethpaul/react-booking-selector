@@ -463,6 +463,7 @@ type StateType = {
   selectionPropSignature: string,
   blockedPropSignature: string,
   dateGridPropSignature: string,
+  selectionSchemePropSignature: SelectionSchemeType,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
   isTouchDragging: boolean,
@@ -474,6 +475,7 @@ type DerivedStateType = {
   selectionPropSignature: string,
   blockedPropSignature: string,
   dateGridPropSignature: string,
+  selectionSchemePropSignature: SelectionSchemeType,
   selectionType: null,
   selectionStart: null,
   isTouchDragging: boolean,
@@ -523,12 +525,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     const dateGridPropSignature = getDateGridSignature(this.props)
+    const selectionSchemePropSignature = this.props.selectionScheme
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
       blockedPropSignature,
       dateGridPropSignature,
+      selectionSchemePropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,
@@ -557,10 +561,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionPropSignature = getDateMinuteSetSignature(props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
+    const selectionSchemePropSignature = props.selectionScheme
     if (
       selectionPropSignature === state.selectionPropSignature &&
       blockedPropSignature === state.blockedPropSignature &&
-      dateGridPropSignature === state.dateGridPropSignature
+      dateGridPropSignature === state.dateGridPropSignature &&
+      selectionSchemePropSignature === state.selectionSchemePropSignature
     ) {
       return null
     }
@@ -572,6 +578,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionPropSignature,
       blockedPropSignature,
       dateGridPropSignature,
+      selectionSchemePropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,

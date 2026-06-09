@@ -139,7 +139,7 @@ value while preserving the order of distinct selected slots.
 
 **type**: `'square' | 'linear'`
 
-**description**: Drag-selection behavior. `square` selects a block with the start and end cells at opposite corners. `linear` selects all slots chronologically between the start and end cells.
+**description**: Drag-selection behavior. `square` selects a block with the start and end cells at opposite corners. `linear` selects all slots chronologically between the start and end cells. Changing the scheme during an active drag cancels that draft.
 
 **required**: no
 
