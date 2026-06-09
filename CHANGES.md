@@ -31,6 +31,8 @@
   events in an active touch drag.
 - Avoided redundant touch drag cleanup state writes after touch streams are
   already idle.
+- Rejected decoded null-byte docs smoke server paths with `400 Bad request`
+  instead of letting invalid filesystem paths throw.
 
 ## 2026-06-08
 

@@ -68,6 +68,10 @@ const createDocsServer = () =>
       sendResponse(response, 400, 'Bad request')
       return
     }
+    if (pathname.includes('\0')) {
+      sendResponse(response, 400, 'Bad request')
+      return
+    }
     const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '')
     const filePath = path.resolve(docsRoot, relativePath)
 

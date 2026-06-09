@@ -187,4 +187,17 @@ describe('smoke-docs script', () => {
 
     expect(output).toContain('Docs smoke passed. Screenshots:')
   })
+
+  it('handles decoded null bytes in docs server request paths', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, {
+      FAKE_CHROME_EXPECT_STATUS: '400',
+      FAKE_CHROME_REQUEST_PATH: '/%00',
+    })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
+  })
 })
