@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Tightened `docs:check` so README cannot duplicate canonical `docs/plans`
+  links.
 - Hardened date range helpers so malformed arguments return `false` instead of
   throwing or being coerced into valid boundaries.
 - Required `startDate` to be a valid `Date` object before using it as the grid

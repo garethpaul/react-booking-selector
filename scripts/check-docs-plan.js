@@ -18,6 +18,10 @@ const planPaths = fs.existsSync(planDir)
       .map((name) => path.join(planDir, name))
   : []
 const readmePlanReferences = Array.from(readme.matchAll(/docs\/plans\/[-\w.]+\.md/gu), (match) => match[0]).sort()
+const readmePlanReferenceCounts = readmePlanReferences.reduce(
+  (counts, planPath) => counts.set(planPath, (counts.get(planPath) ?? 0) + 1),
+  new Map(),
+)
 
 const isLeapYear = (year) => year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
 
@@ -68,6 +72,12 @@ for (const planPath of planPaths) {
 for (const readmePlanReference of readmePlanReferences) {
   if (!planPaths.includes(readmePlanReference)) {
     errors.push(`README.md references missing plan ${readmePlanReference}`)
+  }
+}
+
+for (const [readmePlanReference, referenceCount] of readmePlanReferenceCounts) {
+  if (referenceCount > 1) {
+    errors.push(`README.md must reference ${readmePlanReference} once, found ${referenceCount}`)
   }
 }
 

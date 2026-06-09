@@ -174,4 +174,16 @@ describe('check-docs-plan script', () => {
 
     expect(stderr).toContain(`README.md references missing plan ${missingPlanPath}`)
   })
+
+  it('reports duplicate README docs plan references', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeReadme(projectPath, [baselinePlanPath, baselinePlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`README.md must reference ${baselinePlanPath} once, found 2`)
+  })
 })
