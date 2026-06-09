@@ -121,8 +121,16 @@ const getDateListSignature = (dates: DateListType): string => normalizeSelection
 const getStartDate = (startDate: ?Date): Date =>
   startDate instanceof Date && isValid(startDate) ? startDate : new Date()
 
+const getNumberSignaturePart = (value: mixed): string =>
+  typeof value === 'number' ? `number:${value}` : `invalid:${typeof value}`
+
 const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
-  [dateMinuteKey(startOfDay(getStartDate(startDate))), numDays, minTime, maxTime].join('|')
+  [
+    dateMinuteKey(startOfDay(getStartDate(startDate))),
+    getNumberSignaturePart(numDays),
+    getNumberSignaturePart(minTime),
+    getNumberSignaturePart(maxTime),
+  ].join('|')
 
 const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
 

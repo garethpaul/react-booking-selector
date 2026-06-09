@@ -6,6 +6,8 @@
   throwing or being coerced into valid boundaries.
 - Required `startDate` to be a valid `Date` object before using it as the grid
   origin.
+- Avoided raw coercion of malformed grid range props while computing internal
+  update signatures.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

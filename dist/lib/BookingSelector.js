@@ -76,12 +76,15 @@ var getDateListSignature = function getDateListSignature(dates) {
 var getStartDate = function getStartDate(startDate) {
   return startDate instanceof Date && (0, _isValid.isValid)(startDate) ? startDate : new Date();
 };
+var getNumberSignaturePart = function getNumberSignaturePart(value) {
+  return typeof value === 'number' ? "number:" + value : "invalid:" + typeof value;
+};
 var getDateGridSignature = function getDateGridSignature(_ref) {
   var startDate = _ref.startDate,
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
-  return [dateMinuteKey((0, _startOfDay.startOfDay)(getStartDate(startDate))), numDays, minTime, maxTime].join('|');
+  return [dateMinuteKey((0, _startOfDay.startOfDay)(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)].join('|');
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;

@@ -1828,6 +1828,23 @@ describe('prop updates', () => {
     expect(rendered.container).not.toHaveTextContent('8.5 am')
   })
 
+  it('renders no date cells when range props are malformed', () => {
+    const throwingValue = {
+      toString() {
+        throw new Error('Unexpected coercion')
+      },
+    }
+    const rendered = renderSelector({
+      startDate,
+      numDays: Symbol('days'),
+      minTime: throwingValue,
+      maxTime: throwingValue,
+    })
+
+    expect(rendered.instance.dates).toEqual([])
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(0)
+  })
+
   it('uses the current day when startDate is omitted', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()
