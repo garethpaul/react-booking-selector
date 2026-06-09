@@ -85,4 +85,26 @@ describe('check-docs-plan script', () => {
     expect(stderr).toContain(`${baselinePlanPath} must record make check`)
     expect(stderr).toContain('Makefile must expose corepack yarn verify')
   })
+
+  it('reports when no completed plan markdown files exist', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain('docs/plans must contain completed plan markdown files')
+    expect(stderr).toContain(`${baselinePlanPath} is missing`)
+  })
+
+  it('reports when the canonical baseline plan is missing', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, path.join('docs', 'plans', '2026-06-08-extra-plan.md'), completedPlan('Extra Plan'))
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`${baselinePlanPath} is missing`)
+  })
 })
