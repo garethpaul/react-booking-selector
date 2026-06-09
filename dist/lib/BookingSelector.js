@@ -755,13 +755,14 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       blocked = false;
     }
     var key = event && typeof event.key === 'string' ? event.key : '';
+    var validTime = getValidDate(time);
     if (isKeyboardNavigationKey(key)) {
-      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, key, this.blockedMinuteKeys);
+      if (!validTime) return;
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), validTime, key, this.blockedMinuteKeys);
       preventDefault(event);
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
     }
-    var validTime = getValidDate(time);
     if (blocked || !validTime || !isKeyboardSelectionKey(key)) return;
     preventDefault(event);
     var timeSelected = this.isSelected(validTime);

@@ -3132,6 +3132,17 @@ describe('keyboard interaction', () => {
     expect(instance.state.selectionType).toBe(null)
   })
 
+  it('ignores keyboard navigation events for malformed times', () => {
+    const preventDefault = jest.fn()
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(() => {
+      instance.handleCellKeyDownEvent({ key: 'ArrowRight', preventDefault }, { getTime: true })
+      instance.handleCellKeyDownEvent({ key: 'ArrowDown', preventDefault }, new Date(NaN))
+    }).not.toThrow()
+    expect(preventDefault).not.toHaveBeenCalled()
+  })
+
   it('reports when an unblocked focus target is not registered', () => {
     const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

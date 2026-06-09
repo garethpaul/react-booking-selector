@@ -936,13 +936,15 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return true
   }
 
-  handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: Date, blocked: boolean = false) {
+  handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: mixed, blocked: boolean = false) {
     const key = event && typeof event.key === 'string' ? event.key : ''
+    const validTime = getValidDate(time)
 
     if (isKeyboardNavigationKey(key)) {
+      if (!validTime) return
       const navigationTarget = getKeyboardNavigationTarget(
         buildDateColumns(this.props),
-        time,
+        validTime,
         key,
         this.blockedMinuteKeys,
       )
@@ -951,7 +953,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
-    const validTime = getValidDate(time)
     if (blocked || !validTime || !isKeyboardSelectionKey(key)) return
     preventDefault(event)
     const timeSelected = this.isSelected(validTime)
