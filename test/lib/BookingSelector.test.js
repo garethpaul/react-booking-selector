@@ -1967,12 +1967,13 @@ describe('prop updates', () => {
         slots: [
           { hour: 9, time: mondayNine },
           undefined,
+          { hour: 10, time: new Date(NaN) },
           { hour: 11, time: 'not-a-date' },
           { hour: 12, time: mondayNoon },
         ],
       },
       { day: addDays(startDate, 1), slots: null },
-      { day: addDays(startDate, 2), slots: [undefined] },
+      { day: addDays(startDate, 2), slots: [{ hour: 9, time: new Date(NaN) }] },
       { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
     ]
 

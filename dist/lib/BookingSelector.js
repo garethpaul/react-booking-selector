@@ -188,7 +188,7 @@ var getDateColumnSlots = function getDateColumnSlots(dateColumn) {
   return dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : [];
 };
 var getDateSlotTime = function getDateSlotTime(dateSlot) {
-  return dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null;
+  return dateSlot ? getValidDate(dateSlot.time) : null;
 };
 var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
   var targetKey = getDateKey(time);

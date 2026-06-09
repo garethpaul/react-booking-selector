@@ -241,8 +241,7 @@ const formatDateHeader = (time: Date, dateFormat: string): string => {
 const getDateColumnSlots = (dateColumn: ?DateColumnType): Array<DateSlotType> =>
   dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : []
 
-const getDateSlotTime = (dateSlot: ?DateSlotType): ?Date =>
-  dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null
+const getDateSlotTime = (dateSlot: ?DateSlotType): ?Date => (dateSlot ? getValidDate(dateSlot.time) : null)
 
 const findDateSlotPosition = (dateColumns: Array<DateColumnType>, time: Date): ?DateSlotPositionType => {
   const targetKey = getDateKey(time)
