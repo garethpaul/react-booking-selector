@@ -47,6 +47,10 @@ const expectedDomSnippets = [
   'aria-label="Booking time slots"',
   'aria-label="Available Monday, April 6, 2020 at 8 am"',
   'aria-label="Blocked Wednesday, April 8, 2020 at 10 am"',
+  'aria-label="GitHub repository, opens in a new tab"',
+  'href="https://github.com/garethpaul/react-booking-selector"',
+  'rel="noopener noreferrer"',
+  'target="_blank"',
   '0 selected - 3 blocked',
 ]
 const chromeTimeoutMs = 30000

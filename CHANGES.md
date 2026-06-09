@@ -35,6 +35,8 @@
   instead of letting invalid filesystem paths throw.
 - Kept the docs GitHub link focus outline visible in browsers without
   `:focus-visible` support.
+- Asserted the safe external GitHub link in the production docs smoke DOM
+  checks.
 
 ## 2026-06-08
 

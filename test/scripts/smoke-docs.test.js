@@ -110,7 +110,9 @@ if (args.includes('--dump-dom')) {
         '<p id="booking-selector-demo-status" role="status">0 selected - 3 blocked</p>' +
         '<div role="group" aria-describedby="booking-selector-demo-status" aria-label="Booking time slots">' +
         buttons +
-        '</div></main></body></html>',
+        '</div>' +
+        '<a aria-label="GitHub repository, opens in a new tab" href="https://github.com/garethpaul/react-booking-selector" rel="noopener noreferrer" target="_blank">GitHub</a>' +
+        '</main></body></html>',
     )
     process.exit(0)
   })
