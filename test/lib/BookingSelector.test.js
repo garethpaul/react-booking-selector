@@ -147,6 +147,7 @@ it('endSelection calls the onChange prop and resets selection state', async () =
   expect(setStateSpy).toHaveBeenCalledWith({
     selectionType: null,
     selectionStart: null,
+    isTouchDragging: false,
   })
 
   setStateSpy.mockRestore()
@@ -449,6 +450,36 @@ describe('touch handlers', () => {
     await waitFor(() => {
       expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
     })
+  })
+
+  it('queues touch drag cleanup before calling onChange', () => {
+    const changeSpy = jest.fn()
+    const { container, instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
+    const setStateSpy = jest.spyOn(instance, 'setState')
+    document.elementFromPoint.mockReturnValue(secondCell)
+
+    fireEvent.touchStart(firstCell)
+    fireEvent.touchMove(firstCell, mockEvent)
+    fireEvent.touchEnd(firstCell)
+
+    expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    expect(setStateSpy.mock.invocationCallOrder[setStateSpy.mock.invocationCallOrder.length - 1]).toBeLessThan(
+      changeSpy.mock.invocationCallOrder[0],
+    )
+    expect(setStateSpy).toHaveBeenLastCalledWith({
+      selectionType: null,
+      selectionStart: null,
+      isTouchDragging: false,
+    })
+
+    setStateSpy.mockRestore()
   })
 
   it('selects the start cell when a touch drag ends before entering another cell', async () => {

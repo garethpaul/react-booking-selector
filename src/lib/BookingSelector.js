@@ -651,6 +651,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.setState({
       selectionType: null,
       selectionStart: null,
+      isTouchDragging: false,
     })
     if (nextSelection) {
       this.props.onChange(nextSelection)
@@ -785,7 +786,6 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     } else {
       this.endSelection()
     }
-    this.setState({ isTouchDragging: false })
   }
 
   handleTouchCancelEvent() {

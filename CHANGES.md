@@ -85,5 +85,6 @@
 - Added package-manager metadata so Corepack uses the intended Yarn release.
 - Exposed the docs demo selection count as an atomic live status region.
 - Queued selection cleanup before firing `onChange` so parent callbacks can unmount safely.
+- Queued touch-drag cleanup before firing `onChange` so parent callbacks can unmount safely.
 - Added React StrictMode coverage for date-cell lookup and touch-listener cleanup.
 - Added docs-plan checker coverage for empty plan directories and missing baseline plans.

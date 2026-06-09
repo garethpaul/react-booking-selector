@@ -530,7 +530,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var nextSelection = this.state.selectionType !== null ? normalizeDates(this.state.selectionDraft) : null;
     this.setState({
       selectionType: null,
-      selectionStart: null
+      selectionStart: null,
+      isTouchDragging: false
     });
     if (nextSelection) {
       this.props.onChange(nextSelection);
@@ -663,9 +664,6 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     } else {
       this.endSelection();
     }
-    this.setState({
-      isTouchDragging: false
-    });
   };
   _proto.handleTouchCancelEvent = function handleTouchCancelEvent() {
     this.recordTouchEvent();
