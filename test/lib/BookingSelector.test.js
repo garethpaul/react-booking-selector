@@ -416,6 +416,65 @@ describe('mouse handlers', () => {
     expect(instance.state.selectionStart).toBe(null)
   })
 
+  it('ignores malformed mouse enter endpoints', async () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: selected,
+      selectionBase: [],
+      selectionDraft: [],
+    })
+    const updateDraftSpy = jest.spyOn(instance, 'updateAvailabilityDraft')
+
+    instance.handleMouseEnterEvent(new Date(NaN))
+
+    expect(updateDraftSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionDraft).toEqual([])
+    updateDraftSpy.mockRestore()
+  })
+
+  it('finalizes the start cell when mouseup has a malformed endpoint', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const emptyDraft = []
+    const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: selected,
+      selectionBase: emptyDraft,
+      selectionDraft: emptyDraft,
+    })
+    await act(async () => {
+      instance.handleMouseUpEvent(new Date(NaN))
+    })
+
+    expect(changeSpy).toHaveBeenCalledWith([selected])
+    expect(instance.state.selectionType).toBe(null)
+  })
+
+  it('ends an updated draft when mouseup has a malformed endpoint', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const added = addHours(startOfDay(startDate), 10)
+    const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: selected,
+      selectionBase: [],
+      selectionDraft: [selected, added],
+    })
+    await act(async () => {
+      instance.handleMouseUpEvent(new Date(NaN))
+    })
+
+    expect(changeSpy).toHaveBeenCalledWith([selected, added])
+    expect(instance.state.selectionType).toBe(null)
+  })
+
   it('finishes incomplete active mouse selections when no draft update can run', async () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
@@ -1012,6 +1071,25 @@ describe('updateAvailabilityDraft', () => {
     expect(instance.state.selectionDraft).toEqual([start])
   })
 
+  it('ignores malformed draft endpoints without changing the visible draft', async () => {
+    const callback = jest.fn()
+    const selected = addHours(startDate, 5)
+    const { instance } = renderSelector()
+
+    await setStateAsync(instance, {
+      selectionDraft: [selected],
+      selectionType: 'add',
+      selectionStart: selected,
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(new Date(NaN), callback)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([selected])
+    expect(callback).toHaveBeenCalled()
+  })
+
   it('keeps blocked cells out of selection drafts', async () => {
     const start = addHours(startDate, 5)
     const blocked = addHours(start, 1)
@@ -1058,6 +1136,26 @@ describe('updateAvailabilityDraft', () => {
     })
 
     expect(instance.state.selectionDraft).toEqual([available])
+  })
+
+  it('removes malformed values from the selection base before building a draft', async () => {
+    const existing = addHours(startOfDay(startDate), 9)
+    const added = addHours(startOfDay(startDate), 10)
+    const existingSameMinute = new Date(existing.getTime() + 30000)
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+
+    await setStateAsync(instance, {
+      selectionDraft: [existing],
+      selectionType: 'add',
+      selectionStart: added,
+      selectionBase: [{ getTime: true }, new Date(NaN), existing, existingSameMinute],
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(added)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([existing, added])
   })
 
   it('removes duplicate values from the selection base before removing dates', async () => {

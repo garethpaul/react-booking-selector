@@ -648,17 +648,19 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var _this$state = this.state,
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
-    if (selectionType === null || selectionStart === null) {
+    var validSelectionStart = getValidDate(selectionStart);
+    var validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd);
+    if (selectionType === null || !validSelectionStart || selectionEnd != null && !validSelectionEnd) {
       if (callback) callback();
       return;
     }
     var selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)];
-    var availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(function (time) {
+    var availableSelection = selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates).filter(function (time) {
       return !_this3.isBlocked(time);
     });
-    var nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter(function (time) {
+    var nextDraft = normalizeSelectionDraft(this.state.selectionBase).filter(function (time) {
       return !_this3.isBlocked(time);
-    }));
+    });
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
     } else {
@@ -708,16 +710,27 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.handleMouseEnterEvent = function handleMouseEnterEvent(time) {
     if (this.shouldIgnoreMouseEvent()) return;
+    var validTime = getValidDate(time);
+    if (!validTime) return;
 
     // Need to update selection draft on mouseup as well in order to catch the cases
     // where the user just clicks on a single cell (because no mouseenter events fire
     // in this scenario)
-    this.updateAvailabilityDraft(time);
+    this.updateAvailabilityDraft(validTime);
   };
   _proto.handleMouseUpEvent = function handleMouseUpEvent(time, event) {
     if (!isPrimaryMouseButton(event)) return;
     if (this.shouldIgnoreMouseEvent()) return;
-    this.updateAvailabilityDraft(time, this.endSelection);
+    var validTime = getValidDate(time);
+    if (!validTime) {
+      if (this.state.selectionDraft === this.state.selectionBase) {
+        this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
+      } else {
+        this.endSelection();
+      }
+      return;
+    }
+    this.updateAvailabilityDraft(validTime, this.endSelection);
   };
   _proto.focusDateCell = function focusDateCell(time) {
     if (this.isBlocked(time)) return false;

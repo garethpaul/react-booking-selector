@@ -830,17 +830,19 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   // Given an ending Date, determines all the dates that should be selected in this draft
   updateAvailabilityDraft(selectionEnd: ?Date, callback?: () => void) {
     const { selectionType, selectionStart } = this.state
+    const validSelectionStart = getValidDate(selectionStart)
+    const validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd)
 
-    if (selectionType === null || selectionStart === null) {
+    if (selectionType === null || !validSelectionStart || (selectionEnd != null && !validSelectionEnd)) {
       if (callback) callback()
       return
     }
 
     const selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)]
-    const availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(
+    const availableSelection = selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates).filter(
       (time) => !this.isBlocked(time),
     )
-    let nextDraft = uniqueDatesByMinute(this.state.selectionBase.filter((time) => !this.isBlocked(time)))
+    let nextDraft = normalizeSelectionDraft(this.state.selectionBase).filter((time) => !this.isBlocked(time))
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
     } else {
@@ -886,19 +888,30 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.handleSelectionStartEvent(time)
   }
 
-  handleMouseEnterEvent(time: Date) {
+  handleMouseEnterEvent(time: mixed) {
     if (this.shouldIgnoreMouseEvent()) return
+    const validTime = getValidDate(time)
+    if (!validTime) return
 
     // Need to update selection draft on mouseup as well in order to catch the cases
     // where the user just clicks on a single cell (because no mouseenter events fire
     // in this scenario)
-    this.updateAvailabilityDraft(time)
+    this.updateAvailabilityDraft(validTime)
   }
 
-  handleMouseUpEvent(time: Date, event?: MouseSelectionEventType) {
+  handleMouseUpEvent(time: mixed, event?: MouseSelectionEventType) {
     if (!isPrimaryMouseButton(event)) return
     if (this.shouldIgnoreMouseEvent()) return
-    this.updateAvailabilityDraft(time, this.endSelection)
+    const validTime = getValidDate(time)
+    if (!validTime) {
+      if (this.state.selectionDraft === this.state.selectionBase) {
+        this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection)
+      } else {
+        this.endSelection()
+      }
+      return
+    }
+    this.updateAvailabilityDraft(validTime, this.endSelection)
   }
 
   focusDateCell(time: Date): boolean {
