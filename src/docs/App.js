@@ -118,7 +118,7 @@ export class App extends React.Component<{}, StateType> {
         <MainDiv>
           <IntroText>
             <h1>React Booking Selector</h1>
-            <StatusText aria-live="polite">
+            <StatusText aria-atomic="true" aria-live="polite" role="status">
               {selectedCount} selected - {blockedCount} blocked
             </StatusText>
           </IntroText>

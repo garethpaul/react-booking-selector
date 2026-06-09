@@ -13,13 +13,18 @@ it('renders the GitHub link as a safe external link', () => {
 })
 
 it('updates the visible selection count when the demo grid changes', async () => {
-  const { getByRole, getByText } = render(React.createElement(App))
+  const { getByRole } = render(React.createElement(App))
+  const status = getByRole('status')
   const firstSlot = getByRole('button', { name: 'Available Monday, April 6, 2020 at 8 am' })
+
+  expect(status).toHaveTextContent('0 selected - 3 blocked')
+  expect(status).toHaveAttribute('aria-atomic', 'true')
+  expect(status).toHaveAttribute('aria-live', 'polite')
 
   fireEvent.mouseDown(firstSlot)
   fireEvent.mouseUp(firstSlot)
 
   await waitFor(() => {
-    expect(getByText('1 selected - 3 blocked')).toBeInTheDocument()
+    expect(status).toHaveTextContent('1 selected - 3 blocked')
   })
 })
