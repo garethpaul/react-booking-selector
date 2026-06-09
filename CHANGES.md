@@ -15,6 +15,7 @@
   corrupt grid interaction state.
 - Tightened docs smoke timeout handling so a stuck browser process is terminated
   before the script exits.
+- Added regression coverage for in-place `blocked` prop array updates.
 
 ## 2026-06-08
 

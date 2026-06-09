@@ -1409,6 +1409,17 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionDraft).toEqual([startDate])
   })
 
+  it('detects blocked prop updates when the array is mutated in place', () => {
+    const blocked = []
+    const blockedSlot = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({ blocked, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    blocked.push(blockedSlot)
+    rendered.rerenderWithProps({ blocked, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })).toBeDisabled()
+  })
+
   it('keeps the visible draft when unchanged selection props rerender', () => {
     const selection = []
     const rendered = renderSelector({ selection, startDate, numDays: 1, minTime: 9, maxTime: 9 })
