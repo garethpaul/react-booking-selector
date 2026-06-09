@@ -2449,6 +2449,32 @@ describe('prop updates', () => {
     expect(rendered.instance.selectedMinuteKeys).toEqual(new Set([Math.floor(selected.getTime() / 60000)]))
   })
 
+  it('checks selected minute keys with captured floor math when globals change later', () => {
+    const originalFloor = Math.floor
+    const selected = addHours(startOfDay(startDate), 9)
+    const sameMinute = new Date(selected.getTime() + 30000)
+    const rendered = renderSelector({ selection: [selected], startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    let selectedResult
+    let selectedError
+
+    try {
+      Math.floor = () => {
+        throw new Error('Unexpected Math.floor call')
+      }
+
+      try {
+        selectedResult = rendered.instance.isSelected(sameMinute)
+      } catch (error) {
+        selectedError = error
+      }
+    } finally {
+      Math.floor = originalFloor
+    }
+
+    expect(selectedError).toBeUndefined()
+    expect(selectedResult).toBe(true)
+  })
+
   it('cancels active selections when grid range props change', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
@@ -2991,6 +3017,31 @@ describe('prop updates', () => {
       })
     } finally {
       Number.isFinite = originalIsFinite
+    }
+
+    expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([
+      [new Date(2032, 4, 15), new Date(2032, 4, 15, 9)],
+      [new Date(2032, 4, 16), new Date(2032, 4, 16, 9)],
+    ])
+  })
+
+  it('builds date grids with captured floor math when globals change later', () => {
+    const originalFloor = Math.floor
+    let dateColumns
+
+    try {
+      Math.floor = () => {
+        throw new Error('Unexpected Math.floor call')
+      }
+
+      dateColumns = buildDateColumns({
+        startDate: new Date(2032, 4, 15, 12),
+        numDays: 2,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      Math.floor = originalFloor
     }
 
     expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([

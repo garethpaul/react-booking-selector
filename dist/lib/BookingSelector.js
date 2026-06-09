@@ -63,6 +63,7 @@ var arrayMap = Array.prototype.map;
 var arraySort = Array.prototype.sort;
 var isArray = ArrayConstructor.isArray;
 var numberIsFinite = Number.isFinite;
+var mathFloor = Math.floor;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
     if (typeof Date.now === 'function') {
@@ -115,7 +116,7 @@ var normalizeDates = function normalizeDates(dates) {
   });
 };
 var dateMinuteKey = function dateMinuteKey(value) {
-  return Math.floor(dateGetTime.call(value) / 60000);
+  return mathFloor(dateGetTime.call(value) / 60000);
 };
 var getValidDate = function getValidDate(value) {
   return getDateTimestamp(value) == null ? null : value;
@@ -180,7 +181,7 @@ var getDateGridSignature = function getDateGridSignature(_ref) {
   return arrayJoin.call([dateMinuteKey(startOfDayDate(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)], '|');
 };
 var isWholeNumber = function isWholeNumber(value) {
-  return numberIsFinite(value) && Math.floor(value) === value;
+  return numberIsFinite(value) && mathFloor(value) === value;
 };
 var getVisibleHours = function getVisibleHours(minTime, maxTime) {
   if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {

@@ -120,6 +120,7 @@ const arrayMap = Array.prototype.map
 const arraySort = Array.prototype.sort
 const isArray = ArrayConstructor.isArray
 const numberIsFinite = Number.isFinite
+const mathFloor = Math.floor
 
 const getCurrentTimestamp = (): number => {
   try {
@@ -177,7 +178,7 @@ const normalizeDates = (dates: DateListType): Array<Date> => {
   return arrayFilter.call(arrayMap.call(dateValues, toDate), (date) => getDateTimestamp(date) != null)
 }
 
-const dateMinuteKey = (value: Date): number => Math.floor(dateGetTime.call(value) / 60000)
+const dateMinuteKey = (value: Date): number => mathFloor(dateGetTime.call(value) / 60000)
 
 const getValidDate = (value: mixed): ?Date => (getDateTimestamp(value) == null ? null : (value: any))
 
@@ -249,7 +250,7 @@ const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGrid
     '|',
   )
 
-const isWholeNumber = (value: number): boolean => numberIsFinite(value) && Math.floor(value) === value
+const isWholeNumber = (value: number): boolean => numberIsFinite(value) && mathFloor(value) === value
 
 const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
   if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {
