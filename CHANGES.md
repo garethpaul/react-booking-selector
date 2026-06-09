@@ -66,6 +66,7 @@
   unexpected, or forbidden published files.
 - Split ESLint globals by source, script, and test targets so environment-only
   globals do not leak across file types.
+- Added `eslint.config.js` itself to the warning-free lint gate.
 
 ## 2026-06-08
 

@@ -82,7 +82,7 @@
     "clean:docs": "rm -rf dist/docs",
     "clean:lib": "rm -rf dist/lib dist/esm",
     "build": "yarn lib:build && yarn docs:build",
-    "lint": "eslint \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\" \"scripts/**/*.js\" setupTests.js --max-warnings=0",
+    "lint": "eslint \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\" \"scripts/**/*.js\" setupTests.js eslint.config.js --max-warnings=0",
     "types:check": "yarn lib:build && tsc --noEmit --skipLibCheck --jsx react test/types/index.tsx && tsc --noEmit --skipLibCheck --module NodeNext --moduleResolution NodeNext test/types/esm.mts && tsc --noEmit --skipLibCheck --module NodeNext --moduleResolution NodeNext test/types/cjs.cts",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,mts,cts,html}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx,mts,cts}\" \"scripts/**/*.js\" \"docs/plans/**/*.md\" \".vscode/**/*.json\" \".babelrc\" \"*.{js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,mts,cts,html}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx,mts,cts}\" \"scripts/**/*.js\" \"docs/plans/**/*.md\" \".vscode/**/*.json\" \".babelrc\" \"*.{js,json,md}\"",

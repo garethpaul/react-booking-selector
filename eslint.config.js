@@ -73,7 +73,7 @@ const rules = {
   'import/no-extraneous-dependencies': [
     'error',
     {
-      devDependencies: ['src/docs/**', 'test/**', 'setupTests.js'],
+      devDependencies: ['eslint.config.js', 'src/docs/**', 'test/**', 'setupTests.js'],
     },
   ],
   'import/prefer-default-export': 'off',
@@ -118,6 +118,7 @@ module.exports = [
   prettier,
   createConfig(['src/**/*.{js,jsx}'], domGlobals),
   createConfig(['scripts/**/*.js'], nodeGlobals),
+  createConfig(['eslint.config.js'], nodeGlobals),
   createConfig(['test/**/*.{js,jsx}', 'setupTests.js'], {
     ...domGlobals,
     ...nodeGlobals,
