@@ -502,7 +502,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.refreshInstanceLookups = function refreshInstanceLookups(props, selectionDraft) {
     this.dates = buildDates(props);
     this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
-    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey));
+    this.selectedMinuteKeys = getDateMinuteKeySet(selectionDraft);
   };
   _proto.clearDateCellLookup = function clearDateCellLookup(dateCell) {
     var _this2 = this;
@@ -813,7 +813,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var _this6 = this;
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
-    var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
+    var selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft);
     var gridAriaDescribedBy = this.props['aria-describedby'];
     var gridAriaLabelledBy = this.props['aria-labelledby'];
     var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;

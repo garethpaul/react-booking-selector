@@ -689,7 +689,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   refreshInstanceLookups(props: PropsType, selectionDraft: Array<Date>) {
     this.dates = buildDates(props)
     this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked)
-    this.selectedMinuteKeys = new Set(selectionDraft.map(dateMinuteKey))
+    this.selectedMinuteKeys = getDateMinuteKeySet(selectionDraft)
   }
 
   clearDateCellLookup(dateCell: HTMLElement) {
@@ -1133,7 +1133,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   render(): React.Element<*> {
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
-    const selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
+    const selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft)
     const gridAriaDescribedBy = this.props['aria-describedby']
     const gridAriaLabelledBy = this.props['aria-labelledby']
     const gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel

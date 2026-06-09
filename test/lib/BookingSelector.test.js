@@ -1790,6 +1790,21 @@ describe('prop updates', () => {
     })
   })
 
+  it('ignores malformed selection draft entries during render and lookup refresh', async () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    await setStateAsync(rendered.instance, {
+      selectionDraft: [{ getTime: true }, new Date(NaN), selected],
+    })
+
+    expect(rendered.getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(rendered.instance.selectedMinuteKeys).toEqual(new Set([Math.floor(selected.getTime() / 60000)]))
+  })
+
   it('cancels active selections when grid range props change', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
