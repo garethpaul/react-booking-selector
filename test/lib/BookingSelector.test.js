@@ -1433,6 +1433,39 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionBase).toEqual([selectedOne, selectedTwo])
   })
 
+  it('updates idle selection drafts when controlled selection values change inside the same minute', async () => {
+    const changeSpy = jest.fn()
+    const firstSelectedValue = addHours(startOfDay(startDate), 9)
+    const nextSelectedValue = new Date(firstSelectedValue.getTime() + 30000)
+    const added = addHours(startOfDay(startDate), 10)
+    const rendered = renderSelector({
+      onChange: changeSpy,
+      selection: [firstSelectedValue],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [nextSelectedValue],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([nextSelectedValue])
+    expect(rendered.instance.state.selectionBase).toEqual([nextSelectedValue])
+
+    clickCell(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' }))
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([nextSelectedValue, added])
+    })
+  })
+
   it('cancels active selections when grid range props change', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)

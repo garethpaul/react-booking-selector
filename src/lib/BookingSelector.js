@@ -116,8 +116,7 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
 
 const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDatesByMinute(normalizeDates(dates))
 
-const getDateMinuteListSignature = (dates: DateListType): string =>
-  normalizeSelectionDraft(dates).map(dateMinuteKey).join('|')
+const getDateListSignature = (dates: DateListType): string => normalizeSelectionDraft(dates).map(dateKey).join('|')
 
 const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
 
@@ -482,7 +481,7 @@ type StateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
   selectionPropSignature: string,
-  selectionPropOrderSignature: string,
+  selectionPropListSignature: string,
   blockedPropSignature: string,
   dateGridPropSignature: string,
   selectionSchemePropSignature: SelectionSchemeType,
@@ -495,7 +494,7 @@ type DerivedStateType = {
   selectionDraft: Array<Date>,
   selectionBase: Array<Date>,
   selectionPropSignature: string,
-  selectionPropOrderSignature: string,
+  selectionPropListSignature: string,
   blockedPropSignature: string,
   dateGridPropSignature: string,
   selectionSchemePropSignature: SelectionSchemeType,
@@ -546,7 +545,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
-    const selectionPropOrderSignature = getDateMinuteListSignature(this.props.selection)
+    const selectionPropListSignature = getDateListSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     const dateGridPropSignature = getDateGridSignature(this.props)
     const selectionSchemePropSignature = this.props.selectionScheme
@@ -554,7 +553,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
-      selectionPropOrderSignature,
+      selectionPropListSignature,
       blockedPropSignature,
       dateGridPropSignature,
       selectionSchemePropSignature,
@@ -584,14 +583,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
     const selectionPropSignature = getDateMinuteSetSignature(props.selection)
-    const selectionPropOrderSignature = getDateMinuteListSignature(props.selection)
+    const selectionPropListSignature = getDateListSignature(props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
     const selectionSchemePropSignature = props.selectionScheme
     const selectionIsActive = state.selectionType !== null || state.selectionStart !== null || state.isTouchDragging
     if (
       selectionPropSignature === state.selectionPropSignature &&
-      (selectionPropOrderSignature === state.selectionPropOrderSignature || selectionIsActive) &&
+      (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) &&
       blockedPropSignature === state.blockedPropSignature &&
       dateGridPropSignature === state.dateGridPropSignature &&
       selectionSchemePropSignature === state.selectionSchemePropSignature
@@ -604,7 +603,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
-      selectionPropOrderSignature,
+      selectionPropListSignature,
       blockedPropSignature,
       dateGridPropSignature,
       selectionSchemePropSignature,
