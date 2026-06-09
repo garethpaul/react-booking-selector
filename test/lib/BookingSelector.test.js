@@ -261,6 +261,26 @@ it('endSelection clears partially dangling idle state without calling onChange',
   expect(changeSpy).not.toHaveBeenCalled()
 })
 
+it('endSelection clears malformed active selection types without calling onChange', async () => {
+  const changeSpy = jest.fn()
+  const selected = addHours(startOfDay(startDate), 9)
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, {
+    selectionDraft: [selected],
+    selectionType: 'toggle',
+    selectionStart: selected,
+  })
+
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(instance.state.selectionType).toBe(null)
+  expect(instance.state.selectionStart).toBe(null)
+  expect(changeSpy).not.toHaveBeenCalled()
+})
+
 it('endSelection passes cloned selection dates to onChange', async () => {
   const changeSpy = jest.fn()
   const selected = addHours(startOfDay(startDate), 9)

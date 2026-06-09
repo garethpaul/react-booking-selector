@@ -632,8 +632,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     return null;
   };
   _proto.endSelection = function endSelection() {
-    if (this.state.selectionType === null && this.state.selectionStart === null && !this.state.isTouchDragging) return;
-    var nextSelection = this.state.selectionType !== null ? normalizeSelectionDraft(this.state.selectionDraft) : null;
+    var hasValidSelectionType = this.state.selectionType === 'add' || this.state.selectionType === 'remove';
+    if (!hasValidSelectionType && this.state.selectionStart === null && !this.state.isTouchDragging) return;
+    var nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null;
     this.setState({
       selectionType: null,
       selectionStart: null,
