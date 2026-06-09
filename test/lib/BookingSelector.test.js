@@ -1185,6 +1185,26 @@ describe('componentDidMount', () => {
     expect(instance.touchScrollCells.has(cell)).toBe(false)
   })
 
+  it('treats malformed date cell times as untracked placeholders', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const removeSpy = jest.spyOn(cell, 'removeEventListener')
+    const time = addHours(startOfDay(startDate), 9)
+
+    instance.registerDateCell(cell, time)
+    instance.registerDateCell(cell, { getTime: true })
+    document.elementFromPoint.mockReturnValue(cell)
+
+    expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
+    expect(instance.cellToDate.get(cell)).toBe(null)
+    expect(instance.dateToCell.has(time.getTime())).toBe(false)
+    expect(Array.from(instance.dateToCell.values())).not.toContain(cell)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+    expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+
+    removeSpy.mockRestore()
+  })
+
   it('unregisters date cells even when touchmove listeners cannot be removed', () => {
     const { instance } = renderSelector()
     const cell = { addEventListener: jest.fn(), removeEventListener: true }

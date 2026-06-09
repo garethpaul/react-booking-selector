@@ -40,8 +40,12 @@ var normalizeDates = function normalizeDates(dates) {
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
 };
+var getValidDate = function getValidDate(value) {
+  return value instanceof Date && isValid(value) ? value : null;
+};
 var getDateMinuteKey = function getDateMinuteKey(value) {
-  return value instanceof Date && isValid(value) ? dateMinuteKey(value) : null;
+  var validDate = getValidDate(value);
+  return validDate ? dateMinuteKey(validDate) : null;
 };
 var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
   var key = getDateMinuteKey(time);
@@ -243,7 +247,8 @@ var dateKey = function dateKey(time) {
   return time.getTime();
 };
 var getDateKey = function getDateKey(time) {
-  return time instanceof Date && isValid(time) ? dateKey(time) : null;
+  var validDate = getValidDate(time);
+  return validDate ? dateKey(validDate) : null;
 };
 var TOUCH_MOUSE_SUPPRESSION_MS = 500;
 var Wrapper = styled.div(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  min-width: 0;\n  user-select: none;\n"])));
@@ -530,15 +535,18 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (shouldPreventTouchScroll === void 0) {
       shouldPreventTouchScroll = true;
     }
+    var validTime = getValidDate(time);
     var previousTime = this.cellToDate.get(dateCell);
     if (this.cellToDate.has(dateCell) && previousTime) {
       this.clearDateCellTimeLookup(dateCell, previousTime);
     } else if (this.cellToDate.has(dateCell)) {
       this.clearDateCellLookup(dateCell);
     }
-    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll);
-    this.cellToDate.set(dateCell, time);
-    this.dateToCell.set(dateKey(time), dateCell);
+    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll && validTime != null);
+    this.cellToDate.set(dateCell, validTime);
+    if (validTime) {
+      this.dateToCell.set(dateKey(validTime), dateCell);
+    }
   };
   _proto.unregisterDateCell = function unregisterDateCell(dateCell) {
     var time = this.cellToDate.get(dateCell);

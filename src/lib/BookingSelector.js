@@ -96,8 +96,12 @@ const normalizeDates = (dates: DateListType): Array<Date> =>
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
-const getDateMinuteKey = (value: mixed): ?number =>
-  value instanceof Date && isValid(value) ? dateMinuteKey(value) : null
+const getValidDate = (value: mixed): ?Date => (value instanceof Date && isValid(value) ? value : null)
+
+const getDateMinuteKey = (value: mixed): ?number => {
+  const validDate = getValidDate(value)
+  return validDate ? dateMinuteKey(validDate) : null
+}
 
 const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: mixed): boolean => {
   const key = getDateMinuteKey(time)
@@ -335,7 +339,10 @@ const isPrimaryMouseButton = (event?: MouseSelectionEventType): boolean =>
 
 const dateKey = (time: Date): number => time.getTime()
 
-const getDateKey = (time: mixed): ?number => (time instanceof Date && isValid(time) ? dateKey(time) : null)
+const getDateKey = (time: mixed): ?number => {
+  const validDate = getValidDate(time)
+  return validDate ? dateKey(validDate) : null
+}
 
 const TOUCH_MOUSE_SUPPRESSION_MS = 500
 
@@ -713,16 +720,19 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
   }
 
-  registerDateCell(dateCell: HTMLElement, time: Date, shouldPreventTouchScroll: boolean = true) {
+  registerDateCell(dateCell: HTMLElement, time: mixed, shouldPreventTouchScroll: boolean = true) {
+    const validTime = getValidDate(time)
     const previousTime = this.cellToDate.get(dateCell)
     if (this.cellToDate.has(dateCell) && previousTime) {
       this.clearDateCellTimeLookup(dateCell, previousTime)
     } else if (this.cellToDate.has(dateCell)) {
       this.clearDateCellLookup(dateCell)
     }
-    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll)
-    this.cellToDate.set(dateCell, time)
-    this.dateToCell.set(dateKey(time), dateCell)
+    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll && validTime != null)
+    this.cellToDate.set(dateCell, validTime)
+    if (validTime) {
+      this.dateToCell.set(dateKey(validTime), dateCell)
+    }
   }
 
   unregisterDateCell(dateCell: HTMLElement) {
