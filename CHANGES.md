@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Removed tracked VS Code editor settings from verification inputs and added
+  package-root coverage for the `.vscode/` ignore rule.
 - Pinned the Makefile default goal to `check` so future target reordering cannot
   weaken the repository-standard gate.
 - Added Makefile `lint`, `test`, and `build` wrappers with Jest coverage for

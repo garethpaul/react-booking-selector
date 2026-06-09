@@ -330,3 +330,4 @@ See `docs/plans/2026-06-09-docs-plan-filename-validation.md` for dated docs-plan
 See `docs/plans/2026-06-09-date-utils-malformed-inputs.md` for malformed date utility input handling.
 See `docs/plans/2026-06-09-docs-plan-path-normalization.md` for cross-platform docs-plan path validation.
 See `docs/plans/2026-06-09-make-gate-wrapper-aliases.md` for Makefile gate wrapper aliases.
+See `docs/plans/2026-06-09-editor-metadata-ignore.md` for local editor metadata ignore coverage.

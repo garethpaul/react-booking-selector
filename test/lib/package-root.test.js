@@ -1,5 +1,5 @@
 import { execFileSync } from 'child_process'
-import { readFileSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 
 import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'
 import packageJson from 'react-booking-selector/package.json'
@@ -29,6 +29,20 @@ it('exposes repository Makefile gate wrappers', () => {
   expect(makefile).toMatch(/^test:\n\tcorepack yarn test$/m)
   expect(makefile).toMatch(/^build:\n\tcorepack yarn build$/m)
   expect(makefile).toMatch(/^verify:\n\tcorepack yarn verify$/m)
+})
+
+it('keeps local editor metadata out of verification inputs', () => {
+  const gitignore = readFileSync('.gitignore', 'utf8')
+  const trackedEditorFiles = execFileSync('git', ['ls-files', '.vscode'], {
+    encoding: 'utf8',
+  })
+    .split('\n')
+    .filter((filePath) => filePath && existsSync(filePath))
+
+  expect(gitignore).toContain('.vscode/')
+  expect(trackedEditorFiles).toEqual([])
+  expect(packageJson.scripts.format).not.toContain('.vscode')
+  expect(packageJson.scripts['format:check']).not.toContain('.vscode')
 })
 
 it('keeps package entry metadata aligned with the generated builds', () => {
