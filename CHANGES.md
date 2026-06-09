@@ -45,6 +45,7 @@
 - Reset WebKit button appearance on booking grid cells for Safari parity.
 - Asserted the CommonJS package root's ESM interop marker at runtime.
 - Skipped sparse time entries inside selection-scheme day buckets.
+- Avoided redundant `endSelection` state writes when selection is already idle.
 
 ## 2026-06-08
 

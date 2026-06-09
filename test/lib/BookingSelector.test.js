@@ -196,11 +196,34 @@ it('queues the selection reset before calling onChange', async () => {
 it('endSelection does not call onChange when no selection is active', () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })
+  const setStateSpy = jest.spyOn(instance, 'setState')
 
   act(() => {
     instance.endSelection()
   })
 
+  expect(changeSpy).not.toHaveBeenCalled()
+  expect(setStateSpy).not.toHaveBeenCalled()
+
+  setStateSpy.mockRestore()
+})
+
+it('endSelection clears partially dangling idle state without calling onChange', async () => {
+  const changeSpy = jest.fn()
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, {
+    selectionStart: startDate,
+    isTouchDragging: true,
+  })
+
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(instance.state.selectionType).toBe(null)
+  expect(instance.state.selectionStart).toBe(null)
+  expect(instance.state.isTouchDragging).toBe(false)
   expect(changeSpy).not.toHaveBeenCalled()
 })
 
