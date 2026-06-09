@@ -63,7 +63,7 @@ type DateSlotPositionType = {
   slotIndex: number,
 }
 
-type CreateLocalTimeType = (Date, number) => Date
+type CreateLocalTimeType = (Date, number) => mixed
 
 const DEFAULT_DATE_FORMAT = 'd'
 
@@ -166,6 +166,15 @@ const localTimeExists = (day: Date, hour: number, time: Date): boolean =>
   time.getDate() === day.getDate() &&
   time.getHours() === hour
 
+const createDateSlotTime = (day: Date, hour: number, createTime: CreateLocalTimeType): ?Date => {
+  try {
+    const time = createTime(day, hour)
+    return time instanceof Date && localTimeExists(day, hour, time) ? time : null
+  } catch {
+    return null
+  }
+}
+
 export const buildDateColumns = (
   { startDate, numDays, minTime, maxTime }: DateGridPropsType,
   createTime: CreateLocalTimeType = createLocalTime,
@@ -181,10 +190,9 @@ export const buildDateColumns = (
     const day = addDays(startTime, d)
     const slots = []
     visibleHours.forEach((h) => {
-      const time = createTime(day, h)
       slots.push({
         hour: h,
-        time: time instanceof Date && localTimeExists(day, h, time) ? time : null,
+        time: createDateSlotTime(day, h, createTime),
       })
     })
     dateColumns.push({ day, slots })

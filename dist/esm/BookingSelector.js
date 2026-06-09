@@ -104,6 +104,14 @@ var createLocalTime = function createLocalTime(day, hour) {
 var localTimeExists = function localTimeExists(day, hour, time) {
   return time.getFullYear() === day.getFullYear() && time.getMonth() === day.getMonth() && time.getDate() === day.getDate() && time.getHours() === hour;
 };
+var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
+  try {
+    var time = createTime(day, hour);
+    return time instanceof Date && localTimeExists(day, hour, time) ? time : null;
+  } catch (_unused2) {
+    return null;
+  }
+};
 export var buildDateColumns = function buildDateColumns(_ref2, createTime) {
   var startDate = _ref2.startDate,
     numDays = _ref2.numDays,
@@ -121,10 +129,9 @@ export var buildDateColumns = function buildDateColumns(_ref2, createTime) {
     var day = addDays(startTime, d);
     var slots = [];
     visibleHours.forEach(function (h) {
-      var time = createTime(day, h);
       slots.push({
         hour: h,
-        time: time instanceof Date && localTimeExists(day, h, time) ? time : null
+        time: createDateSlotTime(day, h, createTime)
       });
     });
     dateColumns.push({
@@ -163,7 +170,7 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
     return formatDate(time, dateFormat);
-  } catch (_unused2) {
+  } catch (_unused3) {
     return formatDate(time, DEFAULT_DATE_FORMAT);
   }
 };
