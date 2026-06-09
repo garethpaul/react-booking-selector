@@ -17,17 +17,21 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
 }
 
 .c0 {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 0;
   user-select: none;
 }
 
 .c1 {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
 }
 
 .c2 {
@@ -1403,17 +1407,21 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
 }
 
 .c0 {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 0;
   user-select: none;
 }
 
 .c1 {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
 }
 
 .c2 {

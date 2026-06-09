@@ -49,6 +49,7 @@
 - Treated non-Date custom time values as grid placeholders.
 - Hardened keyboard navigation against malformed slot lists and entries.
 - Finished selection cleanup callbacks even when no draft update can run.
+- Reset wrapper and grid minimum widths for flex host layouts.
 
 ## 2026-06-08
 

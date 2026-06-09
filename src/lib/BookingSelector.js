@@ -306,17 +306,21 @@ const dateKey = (time: Date): number => time.getTime()
 const TOUCH_MOUSE_SUPPRESSION_MS = 500
 
 const Wrapper = styled.div`
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 0;
   user-select: none;
 `
 
 const Grid = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
 `
 
 const Column = styled.div`
