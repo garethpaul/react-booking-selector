@@ -744,7 +744,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   getTimeFromTouchEvent(event: TouchSelectionEventType): ?Date {
     const { touches } = event
     if (!touches || touches.length === 0) return null
-    const { clientX, clientY } = touches[0]
+    const touch = touches[0]
+    if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null
+    if (typeof document.elementFromPoint !== 'function') return null
+    const { clientX, clientY } = touch
     let targetElement = document.elementFromPoint(clientX, clientY)
     while (targetElement) {
       const cellTime = this.cellToDate.get(targetElement)

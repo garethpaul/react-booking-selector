@@ -12,6 +12,8 @@
   overflow checks.
 - Hardened selection-scheme helpers so invalid endpoints or malformed date
   lists produce an empty selection.
+- Ignored malformed touch coordinates instead of attempting DOM hit testing
+  during touch drags.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

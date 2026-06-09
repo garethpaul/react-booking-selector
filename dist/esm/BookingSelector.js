@@ -563,9 +563,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.getTimeFromTouchEvent = function getTimeFromTouchEvent(event) {
     var touches = event.touches;
     if (!touches || touches.length === 0) return null;
-    var _touches$ = touches[0],
-      clientX = _touches$.clientX,
-      clientY = _touches$.clientY;
+    var touch = touches[0];
+    if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null;
+    if (typeof document.elementFromPoint !== 'function') return null;
+    var clientX = touch.clientX,
+      clientY = touch.clientY;
     var targetElement = document.elementFromPoint(clientX, clientY);
     while (targetElement) {
       var cellTime = this.cellToDate.get(targetElement);

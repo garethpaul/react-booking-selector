@@ -158,6 +158,27 @@ it('getTimeFromTouchEvent returns null when there are no touches', () => {
   expect(document.elementFromPoint).not.toHaveBeenCalled()
 })
 
+it('getTimeFromTouchEvent returns null for malformed touch coordinates', () => {
+  const { instance } = renderSelector()
+
+  expect(instance.getTimeFromTouchEvent({ touches: [null] })).toBe(null)
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: NaN, clientY: 2 }] })).toBe(null)
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: Infinity }] })).toBe(null)
+  expect(document.elementFromPoint).not.toHaveBeenCalled()
+})
+
+it('getTimeFromTouchEvent returns null when hit testing is unavailable', () => {
+  const { instance } = renderSelector()
+  const elementFromPoint = document.elementFromPoint
+  document.elementFromPoint = undefined
+
+  try {
+    expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+  } finally {
+    document.elementFromPoint = elementFromPoint
+  }
+})
+
 it('endSelection calls the onChange prop and resets selection state', async () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })
