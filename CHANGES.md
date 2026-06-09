@@ -12,6 +12,8 @@
   output.
 - Guarded document-level mouseup listener registration and cleanup so
   non-standard DOM listener failures cannot break mount or unmount cleanup.
+- Skipped document-level mouse and touch hit testing when no browser document is
+  available.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

@@ -319,6 +319,15 @@ var preventDefault = function preventDefault(event) {
     event.preventDefault();
   }
 };
+var getBrowserDocument = function getBrowserDocument() {
+  if (typeof window === 'undefined') return null;
+  try {
+    var browserDocument = window.document;
+    return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
+  } catch (_unused4) {
+    return null;
+  }
+};
 var BookingSelector = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
     var _this;
@@ -512,10 +521,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    if (typeof document.addEventListener === 'function') {
+    var browserDocument = getBrowserDocument();
+    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
-        document.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused4) {
+        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      } catch (_unused5) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -524,10 +534,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.refreshInstanceLookups(this.props, this.state.selectionDraft);
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
-    if (typeof document.removeEventListener === 'function') {
+    var browserDocument = getBrowserDocument();
+    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
-        document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused5) {
+        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      } catch (_unused6) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -535,7 +546,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused6) {
+        } catch (_unused7) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -577,7 +588,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused7) {
+        } catch (_unused8) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -585,7 +596,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused8) {
+        } catch (_unused9) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -663,13 +674,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (!touches || touches.length === 0) return null;
     var touch = touches[0];
     if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null;
-    if (typeof document.elementFromPoint !== 'function') return null;
+    var browserDocument = getBrowserDocument();
+    if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null;
     var clientX = touch.clientX,
       clientY = touch.clientY;
     var targetElement;
     try {
-      targetElement = document.elementFromPoint(clientX, clientY);
-    } catch (_unused9) {
+      targetElement = browserDocument.elementFromPoint(clientX, clientY);
+    } catch (_unused0) {
       return null;
     }
     while (targetElement) {
@@ -806,7 +818,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused0) {
+    } catch (_unused1) {
       return false;
     }
   };

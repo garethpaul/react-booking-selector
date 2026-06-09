@@ -41,6 +41,12 @@ type PreventableEventType = {
   preventDefault?: mixed,
 }
 
+type BrowserDocumentType = {
+  addEventListener?: mixed,
+  removeEventListener?: mixed,
+  elementFromPoint?: mixed,
+}
+
 type DateGridPropsType = {
   startDate?: Date,
   numDays: number,
@@ -590,6 +596,16 @@ const preventDefault = (event: ?PreventableEventType) => {
   }
 }
 
+const getBrowserDocument = (): ?BrowserDocumentType => {
+  if (typeof window === 'undefined') return null
+  try {
+    const browserDocument = window.document
+    return browserDocument && typeof browserDocument === 'object' ? browserDocument : null
+  } catch {
+    return null
+  }
+}
+
 export default class BookingSelector extends React.Component<PropsType, StateType> {
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
@@ -703,9 +719,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    if (typeof document.addEventListener === 'function') {
+    const browserDocument = getBrowserDocument()
+    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
-        document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
+        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
       } catch {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
@@ -717,9 +734,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   componentWillUnmount() {
-    if (typeof document.removeEventListener === 'function') {
+    const browserDocument = getBrowserDocument()
+    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
-        document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
       } catch {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
@@ -861,11 +879,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!touches || touches.length === 0) return null
     const touch = touches[0]
     if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null
-    if (typeof document.elementFromPoint !== 'function') return null
+    const browserDocument = getBrowserDocument()
+    if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null
     const { clientX, clientY } = touch
     let targetElement
     try {
-      targetElement = document.elementFromPoint(clientX, clientY)
+      targetElement = browserDocument.elementFromPoint(clientX, clientY)
     } catch {
       return null
     }
