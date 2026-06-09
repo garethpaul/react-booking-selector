@@ -469,7 +469,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
     var dateGridPropSignature = getDateGridSignature(props);
     var selectionSchemePropSignature = getSelectionScheme(props.selectionScheme);
-    var selectionIsActive = isSelectionType(state.selectionType) || state.selectionStart !== null || state.isTouchDragging;
+    var selectionIsActive = isSelectionType(state.selectionType);
     if (selectionPropSignature === state.selectionPropSignature && (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature && selectionSchemePropSignature === state.selectionSchemePropSignature) {
       return null;
     }
