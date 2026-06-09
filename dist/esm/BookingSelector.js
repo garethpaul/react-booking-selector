@@ -12,6 +12,9 @@ import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
 import selectionSchemes from './selection-schemes/index.js';
 var DEFAULT_DATE_FORMAT = 'd';
+var isSelectionType = function isSelectionType(value) {
+  return value === 'add' || value === 'remove';
+};
 var getSelectionScheme = function getSelectionScheme(selectionScheme) {
   return selectionScheme === 'linear' || selectionScheme === 'square' ? selectionScheme : 'square';
 };
@@ -460,7 +463,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
     var dateGridPropSignature = getDateGridSignature(props);
     var selectionSchemePropSignature = getSelectionScheme(props.selectionScheme);
-    var selectionIsActive = state.selectionType !== null || state.selectionStart !== null || state.isTouchDragging;
+    var selectionIsActive = isSelectionType(state.selectionType) || state.selectionStart !== null || state.isTouchDragging;
     if (selectionPropSignature === state.selectionPropSignature && (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature && selectionSchemePropSignature === state.selectionSchemePropSignature) {
       return null;
     }
@@ -626,7 +629,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return null;
   };
   _proto.endSelection = function endSelection() {
-    var hasValidSelectionType = this.state.selectionType === 'add' || this.state.selectionType === 'remove';
+    var hasValidSelectionType = isSelectionType(this.state.selectionType);
     if (!hasValidSelectionType && this.state.selectionStart === null && !this.state.isTouchDragging) return;
     var nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null;
     this.setState({
@@ -648,7 +651,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       selectionStart = _this$state.selectionStart;
     var validSelectionStart = getValidDate(selectionStart);
     var validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd);
-    if (selectionType !== 'add' && selectionType !== 'remove' || !validSelectionStart || selectionEnd != null && !validSelectionEnd) {
+    if (!isSelectionType(selectionType) || !validSelectionStart || selectionEnd != null && !validSelectionEnd) {
       if (callback) callback();
       return;
     }

@@ -1830,6 +1830,35 @@ describe('prop updates', () => {
     })
   })
 
+  it('does not treat malformed selection modes as active during controlled prop updates', async () => {
+    const firstSelectedValue = addHours(startOfDay(startDate), 9)
+    const nextSelectedValue = new Date(firstSelectedValue.getTime() + 30000)
+    const rendered = renderSelector({
+      selection: [firstSelectedValue],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    await setStateAsync(rendered.instance, {
+      selectionType: 'toggle',
+      selectionStart: null,
+      isTouchDragging: false,
+    })
+    rendered.rerenderWithProps({
+      selection: [nextSelectedValue],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([nextSelectedValue])
+    expect(rendered.instance.state.selectionBase).toEqual([nextSelectedValue])
+    expect(rendered.instance.state.selectionType).toBe(null)
+  })
+
   it('ignores malformed selection draft entries during render and lookup refresh', async () => {
     const selected = addHours(startOfDay(startDate), 9)
     const rendered = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })

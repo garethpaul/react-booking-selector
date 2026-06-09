@@ -67,6 +67,8 @@ type CreateLocalTimeType = (Date, number) => mixed
 
 const DEFAULT_DATE_FORMAT = 'd'
 
+const isSelectionType = (value: mixed): boolean => value === 'add' || value === 'remove'
+
 const getSelectionScheme = (selectionScheme: mixed): SelectionSchemeType =>
   selectionScheme === 'linear' || selectionScheme === 'square' ? selectionScheme : 'square'
 
@@ -642,7 +644,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
     const selectionSchemePropSignature = getSelectionScheme(props.selectionScheme)
-    const selectionIsActive = state.selectionType !== null || state.selectionStart !== null || state.isTouchDragging
+    const selectionIsActive =
+      isSelectionType(state.selectionType) || state.selectionStart !== null || state.isTouchDragging
     if (
       selectionPropSignature === state.selectionPropSignature &&
       (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) &&
@@ -822,7 +825,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   endSelection() {
-    const hasValidSelectionType = this.state.selectionType === 'add' || this.state.selectionType === 'remove'
+    const hasValidSelectionType = isSelectionType(this.state.selectionType)
     if (!hasValidSelectionType && this.state.selectionStart === null && !this.state.isTouchDragging) return
 
     const nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null
@@ -842,11 +845,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const validSelectionStart = getValidDate(selectionStart)
     const validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd)
 
-    if (
-      (selectionType !== 'add' && selectionType !== 'remove') ||
-      !validSelectionStart ||
-      (selectionEnd != null && !validSelectionEnd)
-    ) {
+    if (!isSelectionType(selectionType) || !validSelectionStart || (selectionEnd != null && !validSelectionEnd)) {
       if (callback) callback()
       return
     }
