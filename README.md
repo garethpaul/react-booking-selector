@@ -52,6 +52,8 @@ Each time slot is rendered as a native button. Blocked slots are disabled and re
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 
+During an active drag or touch selection, controlled `selection` and `blocked` rerenders that keep the same slot-minute set preserve the visible draft instead of canceling the interaction.
+
 ## Custom Cell Rendering
 
 Use `renderDateCell` when a slot needs custom content. The outer grid cell still owns pointer, touch, keyboard, focus, and accessibility behavior, so custom content should be presentational rather than another interactive control.

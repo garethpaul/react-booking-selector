@@ -41,9 +41,6 @@ var dateMinuteKey = function dateMinuteKey(value) {
 var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
   return dateMinuteKeys.has(dateMinuteKey(time));
 };
-var getDatesSignature = function getDatesSignature(dates) {
-  return normalizeDates(dates).map(dateMinuteKey).join('|');
-};
 var getDateMinuteSetSignature = function getDateMinuteSetSignature(dates) {
   return Array.from(new Set(normalizeDates(dates).map(dateMinuteKey))).sort(function (a, b) {
     return a - b;
@@ -358,7 +355,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.touchScrollCells = new Set();
     _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
-    var selectionPropSignature = getDatesSignature(_this.props.selection);
+    var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(_this.props.blocked);
     var dateGridPropSignature = getDateGridSignature(_this.props);
     _this.state = {
@@ -391,7 +388,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   }
   _inheritsLoose(BookingSelector, _React$Component);
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
-    var selectionPropSignature = getDatesSignature(props.selection);
+    var selectionPropSignature = getDateMinuteSetSignature(props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
     var dateGridPropSignature = getDateGridSignature(props);
     if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature) {

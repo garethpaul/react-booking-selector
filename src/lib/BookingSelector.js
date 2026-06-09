@@ -88,8 +88,6 @@ const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 6000
 
 const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: Date): boolean => dateMinuteKeys.has(dateMinuteKey(time))
 
-const getDatesSignature = (dates: DateListType): string => normalizeDates(dates).map(dateMinuteKey).join('|')
-
 const getDateMinuteSetSignature = (dates: DateListType): string =>
   Array.from(new Set(normalizeDates(dates).map(dateMinuteKey)))
     .sort((a, b) => a - b)
@@ -474,7 +472,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.lastTouchEventTime = 0
 
     const selectionDraft = normalizeDates(this.props.selection)
-    const selectionPropSignature = getDatesSignature(this.props.selection)
+    const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     const dateGridPropSignature = getDateGridSignature(this.props)
     this.state = {
@@ -508,7 +506,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
-    const selectionPropSignature = getDatesSignature(props.selection)
+    const selectionPropSignature = getDateMinuteSetSignature(props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
     if (

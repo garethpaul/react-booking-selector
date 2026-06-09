@@ -1104,6 +1104,43 @@ describe('prop updates', () => {
     expect(changeSpy).toHaveBeenCalledWith([selected])
   })
 
+  it('keeps active selections when selection props keep the same minute set', () => {
+    const changeSpy = jest.fn()
+    const selectedOne = addHours(startOfDay(startDate), 9)
+    const selectedTwo = addHours(startOfDay(startDate), 10)
+    const selectedThree = addHours(startOfDay(startDate), 11)
+    const rendered = renderSelector({
+      onChange: changeSpy,
+      selection: [selectedTwo, selectedOne],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11,
+    })
+    const thirdCell = rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })
+
+    fireEvent.mouseDown(thirdCell)
+    fireEvent.mouseEnter(thirdCell)
+
+    rendered.rerenderWithProps({
+      onChange: changeSpy,
+      selection: [selectedOne, new Date(selectedTwo.getTime() + 30000), selectedTwo],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([selectedTwo, selectedOne, selectedThree])
+    expect(rendered.instance.state.selectionBase).toEqual([selectedTwo, selectedOne])
+    expect(rendered.instance.state.selectionType).toBe('add')
+    expect(rendered.instance.state.selectionStart).toEqual(selectedThree)
+
+    fireEvent.mouseUp(rendered.getByRole('button', { name: 'Selected Monday, January 1, 2018 at 11 am' }))
+
+    expect(changeSpy).toHaveBeenCalledWith([selectedTwo, selectedOne, selectedThree])
+  })
+
   it('cancels active selections when grid range props change', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
