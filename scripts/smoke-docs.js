@@ -46,6 +46,7 @@ const contentTypes = new Map([
 const layoutCheckPath = '/__smoke__/layout.html'
 const expectedDomSnippets = [
   '<title>React Booking Selector</title>',
+  '<meta name="description" content="A grid-based booking selector.">',
   '<main',
   'id="booking-selector-demo-status"',
   'role="status"',

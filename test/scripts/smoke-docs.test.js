@@ -146,7 +146,7 @@ if (args.includes('--dump-dom')) {
       ...Array.from({ length: 68 }, () => '<button></button>'),
     ].join('')
     process.stdout.write(
-      '<!doctype html><html><head><title>React Booking Selector</title></head><body><main>' +
+      '<!doctype html><html><head><title>React Booking Selector</title><meta name="description" content="A grid-based booking selector."></head><body><main>' +
         '<p id="booking-selector-demo-status" role="status">0 selected - 3 blocked</p>' +
         '<div role="group" aria-describedby="booking-selector-demo-status" aria-label="Booking time slots">' +
         buttons +
