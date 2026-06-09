@@ -9,9 +9,9 @@ var square = function square(selectionStart, selectionEnd, dateList) {
     var dateIsReversed = isBefore(startOfDay(selectionEnd), startOfDay(selectionStart));
     var timeIsReversed = selectionStart.getHours() > selectionEnd.getHours();
     selected = dateList.reduce(function (acc, dayOfTimes) {
-      return acc.concat(dayOfTimes.filter(function (t) {
+      return Array.isArray(dayOfTimes) ? acc.concat(dayOfTimes.filter(function (t) {
         return selectionStart && selectionEnd && dateUtils.dateIsBetween(dateIsReversed ? selectionEnd : selectionStart, t, dateIsReversed ? selectionStart : selectionEnd) && dateUtils.timeIsBetween(timeIsReversed ? selectionEnd : selectionStart, t, timeIsReversed ? selectionStart : selectionEnd);
-      }));
+      })) : acc;
     }, []);
   }
   return selected;

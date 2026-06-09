@@ -52,4 +52,13 @@ describe('square selection scheme', () => {
     const result = square(dates[START.DATE][START.TIME], dates[END.DATE][END.TIME], dates)
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
   })
+
+  test('it skips missing day buckets', () => {
+    const sparseDates = [dates[0], undefined, dates[2]]
+    const expected = [dates[0][5], dates[0][6], dates[2][5], dates[2][6]]
+
+    const result = square(dates[0][5], dates[2][6], sparseDates)
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(expected))
+  })
 })

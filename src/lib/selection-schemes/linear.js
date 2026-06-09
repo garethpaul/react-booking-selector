@@ -12,18 +12,20 @@ const linear = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
     const reverseSelection = isBefore(selectionEnd, selectionStart)
     selected = dateList.reduce(
       (acc, dayOfTimes) =>
-        acc.concat(
-          dayOfTimes.filter(
-            (t) =>
-              selectionStart &&
-              selectionEnd &&
-              dateUtils.dateHourIsBetween(
-                reverseSelection ? selectionEnd : selectionStart,
-                t,
-                reverseSelection ? selectionStart : selectionEnd,
+        Array.isArray(dayOfTimes)
+          ? acc.concat(
+              dayOfTimes.filter(
+                (t) =>
+                  selectionStart &&
+                  selectionEnd &&
+                  dateUtils.dateHourIsBetween(
+                    reverseSelection ? selectionEnd : selectionStart,
+                    t,
+                    reverseSelection ? selectionStart : selectionEnd,
+                  ),
               ),
-          ),
-        ),
+            )
+          : acc,
       [],
     )
   }

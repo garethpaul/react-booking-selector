@@ -16,6 +16,8 @@
 - Tightened docs smoke timeout handling so a stuck browser process is terminated
   before the script exits.
 - Added regression coverage for in-place `blocked` prop array updates.
+- Hardened selection-scheme helpers so sparse day buckets are skipped instead
+  of throwing.
 
 ## 2026-06-08
 
