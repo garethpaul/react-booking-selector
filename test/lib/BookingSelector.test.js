@@ -936,6 +936,27 @@ describe('componentWillUnmount', () => {
     expect(instance.dateToCell.has(staleTime.getTime())).toBe(false)
     removeSpy.mockRestore()
   })
+
+  it('keeps date-cell lookups stable when React StrictMode remounts refs', () => {
+    const instanceRef = React.createRef()
+    const rendered = render(
+      <React.StrictMode>
+        <BookingSelector ref={instanceRef} startDate={startDate} numDays={1} minTime={9} maxTime={9} />
+      </React.StrictMode>,
+    )
+    const instance = instanceRef.current
+
+    expect(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toBeInTheDocument()
+    expect(instance.cellToDate.size).toBe(1)
+    expect(instance.dateToCell.size).toBe(1)
+    expect(instance.touchScrollCells.size).toBe(1)
+
+    rendered.unmount()
+
+    expect(instance.cellToDate.size).toBe(0)
+    expect(instance.dateToCell.size).toBe(0)
+    expect(instance.touchScrollCells.size).toBe(0)
+  })
 })
 
 describe('prop updates', () => {
