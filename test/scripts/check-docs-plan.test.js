@@ -129,6 +129,20 @@ describe('check-docs-plan script', () => {
     expect(stderr).toContain(`README.md must reference ${baselinePlanPath}`)
   })
 
+  it('reports docs plans without dated filenames', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    const undatedPlanPath = path.join('docs', 'plans', 'undated-plan.md')
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writePlan(projectPath, undatedPlanPath, completedPlan('Undated Plan'))
+    writeReadme(projectPath, [baselinePlanPath, undatedPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`${undatedPlanPath} must use a YYYY-MM-DD descriptive filename`)
+  })
+
   it('reports README references to missing docs plans', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)

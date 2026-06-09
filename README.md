@@ -308,7 +308,7 @@ corepack yarn docs:smoke
 ```
 
 `make check` is the repository-standard wrapper around `corepack yarn verify`.
-`corepack yarn verify` checks every canonical completed plan under `docs/plans`, runs formatting checks, linting,
+`corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types
 Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and
 `LICENSE`.
@@ -321,3 +321,4 @@ See `docs/plans/2026-06-08-custom-render-state-coverage.md` for custom cell rend
 See `docs/plans/2026-06-08-custom-render-keyboard-coverage.md` for keyboard coverage around custom-rendered cells.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
+See `docs/plans/2026-06-09-docs-plan-filename-validation.md` for dated docs-plan filename validation.

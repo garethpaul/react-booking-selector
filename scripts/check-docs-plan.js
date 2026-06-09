@@ -9,6 +9,7 @@ const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8')
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
 
 const errors = []
+const planFilenamePattern = /^\d{4}-\d{2}-\d{2}-[-\w.]+\.md$/u
 const planPaths = fs.existsSync(planDir)
   ? fs
       .readdirSync(planDir)
@@ -27,7 +28,11 @@ if (!planPaths.includes(baselinePlanPath)) {
 }
 
 for (const planPath of planPaths) {
+  const planFilename = path.basename(planPath)
   const plan = fs.readFileSync(planPath, 'utf8')
+  if (!planFilenamePattern.test(planFilename)) {
+    errors.push(`${planPath} must use a YYYY-MM-DD descriptive filename`)
+  }
   if (!/^## Status: Completed$/mu.test(plan)) {
     errors.push(`${planPath} must record Status: Completed`)
   }
