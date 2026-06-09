@@ -83,7 +83,11 @@ const toCssUnit = (value: ?(number | string)): string => {
   return /^-?\d+(\.\d+)?$/.test(cssValue) ? `${cssValue}px` : cssValue
 }
 
-const toCssColor = (value: mixed, fallback: string): string => (typeof value === 'string' ? value : fallback)
+const toCssColor = (value: mixed, fallback: string): string => {
+  if (typeof value !== 'string') return fallback
+  const colorValue = value.trim()
+  return colorValue || fallback
+}
 
 const getNonEmptyString = (value: mixed): ?string => {
   if (typeof value !== 'string') return undefined

@@ -29,7 +29,9 @@ var toCssUnit = function toCssUnit(value) {
   return /^-?\d+(\.\d+)?$/.test(cssValue) ? cssValue + "px" : cssValue;
 };
 var toCssColor = function toCssColor(value, fallback) {
-  return typeof value === 'string' ? value : fallback;
+  if (typeof value !== 'string') return fallback;
+  var colorValue = value.trim();
+  return colorValue || fallback;
 };
 var getNonEmptyString = function getNonEmptyString(value) {
   if (typeof value !== 'string') return undefined;

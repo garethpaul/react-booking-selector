@@ -2871,6 +2871,31 @@ describe('cell accessibility', () => {
     expect(blockedContent).toHaveStyleRule('background-color', colors.black, { modifier: ':hover' })
   })
 
+  it('falls back from blank cell colors', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 11)
+    const { getByRole } = renderSelector({
+      selection: [selected],
+      blocked: [blocked],
+      selectedColor: ' ',
+      unselectedColor: ' ',
+      hoveredColor: ' ',
+      blockedColor: ' ',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11,
+    })
+    const selectedContent = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' }).firstChild
+    const availableContent = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' }).firstChild
+    const blockedContent = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 11 am' }).firstChild
+
+    expect(selectedContent).toHaveStyleRule('background-color', colors.blue)
+    expect(availableContent).toHaveStyleRule('background-color', colors.paleBlue)
+    expect(availableContent).toHaveStyleRule('background-color', colors.lightBlue, { modifier: ':hover' })
+    expect(blockedContent).toHaveStyleRule('background-color', colors.black)
+  })
+
   it('hides visual time labels from assistive technology', () => {
     const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
