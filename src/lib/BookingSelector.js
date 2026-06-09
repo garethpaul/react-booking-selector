@@ -111,6 +111,9 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
 
 const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
 
+const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
+  [dateMinuteKey(startOfDay(getStartDate(startDate))), numDays, minTime, maxTime].join('|')
+
 const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
 
 const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
@@ -406,6 +409,7 @@ type StateType = {
   selectionBase: Array<Date>,
   selectionPropSignature: string,
   blockedPropSignature: string,
+  dateGridPropSignature: string,
   selectionType: ?SelectionType,
   selectionStart: ?Date,
   isTouchDragging: boolean,
@@ -416,6 +420,7 @@ type DerivedStateType = {
   selectionBase: Array<Date>,
   selectionPropSignature: string,
   blockedPropSignature: string,
+  dateGridPropSignature: string,
   selectionType: null,
   selectionStart: null,
   isTouchDragging: boolean,
@@ -463,11 +468,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionDraft = normalizeDates(this.props.selection)
     const selectionPropSignature = getDatesSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
+    const dateGridPropSignature = getDateGridSignature(this.props)
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature,
       blockedPropSignature,
+      dateGridPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,
@@ -495,9 +502,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   static getDerivedStateFromProps(props: PropsType, state: StateType): ?DerivedStateType {
     const selectionPropSignature = getDatesSignature(props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
+    const dateGridPropSignature = getDateGridSignature(props)
     if (
       selectionPropSignature === state.selectionPropSignature &&
-      blockedPropSignature === state.blockedPropSignature
+      blockedPropSignature === state.blockedPropSignature &&
+      dateGridPropSignature === state.dateGridPropSignature
     ) {
       return null
     }
@@ -508,6 +517,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionBase: selectionDraft,
       selectionPropSignature,
       blockedPropSignature,
+      dateGridPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,

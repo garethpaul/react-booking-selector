@@ -72,6 +72,13 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
 var getStartDate = function getStartDate(startDate) {
   return startDate && (0, _isValid.isValid)(startDate) ? startDate : new Date();
 };
+var getDateGridSignature = function getDateGridSignature(_ref) {
+  var startDate = _ref.startDate,
+    numDays = _ref.numDays,
+    minTime = _ref.minTime,
+    maxTime = _ref.maxTime;
+  return [dateMinuteKey((0, _startOfDay.startOfDay)(getStartDate(startDate))), numDays, minTime, maxTime].join('|');
+};
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
 };
@@ -91,11 +98,11 @@ var createLocalTime = function createLocalTime(day, hour) {
 var localTimeExists = function localTimeExists(day, hour, time) {
   return time.getFullYear() === day.getFullYear() && time.getMonth() === day.getMonth() && time.getDate() === day.getDate() && time.getHours() === hour;
 };
-var buildDateColumns = exports.buildDateColumns = function buildDateColumns(_ref, createTime) {
-  var startDate = _ref.startDate,
-    numDays = _ref.numDays,
-    minTime = _ref.minTime,
-    maxTime = _ref.maxTime;
+var buildDateColumns = exports.buildDateColumns = function buildDateColumns(_ref2, createTime) {
+  var startDate = _ref2.startDate,
+    numDays = _ref2.numDays,
+    minTime = _ref2.minTime,
+    maxTime = _ref2.maxTime;
   if (createTime === void 0) {
     createTime = createLocalTime;
   }
@@ -359,11 +366,13 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(_this.props.blocked);
+    var dateGridPropSignature = getDateGridSignature(_this.props);
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
       selectionPropSignature: selectionPropSignature,
       blockedPropSignature: blockedPropSignature,
+      dateGridPropSignature: dateGridPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
@@ -390,7 +399,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   BookingSelector.getDerivedStateFromProps = function getDerivedStateFromProps(props, state) {
     var selectionPropSignature = getDatesSignature(props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
-    if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature) {
+    var dateGridPropSignature = getDateGridSignature(props);
+    if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature) {
       return null;
     }
     var selectionDraft = normalizeDates(props.selection);
@@ -399,6 +409,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       selectionBase: selectionDraft,
       selectionPropSignature: selectionPropSignature,
       blockedPropSignature: blockedPropSignature,
+      dateGridPropSignature: dateGridPropSignature,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
