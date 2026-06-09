@@ -24,6 +24,8 @@
   hit-test results cannot throw or loop.
 - Guarded grid owner-document lookup so malformed refs fall back to the browser
   document when possible.
+- Fell back to Date object-tag checks when `instanceof Date` throws in hostile
+  host environments.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

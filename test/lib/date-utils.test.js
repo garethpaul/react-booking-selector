@@ -136,6 +136,30 @@ describe('malformed date inputs', () => {
     expect(isDateObject(createCrossRealmDate('2018-01-01T09:00:00.000'))).toBe(true)
   })
 
+  test('Date brand checks fall back when instanceof Date throws', () => {
+    const hasInstanceDescriptor = Object.getOwnPropertyDescriptor(Date, Symbol.hasInstance)
+    const timestamp = validDate.getTime()
+
+    try {
+      Object.defineProperty(Date, Symbol.hasInstance, {
+        configurable: true,
+        value() {
+          throw new Error('Cannot check Date instance')
+        },
+      })
+
+      expect(isDateObject(validDate)).toBe(true)
+      expect(getDateTimestamp(validDate)).toBe(timestamp)
+      expect(isValidDate({})).toBe(false)
+    } finally {
+      if (hasInstanceDescriptor) {
+        Object.defineProperty(Date, Symbol.hasInstance, hasInstanceDescriptor)
+      } else {
+        delete Date[Symbol.hasInstance]
+      }
+    }
+  })
+
   test('Date readers use captured prototype methods when Date prototypes change later', () => {
     const originalGetTime = Date.prototype.getTime
     const originalGetHours = Date.prototype.getHours

@@ -5,8 +5,16 @@ const dateGetTime = Date.prototype.getTime
 const dateGetHours = Date.prototype.getHours
 const dateSetHours = Date.prototype.setHours
 
+const isDateInstance = (date: any): boolean => {
+  try {
+    return date instanceof Date
+  } catch {
+    return false
+  }
+}
+
 export const hasDateObjectTag = (date: any): boolean => {
-  if (date instanceof Date) return true
+  if (isDateInstance(date)) return true
   if (!date || typeof date !== 'object') return false
 
   try {

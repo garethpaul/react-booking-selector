@@ -2,12 +2,19 @@ var objectToString = Object.prototype.toString;
 var dateGetTime = Date.prototype.getTime;
 var dateGetHours = Date.prototype.getHours;
 var dateSetHours = Date.prototype.setHours;
+var isDateInstance = function isDateInstance(date) {
+  try {
+    return date instanceof Date;
+  } catch (_unused) {
+    return false;
+  }
+};
 export var hasDateObjectTag = function hasDateObjectTag(date) {
-  if (date instanceof Date) return true;
+  if (isDateInstance(date)) return true;
   if (!date || typeof date !== 'object') return false;
   try {
     return objectToString.call(date) === '[object Date]';
-  } catch (_unused) {
+  } catch (_unused2) {
     return false;
   }
 };
@@ -16,7 +23,7 @@ export var isDateObject = function isDateObject(date) {
   try {
     dateGetTime.call(date);
     return true;
-  } catch (_unused2) {
+  } catch (_unused3) {
     return false;
   }
 };
