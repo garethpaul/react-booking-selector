@@ -645,14 +645,24 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var hasDanglingSelectionState = this.state.selectionType != null || this.state.selectionStart !== null || this.state.isTouchDragging;
     if (!hasValidSelectionType && !hasDanglingSelectionState) return;
     var nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null;
+    if (nextSelection) {
+      this.setState({
+        selectionDraft: nextSelection,
+        selectionBase: nextSelection,
+        selectionType: null,
+        selectionStart: null,
+        isTouchDragging: false
+      });
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(normalizeSelectionDraft(nextSelection));
+      }
+      return;
+    }
     this.setState({
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false
     });
-    if (nextSelection && typeof this.props.onChange === 'function') {
-      this.props.onChange(nextSelection);
-    }
   }
 
   // Given an ending Date, determines all the dates that should be selected in this draft

@@ -204,6 +204,8 @@ it('endSelection calls the onChange prop and resets selection state', async () =
 
   expect(changeSpy).toHaveBeenCalledWith([])
   expect(setStateSpy).toHaveBeenCalledWith({
+    selectionDraft: [],
+    selectionBase: [],
     selectionType: null,
     selectionStart: null,
     isTouchDragging: false,
@@ -341,6 +343,10 @@ it('endSelection emits minute-unique selection dates', async () => {
   const [nextSelection] = changeSpy.mock.calls[0]
   expect(nextSelection).toEqual([selected])
   expect(nextSelection[0]).not.toBe(selected)
+  expect(nextSelection).not.toBe(instance.state.selectionDraft)
+  expect(instance.state.selectionDraft).toEqual([selected])
+  expect(instance.state.selectionBase).toEqual([selected])
+  expect(instance.state.selectionDraft[0]).not.toBe(selected)
 })
 
 it('keeps internal selection state isolated from onChange mutations', async () => {
@@ -831,17 +837,20 @@ describe('touch handlers', () => {
     })
     const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
     const setStateSpy = jest.spyOn(instance, 'setState')
+    const expectedSelection = [addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)]
     document.elementFromPoint.mockReturnValue(secondCell)
 
     fireEvent.touchStart(firstCell)
     fireEvent.touchMove(firstCell, mockEvent)
     fireEvent.touchEnd(firstCell)
 
-    expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    expect(changeSpy).toHaveBeenCalledWith(expectedSelection)
     expect(setStateSpy.mock.invocationCallOrder[setStateSpy.mock.invocationCallOrder.length - 1]).toBeLessThan(
       changeSpy.mock.invocationCallOrder[0],
     )
     expect(setStateSpy).toHaveBeenLastCalledWith({
+      selectionDraft: expectedSelection,
+      selectionBase: expectedSelection,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,

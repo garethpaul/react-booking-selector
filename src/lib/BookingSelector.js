@@ -837,14 +837,25 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!hasValidSelectionType && !hasDanglingSelectionState) return
 
     const nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null
+    if (nextSelection) {
+      this.setState({
+        selectionDraft: nextSelection,
+        selectionBase: nextSelection,
+        selectionType: null,
+        selectionStart: null,
+        isTouchDragging: false,
+      })
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(normalizeSelectionDraft(nextSelection))
+      }
+      return
+    }
+
     this.setState({
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,
     })
-    if (nextSelection && typeof this.props.onChange === 'function') {
-      this.props.onChange(nextSelection)
-    }
   }
 
   // Given an ending Date, determines all the dates that should be selected in this draft
