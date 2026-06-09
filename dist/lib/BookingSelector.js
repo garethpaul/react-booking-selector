@@ -18,6 +18,7 @@ function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prot
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
 var DEFAULT_DATE_FORMAT = 'd';
+var DEFAULT_ARIA_LABEL = 'Booking time slots';
 var isSelectionType = function isSelectionType(value) {
   return value === 'add' || value === 'remove';
 };
@@ -33,6 +34,11 @@ var toCssUnit = function toCssUnit(value) {
 };
 var toCssColor = function toCssColor(value, fallback) {
   return typeof value === 'string' ? value : fallback;
+};
+var getNonEmptyString = function getNonEmptyString(value) {
+  if (typeof value !== 'string') return undefined;
+  var trimmedValue = value.trim();
+  return trimmedValue ? trimmedValue : undefined;
 };
 var invalidDate = function invalidDate() {
   return new Date(NaN);
@@ -830,9 +836,9 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft);
-    var gridAriaDescribedBy = this.props['aria-describedby'];
-    var gridAriaLabelledBy = this.props['aria-labelledby'];
-    var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;
+    var gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby']);
+    var gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby']);
+    var gridAriaLabel = getNonEmptyString(this.props['aria-label']) || getNonEmptyString(this.props.ariaLabel) || DEFAULT_ARIA_LABEL;
     return /*#__PURE__*/React.createElement(Wrapper, {
       className: this.props.className,
       id: this.props.id,
@@ -840,7 +846,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     }, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
       "aria-describedby": gridAriaDescribedBy,
-      "aria-label": gridAriaLabel,
+      "aria-label": gridAriaLabelledBy ? undefined : gridAriaLabel,
       "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
         _this6.gridRef = el;
@@ -864,6 +870,6 @@ BookingSelector.defaultProps = {
   unselectedColor: _colors.default.paleBlue,
   hoveredColor: _colors.default.lightBlue,
   blockedColor: _colors.default.black,
-  ariaLabel: 'Booking time slots',
+  ariaLabel: DEFAULT_ARIA_LABEL,
   onChange: function onChange() {}
 };

@@ -12,6 +12,7 @@ import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
 import selectionSchemes from './selection-schemes/index.js';
 var DEFAULT_DATE_FORMAT = 'd';
+var DEFAULT_ARIA_LABEL = 'Booking time slots';
 var isSelectionType = function isSelectionType(value) {
   return value === 'add' || value === 'remove';
 };
@@ -27,6 +28,11 @@ var toCssUnit = function toCssUnit(value) {
 };
 var toCssColor = function toCssColor(value, fallback) {
   return typeof value === 'string' ? value : fallback;
+};
+var getNonEmptyString = function getNonEmptyString(value) {
+  if (typeof value !== 'string') return undefined;
+  var trimmedValue = value.trim();
+  return trimmedValue ? trimmedValue : undefined;
 };
 var invalidDate = function invalidDate() {
   return new Date(NaN);
@@ -824,9 +830,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft);
-    var gridAriaDescribedBy = this.props['aria-describedby'];
-    var gridAriaLabelledBy = this.props['aria-labelledby'];
-    var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;
+    var gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby']);
+    var gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby']);
+    var gridAriaLabel = getNonEmptyString(this.props['aria-label']) || getNonEmptyString(this.props.ariaLabel) || DEFAULT_ARIA_LABEL;
     return /*#__PURE__*/React.createElement(Wrapper, {
       className: this.props.className,
       id: this.props.id,
@@ -834,7 +840,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
       "aria-describedby": gridAriaDescribedBy,
-      "aria-label": gridAriaLabel,
+      "aria-label": gridAriaLabelledBy ? undefined : gridAriaLabel,
       "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
         _this6.gridRef = el;
@@ -858,7 +864,7 @@ BookingSelector.defaultProps = {
   unselectedColor: colors.paleBlue,
   hoveredColor: colors.lightBlue,
   blockedColor: colors.black,
-  ariaLabel: 'Booking time slots',
+  ariaLabel: DEFAULT_ARIA_LABEL,
   onChange: function onChange() {}
 };
 export { BookingSelector as default };

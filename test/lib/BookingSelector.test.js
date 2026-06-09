@@ -2643,6 +2643,28 @@ describe('cell accessibility', () => {
     expect(group).toHaveAccessibleDescription('Choose every hour your team can accept appointments.')
   })
 
+  it('falls back from blank or malformed slot group aria props without coercing them', () => {
+    const malformedAriaValue = {
+      toString() {
+        throw new Error('Unexpected aria prop coercion')
+      },
+    }
+    const { getByRole } = renderSelector({
+      ariaLabel: malformedAriaValue,
+      'aria-describedby': malformedAriaValue,
+      'aria-label': '   ',
+      'aria-labelledby': malformedAriaValue,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    const group = getByRole('group', { name: 'Booking time slots' })
+    expect(group).not.toHaveAttribute('aria-describedby')
+    expect(group).not.toHaveAttribute('aria-labelledby')
+  })
+
   it('renders cells as native buttons', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

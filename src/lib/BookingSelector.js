@@ -66,6 +66,7 @@ type DateSlotPositionType = {
 type CreateLocalTimeType = (Date, number) => mixed
 
 const DEFAULT_DATE_FORMAT = 'd'
+const DEFAULT_ARIA_LABEL = 'Booking time slots'
 
 const isSelectionType = (value: mixed): boolean => value === 'add' || value === 'remove'
 
@@ -81,6 +82,12 @@ const toCssUnit = (value: ?(number | string)): string => {
 }
 
 const toCssColor = (value: mixed, fallback: string): string => (typeof value === 'string' ? value : fallback)
+
+const getNonEmptyString = (value: mixed): ?string => {
+  if (typeof value !== 'string') return undefined
+  const trimmedValue = value.trim()
+  return trimmedValue ? trimmedValue : undefined
+}
 
 const invalidDate = (): Date => new Date(NaN)
 
@@ -588,7 +595,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     unselectedColor: colors.paleBlue,
     hoveredColor: colors.lightBlue,
     blockedColor: colors.black,
-    ariaLabel: 'Booking time slots',
+    ariaLabel: DEFAULT_ARIA_LABEL,
     onChange: () => {},
   }
 
@@ -1149,9 +1156,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft)
-    const gridAriaDescribedBy = this.props['aria-describedby']
-    const gridAriaLabelledBy = this.props['aria-labelledby']
-    const gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel
+    const gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby'])
+    const gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby'])
+    const gridAriaLabel =
+      getNonEmptyString(this.props['aria-label']) || getNonEmptyString(this.props.ariaLabel) || DEFAULT_ARIA_LABEL
 
     return (
       <Wrapper className={this.props.className} id={this.props.id} style={this.props.style}>
@@ -1159,7 +1167,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
           <Grid
             role="group"
             aria-describedby={gridAriaDescribedBy}
-            aria-label={gridAriaLabel}
+            aria-label={gridAriaLabelledBy ? undefined : gridAriaLabel}
             aria-labelledby={gridAriaLabelledBy}
             ref={(el) => {
               this.gridRef = el
