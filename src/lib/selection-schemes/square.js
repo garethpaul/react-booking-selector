@@ -1,17 +1,20 @@
 // @flow
 
 import { isBefore } from 'date-fns/isBefore'
+import { isValid } from 'date-fns/isValid'
 import { startOfDay } from 'date-fns/startOfDay'
 
 import * as dateUtils from '../date-utils.js'
 
-const isDate = (time: any): boolean => time instanceof Date
+const isValidDate = (time: any): boolean => time instanceof Date && isValid(time)
 
 const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Array<Date>>): Array<Date> => {
   let selected: Array<Date> = []
+  if (!isValidDate(selectionStart)) return selected
+
   if (selectionEnd == null) {
-    if (selectionStart) selected = [selectionStart]
-  } else if (selectionStart) {
+    selected = [selectionStart]
+  } else if (isValidDate(selectionEnd)) {
     const dateIsReversed = isBefore(startOfDay(selectionEnd), startOfDay(selectionStart))
     const timeIsReversed = selectionStart.getHours() > selectionEnd.getHours()
 
@@ -21,9 +24,7 @@ const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
           ? acc.concat(
               dayOfTimes.filter(
                 (t) =>
-                  isDate(t) &&
-                  selectionStart &&
-                  selectionEnd &&
+                  isValidDate(t) &&
                   dateUtils.dateIsBetween(
                     dateIsReversed ? selectionEnd : selectionStart,
                     t,

@@ -31,6 +31,13 @@ describe('square selection scheme', () => {
     expect(square(null, dates[0][1], dates)).toHaveLength(0)
   })
 
+  test('it ignores invalid selection endpoints', () => {
+    expect(square(new Date('invalid'), null, dates)).toEqual([])
+    expect(square('not-a-date', dates[0][1], dates)).toEqual([])
+    expect(square(dates[0][1], new Date('invalid'), dates)).toEqual([])
+    expect(square(dates[0][1], 'not-a-date', dates)).toEqual([])
+  })
+
   test('it handles a cross-day selection', () => {
     const expected = []
     const START = { DATE: 1, TIME: 10 }
