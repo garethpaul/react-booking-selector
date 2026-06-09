@@ -674,7 +674,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.focusDateCell = function focusDateCell(time) {
     if (this.isBlocked(time)) return false;
     var dateCell = this.dateToCell.get(dateKey(time));
-    if (!dateCell) return false;
+    if (!dateCell || typeof dateCell.focus !== 'function') return false;
     dateCell.focus();
     return true;
   };

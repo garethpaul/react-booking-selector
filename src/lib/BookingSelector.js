@@ -853,7 +853,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   focusDateCell(time: Date): boolean {
     if (this.isBlocked(time)) return false
     const dateCell = this.dateToCell.get(dateKey(time))
-    if (!dateCell) return false
+    if (!dateCell || typeof dateCell.focus !== 'function') return false
     dateCell.focus()
     return true
   }

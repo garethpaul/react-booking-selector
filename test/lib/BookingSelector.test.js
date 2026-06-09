@@ -2570,6 +2570,14 @@ describe('keyboard interaction', () => {
     expect(instance.focusDateCell(addHours(startOfDay(startDate), 10))).toBe(false)
   })
 
+  it('reports when a registered focus target cannot receive focus', () => {
+    const time = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    instance.dateToCell.set(time.getTime(), { focus: true })
+
+    expect(instance.focusDateCell(time)).toBe(false)
+  })
+
   it('reports when a blocked focus target is not focusable', () => {
     const blocked = addHours(startOfDay(startDate), 9)
     const { instance } = renderSelector({ blocked: [blocked], startDate, numDays: 1, minTime: 9, maxTime: 9 })
