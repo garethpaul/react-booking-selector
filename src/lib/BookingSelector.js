@@ -204,14 +204,19 @@ const formatDateHeader = (time: Date, dateFormat: string): string => {
   }
 }
 
+const getDateColumnSlots = (dateColumn: ?DateColumnType): Array<DateSlotType> =>
+  dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : []
+
+const getDateSlotTime = (dateSlot: ?DateSlotType): ?Date =>
+  dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null
+
 const findDateSlotPosition = (dateColumns: Array<DateColumnType>, time: Date): ?DateSlotPositionType => {
   const targetKey = dateKey(time)
   for (let columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
     const dateColumn = dateColumns[columnIndex]
-    if (!dateColumn) continue
-    const { slots } = dateColumn
+    const slots = getDateColumnSlots(dateColumn)
     for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
-      const slotTime = slots[slotIndex].time
+      const slotTime = getDateSlotTime(slots[slotIndex])
       if (slotTime && dateKey(slotTime) === targetKey) return { columnIndex, slotIndex }
     }
   }
@@ -230,22 +235,22 @@ const getHorizontalKeyboardNavigationTarget = (
     targetColumnIndex += direction
   ) {
     const targetColumn = dateColumns[targetColumnIndex]
-    const targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null
-    const targetTime = targetSlot ? targetSlot.time : null
+    const targetTime = getDateSlotTime(getDateColumnSlots(targetColumn)[position.slotIndex])
     if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
   }
   return null
 }
 
 const getVerticalKeyboardNavigationTarget = (
-  dateColumn: DateColumnType,
+  dateColumn: ?DateColumnType,
   slotIndex: number,
   direction: -1 | 1,
   blockedMinuteKeys: Set<number>,
 ): ?Date => {
+  const slots = getDateColumnSlots(dateColumn)
   for (let nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
-    if (nextSlotIndex >= dateColumn.slots.length) return null
-    const nextTime = dateColumn.slots[nextSlotIndex].time
+    if (nextSlotIndex >= slots.length) return null
+    const nextTime = getDateSlotTime(slots[nextSlotIndex])
     if (nextTime && !hasDateMinuteKey(blockedMinuteKeys, nextTime)) return nextTime
   }
   return null

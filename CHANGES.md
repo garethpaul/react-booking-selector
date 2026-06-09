@@ -47,6 +47,7 @@
 - Skipped sparse time entries inside selection-scheme day buckets.
 - Avoided redundant `endSelection` state writes when selection is already idle.
 - Treated non-Date custom time values as grid placeholders.
+- Hardened keyboard navigation against malformed slot lists and entries.
 
 ## 2026-06-08
 

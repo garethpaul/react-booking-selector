@@ -162,14 +162,19 @@ var formatDateHeader = function formatDateHeader(time, dateFormat) {
     return (0, _format.format)(time, DEFAULT_DATE_FORMAT);
   }
 };
+var getDateColumnSlots = function getDateColumnSlots(dateColumn) {
+  return dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : [];
+};
+var getDateSlotTime = function getDateSlotTime(dateSlot) {
+  return dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null;
+};
 var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
   var targetKey = dateKey(time);
   for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
     var dateColumn = dateColumns[columnIndex];
-    if (!dateColumn) continue;
-    var slots = dateColumn.slots;
+    var slots = getDateColumnSlots(dateColumn);
     for (var slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
-      var slotTime = slots[slotIndex].time;
+      var slotTime = getDateSlotTime(slots[slotIndex]);
       if (slotTime && dateKey(slotTime) === targetKey) return {
         columnIndex: columnIndex,
         slotIndex: slotIndex
@@ -181,16 +186,16 @@ var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
 var getHorizontalKeyboardNavigationTarget = function getHorizontalKeyboardNavigationTarget(dateColumns, position, direction, blockedMinuteKeys) {
   for (var targetColumnIndex = position.columnIndex + direction; targetColumnIndex >= 0 && targetColumnIndex < dateColumns.length; targetColumnIndex += direction) {
     var targetColumn = dateColumns[targetColumnIndex];
-    var targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null;
-    var targetTime = targetSlot ? targetSlot.time : null;
+    var targetTime = getDateSlotTime(getDateColumnSlots(targetColumn)[position.slotIndex]);
     if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
   }
   return null;
 };
 var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigationTarget(dateColumn, slotIndex, direction, blockedMinuteKeys) {
+  var slots = getDateColumnSlots(dateColumn);
   for (var nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
-    if (nextSlotIndex >= dateColumn.slots.length) return null;
-    var nextTime = dateColumn.slots[nextSlotIndex].time;
+    if (nextSlotIndex >= slots.length) return null;
+    var nextTime = getDateSlotTime(slots[nextSlotIndex]);
     if (nextTime && !hasDateMinuteKey(blockedMinuteKeys, nextTime)) return nextTime;
   }
   return null;

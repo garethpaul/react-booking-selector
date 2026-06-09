@@ -1662,6 +1662,30 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(sparseBeforeTarget, tuesdayNine, 'ArrowLeft')).toBe(null)
   })
 
+  it('skips malformed keyboard navigation slot lists and entries', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const mondayNoon = addHours(startOfDay(startDate), 12)
+    const thursdayNine = addHours(addDays(startOfDay(startDate), 3), 9)
+    const dateColumns = [
+      {
+        day: startDate,
+        slots: [
+          { hour: 9, time: mondayNine },
+          undefined,
+          { hour: 11, time: 'not-a-date' },
+          { hour: 12, time: mondayNoon },
+        ],
+      },
+      { day: addDays(startDate, 1), slots: null },
+      { day: addDays(startDate, 2), slots: [undefined] },
+      { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
+    ]
+
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowRight')).toBe(thursdayNine)
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowDown')).toBe(mondayNoon)
+    expect(getKeyboardNavigationTarget([{ day: startDate, slots: null }], mondayNine, 'ArrowRight')).toBe(null)
+  })
+
   it('skips placeholder rows when vertically navigating daylight-saving-time gaps', () => {
     const dateColumns = buildDateColumns(
       {
