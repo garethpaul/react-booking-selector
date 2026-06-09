@@ -115,7 +115,7 @@ export class App extends React.Component<{}, StateType> {
     return (
       <React.Fragment>
         <GlobalStyle />
-        <MainDiv>
+        <MainDiv as="main">
           <IntroText>
             <h1>React Booking Selector</h1>
             <StatusText aria-atomic="true" aria-live="polite" role="status">

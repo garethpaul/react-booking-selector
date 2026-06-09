@@ -89,3 +89,4 @@
 - Added React StrictMode coverage for date-cell lookup and touch-listener cleanup.
 - Added docs-plan checker coverage for empty plan directories and missing baseline plans.
 - Cancelled active selections when the rendered date or hour grid changes.
+- Exposed the docs demo content through a main landmark.

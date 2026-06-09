@@ -1,7 +1,14 @@
 import React from 'react'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor, within } from '@testing-library/react'
 
 import { App } from '../../src/docs/App'
+
+it('renders the demo content in a main landmark', () => {
+  const { getByRole } = render(React.createElement(App))
+  const main = getByRole('main')
+
+  expect(within(main).getByRole('heading', { name: 'React Booking Selector' })).toBeInTheDocument()
+})
 
 it('renders the GitHub link as a safe external link', () => {
   const { getByRole } = render(React.createElement(App))
