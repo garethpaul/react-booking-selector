@@ -82,3 +82,4 @@
 - Kept arrow-key focus on the rendered slot grid across daylight-saving-time placeholders.
 - Updated the project vision to track daylight-saving-time placeholder coverage as an ongoing maintenance concern.
 - Added docs-app coverage for the demo grid updating its visible selected-slot count.
+- Added package-manager metadata so Corepack uses the intended Yarn release.

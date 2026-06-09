@@ -4,6 +4,7 @@
   "description": "A grid based booking selector.",
   "author": "Gareth Paul Jones",
   "type": "commonjs",
+  "packageManager": "yarn@1.22.22",
   "sideEffects": [
     "src/docs/App.js"
   ],
