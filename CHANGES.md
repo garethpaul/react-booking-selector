@@ -60,6 +60,8 @@
 - Required docs-plan filename dates to be valid calendar dates, not just
   date-shaped prefixes.
 - Added narrow-mobile docs smoke screenshots to catch 320px layout regressions.
+- Marked the published package contract as explicitly side-effect-free instead
+  of listing an internal docs entry that is not published.
 
 ## 2026-06-08
 

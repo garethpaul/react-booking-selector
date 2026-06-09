@@ -11,6 +11,10 @@ it('exports package metadata', () => {
   expect(packageJson.name).toBe('react-booking-selector')
 })
 
+it('marks the published package as side-effect free', () => {
+  expect(packageJson.sideEffects).toBe(false)
+})
+
 it('supports direct CommonJS require interop', () => {
   const output = execFileSync(
     process.execPath,

@@ -5,9 +5,7 @@
   "author": "Gareth Paul Jones",
   "type": "commonjs",
   "packageManager": "yarn@1.22.22",
-  "sideEffects": [
-    "src/docs/App.js"
-  ],
+  "sideEffects": false,
   "types": "dist/lib/index.d.ts",
   "repository": {
     "type": "git",
