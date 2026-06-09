@@ -39,6 +39,18 @@ type DateGridPropsType = {
   maxTime: number,
 }
 
+type DateSlotType = {
+  hour: number,
+  time: ?Date,
+}
+
+type DateColumnType = {
+  day: Date,
+  slots: Array<DateSlotType>,
+}
+
+type CreateLocalTimeType = (Date, number) => Date
+
 const DEFAULT_DATE_FORMAT = 'd'
 
 const toCssUnit = (value: ?(number | string)): string => {
@@ -112,22 +124,50 @@ const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
 const createLocalTime = (day: Date, hour: number): Date =>
   new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0)
 
-const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
+const localTimeExists = (day: Date, hour: number, time: Date): boolean =>
+  time.getFullYear() === day.getFullYear() &&
+  time.getMonth() === day.getMonth() &&
+  time.getDate() === day.getDate() &&
+  time.getHours() === hour
+
+export const buildDateColumns = (
+  { startDate, numDays, minTime, maxTime }: DateGridPropsType,
+  createTime: CreateLocalTimeType = createLocalTime,
+): Array<DateColumnType> => {
   if (!isWholeNumber(numDays) || numDays <= 0) return []
 
   const startTime = startOfDay(getStartDate(startDate))
   const visibleHours = getVisibleHours(minTime, maxTime)
   if (visibleHours.length === 0) return []
 
-  const dates = []
+  const dateColumns = []
   for (let d = 0; d < numDays; d += 1) {
-    const currentDay = []
     const day = addDays(startTime, d)
+    const slots = []
     visibleHours.forEach((h) => {
-      currentDay.push(createLocalTime(day, h))
+      const time = createTime(day, h)
+      slots.push({
+        hour: h,
+        time: localTimeExists(day, h, time) ? time : null,
+      })
     })
-    dates.push(currentDay)
+    dateColumns.push({ day, slots })
   }
+  return dateColumns
+}
+
+export const buildDates = (
+  dateGridProps: DateGridPropsType,
+  createTime: CreateLocalTimeType = createLocalTime,
+): Array<Array<Date>> => {
+  const dates = []
+  buildDateColumns(dateGridProps, createTime).forEach((dateColumn) => {
+    const columnDates = []
+    dateColumn.slots.forEach((slot) => {
+      if (slot.time) columnDates.push(slot.time)
+    })
+    dates.push(columnDates)
+  })
   return dates
 }
 
@@ -732,17 +772,25 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderDateColumn = (
-    dayOfTimes: Array<Date>,
+    dateColumn: DateColumnType,
     blockedMinuteKeys: Set<number>,
     selectedMinuteKeys: Set<number>,
   ): React.Element<*> => (
-    <Column key={dayOfTimes[0].toISOString()}>
+    <Column key={dateColumn.day.toISOString()}>
       <GridCell $height="50" $margin={this.props.margin} aria-hidden="true">
-        <DayLabel>{formatDate(dayOfTimes[0], 'EEE').toUpperCase()}</DayLabel>
-        <DateLabel>{formatDateHeader(dayOfTimes[0], this.props.dateFormat)}</DateLabel>
+        <DayLabel>{formatDate(dateColumn.day, 'EEE').toUpperCase()}</DayLabel>
+        <DateLabel>{formatDateHeader(dateColumn.day, this.props.dateFormat)}</DateLabel>
       </GridCell>
-      {dayOfTimes.map((time) => this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys))}
+      {dateColumn.slots.map((slot) =>
+        slot.time
+          ? this.renderDateCellWrapperWithLookups(slot.time, blockedMinuteKeys, selectedMinuteKeys)
+          : this.renderDateCellPlaceholder(dateColumn.day, slot.hour),
+      )}
     </Column>
+  )
+
+  renderDateCellPlaceholder = (day: Date, hour: number): React.Element<*> => (
+    <GridCell $height="40px" $margin={this.props.margin} aria-hidden="true" key={`${day.toISOString()}-${hour}`} />
   )
 
   renderDateCellWrapper = (time: Date): React.Element<*> =>
@@ -830,7 +878,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   render(): React.Element<*> {
-    const dates = buildDates(this.props)
+    const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
 
@@ -844,8 +892,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
               this.gridRef = el
             }}
           >
-            {dates.length > 0 && this.renderTimeLabels()}
-            {dates.map((dayOfTimes) => this.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys))}
+            {dateColumns.length > 0 && this.renderTimeLabels()}
+            {dateColumns.map((dateColumn) => this.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys))}
           </Grid>
         }
       </Wrapper>

@@ -1,7 +1,7 @@
 "use strict";
 
 exports.__esModule = true;
-exports.preventScroll = exports.default = exports.GridCell = void 0;
+exports.preventScroll = exports.default = exports.buildDates = exports.buildDateColumns = exports.GridCell = void 0;
 var React = _interopRequireWildcard(require("react"));
 var _addDays = require("date-fns/addDays");
 var _addHours = require("date-fns/addHours");
@@ -89,27 +89,54 @@ var getVisibleHours = function getVisibleHours(minTime, maxTime) {
 var createLocalTime = function createLocalTime(day, hour) {
   return new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0);
 };
-var buildDates = function buildDates(_ref) {
+var localTimeExists = function localTimeExists(day, hour, time) {
+  return time.getFullYear() === day.getFullYear() && time.getMonth() === day.getMonth() && time.getDate() === day.getDate() && time.getHours() === hour;
+};
+var buildDateColumns = exports.buildDateColumns = function buildDateColumns(_ref, createTime) {
   var startDate = _ref.startDate,
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
+  if (createTime === void 0) {
+    createTime = createLocalTime;
+  }
   if (!isWholeNumber(numDays) || numDays <= 0) return [];
   var startTime = (0, _startOfDay.startOfDay)(getStartDate(startDate));
   var visibleHours = getVisibleHours(minTime, maxTime);
   if (visibleHours.length === 0) return [];
-  var dates = [];
+  var dateColumns = [];
   var _loop = function _loop() {
-    var currentDay = [];
     var day = (0, _addDays.addDays)(startTime, d);
+    var slots = [];
     visibleHours.forEach(function (h) {
-      currentDay.push(createLocalTime(day, h));
+      var time = createTime(day, h);
+      slots.push({
+        hour: h,
+        time: localTimeExists(day, h, time) ? time : null
+      });
     });
-    dates.push(currentDay);
+    dateColumns.push({
+      day: day,
+      slots: slots
+    });
   };
   for (var d = 0; d < numDays; d += 1) {
     _loop();
   }
+  return dateColumns;
+};
+var buildDates = exports.buildDates = function buildDates(dateGridProps, createTime) {
+  if (createTime === void 0) {
+    createTime = createLocalTime;
+  }
+  var dates = [];
+  buildDateColumns(dateGridProps, createTime).forEach(function (dateColumn) {
+    var columnDates = [];
+    dateColumn.slots.forEach(function (slot) {
+      if (slot.time) columnDates.push(slot.time);
+    });
+    dates.push(columnDates);
+  });
   return dates;
 };
 var formatHour = function formatHour(hour) {
@@ -200,16 +227,24 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         "aria-hidden": "true"
       }, labels);
     };
-    _this.renderDateColumn = function (dayOfTimes, blockedMinuteKeys, selectedMinuteKeys) {
+    _this.renderDateColumn = function (dateColumn, blockedMinuteKeys, selectedMinuteKeys) {
       return /*#__PURE__*/React.createElement(Column, {
-        key: dayOfTimes[0].toISOString()
+        key: dateColumn.day.toISOString()
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin,
         "aria-hidden": "true"
-      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _format.format)(dayOfTimes[0], 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dayOfTimes[0], _this.props.dateFormat))), dayOfTimes.map(function (time) {
-        return _this.renderDateCellWrapperWithLookups(time, blockedMinuteKeys, selectedMinuteKeys);
+      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _format.format)(dateColumn.day, 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dateColumn.day, _this.props.dateFormat))), dateColumn.slots.map(function (slot) {
+        return slot.time ? _this.renderDateCellWrapperWithLookups(slot.time, blockedMinuteKeys, selectedMinuteKeys) : _this.renderDateCellPlaceholder(dateColumn.day, slot.hour);
       }));
+    };
+    _this.renderDateCellPlaceholder = function (day, hour) {
+      return /*#__PURE__*/React.createElement(GridCell, {
+        $height: "40px",
+        $margin: _this.props.margin,
+        "aria-hidden": "true",
+        key: day.toISOString() + "-" + hour
+      });
     };
     _this.renderDateCellWrapper = function (time) {
       return _this.renderDateCellWrapperWithLookups(time, _this.blockedMinuteKeys, _this.selectedMinuteKeys);
@@ -620,7 +655,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.render = function render() {
     var _this6 = this;
-    var dates = buildDates(this.props);
+    var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
     return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
@@ -629,8 +664,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       ref: function ref(el) {
         _this6.gridRef = el;
       }
-    }, dates.length > 0 && this.renderTimeLabels(), dates.map(function (dayOfTimes) {
-      return _this6.renderDateColumn(dayOfTimes, blockedMinuteKeys, selectedMinuteKeys);
+    }, dateColumns.length > 0 && this.renderTimeLabels(), dateColumns.map(function (dateColumn) {
+      return _this6.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };
   return BookingSelector;

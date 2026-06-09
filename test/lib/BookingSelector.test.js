@@ -1,8 +1,8 @@
 import React, { act } from 'react'
 import { addDays, addHours, startOfDay } from 'date-fns'
-import { createEvent, fireEvent, render, waitFor } from '@testing-library/react'
+import { createEvent, fireEvent, render, waitFor, within } from '@testing-library/react'
 
-import BookingSelector, { preventScroll } from '../../src/lib/BookingSelector'
+import BookingSelector, { buildDateColumns, buildDates, preventScroll } from '../../src/lib/BookingSelector'
 
 const startDate = new Date('2018-01-01T00:00:00.000')
 
@@ -1072,29 +1072,88 @@ describe('prop updates', () => {
   })
 
   it('keeps visible hours stable across daylight-saving-time boundaries', () => {
-    const previousTimeZone = process.env.TZ
-    process.env.TZ = 'America/New_York'
-
-    try {
-      const rendered = renderSelector({
-        startDate: new Date(2024, 2, 9),
+    const start = new Date(2024, 2, 9)
+    const dateColumns = buildDateColumns(
+      {
+        startDate: start,
         numDays: 3,
         minTime: 9,
         maxTime: 9,
-      })
+      },
+      (day, hour) => new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0),
+    )
 
-      expect(rendered.instance.dates.map((dayOfTimes) => dayOfTimes[0].getHours())).toEqual([9, 9, 9])
-      expect(rendered.getByRole('button', { name: 'Available Saturday, March 9, 2024 at 9 am' })).toBeInTheDocument()
-      expect(rendered.getByRole('button', { name: 'Available Sunday, March 10, 2024 at 9 am' })).toBeInTheDocument()
-      expect(rendered.getByRole('button', { name: 'Available Monday, March 11, 2024 at 9 am' })).toBeInTheDocument()
-      expect(rendered.queryByRole('button', { name: 'Available Sunday, March 10, 2024 at 10 am' })).toBe(null)
-    } finally {
-      if (previousTimeZone === undefined) {
-        delete process.env.TZ
-      } else {
-        process.env.TZ = previousTimeZone
-      }
+    expect(dateColumns.map((dateColumn) => dateColumn.slots[0].time.getHours())).toEqual([9, 9, 9])
+  })
+
+  it('marks nonexistent daylight-saving-time hours as placeholders instead of duplicate slots', () => {
+    const start = new Date(2024, 2, 10)
+    const dateGridProps = {
+      startDate: start,
+      numDays: 1,
+      minTime: 1,
+      maxTime: 3,
     }
+    const createTime = (day, hour) => {
+      const visibleHour = hour === 2 ? 3 : hour
+      return new Date(day.getFullYear(), day.getMonth(), day.getDate(), visibleHour, 0, 0, 0)
+    }
+    const dateColumns = buildDateColumns(dateGridProps, createTime)
+
+    expect(dateColumns[0].slots.map((slot) => [slot.hour, slot.time ? slot.time.getHours() : null])).toEqual([
+      [1, 1],
+      [2, null],
+      [3, 3],
+    ])
+    expect(buildDates(dateGridProps, createTime)[0].map((time) => time.getHours())).toEqual([1, 3])
+  })
+
+  it('renders nonexistent daylight-saving-time hours as placeholders instead of duplicate slots', () => {
+    const start = new Date(2024, 2, 10)
+    const host = renderSelector({ startDate: start, numDays: 1, minTime: 1, maxTime: 3 })
+    const [dateColumn] = buildDateColumns(
+      {
+        startDate: start,
+        numDays: 1,
+        minTime: 1,
+        maxTime: 3,
+      },
+      (day, hour) => {
+        const visibleHour = hour === 2 ? 3 : hour
+        return new Date(day.getFullYear(), day.getMonth(), day.getDate(), visibleHour, 0, 0, 0)
+      },
+    )
+    const rendered = render(
+      <div>
+        {host.instance.renderTimeLabels()}
+        {host.instance.renderDateColumn(dateColumn, new Set(), new Set())}
+      </div>,
+    )
+    const renderedGrid = within(rendered.container)
+
+    expect(rendered.container.querySelectorAll('button.rgdp__grid-cell')).toHaveLength(2)
+    expect(renderedGrid.getByText('2 am').closest('[aria-hidden="true"]')).toBeInTheDocument()
+    expect(renderedGrid.getByRole('button', { name: 'Available Sunday, March 10, 2024 at 1 am' })).toBeInTheDocument()
+    expect(renderedGrid.queryByRole('button', { name: 'Available Sunday, March 10, 2024 at 2 am' })).toBe(null)
+    expect(renderedGrid.getAllByRole('button', { name: 'Available Sunday, March 10, 2024 at 3 am' })).toHaveLength(1)
+
+    host.unmount()
+    rendered.unmount()
+  })
+
+  it('renders real date slots across daylight-saving-time boundaries', () => {
+    const rendered = renderSelector({
+      startDate: new Date(2024, 2, 9),
+      numDays: 3,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(rendered.instance.dates.map((dayOfTimes) => dayOfTimes[0].getHours())).toEqual([9, 9, 9])
+    expect(rendered.getByRole('button', { name: 'Available Saturday, March 9, 2024 at 9 am' })).toBeInTheDocument()
+    expect(rendered.getByRole('button', { name: 'Available Sunday, March 10, 2024 at 9 am' })).toBeInTheDocument()
+    expect(rendered.getByRole('button', { name: 'Available Monday, March 11, 2024 at 9 am' })).toBeInTheDocument()
+    expect(rendered.queryByRole('button', { name: 'Available Sunday, March 10, 2024 at 10 am' })).toBe(null)
   })
 
   it('renders no date cells when the time range has no slots', () => {
