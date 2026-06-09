@@ -250,6 +250,16 @@ Invalid format strings fall back to the default day-of-month header format.
 
 **default value**: `'Booking time slots'`
 
+### `aria-labelledby`
+
+**type**: `string`
+
+**description**: ID reference for visible text that labels the booking slot group. When provided, this takes precedence over `aria-label` and the default group label.
+
+**required**: no
+
+**default value**: none
+
 ### `renderDateCell`
 
 **type**: `(time: Date, selected: boolean, blocked: boolean) => React.ReactNode`

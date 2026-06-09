@@ -26,6 +26,7 @@ export interface BookingSelectorProps {
   blockedColor?: string
   ariaLabel?: string
   'aria-label'?: string
+  'aria-labelledby'?: string
   style?: React.CSSProperties
   renderDateCell?: (time: Date, selected: boolean, blocked: boolean) => React.ReactNode
 }

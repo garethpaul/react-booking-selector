@@ -46,6 +46,7 @@ const defaultExport = (
     blockedColor="rgba(79, 79, 79, 1)"
     ariaLabel="Appointment availability"
     aria-label="Team appointment availability"
+    aria-labelledby="team-availability-heading"
     renderDateCell={renderDateCell}
   />
 )

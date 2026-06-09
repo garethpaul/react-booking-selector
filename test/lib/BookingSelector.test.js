@@ -1507,6 +1507,26 @@ describe('cell accessibility', () => {
     expect(queryByRole('group', { name: 'Alias label' })).toBe(null)
   })
 
+  it('supports aria-labelledby for naming the slot group from visible text', () => {
+    const { getByRole } = render(
+      <>
+        <h2 id="availability-heading">Team availability</h2>
+        <BookingSelector
+          aria-label="Fallback appointment availability"
+          aria-labelledby="availability-heading"
+          startDate={startDate}
+          numDays={1}
+          minTime={9}
+          maxTime={9}
+        />
+      </>,
+    )
+    const group = getByRole('group', { name: 'Team availability' })
+
+    expect(group).toHaveAttribute('aria-labelledby', 'availability-heading')
+    expect(group).not.toHaveAttribute('aria-label')
+  })
+
   it('renders cells as native buttons', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

@@ -696,13 +696,15 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
-    var gridAriaLabel = this.props['aria-label'] || this.props.ariaLabel;
+    var gridAriaLabelledBy = this.props['aria-labelledby'];
+    var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;
     return /*#__PURE__*/React.createElement(Wrapper, {
       className: this.props.className,
       style: this.props.style
     }, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
       "aria-label": gridAriaLabel,
+      "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
         _this6.gridRef = el;
       }

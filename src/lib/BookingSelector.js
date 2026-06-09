@@ -404,6 +404,7 @@ type PropsType = {
   blockedColor: string,
   ariaLabel: string,
   'aria-label'?: string,
+  'aria-labelledby'?: string,
   style?: StyleType,
   renderDateCell?: (Date, boolean, boolean) => React.Node,
 }
@@ -943,7 +944,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
-    const gridAriaLabel = this.props['aria-label'] || this.props.ariaLabel
+    const gridAriaLabelledBy = this.props['aria-labelledby']
+    const gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel
 
     return (
       <Wrapper className={this.props.className} style={this.props.style}>
@@ -951,6 +953,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
           <Grid
             role="group"
             aria-label={gridAriaLabel}
+            aria-labelledby={gridAriaLabelledBy}
             ref={(el) => {
               this.gridRef = el
             }}

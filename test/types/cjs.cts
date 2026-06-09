@@ -14,6 +14,7 @@ const style: BookingSelector.BookingSelectorProps['style'] = { maxWidth: 480 }
 const margin: BookingSelector.BookingSelectorCssLength = '0.25rem'
 const ariaLabel: BookingSelector.BookingSelectorProps['ariaLabel'] = 'Appointment availability'
 const standardAriaLabel: BookingSelector.BookingSelectorProps['aria-label'] = 'Team appointment availability'
+const ariaLabelledBy: BookingSelector.BookingSelectorProps['aria-labelledby'] = 'team-availability-heading'
 
 const onChange: NonNullable<BookingSelector.BookingSelectorProps['onChange']> = (nextSelection) => {
   nextSelection.forEach((time) => {
@@ -30,4 +31,5 @@ void style
 void margin
 void ariaLabel
 void standardAriaLabel
+void ariaLabelledBy
 void onChange
