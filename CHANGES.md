@@ -43,6 +43,7 @@
 - Added docs smoke regression coverage for encoded path traversal attempts.
 - Reported incomplete docs smoke PNG screenshots with explicit parser errors.
 - Reset WebKit button appearance on booking grid cells for Safari parity.
+- Asserted the CommonJS package root's ESM interop marker at runtime.
 
 ## 2026-06-08
 

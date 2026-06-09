@@ -16,12 +16,12 @@ it('supports direct CommonJS require interop', () => {
     process.execPath,
     [
       '-e',
-      "const BookingSelector = require('react-booking-selector'); console.log(`${typeof BookingSelector}:${BookingSelector.default === BookingSelector}:${BookingSelector.BookingSelector === BookingSelector}`)",
+      "const BookingSelector = require('react-booking-selector'); console.log(`${typeof BookingSelector}:${BookingSelector.default === BookingSelector}:${BookingSelector.BookingSelector === BookingSelector}:${BookingSelector.__esModule === true}`)",
     ],
     { cwd: process.cwd(), encoding: 'utf8' },
   )
 
-  expect(output.trim()).toBe('function:true:true')
+  expect(output.trim()).toBe('function:true:true:true')
 })
 
 it('supports the package ESM import condition', () => {
