@@ -69,6 +69,8 @@
 - Split ESLint globals by source, script, and test targets so environment-only
   globals do not leak across file types.
 - Added `eslint.config.js` itself to the warning-free lint gate.
+- Extended `docs:smoke` with desktop, mobile, and narrow-mobile horizontal
+  overflow checks.
 
 ## 2026-06-08
 

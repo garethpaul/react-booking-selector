@@ -102,6 +102,29 @@ if (screenshotArg) {
 
 if (args.includes('--dump-dom')) {
   requestSmokePath(args[args.length - 1], () => {
+    const targetUrl = new URL(args[args.length - 1])
+    if (targetUrl.pathname === '/__smoke__/layout.html') {
+      const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
+      const [width] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
+      const layout = {
+        status: 'ok',
+        viewportWidth: width,
+        rootClientWidth: width,
+        rootScrollWidth: process.env.FAKE_CHROME_LAYOUT_OVERFLOW === '1' ? width + 20 : width,
+        bodyClientWidth: width,
+        bodyScrollWidth: width,
+        buttonCount: 70,
+        minCellLeft: 0,
+        maxCellRight: width,
+      }
+      process.stdout.write(
+        '<!doctype html><html><body><pre id="layout-result">' +
+          JSON.stringify(layout) +
+          '</pre></body></html>',
+      )
+      process.exit(0)
+    }
+
     const buttons = [
       '<button aria-label="Available Monday, April 6, 2020 at 8 am"></button>',
       '<button aria-label="Blocked Wednesday, April 8, 2020 at 10 am"></button>',
@@ -190,6 +213,16 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_INCOMPLETE_SCREENSHOTS: '1' })
     }).toThrow(/desktop\.png is missing PNG terminator/u)
+  })
+
+  it('fails when a checked viewport has horizontal layout overflow', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_LAYOUT_OVERFLOW: '1' })
+    }).toThrow(/desktop layout has horizontal overflow/u)
   })
 
   it('handles malformed docs server request paths', () => {

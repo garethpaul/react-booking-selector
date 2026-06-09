@@ -43,6 +43,7 @@ const contentTypes = new Map([
   ['.css', 'text/css; charset=utf-8'],
   ['.svg', 'image/svg+xml; charset=utf-8'],
 ])
+const layoutCheckPath = '/__smoke__/layout.html'
 const expectedDomSnippets = [
   '<title>React Booking Selector</title>',
   '<main',
@@ -66,6 +67,69 @@ const sendResponse = (response, statusCode, body) => {
   response.end(body)
 }
 
+const createLayoutCheckHtml = (targetPath = '/') => `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Docs Layout Smoke</title>
+    <style>
+      html,
+      body,
+      iframe {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <pre id="layout-result">pending</pre>
+    <iframe id="docs-frame"></iframe>
+    <script>
+      const result = document.getElementById('layout-result')
+      const frame = document.getElementById('docs-frame')
+      const writeResult = (payload) => {
+        result.textContent = JSON.stringify(payload)
+      }
+      const measureLayout = () => {
+        try {
+          const doc = frame.contentDocument
+          const root = doc.documentElement
+          const body = doc.body
+          const viewportWidth = frame.contentWindow.innerWidth
+          const slotCells = Array.from(doc.querySelectorAll('button.rgdp__grid-cell'))
+          const cellBounds = slotCells.map((cell) => cell.getBoundingClientRect())
+          const maxCellRight = cellBounds.reduce((maxRight, rect) => Math.max(maxRight, rect.right), 0)
+          const minCellLeft = cellBounds.reduce((minLeft, rect) => Math.min(minLeft, rect.left), viewportWidth)
+          writeResult({
+            status: 'ok',
+            viewportWidth,
+            rootClientWidth: root.clientWidth,
+            rootScrollWidth: root.scrollWidth,
+            bodyClientWidth: body ? body.clientWidth : 0,
+            bodyScrollWidth: body ? body.scrollWidth : 0,
+            buttonCount: slotCells.length,
+            minCellLeft,
+            maxCellRight,
+          })
+        } catch (error) {
+          writeResult({ status: 'error', message: error.message })
+        }
+      }
+      frame.addEventListener('load', () => {
+        setTimeout(measureLayout, 0)
+      })
+      frame.src = '${targetPath}'
+      setTimeout(() => {
+        if (result.textContent === 'pending') {
+          writeResult({ status: 'error', message: 'Timed out waiting for docs layout' })
+        }
+      }, 3000)
+    </script>
+  </body>
+</html>`
+
 const isInsideDocsRoot = (filePath) => filePath === docsRoot || filePath.startsWith(`${docsRoot}${path.sep}`)
 
 const createDocsServer = () =>
@@ -80,6 +144,11 @@ const createDocsServer = () =>
     }
     if (pathname.includes('\0')) {
       sendResponse(response, 400, 'Bad request')
+      return
+    }
+    if (pathname === layoutCheckPath) {
+      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+      response.end(createLayoutCheckHtml('/'))
       return
     }
     const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '')
@@ -337,6 +406,53 @@ const assertDom = (dom) => {
   if (buttonCount !== 70) throw new Error(`Expected 70 booking slot buttons, found ${buttonCount}`)
 }
 
+const decodeHtmlText = (value) =>
+  value
+    .replace(/&quot;/gu, '"')
+    .replace(/&#39;/gu, "'")
+    .replace(/&lt;/gu, '<')
+    .replace(/&gt;/gu, '>')
+    .replace(/&amp;/gu, '&')
+
+const parseLayoutResult = (dom) => {
+  const resultMatch = dom.match(/<pre id="layout-result">([\s\S]*?)<\/pre>/u)
+  if (!resultMatch) throw new Error('Docs layout smoke result is missing')
+
+  try {
+    return JSON.parse(decodeHtmlText(resultMatch[1].trim()))
+  } catch (error) {
+    throw new Error(`Docs layout smoke result is invalid JSON: ${error.message}`)
+  }
+}
+
+const assertLayout = (screenshot, dom) => {
+  const layout = parseLayoutResult(dom)
+  if (layout.status !== 'ok') {
+    throw new Error(`${screenshot.name} layout smoke failed: ${layout.message || 'unknown error'}`)
+  }
+  if (layout.viewportWidth > screenshot.width || layout.viewportWidth < screenshot.width - 40) {
+    throw new Error(
+      `${screenshot.name} layout viewport is ${layout.viewportWidth}px, expected near ${screenshot.width}px`,
+    )
+  }
+  if (layout.buttonCount !== 70) {
+    throw new Error(`${screenshot.name} layout expected 70 booking slot buttons, found ${layout.buttonCount}`)
+  }
+
+  const maxDocumentWidth = Math.max(layout.rootScrollWidth, layout.bodyScrollWidth)
+  const maxClientWidth = Math.max(layout.rootClientWidth, layout.bodyClientWidth)
+  if (maxDocumentWidth > maxClientWidth + 1) {
+    throw new Error(
+      `${screenshot.name} layout has horizontal overflow: scroll width ${maxDocumentWidth}px, client width ${maxClientWidth}px`,
+    )
+  }
+  if (layout.minCellLeft < -1 || layout.maxCellRight > layout.viewportWidth + 1) {
+    throw new Error(
+      `${screenshot.name} slot cells leave the viewport: left ${layout.minCellLeft}px, right ${layout.maxCellRight}px`,
+    )
+  }
+}
+
 const main = async () => {
   if (!fs.existsSync(path.join(docsRoot, 'index.html'))) {
     throw new Error('dist/docs/index.html is missing. Run corepack yarn docs:build before smoke-docs.js.')
@@ -355,6 +471,16 @@ const main = async () => {
         url,
       ])
       assertScreenshot(screenshot)
+    }
+
+    for (const screenshot of screenshots) {
+      const layoutDom = await runChrome(chrome, [
+        `--window-size=${screenshot.width},${screenshot.height}`,
+        '--virtual-time-budget=5000',
+        '--dump-dom',
+        `${url}${layoutCheckPath}`,
+      ])
+      assertLayout(screenshot, layoutDom)
     }
 
     const dom = await runChrome(chrome, ['--dump-dom', url])
