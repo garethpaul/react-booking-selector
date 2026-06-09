@@ -140,12 +140,15 @@ var createLocalTime = function createLocalTime(day, hour) {
   return new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0);
 };
 var localTimeExists = function localTimeExists(day, hour, time) {
-  return time.getFullYear() === day.getFullYear() && time.getMonth() === day.getMonth() && time.getDate() === day.getDate() && time.getHours() === hour;
+  return Date.prototype.getFullYear.call(time) === Date.prototype.getFullYear.call(day) && Date.prototype.getMonth.call(time) === Date.prototype.getMonth.call(day) && Date.prototype.getDate.call(time) === Date.prototype.getDate.call(day) && Date.prototype.getHours.call(time) === hour;
 };
 var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
   try {
     var time = createTime(day, hour);
-    return time instanceof Date && localTimeExists(day, hour, time) ? time : null;
+    var timestamp = getDateTimestamp(time);
+    if (timestamp == null) return null;
+    var slotTime = new Date(timestamp);
+    return localTimeExists(day, hour, slotTime) ? slotTime : null;
   } catch (_unused2) {
     return null;
   }

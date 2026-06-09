@@ -192,15 +192,18 @@ const createLocalTime = (day: Date, hour: number): Date =>
   new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0)
 
 const localTimeExists = (day: Date, hour: number, time: Date): boolean =>
-  time.getFullYear() === day.getFullYear() &&
-  time.getMonth() === day.getMonth() &&
-  time.getDate() === day.getDate() &&
-  time.getHours() === hour
+  Date.prototype.getFullYear.call(time) === Date.prototype.getFullYear.call(day) &&
+  Date.prototype.getMonth.call(time) === Date.prototype.getMonth.call(day) &&
+  Date.prototype.getDate.call(time) === Date.prototype.getDate.call(day) &&
+  Date.prototype.getHours.call(time) === hour
 
 const createDateSlotTime = (day: Date, hour: number, createTime: CreateLocalTimeType): ?Date => {
   try {
     const time = createTime(day, hour)
-    return time instanceof Date && localTimeExists(day, hour, time) ? time : null
+    const timestamp = getDateTimestamp(time)
+    if (timestamp == null) return null
+    const slotTime = new Date(timestamp)
+    return localTimeExists(day, hour, slotTime) ? slotTime : null
   } catch {
     return null
   }

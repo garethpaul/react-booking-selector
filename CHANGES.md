@@ -12,6 +12,8 @@
   non-standard DOM listener failures cannot break mount or unmount cleanup.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
+- Normalized valid custom slot time values before grid validation so
+  cross-realm `Date` values remain real booking slots.
 - Normalized `docs:check` plan paths so README validation remains stable
   across native path separators.
 - Tightened `docs:check` so README cannot duplicate canonical `docs/plans`

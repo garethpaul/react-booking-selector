@@ -2324,6 +2324,45 @@ describe('prop updates', () => {
     expect(dateColumns.map((dateColumn) => dateColumn.slots[0].time.getHours())).toEqual([9, 9, 9])
   })
 
+  it('normalizes valid custom time values from another JavaScript realm', () => {
+    const start = new Date(2024, 2, 10)
+    const expected = new Date(2024, 2, 10, 9)
+    const returnedTimes = []
+    const dateGridProps = {
+      startDate: start,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    }
+    const createTime = (day, hour) => {
+      const crossRealmTime = createCrossRealmDate(
+        new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0).getTime(),
+      )
+      crossRealmTime.getFullYear = () => {
+        throw new Error('Unexpected custom time getFullYear call')
+      }
+      crossRealmTime.getMonth = () => {
+        throw new Error('Unexpected custom time getMonth call')
+      }
+      crossRealmTime.getDate = () => {
+        throw new Error('Unexpected custom time getDate call')
+      }
+      crossRealmTime.getHours = () => {
+        throw new Error('Unexpected custom time getHours call')
+      }
+      returnedTimes.push(crossRealmTime)
+      return crossRealmTime
+    }
+    const dateColumns = buildDateColumns(dateGridProps, createTime)
+    const slotTime = dateColumns[0].slots[0].time
+
+    expect(returnedTimes[0]).not.toBeInstanceOf(Date)
+    expect(slotTime).toEqual(expected)
+    expect(slotTime).toBeInstanceOf(Date)
+    expect(slotTime).not.toBe(returnedTimes[0])
+    expect(buildDates(dateGridProps, createTime)[0]).toEqual([expected])
+  })
+
   it('marks nonexistent daylight-saving-time hours as placeholders instead of duplicate slots', () => {
     const start = new Date(2024, 2, 10)
     const dateGridProps = {
