@@ -67,6 +67,9 @@ type CreateLocalTimeType = (Date, number) => mixed
 
 const DEFAULT_DATE_FORMAT = 'd'
 
+const getSelectionScheme = (selectionScheme: mixed): SelectionSchemeType =>
+  selectionScheme === 'linear' || selectionScheme === 'square' ? selectionScheme : 'square'
+
 const toCssUnit = (value: ?(number | string)): string => {
   if (value == null) return '0px'
   if (typeof value === 'number' && !Number.isFinite(value)) return '0px'
@@ -592,7 +595,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionPropListSignature = getDateListSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     const dateGridPropSignature = getDateGridSignature(this.props)
-    const selectionSchemePropSignature = this.props.selectionScheme
+    const selectionSchemePropSignature = getSelectionScheme(this.props.selectionScheme)
     this.state = {
       selectionDraft,
       selectionBase: selectionDraft,
@@ -630,7 +633,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const selectionPropListSignature = getDateListSignature(props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
-    const selectionSchemePropSignature = props.selectionScheme
+    const selectionSchemePropSignature = getSelectionScheme(props.selectionScheme)
     const selectionIsActive = state.selectionType !== null || state.selectionStart !== null || state.isTouchDragging
     if (
       selectionPropSignature === state.selectionPropSignature &&
@@ -833,8 +836,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
-    const selectionSchemeHandler =
-      this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square
+    const selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)]
     const availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(
       (time) => !this.isBlocked(time),
     )

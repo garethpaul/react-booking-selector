@@ -1082,6 +1082,37 @@ describe('updateAvailabilityDraft', () => {
     expect(instance.state.selectionDraft).toEqual([start, end])
   })
 
+  it('falls back to square selection without coercing malformed selection schemes', async () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const mondayTen = addHours(startOfDay(startDate), 10)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const tuesdayTen = addHours(addDays(startOfDay(startDate), 1), 10)
+    const { instance } = renderSelector({
+      selectionScheme: {
+        toString() {
+          throw new Error('Unexpected selection scheme coercion')
+        },
+      },
+      startDate,
+      numDays: 2,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(instance.state.selectionSchemePropSignature).toBe('square')
+
+    await setStateAsync(instance, {
+      selectionType: 'add',
+      selectionStart: mondayTen,
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(tuesdayNine)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([mondayNine, mondayTen, tuesdayNine, tuesdayTen])
+  })
+
   it('preserves the visible draft when adding another cell before parent rerender', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })

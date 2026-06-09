@@ -18,6 +18,9 @@ function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prot
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
 var DEFAULT_DATE_FORMAT = 'd';
+var getSelectionScheme = function getSelectionScheme(selectionScheme) {
+  return selectionScheme === 'linear' || selectionScheme === 'square' ? selectionScheme : 'square';
+};
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
   if (typeof value === 'number' && !Number.isFinite(value)) return '0px';
@@ -422,7 +425,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var selectionPropListSignature = getDateListSignature(_this.props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(_this.props.blocked);
     var dateGridPropSignature = getDateGridSignature(_this.props);
-    var selectionSchemePropSignature = _this.props.selectionScheme;
+    var selectionSchemePropSignature = getSelectionScheme(_this.props.selectionScheme);
     _this.state = {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
@@ -459,7 +462,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var selectionPropListSignature = getDateListSignature(props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(props.blocked);
     var dateGridPropSignature = getDateGridSignature(props);
-    var selectionSchemePropSignature = props.selectionScheme;
+    var selectionSchemePropSignature = getSelectionScheme(props.selectionScheme);
     var selectionIsActive = state.selectionType !== null || state.selectionStart !== null || state.isTouchDragging;
     if (selectionPropSignature === state.selectionPropSignature && (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature && selectionSchemePropSignature === state.selectionSchemePropSignature) {
       return null;
@@ -649,7 +652,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (callback) callback();
       return;
     }
-    var selectionSchemeHandler = this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square;
+    var selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)];
     var availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(function (time) {
       return !_this3.isBlocked(time);
     });
