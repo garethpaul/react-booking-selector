@@ -497,6 +497,33 @@ describe('touch handlers', () => {
     })
   })
 
+  it('ignores blocked cells as touch drag endpoints', async () => {
+    const changeSpy = jest.fn()
+    const blocked = addHours(startOfDay(startDate), 10)
+    const { getByRole, instance } = renderSelector({
+      blocked: [blocked],
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const firstCell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })
+    document.elementFromPoint.mockReturnValue(blockedCell)
+
+    fireEvent.touchStart(firstCell)
+    fireEvent.touchMove(firstCell, mockEvent)
+
+    expect(instance.state.selectionDraft).toEqual([])
+
+    fireEvent.touchEnd(firstCell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9)])
+    })
+  })
+
   it('ignores late touch moves after controlled props cancel the selection', () => {
     const changeSpy = jest.fn()
     const controlledSelection = addHours(startOfDay(startDate), 10)
@@ -1470,7 +1497,7 @@ describe('blocked cells', () => {
     expect(instance.state.selectionStart).toBe(null)
   })
 
-  it('does not call pointer start handlers for blocked cell wrappers', () => {
+  it('does not call pointer handlers for blocked cell wrappers', () => {
     const blocked = addHours(startOfDay(startDate), 9)
     const { instance } = renderSelector({
       blocked: [blocked],
@@ -1479,16 +1506,24 @@ describe('blocked cells', () => {
       minTime: 9,
       maxTime: 9,
     })
-    const mouseSpy = jest.spyOn(instance, 'handleMouseDownEvent')
+    const mouseDownSpy = jest.spyOn(instance, 'handleMouseDownEvent')
+    const mouseEnterSpy = jest.spyOn(instance, 'handleMouseEnterEvent')
+    const mouseUpSpy = jest.spyOn(instance, 'handleMouseUpEvent')
     const touchSpy = jest.spyOn(instance, 'handleTouchStartEvent')
     const blockedCellWrapper = instance.renderDateCellWrapper(blocked)
 
     blockedCellWrapper.props.onMouseDown()
+    blockedCellWrapper.props.onMouseEnter()
+    blockedCellWrapper.props.onMouseUp()
     blockedCellWrapper.props.onTouchStart()
 
-    expect(mouseSpy).not.toHaveBeenCalled()
+    expect(mouseDownSpy).not.toHaveBeenCalled()
+    expect(mouseEnterSpy).not.toHaveBeenCalled()
+    expect(mouseUpSpy).not.toHaveBeenCalled()
     expect(touchSpy).not.toHaveBeenCalled()
-    mouseSpy.mockRestore()
+    mouseDownSpy.mockRestore()
+    mouseEnterSpy.mockRestore()
+    mouseUpSpy.mockRestore()
     touchSpy.mockRestore()
   })
 })

@@ -290,6 +290,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       var touchStartHandler = function touchStartHandler() {
         if (!blocked) _this.handleTouchStartEvent(time);
       };
+      var mouseEnterHandler = function mouseEnterHandler() {
+        if (!blocked) _this.handleMouseEnterEvent(time);
+      };
+      var mouseUpHandler = function mouseUpHandler() {
+        if (!blocked) _this.handleMouseUpEvent(time);
+      };
       var currentDateCell = null;
       var refSetter = function refSetter(dateCell) {
         if (currentDateCell && currentDateCell !== dateCell) {
@@ -317,12 +323,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         // Mouse handlers
         ,
         onMouseDown: mouseStartHandler,
-        onMouseEnter: function onMouseEnter() {
-          _this.handleMouseEnterEvent(time);
-        },
-        onMouseUp: function onMouseUp() {
-          _this.handleMouseUpEvent(time);
-        }
+        onMouseEnter: mouseEnterHandler,
+        onMouseUp: mouseUpHandler
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
@@ -647,7 +649,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       isTouchDragging: true
     });
     var cellTime = this.getTimeFromTouchEvent(event);
-    if (cellTime) {
+    if (cellTime && !this.isBlocked(cellTime)) {
       this.updateAvailabilityDraft(cellTime);
     }
   };

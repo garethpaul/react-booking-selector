@@ -779,7 +779,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     this.setState({ isTouchDragging: true })
     const cellTime = this.getTimeFromTouchEvent(event)
-    if (cellTime) {
+    if (cellTime && !this.isBlocked(cellTime)) {
       this.updateAvailabilityDraft(cellTime)
     }
   }
@@ -871,6 +871,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const touchStartHandler = () => {
       if (!blocked) this.handleTouchStartEvent(time)
     }
+    const mouseEnterHandler = () => {
+      if (!blocked) this.handleMouseEnterEvent(time)
+    }
+    const mouseUpHandler = () => {
+      if (!blocked) this.handleMouseUpEvent(time)
+    }
     let currentDateCell: ?HTMLElement = null
     const refSetter = (dateCell: ?HTMLElement) => {
       if (currentDateCell && currentDateCell !== dateCell) {
@@ -899,12 +905,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         ref={refSetter}
         // Mouse handlers
         onMouseDown={mouseStartHandler}
-        onMouseEnter={() => {
-          this.handleMouseEnterEvent(time)
-        }}
-        onMouseUp={() => {
-          this.handleMouseUpEvent(time)
-        }}
+        onMouseEnter={mouseEnterHandler}
+        onMouseUp={mouseUpHandler}
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
