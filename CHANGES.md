@@ -55,6 +55,8 @@
 - Ignored non-callable listener cleanup entries during unmount.
 - Refreshed idle controlled selection drafts when exact selected values change
   inside the same slot minute.
+- Replaced primitive docs `window.process` shims before assigning
+  `process.env.NODE_ENV`.
 
 ## 2026-06-08
 

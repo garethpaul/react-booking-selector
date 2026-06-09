@@ -11,8 +11,11 @@
       <div id="app"></div>
     </div>
     <script>
-      window.process = window.process || {}
-      window.process.env = window.process.env || {}
+      window.process =
+        window.process && (typeof window.process === 'object' || typeof window.process === 'function')
+          ? window.process
+          : {}
+      window.process.env = window.process.env && typeof window.process.env === 'object' ? window.process.env : {}
       window.process.env.NODE_ENV = window.process.env.NODE_ENV || 'production'
     </script>
     <script type="module" src="./App.js"></script>
