@@ -12,4 +12,5 @@ module.exports.default = BookingSelector;
 module.exports.__esModule = true;
 `
 
+fs.mkdirSync(path.dirname(outputPath), { recursive: true })
 fs.writeFileSync(outputPath, contents)

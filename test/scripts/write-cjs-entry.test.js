@@ -31,4 +31,15 @@ module.exports.default = BookingSelector;
 module.exports.__esModule = true;
 `)
   })
+
+  it('creates the package entry output directory when needed', () => {
+    const projectPath = mkdtempSync(path.join(tmpdir(), 'react-booking-selector-cjs-entry-'))
+    tempProjects.push(projectPath)
+
+    execFileSync(process.execPath, [scriptPath], { cwd: projectPath })
+
+    expect(readFileSync(path.join(projectPath, 'dist', 'lib', 'index.js'), 'utf8')).toContain(
+      'module.exports = BookingSelector;',
+    )
+  })
 })

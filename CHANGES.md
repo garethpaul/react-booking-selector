@@ -39,6 +39,7 @@
   checks.
 - Kept booking grid cell focus outlines visible in browsers without
   `:focus-visible` support.
+- Made the CommonJS entry writer create its output directory when run directly.
 
 ## 2026-06-08
 
