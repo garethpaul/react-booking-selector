@@ -26,10 +26,13 @@ Priority:
 
 Next priorities:
 
-- Add focused tests for keyboard, mouse, and touch selection flows
-- Improve accessibility labels and keyboard navigation documentation
-- Document date/timezone expectations for `Date` inputs
-- Keep peer dependency ranges aligned with supported React versions
+- Add visual regression coverage before larger layout or styling changes.
+- Research daylight-saving-time edge cases in the generated day/hour grid before
+  changing date construction semantics.
+- Keep peer dependency ranges aligned with supported React and styled-components
+  majors.
+- Revisit the ESLint 10 major when the active parser and plugin peer ranges
+  support it.
 
 Contribution rules:
 

@@ -75,3 +75,4 @@
 - Aligned margin prop declarations and docs with runtime support for CSS length strings.
 - Aligned source Flow props with runtime and TypeScript support for nullish selection lists.
 - Avoided suppressing touch scrolling from disabled blocked cells.
+- Updated the project vision next priorities to reflect completed interaction and accessibility coverage.
