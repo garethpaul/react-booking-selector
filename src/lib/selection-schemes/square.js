@@ -5,6 +5,8 @@ import { startOfDay } from 'date-fns/startOfDay'
 
 import * as dateUtils from '../date-utils.js'
 
+const isDate = (time: any): boolean => time instanceof Date
+
 const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Array<Date>>): Array<Date> => {
   let selected: Array<Date> = []
   if (selectionEnd == null) {
@@ -19,6 +21,7 @@ const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
           ? acc.concat(
               dayOfTimes.filter(
                 (t) =>
+                  isDate(t) &&
                   selectionStart &&
                   selectionEnd &&
                   dateUtils.dateIsBetween(

@@ -44,6 +44,7 @@
 - Reported incomplete docs smoke PNG screenshots with explicit parser errors.
 - Reset WebKit button appearance on booking grid cells for Safari parity.
 - Asserted the CommonJS package root's ESM interop marker at runtime.
+- Skipped sparse time entries inside selection-scheme day buckets.
 
 ## 2026-06-08
 

@@ -61,4 +61,13 @@ describe('linear selection scheme', () => {
 
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
   })
+
+  test('it skips missing times inside day buckets', () => {
+    const sparseDates = [[dates[0][18], undefined, dates[0][19]], [null], [dates[2][0], dates[2][1]]]
+    const expected = [dates[0][18], dates[0][19], dates[2][0], dates[2][1]]
+
+    const result = linear(dates[0][18], dates[2][1], sparseDates)
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(expected))
+  })
 })
