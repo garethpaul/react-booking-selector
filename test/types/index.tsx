@@ -13,6 +13,8 @@ const selection: BookingSelectorProps['selection'] = [
   undefined,
 ]
 const blocked: BookingSelectorProps['blocked'] = [new Date('2026-06-08T12:00:00.000Z').getTime(), null, undefined]
+const nullSelection: BookingSelectorProps['selection'] = null
+const nullBlocked: BookingSelectorProps['blocked'] = null
 
 const renderDateCell: BookingSelectorProps['renderDateCell'] = (time, selected, blockedCell) => (
   <span data-time={time.toISOString()} data-selected={selected} data-blocked={blockedCell} />
@@ -45,6 +47,8 @@ const defaultExport = (
 )
 
 const namedExport = <NamedBookingSelector selection={selection} onChange={onChange} />
+const nullishProps = <NamedBookingSelector selection={nullSelection} blocked={nullBlocked} onChange={onChange} />
 
 void defaultExport
 void namedExport
+void nullishProps

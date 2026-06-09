@@ -68,3 +68,4 @@
 - Moved completed custom-renderer plans into the verified `docs/plans` inventory.
 - Preserved newer reverse date-cell lookups when older cells unregister or re-register.
 - Supported legacy `Spacebar` key values for keyboard slot toggles.
+- Aligned TypeScript declarations with runtime support for null `selection` and `blocked` props.

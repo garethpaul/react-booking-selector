@@ -5,11 +5,13 @@ declare class BookingSelectorComponent extends React.Component<BookingSelectorCo
 declare namespace BookingSelectorComponent {
   export type BookingSelectorDateValue = Date | string | number | { valueOf(): number } | null | undefined
 
+  export type BookingSelectorDateList = ReadonlyArray<BookingSelectorDateValue> | null | undefined
+
   export type BookingSelectorSelectionScheme = 'linear' | 'square'
 
   export interface BookingSelectorProps {
-    selection?: ReadonlyArray<BookingSelectorDateValue>
-    blocked?: ReadonlyArray<BookingSelectorDateValue>
+    selection?: BookingSelectorDateList
+    blocked?: BookingSelectorDateList
     selectionScheme?: BookingSelectorSelectionScheme
     onChange?: (selection: Date[]) => void
     startDate?: Date

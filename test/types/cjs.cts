@@ -8,6 +8,7 @@ const selection: BookingSelector.BookingSelectorProps['selection'] = [
   '2026-06-08T10:00:00.000Z',
   { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() },
 ]
+const blocked: BookingSelector.BookingSelectorProps['blocked'] = null
 
 const onChange: NonNullable<BookingSelector.BookingSelectorProps['onChange']> = (nextSelection) => {
   nextSelection.forEach((time) => {
@@ -18,4 +19,5 @@ const onChange: NonNullable<BookingSelector.BookingSelectorProps['onChange']> = 
 void defaultExport
 void namedExport
 void selection
+void blocked
 void onChange

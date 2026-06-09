@@ -81,7 +81,7 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 
 ### `selection`
 
-**type**: `Array<Date | string | number | { valueOf(): number } | null | undefined>`
+**type**: `Array<Date | string | number | { valueOf(): number } | null | undefined> | null | undefined`
 
 **description**: List of date/times that should be selected in the grid. Values should reflect the start time of each selected slot.
 
@@ -91,7 +91,7 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 
 ### `blocked`
 
-**type**: `Array<Date | string | number | { valueOf(): number } | null | undefined>`
+**type**: `Array<Date | string | number | { valueOf(): number } | null | undefined> | null | undefined`
 
 **description**: List of date/times that should be unavailable to select.
 
