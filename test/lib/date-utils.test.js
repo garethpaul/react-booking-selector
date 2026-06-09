@@ -194,6 +194,49 @@ describe('malformed date inputs', () => {
     }
   })
 
+  test('date helpers use captured finite checks when globals change later', () => {
+    const originalIsFinite = Number.isFinite
+    const originalEvery = Array.prototype.every
+    const start = new Date(2018, 0, 1, 9)
+    const candidate = new Date(2018, 0, 1, 10)
+    const end = new Date(2018, 0, 1, 11)
+    const expectedStartOfDay = new Date(candidate)
+    expectedStartOfDay.setHours(0, 0, 0, 0)
+    let result
+
+    try {
+      Number.isFinite = () => {
+        throw new Error('Unexpected Number.isFinite call')
+      }
+      Array.prototype.every = function every() {
+        throw new Error('Unexpected array every call')
+      }
+
+      result = {
+        timestamp: getDateTimestamp(candidate),
+        hour: getDateHour(candidate),
+        startOfDayTimestamp: getStartOfDayTimestamp(candidate),
+        valid: isValidDate(candidate),
+        dateHourBetween: dateHourIsBetween(start, candidate, end),
+        dateBetween: dateIsBetween(start, candidate, end),
+        timeBetween: timeIsBetween(start, candidate, end),
+      }
+    } finally {
+      Number.isFinite = originalIsFinite
+      Array.prototype.every = originalEvery
+    }
+
+    expect(result).toEqual({
+      timestamp: candidate.getTime(),
+      hour: candidate.getHours(),
+      startOfDayTimestamp: expectedStartOfDay.getTime(),
+      valid: true,
+      dateHourBetween: true,
+      dateBetween: true,
+      timeBetween: true,
+    })
+  })
+
   test('Date readers use the captured Date constructor when the global changes later', () => {
     const OriginalDate = Date
     const candidate = new OriginalDate(2018, 0, 1, 10)

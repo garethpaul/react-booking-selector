@@ -217,6 +217,39 @@ it('getTimeFromTouchEvent returns null for malformed touch coordinates', () => {
   expect(document.elementFromPoint).not.toHaveBeenCalled()
 })
 
+it('getTimeFromTouchEvent uses captured finite checks when globals change later', () => {
+  const originalIsFinite = Number.isFinite
+  const { instance } = renderSelector()
+  const mockCellTime = new Date()
+  const mockEvent = {
+    touches: [{ clientX: 1, clientY: 2 }],
+  }
+  const mockElement = document.createElement('div')
+  let touchTime
+  let touchError
+
+  document.elementFromPoint.mockReturnValue(mockElement)
+  instance.registerDateCell(mockElement, mockCellTime)
+
+  try {
+    Number.isFinite = () => {
+      throw new Error('Unexpected Number.isFinite call')
+    }
+
+    try {
+      touchTime = instance.getTimeFromTouchEvent(mockEvent)
+    } catch (error) {
+      touchError = error
+    }
+  } finally {
+    Number.isFinite = originalIsFinite
+  }
+
+  expect(touchError).toBeUndefined()
+  expect(touchTime).toBe(mockCellTime)
+  expect(document.elementFromPoint).toHaveBeenCalledWith(1, 2)
+})
+
 it('getTimeFromTouchEvent returns null when hit testing is unavailable', () => {
   const { instance } = renderSelector()
   const elementFromPoint = document.elementFromPoint
@@ -2933,6 +2966,31 @@ describe('prop updates', () => {
       Date.prototype.getDate = originalGetDate
       Date.prototype.setDate = originalSetDate
       Date.prototype.setHours = originalSetHours
+    }
+
+    expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([
+      [new Date(2032, 4, 15), new Date(2032, 4, 15, 9)],
+      [new Date(2032, 4, 16), new Date(2032, 4, 16, 9)],
+    ])
+  })
+
+  it('builds date grids with captured finite checks when globals change later', () => {
+    const originalIsFinite = Number.isFinite
+    let dateColumns
+
+    try {
+      Number.isFinite = () => {
+        throw new Error('Unexpected Number.isFinite call')
+      }
+
+      dateColumns = buildDateColumns({
+        startDate: new Date(2032, 4, 15, 12),
+        numDays: 2,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      Number.isFinite = originalIsFinite
     }
 
     expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([

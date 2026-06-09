@@ -7,6 +7,8 @@ var objectToString = Object.prototype.toString;
 var dateGetTime = DateConstructor.prototype.getTime;
 var dateGetHours = DateConstructor.prototype.getHours;
 var dateSetHours = DateConstructor.prototype.setHours;
+var numberIsFinite = Number.isFinite;
+var arrayEvery = Array.prototype.every;
 var isDateInstance = function isDateInstance(date) {
   try {
     return date instanceof DateConstructor;
@@ -42,19 +44,19 @@ var getDateHour = exports.getDateHour = function getDateHour(date) {
 };
 var getStartOfDayTimestamp = exports.getStartOfDayTimestamp = function getStartOfDayTimestamp(date) {
   var timestamp = getDateTimestamp(date);
-  if (!Number.isFinite(timestamp)) return Number.NaN;
+  if (!numberIsFinite(timestamp)) return Number.NaN;
   var startOfDay = new DateConstructor(timestamp);
   dateSetHours.call(startOfDay, 0, 0, 0, 0);
   return dateGetTime.call(startOfDay);
 };
 var isValidDate = exports.isValidDate = function isValidDate(date) {
-  return Number.isFinite(getDateTimestamp(date));
+  return numberIsFinite(getDateTimestamp(date));
 };
 var allNumbersAreFinite = function allNumbersAreFinite() {
   for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
     values[_key] = arguments[_key];
   }
-  return values.every(Number.isFinite);
+  return arrayEvery.call(values, numberIsFinite);
 };
 
 // Helper function that determines if a timestamp is between two other dates.

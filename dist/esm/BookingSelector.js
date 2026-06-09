@@ -19,7 +19,7 @@ var getSelectionScheme = function getSelectionScheme(selectionScheme) {
 };
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
-  if (typeof value === 'number' && !Number.isFinite(value)) return '0px';
+  if (typeof value === 'number' && !numberIsFinite(value)) return '0px';
   if (typeof value === 'number') return value + "px";
   if (typeof value !== 'string') return '0px';
   var cssValue = value.trim();
@@ -56,11 +56,12 @@ var arrayJoin = Array.prototype.join;
 var arrayMap = Array.prototype.map;
 var arraySort = Array.prototype.sort;
 var isArray = ArrayConstructor.isArray;
+var numberIsFinite = Number.isFinite;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
     if (typeof Date.now === 'function') {
       var timestamp = Date.now();
-      if (Number.isFinite(timestamp)) return timestamp;
+      if (numberIsFinite(timestamp)) return timestamp;
     }
   } catch (_unused) {
     // Fall back to the captured Date.now below.
@@ -69,7 +70,7 @@ var getCurrentTimestamp = function getCurrentTimestamp() {
 };
 var getDateTimestamp = function getDateTimestamp(value) {
   var timestamp = readDateTimestamp(value);
-  return Number.isFinite(timestamp) ? timestamp : null;
+  return numberIsFinite(timestamp) ? timestamp : null;
 };
 var cloneDate = function cloneDate(date) {
   return new DateConstructor(dateGetTime.call(date));
@@ -173,7 +174,7 @@ var getDateGridSignature = function getDateGridSignature(_ref) {
   return arrayJoin.call([dateMinuteKey(startOfDayDate(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)], '|');
 };
 var isWholeNumber = function isWholeNumber(value) {
-  return Number.isFinite(value) && Math.floor(value) === value;
+  return numberIsFinite(value) && Math.floor(value) === value;
 };
 var getVisibleHours = function getVisibleHours(minTime, maxTime) {
   if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {
@@ -753,7 +754,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var touches = event.touches;
     if (!touches || touches.length === 0) return null;
     var touch = touches[0];
-    if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null;
+    if (!touch || !numberIsFinite(touch.clientX) || !numberIsFinite(touch.clientY)) return null;
     var browserDocument = this.getDocument();
     if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null;
     var clientX = touch.clientX,

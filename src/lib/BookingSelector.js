@@ -79,7 +79,7 @@ const getSelectionScheme = (selectionScheme: mixed): SelectionSchemeType =>
 
 const toCssUnit = (value: ?(number | string)): string => {
   if (value == null) return '0px'
-  if (typeof value === 'number' && !Number.isFinite(value)) return '0px'
+  if (typeof value === 'number' && !numberIsFinite(value)) return '0px'
   if (typeof value === 'number') return `${value}px`
   if (typeof value !== 'string') return '0px'
   const cssValue = value.trim()
@@ -119,12 +119,13 @@ const arrayJoin = Array.prototype.join
 const arrayMap = Array.prototype.map
 const arraySort = Array.prototype.sort
 const isArray = ArrayConstructor.isArray
+const numberIsFinite = Number.isFinite
 
 const getCurrentTimestamp = (): number => {
   try {
     if (typeof Date.now === 'function') {
       const timestamp = Date.now()
-      if (Number.isFinite(timestamp)) return timestamp
+      if (numberIsFinite(timestamp)) return timestamp
     }
   } catch {
     // Fall back to the captured Date.now below.
@@ -135,7 +136,7 @@ const getCurrentTimestamp = (): number => {
 
 const getDateTimestamp = (value: mixed): ?number => {
   const timestamp = readDateTimestamp(value)
-  return Number.isFinite(timestamp) ? timestamp : null
+  return numberIsFinite(timestamp) ? timestamp : null
 }
 
 const cloneDate = (date: Date): Date => new DateConstructor(dateGetTime.call(date))
@@ -248,7 +249,7 @@ const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGrid
     '|',
   )
 
-const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
+const isWholeNumber = (value: number): boolean => numberIsFinite(value) && Math.floor(value) === value
 
 const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
   if (!isWholeNumber(minTime) || !isWholeNumber(maxTime) || minTime < 0 || maxTime > 23 || minTime > maxTime) {
@@ -971,7 +972,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const { touches } = event
     if (!touches || touches.length === 0) return null
     const touch = touches[0]
-    if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null
+    if (!touch || !numberIsFinite(touch.clientX) || !numberIsFinite(touch.clientY)) return null
     const browserDocument = this.getDocument()
     if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null
     const { clientX, clientY } = touch

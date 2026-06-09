@@ -5,6 +5,8 @@ const objectToString = Object.prototype.toString
 const dateGetTime = DateConstructor.prototype.getTime
 const dateGetHours = DateConstructor.prototype.getHours
 const dateSetHours = DateConstructor.prototype.setHours
+const numberIsFinite = Number.isFinite
+const arrayEvery = Array.prototype.every
 
 const isDateInstance = (date: any): boolean => {
   try {
@@ -50,16 +52,16 @@ export const getDateHour = (date: any): number => {
 
 export const getStartOfDayTimestamp = (date: any): number => {
   const timestamp = getDateTimestamp(date)
-  if (!Number.isFinite(timestamp)) return Number.NaN
+  if (!numberIsFinite(timestamp)) return Number.NaN
 
   const startOfDay = new DateConstructor(timestamp)
   dateSetHours.call(startOfDay, 0, 0, 0, 0)
   return dateGetTime.call(startOfDay)
 }
 
-export const isValidDate = (date: any): boolean => Number.isFinite(getDateTimestamp(date))
+export const isValidDate = (date: any): boolean => numberIsFinite(getDateTimestamp(date))
 
-const allNumbersAreFinite = (...values: Array<number>): boolean => values.every(Number.isFinite)
+const allNumbersAreFinite = (...values: Array<number>): boolean => arrayEvery.call(values, numberIsFinite)
 
 // Helper function that determines if a timestamp is between two other dates.
 export const dateHourIsBetween = (start: Date, candidate: Date, end: Date): boolean => {
