@@ -206,6 +206,9 @@ var isKeyboardNavigationKey = function isKeyboardNavigationKey(key) {
 var isKeyboardSelectionKey = function isKeyboardSelectionKey(key) {
   return key === 'Enter' || key === ' ' || key === 'Spacebar';
 };
+var isPrimaryMouseButton = function isPrimaryMouseButton(event) {
+  return !event || event.button == null || event.button === 0;
+};
 var dateKey = function dateKey(time) {
   return time.getTime();
 };
@@ -293,8 +296,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.renderDateCellWrapperWithLookups = function (time, blockedMinuteKeys, selectedMinuteKeys) {
       var blocked = hasDateMinuteKey(blockedMinuteKeys, time);
       var selected = !blocked && hasDateMinuteKey(selectedMinuteKeys, time);
-      var mouseStartHandler = function mouseStartHandler() {
-        if (!blocked) _this.handleMouseDownEvent(time);
+      var mouseStartHandler = function mouseStartHandler(event) {
+        if (!blocked) _this.handleMouseDownEvent(time, event);
       };
       var touchStartHandler = function touchStartHandler() {
         if (!blocked) _this.handleTouchStartEvent(time);
@@ -302,8 +305,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       var mouseEnterHandler = function mouseEnterHandler() {
         if (!blocked) _this.handleMouseEnterEvent(time);
       };
-      var mouseUpHandler = function mouseUpHandler() {
-        if (!blocked) _this.handleMouseUpEvent(time);
+      var mouseUpHandler = function mouseUpHandler(event) {
+        if (!blocked) _this.handleMouseUpEvent(time, event);
       };
       var currentDateCell = null;
       var refSetter = function refSetter(dateCell) {
@@ -516,6 +519,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (this.state.selectionType === null) return;
     if (this.shouldIgnoreMouseEvent()) return;
+    if (!isPrimaryMouseButton(event)) return;
     var dateCell = this.getDateCellFromEventTarget(event.target);
     var dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null;
     if (dateCellTime && !this.isBlocked(dateCellTime)) return;
@@ -605,7 +609,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.shouldIgnoreMouseEvent = function shouldIgnoreMouseEvent() {
     return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS;
   };
-  _proto.handleMouseDownEvent = function handleMouseDownEvent(time) {
+  _proto.handleMouseDownEvent = function handleMouseDownEvent(time, event) {
+    if (!isPrimaryMouseButton(event)) return;
     if (this.shouldIgnoreMouseEvent()) return;
     this.handleSelectionStartEvent(time);
   };
@@ -617,7 +622,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     // in this scenario)
     this.updateAvailabilityDraft(time);
   };
-  _proto.handleMouseUpEvent = function handleMouseUpEvent(time) {
+  _proto.handleMouseUpEvent = function handleMouseUpEvent(time, event) {
+    if (!isPrimaryMouseButton(event)) return;
     if (this.shouldIgnoreMouseEvent()) return;
     this.updateAvailabilityDraft(time, this.endSelection);
   };

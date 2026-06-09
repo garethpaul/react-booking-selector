@@ -247,6 +247,76 @@ describe('mouse handlers', () => {
     })
   })
 
+  it('ignores non-primary mouse button selections', () => {
+    const changeSpy = jest.fn()
+    const { container, instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const cell = container.querySelector('button.rgdp__grid-cell')
+
+    fireEvent.mouseDown(cell, { button: 2 })
+    fireEvent.mouseEnter(cell)
+    fireEvent.mouseUp(cell, { button: 2 })
+
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionType).toBe(null)
+    expect(cell).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('treats missing mouse button metadata as primary input', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    act(() => {
+      instance.handleMouseDownEvent(selected, {})
+    })
+    expect(instance.state.selectionType).toBe('add')
+
+    act(() => {
+      instance.handleMouseUpEvent(selected)
+    })
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([selected])
+    })
+  })
+
+  it('does not end an active drag from a non-primary cell mouseup', async () => {
+    const changeSpy = jest.fn()
+    const { container, instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(secondCell, { button: 1 })
+
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionType).toBe('add')
+
+    fireEvent.mouseUp(secondCell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+  })
+
   it('ends a drag when the mouse is released outside the grid', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })
@@ -254,6 +324,31 @@ describe('mouse handlers', () => {
 
     fireEvent.mouseDown(firstCell)
     fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(document.body)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([addHours(startOfDay(startDate), 9), addHours(startOfDay(startDate), 10)])
+    })
+  })
+
+  it('does not end an active drag from a non-primary document mouseup', async () => {
+    const changeSpy = jest.fn()
+    const { container, instance } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const [firstCell, secondCell] = Array.from(container.querySelectorAll('button.rgdp__grid-cell'))
+
+    fireEvent.mouseDown(firstCell)
+    fireEvent.mouseEnter(secondCell)
+    fireEvent.mouseUp(document.body, { button: 2 })
+
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionType).toBe('add')
+
     fireEvent.mouseUp(document.body)
 
     await waitFor(() => {

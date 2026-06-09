@@ -28,6 +28,10 @@ type TouchSelectionEventType = {
   }>,
 }
 
+type MouseSelectionEventType = {
+  button?: number,
+}
+
 type KeyboardSelectionEventType = {
   key: string,
   preventDefault: () => void,
@@ -283,6 +287,9 @@ const isKeyboardNavigationKey = (key: string): boolean =>
   key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp'
 
 const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key === ' ' || key === 'Spacebar'
+
+const isPrimaryMouseButton = (event?: MouseSelectionEventType): boolean =>
+  !event || event.button == null || event.button === 0
 
 const dateKey = (time: Date): number => time.getTime()
 
@@ -674,6 +681,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   handleDocumentMouseUpEvent(event: MouseEvent) {
     if (this.state.selectionType === null) return
     if (this.shouldIgnoreMouseEvent()) return
+    if (!isPrimaryMouseButton(event)) return
     const dateCell = this.getDateCellFromEventTarget(event.target)
     const dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null
     if (dateCellTime && !this.isBlocked(dateCellTime)) return
@@ -756,7 +764,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS
   }
 
-  handleMouseDownEvent(time: Date) {
+  handleMouseDownEvent(time: Date, event?: MouseSelectionEventType) {
+    if (!isPrimaryMouseButton(event)) return
     if (this.shouldIgnoreMouseEvent()) return
     this.handleSelectionStartEvent(time)
   }
@@ -770,7 +779,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.updateAvailabilityDraft(time)
   }
 
-  handleMouseUpEvent(time: Date) {
+  handleMouseUpEvent(time: Date, event?: MouseSelectionEventType) {
+    if (!isPrimaryMouseButton(event)) return
     if (this.shouldIgnoreMouseEvent()) return
     this.updateAvailabilityDraft(time, this.endSelection)
   }
@@ -908,8 +918,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   ): React.Element<*> => {
     const blocked = hasDateMinuteKey(blockedMinuteKeys, time)
     const selected = !blocked && hasDateMinuteKey(selectedMinuteKeys, time)
-    const mouseStartHandler = () => {
-      if (!blocked) this.handleMouseDownEvent(time)
+    const mouseStartHandler = (event) => {
+      if (!blocked) this.handleMouseDownEvent(time, event)
     }
     const touchStartHandler = () => {
       if (!blocked) this.handleTouchStartEvent(time)
@@ -917,8 +927,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const mouseEnterHandler = () => {
       if (!blocked) this.handleMouseEnterEvent(time)
     }
-    const mouseUpHandler = () => {
-      if (!blocked) this.handleMouseUpEvent(time)
+    const mouseUpHandler = (event) => {
+      if (!blocked) this.handleMouseUpEvent(time, event)
     }
     let currentDateCell: ?HTMLElement = null
     const refSetter = (dateCell: ?HTMLElement) => {
