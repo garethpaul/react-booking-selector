@@ -322,3 +322,4 @@ See `docs/plans/2026-06-08-custom-render-keyboard-coverage.md` for keyboard cove
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-filename-validation.md` for dated docs-plan filename validation.
+See `docs/plans/2026-06-09-date-utils-malformed-inputs.md` for malformed date utility input handling.

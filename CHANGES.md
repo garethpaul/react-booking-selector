@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Hardened date range helpers so malformed arguments return `false` instead of
+  throwing or being coerced into valid boundaries.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

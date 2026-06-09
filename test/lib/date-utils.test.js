@@ -47,6 +47,21 @@ describe('dateIsBetween', () => {
   })
 })
 
+describe('malformed date inputs', () => {
+  const validDate = new Date('2018-01-01T09:00:00.000')
+  const invalidDate = new Date('invalid')
+
+  test.each([
+    ['dateHourIsBetween', dateHourIsBetween],
+    ['dateIsBetween', dateIsBetween],
+    ['timeIsBetween', timeIsBetween],
+  ])('%s returns false instead of throwing for malformed arguments', (testName, isBetween) => {
+    expect(isBetween(null, validDate, validDate)).toBe(false)
+    expect(isBetween(validDate, invalidDate, validDate)).toBe(false)
+    expect(isBetween(validDate, validDate, 'not-a-date')).toBe(false)
+  })
+})
+
 describe('timeIsBetween', () => {
   const { today, tomorrow } = getHourlyDates()
 
