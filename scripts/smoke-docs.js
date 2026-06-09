@@ -425,31 +425,44 @@ const parseLayoutResult = (dom) => {
   }
 }
 
+const getLayoutNumber = (screenshot, layout, name) => {
+  const value = layout[name]
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new Error(`${screenshot.name} layout metric ${name} is not a finite number`)
+  }
+  return value
+}
+
 const assertLayout = (screenshot, dom) => {
   const layout = parseLayoutResult(dom)
   if (layout.status !== 'ok') {
     throw new Error(`${screenshot.name} layout smoke failed: ${layout.message || 'unknown error'}`)
   }
-  if (layout.viewportWidth > screenshot.width || layout.viewportWidth < screenshot.width - 40) {
-    throw new Error(
-      `${screenshot.name} layout viewport is ${layout.viewportWidth}px, expected near ${screenshot.width}px`,
-    )
+  const viewportWidth = getLayoutNumber(screenshot, layout, 'viewportWidth')
+  const rootClientWidth = getLayoutNumber(screenshot, layout, 'rootClientWidth')
+  const rootScrollWidth = getLayoutNumber(screenshot, layout, 'rootScrollWidth')
+  const bodyClientWidth = getLayoutNumber(screenshot, layout, 'bodyClientWidth')
+  const bodyScrollWidth = getLayoutNumber(screenshot, layout, 'bodyScrollWidth')
+  const buttonCount = getLayoutNumber(screenshot, layout, 'buttonCount')
+  const minCellLeft = getLayoutNumber(screenshot, layout, 'minCellLeft')
+  const maxCellRight = getLayoutNumber(screenshot, layout, 'maxCellRight')
+
+  if (viewportWidth > screenshot.width || viewportWidth < screenshot.width - 40) {
+    throw new Error(`${screenshot.name} layout viewport is ${viewportWidth}px, expected near ${screenshot.width}px`)
   }
-  if (layout.buttonCount !== 70) {
-    throw new Error(`${screenshot.name} layout expected 70 booking slot buttons, found ${layout.buttonCount}`)
+  if (buttonCount !== 70) {
+    throw new Error(`${screenshot.name} layout expected 70 booking slot buttons, found ${buttonCount}`)
   }
 
-  const maxDocumentWidth = Math.max(layout.rootScrollWidth, layout.bodyScrollWidth)
-  const maxClientWidth = Math.max(layout.rootClientWidth, layout.bodyClientWidth)
+  const maxDocumentWidth = Math.max(rootScrollWidth, bodyScrollWidth)
+  const maxClientWidth = Math.max(rootClientWidth, bodyClientWidth)
   if (maxDocumentWidth > maxClientWidth + 1) {
     throw new Error(
       `${screenshot.name} layout has horizontal overflow: scroll width ${maxDocumentWidth}px, client width ${maxClientWidth}px`,
     )
   }
-  if (layout.minCellLeft < -1 || layout.maxCellRight > layout.viewportWidth + 1) {
-    throw new Error(
-      `${screenshot.name} slot cells leave the viewport: left ${layout.minCellLeft}px, right ${layout.maxCellRight}px`,
-    )
+  if (minCellLeft < -1 || maxCellRight > viewportWidth + 1) {
+    throw new Error(`${screenshot.name} slot cells leave the viewport: left ${minCellLeft}px, right ${maxCellRight}px`)
   }
 }
 

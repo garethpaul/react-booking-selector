@@ -8,6 +8,8 @@
   origin.
 - Avoided raw coercion of malformed grid range props while computing internal
   update signatures.
+- Required docs smoke layout metrics to be finite numbers before evaluating
+  overflow checks.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

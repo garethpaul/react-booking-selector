@@ -117,6 +117,9 @@ if (args.includes('--dump-dom')) {
         minCellLeft: 0,
         maxCellRight: width,
       }
+      if (process.env.FAKE_CHROME_LAYOUT_MISSING_METRIC === '1') {
+        delete layout.maxCellRight
+      }
       process.stdout.write(
         '<!doctype html><html><body><pre id="layout-result">' +
           JSON.stringify(layout) +
@@ -223,6 +226,16 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_LAYOUT_OVERFLOW: '1' })
     }).toThrow(/desktop layout has horizontal overflow/u)
+  })
+
+  it('fails when the layout smoke result is missing a metric', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_LAYOUT_MISSING_METRIC: '1' })
+    }).toThrow(/desktop layout metric maxCellRight is not a finite number/u)
   })
 
   it('handles malformed docs server request paths', () => {
