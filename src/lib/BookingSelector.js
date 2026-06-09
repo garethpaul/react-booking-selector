@@ -952,8 +952,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (key == null) return false
     const dateCell = this.dateToCell.get(key)
     if (!dateCell || typeof dateCell.focus !== 'function') return false
-    dateCell.focus()
-    return true
+    try {
+      dateCell.focus()
+      return true
+    } catch {
+      return false
+    }
   }
 
   handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: mixed, blocked: boolean = false) {

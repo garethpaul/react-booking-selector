@@ -757,8 +757,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (key == null) return false;
     var dateCell = this.dateToCell.get(key);
     if (!dateCell || typeof dateCell.focus !== 'function') return false;
-    dateCell.focus();
-    return true;
+    try {
+      dateCell.focus();
+      return true;
+    } catch (_unused4) {
+      return false;
+    }
   };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this4 = this;

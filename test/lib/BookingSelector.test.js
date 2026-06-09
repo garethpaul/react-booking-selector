@@ -3236,6 +3236,18 @@ describe('keyboard interaction', () => {
     expect(instance.focusDateCell(time)).toBe(false)
   })
 
+  it('reports when a registered focus target throws while focusing', () => {
+    const time = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    instance.dateToCell.set(time.getTime(), {
+      focus() {
+        throw new Error('Cannot focus stale target')
+      },
+    })
+
+    expect(instance.focusDateCell(time)).toBe(false)
+  })
+
   it('reports when a blocked focus target is not focusable', () => {
     const blocked = addHours(startOfDay(startDate), 9)
     const { instance } = renderSelector({ blocked: [blocked], startDate, numDays: 1, minTime: 9, maxTime: 9 })
