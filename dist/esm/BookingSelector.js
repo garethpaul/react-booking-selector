@@ -617,9 +617,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return hasDateMinuteKey(this.selectedMinuteKeys, time);
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
-    if (typeof Node === 'undefined') return null;
+    if (typeof Node !== 'function') return null;
     if (!(target instanceof Node)) return null;
-    var targetElement = typeof HTMLElement !== 'undefined' && target instanceof HTMLElement ? target : target.parentElement;
+    var targetElement = typeof HTMLElement === 'function' && target instanceof HTMLElement ? target : target.parentElement;
     while (targetElement) {
       if (this.cellToDate.has(targetElement)) return targetElement;
       if (targetElement === this.gridRef) return null;

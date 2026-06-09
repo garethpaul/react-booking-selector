@@ -1665,6 +1665,9 @@ describe('componentDidMount', () => {
 
     try {
       expect(instance.getDateCellFromEventTarget(document.createElement('div'))).toBe(null)
+      window.Node = {}
+      window.HTMLElement = {}
+      expect(instance.getDateCellFromEventTarget(document.createElement('div'))).toBe(null)
     } finally {
       window.Node = nodeConstructor
       window.HTMLElement = htmlElementConstructor
