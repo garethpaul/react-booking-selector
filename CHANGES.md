@@ -42,6 +42,7 @@
 - Made the CommonJS entry writer create its output directory when run directly.
 - Added docs smoke regression coverage for encoded path traversal attempts.
 - Reported incomplete docs smoke PNG screenshots with explicit parser errors.
+- Reset WebKit button appearance on booking grid cells for Safari parity.
 
 ## 2026-06-08
 

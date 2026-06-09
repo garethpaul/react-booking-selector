@@ -345,6 +345,7 @@ export const GridCell = styled.div`
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   ${(props) => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}

@@ -1913,6 +1913,7 @@ describe('cell accessibility', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
 
+    expect(cell).toHaveStyleRule('-webkit-appearance', 'none')
     expect(cell).toHaveStyleRule('align-self', 'stretch')
     expect(cell).toHaveStyleRule('width', 'auto')
     expect(cell).toHaveStyleRule('max-width', 'none')

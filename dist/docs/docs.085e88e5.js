@@ -63,6 +63,7 @@ Example:
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   ${e=>e.$interactive&&`cursor: ${e.$blocked?"not-allowed":"pointer"};`}

@@ -57,6 +57,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -93,6 +94,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -129,6 +131,7 @@ exports[`snapshot tests renders correctly with custom render prop 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   cursor: pointer;
@@ -1440,6 +1443,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -1476,6 +1480,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -1512,6 +1517,7 @@ exports[`snapshot tests renders correctly with default render logic 1`] = `
   padding: 0;
   border: 0;
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   color: inherit;
   cursor: pointer;
