@@ -9,7 +9,7 @@ var linear = function linear(selectionStart, selectionEnd, dateList) {
   if (!isValidDate(selectionStart)) return selected;
   if (selectionEnd == null) {
     selected = [selectionStart];
-  } else if (isValidDate(selectionEnd)) {
+  } else if (isValidDate(selectionEnd) && Array.isArray(dateList)) {
     var reverseSelection = isBefore(selectionEnd, selectionStart);
     selected = dateList.reduce(function (acc, dayOfTimes) {
       return Array.isArray(dayOfTimes) ? acc.concat(dayOfTimes.filter(function (t) {

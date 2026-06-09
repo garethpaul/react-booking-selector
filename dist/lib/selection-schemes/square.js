@@ -15,7 +15,7 @@ var square = function square(selectionStart, selectionEnd, dateList) {
   if (!isValidDate(selectionStart)) return selected;
   if (selectionEnd == null) {
     selected = [selectionStart];
-  } else if (isValidDate(selectionEnd)) {
+  } else if (isValidDate(selectionEnd) && Array.isArray(dateList)) {
     var dateIsReversed = (0, _isBefore.isBefore)((0, _startOfDay.startOfDay)(selectionEnd), (0, _startOfDay.startOfDay)(selectionStart));
     var timeIsReversed = selectionStart.getHours() > selectionEnd.getHours();
     selected = dateList.reduce(function (acc, dayOfTimes) {

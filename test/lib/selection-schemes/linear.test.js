@@ -69,6 +69,11 @@ describe('linear selection scheme', () => {
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
   })
 
+  test('it ignores malformed date lists', () => {
+    expect(linear(dates[0][1], dates[0][2], null)).toEqual([])
+    expect(linear(dates[0][1], dates[0][2], { reduce: () => [dates[0][1]] })).toEqual([])
+  })
+
   test('it skips missing times inside day buckets', () => {
     const sparseDates = [[dates[0][18], undefined, dates[0][19]], [null], [dates[2][0], dates[2][1]]]
     const expected = [dates[0][18], dates[0][19], dates[2][0], dates[2][1]]

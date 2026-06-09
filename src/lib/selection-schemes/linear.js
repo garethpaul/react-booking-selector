@@ -13,7 +13,7 @@ const linear = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
 
   if (selectionEnd == null) {
     selected = [selectionStart]
-  } else if (isValidDate(selectionEnd)) {
+  } else if (isValidDate(selectionEnd) && Array.isArray(dateList)) {
     const reverseSelection = isBefore(selectionEnd, selectionStart)
     selected = dateList.reduce(
       (acc, dayOfTimes) =>

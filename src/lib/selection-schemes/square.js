@@ -14,7 +14,7 @@ const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Arra
 
   if (selectionEnd == null) {
     selected = [selectionStart]
-  } else if (isValidDate(selectionEnd)) {
+  } else if (isValidDate(selectionEnd) && Array.isArray(dateList)) {
     const dateIsReversed = isBefore(startOfDay(selectionEnd), startOfDay(selectionStart))
     const timeIsReversed = selectionStart.getHours() > selectionEnd.getHours()
 

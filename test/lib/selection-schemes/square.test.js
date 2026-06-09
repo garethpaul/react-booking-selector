@@ -69,6 +69,11 @@ describe('square selection scheme', () => {
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
   })
 
+  test('it ignores malformed date lists', () => {
+    expect(square(dates[0][1], dates[0][2], null)).toEqual([])
+    expect(square(dates[0][1], dates[0][2], { reduce: () => [dates[0][1]] })).toEqual([])
+  })
+
   test('it skips missing times inside day buckets', () => {
     const sparseDates = [[dates[0][5], undefined, dates[0][6]], [null], [dates[2][5], dates[2][6]]]
     const expected = [dates[0][5], dates[0][6], dates[2][5], dates[2][6]]

@@ -10,7 +10,7 @@ var square = function square(selectionStart, selectionEnd, dateList) {
   if (!isValidDate(selectionStart)) return selected;
   if (selectionEnd == null) {
     selected = [selectionStart];
-  } else if (isValidDate(selectionEnd)) {
+  } else if (isValidDate(selectionEnd) && Array.isArray(dateList)) {
     var dateIsReversed = isBefore(startOfDay(selectionEnd), startOfDay(selectionStart));
     var timeIsReversed = selectionStart.getHours() > selectionEnd.getHours();
     selected = dateList.reduce(function (acc, dayOfTimes) {
