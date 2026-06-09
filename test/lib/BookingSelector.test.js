@@ -1446,6 +1446,23 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
+  it('attaches document mouseup listeners to the rendered grid owner document', () => {
+    const { instance } = renderSelector()
+    const originalGridRef = instance.gridRef
+    const ownerDocument = {
+      addEventListener: jest.fn(),
+    }
+
+    try {
+      instance.gridRef = { ownerDocument }
+      instance.componentDidMount()
+    } finally {
+      instance.gridRef = originalGridRef
+    }
+
+    expect(ownerDocument.addEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+  })
+
   it('attaches non-passive touchmove listeners as date cells mount', () => {
     const addSpy = jest.spyOn(HTMLElement.prototype, 'addEventListener')
 
@@ -1554,6 +1571,27 @@ describe('componentDidMount', () => {
     expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
 
     removeSpy.mockRestore()
+  })
+
+  it('uses the rendered grid owner document for touch hit testing', () => {
+    const { instance } = renderSelector()
+    const originalGridRef = instance.gridRef
+    const cell = document.createElement('div')
+    const time = addHours(startOfDay(startDate), 9)
+    const ownerDocument = {
+      elementFromPoint: jest.fn().mockReturnValue(cell),
+    }
+
+    instance.registerDateCell(cell, time)
+    try {
+      instance.gridRef = { ownerDocument }
+      expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toEqual(time)
+    } finally {
+      instance.gridRef = originalGridRef
+    }
+
+    expect(ownerDocument.elementFromPoint).toHaveBeenCalledWith(1, 2)
+    expect(document.elementFromPoint).not.toHaveBeenCalled()
   })
 
   it('ignores nullish date cells during registration cleanup', () => {
@@ -1763,6 +1801,23 @@ describe('componentWillUnmount', () => {
     expect(instance.dateToCell.size).toBe(0)
     expect(instance.touchScrollCells.size).toBe(0)
     removeSpy.mockRestore()
+  })
+
+  it('removes document mouseup listeners from the rendered grid owner document', () => {
+    const { instance } = renderSelector()
+    const originalGridRef = instance.gridRef
+    const ownerDocument = {
+      removeEventListener: jest.fn(),
+    }
+
+    try {
+      instance.gridRef = { ownerDocument }
+      instance.componentWillUnmount()
+    } finally {
+      instance.gridRef = originalGridRef
+    }
+
+    expect(ownerDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
   })
 
   it('removes the touchmove event listeners from the date cells', () => {

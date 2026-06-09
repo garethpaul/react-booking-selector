@@ -725,7 +725,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    const browserDocument = getBrowserDocument()
+    const browserDocument = this.getDocument()
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
@@ -740,7 +740,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   componentWillUnmount() {
-    const browserDocument = getBrowserDocument()
+    const browserDocument = this.getDocument()
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
@@ -848,6 +848,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return hasDateMinuteKey(this.selectedMinuteKeys, time)
   }
 
+  getDocument(): ?BrowserDocumentType {
+    const gridDocument = this.gridRef && this.gridRef.ownerDocument
+    return gridDocument && typeof gridDocument === 'object' ? gridDocument : getBrowserDocument()
+  }
+
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {
     if (typeof Node !== 'function') return null
     if (!(target instanceof Node)) return null
@@ -885,7 +890,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!touches || touches.length === 0) return null
     const touch = touches[0]
     if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null
-    const browserDocument = getBrowserDocument()
+    const browserDocument = this.getDocument()
     if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null
     const { clientX, clientY } = touch
     let targetElement

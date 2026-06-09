@@ -532,7 +532,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    var browserDocument = getBrowserDocument();
+    var browserDocument = this.getDocument();
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
@@ -545,7 +545,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     this.refreshInstanceLookups(this.props, this.state.selectionDraft);
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
-    var browserDocument = getBrowserDocument();
+    var browserDocument = this.getDocument();
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
@@ -650,6 +650,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.isSelected = function isSelected(time) {
     return hasDateMinuteKey(this.selectedMinuteKeys, time);
   };
+  _proto.getDocument = function getDocument() {
+    var gridDocument = this.gridRef && this.gridRef.ownerDocument;
+    return gridDocument && typeof gridDocument === 'object' ? gridDocument : getBrowserDocument();
+  };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
     if (typeof Node !== 'function') return null;
     if (!(target instanceof Node)) return null;
@@ -685,7 +689,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (!touches || touches.length === 0) return null;
     var touch = touches[0];
     if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null;
-    var browserDocument = getBrowserDocument();
+    var browserDocument = this.getDocument();
     if (!browserDocument || typeof browserDocument.elementFromPoint !== 'function') return null;
     var clientX = touch.clientX,
       clientY = touch.clientY;

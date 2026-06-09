@@ -73,4 +73,19 @@ describe('BookingSelector without a browser document', () => {
       })
     })
   })
+
+  it('uses a valid browser document fallback when no grid document is registered', () => {
+    const instance = createSelectorInstance()
+    const cell = {}
+    const time = new Date('2018-01-01T09:00:00.000')
+    const documentValue = {
+      elementFromPoint: jest.fn().mockReturnValue(cell),
+    }
+
+    instance.registerDateCell(cell, time)
+    withGlobalWindow({ document: documentValue }, () => {
+      expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toEqual(time)
+    })
+    expect(documentValue.elementFromPoint).toHaveBeenCalledWith(1, 2)
+  })
 })
