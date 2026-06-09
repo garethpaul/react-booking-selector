@@ -10,6 +10,8 @@ const selection: BookingSelectorProps['selection'] = [
   { valueOf: () => new Date('2026-06-08T11:00:00.000Z').getTime() },
 ]
 const blocked: BookingSelectorProps['blocked'] = null
+const className: BookingSelectorProps['className'] = 'booking-selector-shell'
+const style: BookingSelectorProps['style'] = { maxWidth: 480 }
 const margin: BookingSelectorCssLength = '0.25rem'
 const ariaLabel: BookingSelectorProps['ariaLabel'] = 'Appointment availability'
 const standardAriaLabel: BookingSelectorProps['aria-label'] = 'Team appointment availability'
@@ -24,6 +26,8 @@ void BookingSelector
 void NamedBookingSelector
 void selection
 void blocked
+void className
+void style
 void margin
 void ariaLabel
 void standardAriaLabel

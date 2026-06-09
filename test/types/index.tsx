@@ -28,6 +28,8 @@ const onChange: BookingSelectorProps['onChange'] = (nextSelection) => {
 
 const defaultExport = (
   <BookingSelector
+    className="booking-selector-shell"
+    style={{ maxWidth: 480 }}
     selection={selection}
     blocked={blocked}
     selectionScheme="square"

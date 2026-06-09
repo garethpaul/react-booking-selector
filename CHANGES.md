@@ -93,3 +93,4 @@
 - Added an `ariaLabel` prop for customizing the booking slot group name.
 - Added direct coverage for the CommonJS entry writer script.
 - Supported the standard `aria-label` prop for naming the booking slot group.
+- Passed `className` and `style` through to the outer component wrapper.

@@ -9,6 +9,7 @@ export type BookingSelectorCssLength = number | string
 export type BookingSelectorSelectionScheme = 'linear' | 'square'
 
 export interface BookingSelectorProps {
+  className?: string
   selection?: BookingSelectorDateList
   blocked?: BookingSelectorDateList
   selectionScheme?: BookingSelectorSelectionScheme
@@ -25,6 +26,7 @@ export interface BookingSelectorProps {
   blockedColor?: string
   ariaLabel?: string
   'aria-label'?: string
+  style?: React.CSSProperties
   renderDateCell?: (time: Date, selected: boolean, blocked: boolean) => React.ReactNode
 }
 

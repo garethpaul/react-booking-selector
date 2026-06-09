@@ -79,6 +79,26 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 
 ## Props
 
+### `className`
+
+**type**: `string`
+
+**description**: Class name applied to the outer component wrapper.
+
+**required**: no
+
+**default value**: none
+
+### `style`
+
+**type**: `React.CSSProperties`
+
+**description**: Inline styles applied to the outer component wrapper.
+
+**required**: no
+
+**default value**: none
+
 ### `selection`
 
 **type**: `Array<Date | string | number | { valueOf(): number } | null | undefined> | null | undefined`

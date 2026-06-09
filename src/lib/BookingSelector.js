@@ -19,6 +19,8 @@ type SelectionType = 'add' | 'remove'
 
 type SelectionSchemeType = 'linear' | 'square'
 
+type StyleType = { [string]: string | number | null | void }
+
 type TouchSelectionEventType = {
   touches?: Array<{
     clientX: number,
@@ -385,6 +387,7 @@ const TimeText = styled(Text)`
 `
 
 type PropsType = {
+  className?: string,
   selection: DateListType,
   blocked: DateListType,
   selectionScheme: SelectionSchemeType,
@@ -401,6 +404,7 @@ type PropsType = {
   blockedColor: string,
   ariaLabel: string,
   'aria-label'?: string,
+  style?: StyleType,
   renderDateCell?: (Date, boolean, boolean) => React.Node,
 }
 
@@ -942,7 +946,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const gridAriaLabel = this.props['aria-label'] || this.props.ariaLabel
 
     return (
-      <Wrapper>
+      <Wrapper className={this.props.className} style={this.props.style}>
         {
           <Grid
             role="group"
