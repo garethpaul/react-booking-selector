@@ -11,6 +11,7 @@ const browserGlobals = {
   document: 'readonly',
   HTMLElement: 'readonly',
   MouseEvent: 'readonly',
+  module: 'readonly',
   Node: 'readonly',
   process: 'readonly',
   require: 'readonly',

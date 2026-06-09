@@ -62,6 +62,8 @@
 - Added narrow-mobile docs smoke screenshots to catch 320px layout regressions.
 - Marked the published package contract as explicitly side-effect-free instead
   of listing an internal docs entry that is not published.
+- Added a strict package-contents check so `pack:check` fails on missing,
+  unexpected, or forbidden published files.
 
 ## 2026-06-08
 
