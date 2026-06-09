@@ -11,6 +11,7 @@ const selection: BookingSelectorProps['selection'] = [
 ]
 const blocked: BookingSelectorProps['blocked'] = null
 const className: BookingSelectorProps['className'] = 'booking-selector-shell'
+const id: BookingSelectorProps['id'] = 'booking-selector'
 const style: BookingSelectorProps['style'] = { maxWidth: 480 }
 const margin: BookingSelectorCssLength = '0.25rem'
 const ariaLabel: BookingSelectorProps['ariaLabel'] = 'Appointment availability'
@@ -28,6 +29,7 @@ void NamedBookingSelector
 void selection
 void blocked
 void className
+void id
 void style
 void margin
 void ariaLabel

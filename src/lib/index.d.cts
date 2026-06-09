@@ -13,6 +13,7 @@ declare namespace BookingSelectorComponent {
 
   export interface BookingSelectorProps {
     className?: string
+    id?: string
     selection?: BookingSelectorDateList
     blocked?: BookingSelectorDateList
     selectionScheme?: BookingSelectorSelectionScheme

@@ -703,6 +703,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;
     return /*#__PURE__*/React.createElement(Wrapper, {
       className: this.props.className,
+      id: this.props.id,
       style: this.props.style
     }, /*#__PURE__*/React.createElement(Grid, {
       role: "group",

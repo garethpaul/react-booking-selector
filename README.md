@@ -91,6 +91,16 @@ Values in `selection` and `blocked` may be `Date` objects, timestamps, date stri
 
 **default value**: none
 
+### `id`
+
+**type**: `string`
+
+**description**: ID applied to the outer component wrapper.
+
+**required**: no
+
+**default value**: none
+
 ### `style`
 
 **type**: `React.CSSProperties`

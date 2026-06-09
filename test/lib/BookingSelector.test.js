@@ -1497,6 +1497,7 @@ describe('cell accessibility', () => {
   it('passes presentation props to the outer wrapper', () => {
     const { container, getByRole } = renderSelector({
       className: 'booking-selector-shell',
+      id: 'booking-selector-shell',
       style: { maxWidth: 480 },
       startDate,
       numDays: 1,
@@ -1507,9 +1508,11 @@ describe('cell accessibility', () => {
     const group = getByRole('group', { name: 'Booking time slots' })
 
     expect(wrapper).toHaveClass('booking-selector-shell')
+    expect(wrapper).toHaveAttribute('id', 'booking-selector-shell')
     expect(wrapper).toHaveStyle('max-width: 480px')
     expect(group.parentElement).toBe(wrapper)
     expect(group).not.toHaveClass('booking-selector-shell')
+    expect(group).not.toHaveAttribute('id', 'booking-selector-shell')
   })
 
   it('labels the slot group', () => {

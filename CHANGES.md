@@ -96,3 +96,4 @@
 - Passed `className` and `style` through to the outer component wrapper.
 - Supported `aria-labelledby` for naming the booking slot group from visible text.
 - Preserved in-progress selections when controlled `selection` props are reordered or duplicated without changing slots.
+- Passed `id` through to the outer component wrapper.

@@ -386,6 +386,7 @@ const TimeText = styled(Text)`
 
 type PropsType = {
   className?: string,
+  id?: string,
   selection: DateListType,
   blocked: DateListType,
   selectionScheme: SelectionSchemeType,
@@ -946,7 +947,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel
 
     return (
-      <Wrapper className={this.props.className} style={this.props.style}>
+      <Wrapper className={this.props.className} id={this.props.id} style={this.props.style}>
         {
           <Grid
             role="group"
