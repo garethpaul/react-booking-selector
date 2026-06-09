@@ -131,6 +131,9 @@ var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key
   if (key === 'ArrowUp') return (0, _addHours.addHours)(time, -1);
   return null;
 };
+var isKeyboardSelectionKey = function isKeyboardSelectionKey(key) {
+  return key === 'Enter' || key === ' ' || key === 'Spacebar';
+};
 var dateKey = function dateKey(time) {
   return time.getTime();
 };
@@ -529,7 +532,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       this.focusDateCell(navigationTarget);
       return;
     }
-    if (blocked || event.key !== 'Enter' && event.key !== ' ') return;
+    if (blocked || !isKeyboardSelectionKey(event.key)) return;
     event.preventDefault();
     var timeSelected = this.isSelected(time);
     this.setState({

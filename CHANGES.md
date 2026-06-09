@@ -67,3 +67,4 @@
 - Added black-box coverage for the docs-plan checker success and failure paths.
 - Moved completed custom-renderer plans into the verified `docs/plans` inventory.
 - Preserved newer reverse date-cell lookups when older cells unregister or re-register.
+- Supported legacy `Spacebar` key values for keyboard slot toggles.

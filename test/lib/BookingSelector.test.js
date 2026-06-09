@@ -1453,6 +1453,27 @@ describe('keyboard interaction', () => {
     expect(event.defaultPrevented).toBe(true)
   })
 
+  it('toggles a focused cell with legacy Spacebar key values', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const event = createEvent.keyDown(cell, { key: 'Spacebar' })
+
+    fireEvent(cell, event)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([selected])
+    })
+    expect(event.defaultPrevented).toBe(true)
+  })
+
   it('ignores non-action keys on focused cells', () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy })

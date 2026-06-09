@@ -153,6 +153,8 @@ const getKeyboardNavigationTarget = (time: Date, key: string): ?Date => {
   return null
 }
 
+const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key === ' ' || key === 'Spacebar'
+
 const dateKey = (time: Date): number => time.getTime()
 
 const TOUCH_MOUSE_SUPPRESSION_MS = 500
@@ -630,7 +632,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
-    if (blocked || (event.key !== 'Enter' && event.key !== ' ')) return
+    if (blocked || !isKeyboardSelectionKey(event.key)) return
     event.preventDefault()
     const timeSelected = this.isSelected(time)
     this.setState(
