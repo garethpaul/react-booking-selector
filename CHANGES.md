@@ -6,6 +6,12 @@
   the repository-standard gate aliases.
 - Ran the normal Jest test script serially after `lib:build` so generated
   package metadata is stable before Jest crawls the workspace.
+- Updated Prettier to the `3.8.4` patch release without changing formatted
+  output.
+- Guarded document-level mouseup listener registration and cleanup so
+  non-standard DOM listener failures cannot break mount or unmount cleanup.
+- Accepted valid `Date` objects created in another JavaScript realm while still
+  rejecting objects that only spoof the Date brand.
 - Normalized `docs:check` plan paths so README validation remains stable
   across native path separators.
 - Tightened `docs:check` so README cannot duplicate canonical `docs/plans`
