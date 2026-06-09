@@ -19,7 +19,9 @@
         window.process.env = window.process.env && typeof window.process.env === 'object' ? window.process.env : {}
         window.process.env.NODE_ENV = window.process.env.NODE_ENV || 'production'
       } catch (error) {
-        window.process = { env: { NODE_ENV: 'production' } }
+        try {
+          window.process = { env: { NODE_ENV: 'production' } }
+        } catch (assignError) {}
       }
     </script>
     <script type="module" src="./App.js"></script>

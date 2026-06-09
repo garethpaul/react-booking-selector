@@ -84,3 +84,20 @@ it('recovers when an existing docs process env getter throws', () => {
 
   expect(windowGlobal.process).toEqual({ env: { NODE_ENV: 'production' } })
 })
+
+it('does not throw when the docs process fallback assignment throws', () => {
+  const runProcessShim = new Function('window', getProcessShimScript())
+  const windowGlobal = {}
+  Object.defineProperty(windowGlobal, 'process', {
+    get() {
+      throw new Error('Cannot read process')
+    },
+    set() {
+      throw new Error('Cannot replace process')
+    },
+  })
+
+  expect(() => {
+    runProcessShim(windowGlobal)
+  }).not.toThrow()
+})

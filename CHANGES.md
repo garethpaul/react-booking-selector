@@ -28,6 +28,8 @@
   host environments.
 - Ignored throwing event default-prevention methods instead of failing keyboard
   navigation or touch-scroll handling.
+- Ignored docs process-shim fallback assignment failures when host pages expose
+  throwing `window.process` setters.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do
