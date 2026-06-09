@@ -28,7 +28,8 @@ Priority:
 
 Next priorities:
 
-- Add visual regression coverage before larger layout or styling changes.
+- Keep `docs:smoke` in the gate for layout-sensitive changes, and add baseline
+  visual regression coverage before larger styling changes.
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
   as the day/hour grid evolves.
 - Keep peer dependency ranges aligned with supported React and styled-components
