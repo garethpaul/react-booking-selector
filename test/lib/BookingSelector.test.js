@@ -2632,4 +2632,10 @@ describe('preventScroll', () => {
     preventScroll(event)
     expect(event.preventDefault).toHaveBeenCalled()
   })
+
+  it('ignores events without callable default prevention', () => {
+    expect(() => {
+      preventScroll({ preventDefault: true })
+    }).not.toThrow()
+  })
 })

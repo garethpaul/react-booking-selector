@@ -266,7 +266,9 @@ var DayLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject8 || (_
 var TimeLabelCell = _styled.default.div(_templateObject9 || (_templateObject9 = _taggedTemplateLiteralLoose(["\n  position: relative;\n  box-sizing: border-box;\n  width: 100%;\n  height: 40px;\n  padding-right: 15px;\n  display: flex;\n  justify-content: flex-end;\n  align-items: center;\n  color: rgb(112, 117, 122);\n  @media (max-width: 699px) {\n    padding-right: 6px;\n  }\n"])));
 var TimeText = (0, _styled.default)(_typography.Text)(_templateObject0 || (_templateObject0 = _taggedTemplateLiteralLoose(["\n  margin: 0;\n  font-size: 11px;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n  text-align: right;\n  text-transform: uppercase;\n"])));
 var preventScroll = exports.preventScroll = function preventScroll(e) {
-  e.preventDefault();
+  if (typeof e.preventDefault === 'function') {
+    e.preventDefault();
+  }
 };
 var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {

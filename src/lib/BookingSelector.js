@@ -514,7 +514,9 @@ type DerivedStateType = {
 }
 
 export const preventScroll = (e: TouchEvent) => {
-  e.preventDefault()
+  if (typeof e.preventDefault === 'function') {
+    e.preventDefault()
+  }
 }
 
 export default class BookingSelector extends React.Component<PropsType, StateType> {

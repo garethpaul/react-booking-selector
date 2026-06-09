@@ -21,6 +21,7 @@
 - Guarded CSS length normalization against malformed non-string margin values.
 - Guarded keyboard focus restoration against malformed date-cell lookup
   entries.
+- Ignored malformed touch scroll events without callable default prevention.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.
