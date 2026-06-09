@@ -2,6 +2,9 @@
  * @jest-environment node
  */
 
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+
 import BookingSelector, { preventScroll } from '../../src/lib/BookingSelector'
 
 const createSelectorInstance = () => new BookingSelector({ ...BookingSelector.defaultProps })
@@ -24,6 +27,21 @@ const withGlobalWindow = (windowValue, callback) => {
 }
 
 describe('BookingSelector without a browser document', () => {
+  it('server-renders slot markup without browser globals', () => {
+    const html = renderToString(
+      React.createElement(BookingSelector, {
+        startDate: new Date('2018-01-01T00:00:00.000'),
+        numDays: 1,
+        minTime: 9,
+        maxTime: 9,
+      }),
+    )
+
+    expect(html).toContain('role="group"')
+    expect(html).toContain('aria-label="Booking time slots"')
+    expect(html).toContain('aria-label="Available Monday, January 1, 2018 at 9 am"')
+  })
+
   it('mounts and unmounts without document-level listener support', () => {
     const instance = createSelectorInstance()
     const cell = {
