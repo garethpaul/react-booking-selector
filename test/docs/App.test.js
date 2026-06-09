@@ -22,11 +22,15 @@ it('renders the GitHub link as a safe external link', () => {
 it('updates the visible selection count when the demo grid changes', async () => {
   const { getByRole } = render(React.createElement(App))
   const status = getByRole('status')
+  const slotGroup = getByRole('group', { name: 'Booking time slots' })
   const firstSlot = getByRole('button', { name: 'Available Monday, April 6, 2020 at 8 am' })
 
   expect(status).toHaveTextContent('0 selected - 3 blocked')
+  expect(status).toHaveAttribute('id', 'booking-selector-demo-status')
   expect(status).toHaveAttribute('aria-atomic', 'true')
   expect(status).toHaveAttribute('aria-live', 'polite')
+  expect(slotGroup).toHaveAttribute('aria-describedby', 'booking-selector-demo-status')
+  expect(slotGroup).toHaveAccessibleDescription('0 selected - 3 blocked')
 
   fireEvent.mouseDown(firstSlot)
   fireEvent.mouseUp(firstSlot)

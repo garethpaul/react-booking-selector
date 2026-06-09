@@ -118,7 +118,7 @@ export class App extends React.Component<{}, StateType> {
         <MainDiv as="main">
           <IntroText>
             <h1>React Booking Selector</h1>
-            <StatusText aria-atomic="true" aria-live="polite" role="status">
+            <StatusText aria-atomic="true" aria-live="polite" id="booking-selector-demo-status" role="status">
               {selectedCount} selected - {blockedCount} blocked
             </StatusText>
           </IntroText>
@@ -130,6 +130,7 @@ export class App extends React.Component<{}, StateType> {
               numDays={7}
               selection={this.state.schedule}
               blocked={this.state.blocked}
+              aria-describedby="booking-selector-demo-status"
               onChange={this.handleDateChange}
             />
           </BookingSelectorCard>
