@@ -672,10 +672,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   syncDateCellTouchMoveListener(dateCell: HTMLElement, shouldPreventTouchScroll: boolean) {
     const isPreventingTouchScroll = this.touchScrollCells.has(dateCell)
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
-      dateCell.addEventListener('touchmove', preventScroll, { passive: false })
-      this.touchScrollCells.add(dateCell)
+      if (typeof dateCell.addEventListener === 'function') {
+        dateCell.addEventListener('touchmove', preventScroll, { passive: false })
+        this.touchScrollCells.add(dateCell)
+      }
     } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
-      dateCell.removeEventListener('touchmove', preventScroll)
+      if (typeof dateCell.removeEventListener === 'function') {
+        dateCell.removeEventListener('touchmove', preventScroll)
+      }
       this.touchScrollCells.delete(dateCell)
     }
   }

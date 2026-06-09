@@ -1126,6 +1126,35 @@ describe('componentDidMount', () => {
     removeSpy.mockRestore()
   })
 
+  it('registers date cells even when touchmove listeners cannot be attached', () => {
+    const { instance } = renderSelector()
+    const cell = { addEventListener: true, removeEventListener: jest.fn() }
+    const time = addHours(startOfDay(startDate), 9)
+
+    expect(() => {
+      instance.registerDateCell(cell, time)
+    }).not.toThrow()
+    expect(instance.cellToDate.get(cell)).toEqual(time)
+    expect(instance.dateToCell.get(time.getTime())).toBe(cell)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+  })
+
+  it('unregisters date cells even when touchmove listeners cannot be removed', () => {
+    const { instance } = renderSelector()
+    const cell = { addEventListener: jest.fn(), removeEventListener: true }
+    const time = addHours(startOfDay(startDate), 9)
+
+    instance.registerDateCell(cell, time)
+
+    expect(instance.touchScrollCells.has(cell)).toBe(true)
+    expect(() => {
+      instance.unregisterDateCell(cell)
+    }).not.toThrow()
+    expect(instance.cellToDate.has(cell)).toBe(false)
+    expect(instance.dateToCell.has(time.getTime())).toBe(false)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+  })
+
   it('keeps newer date lookup entries when an older cell unregisters the same time', () => {
     const { instance } = renderSelector()
     const firstCell = document.createElement('div')

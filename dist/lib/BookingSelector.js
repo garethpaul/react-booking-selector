@@ -498,12 +498,16 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.syncDateCellTouchMoveListener = function syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll) {
     var isPreventingTouchScroll = this.touchScrollCells.has(dateCell);
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
-      dateCell.addEventListener('touchmove', preventScroll, {
-        passive: false
-      });
-      this.touchScrollCells.add(dateCell);
+      if (typeof dateCell.addEventListener === 'function') {
+        dateCell.addEventListener('touchmove', preventScroll, {
+          passive: false
+        });
+        this.touchScrollCells.add(dateCell);
+      }
     } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
-      dateCell.removeEventListener('touchmove', preventScroll);
+      if (typeof dateCell.removeEventListener === 'function') {
+        dateCell.removeEventListener('touchmove', preventScroll);
+      }
       this.touchScrollCells.delete(dateCell);
     }
   };

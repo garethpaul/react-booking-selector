@@ -16,6 +16,8 @@
   during touch drags.
 - Retried transient missing docs smoke layout dumps before failing the browser
   smoke check.
+- Hardened date-cell registration when touchmove listener methods are missing
+  or malformed.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.
