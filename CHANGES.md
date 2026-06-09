@@ -77,3 +77,4 @@
 - Avoided suppressing touch scrolling from disabled blocked cells.
 - Updated the project vision next priorities to reflect completed interaction and accessibility coverage.
 - Hardened the docs HTML process shim when a host already defines `window.process` without `env`.
+- Kept generated slot hours stable across daylight-saving-time offset changes.

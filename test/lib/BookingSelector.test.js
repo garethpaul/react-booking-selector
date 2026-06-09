@@ -1071,6 +1071,32 @@ describe('prop updates', () => {
     expect(rendered.instance.dates[0]).toHaveLength(2)
   })
 
+  it('keeps visible hours stable across daylight-saving-time boundaries', () => {
+    const previousTimeZone = process.env.TZ
+    process.env.TZ = 'America/New_York'
+
+    try {
+      const rendered = renderSelector({
+        startDate: new Date(2024, 2, 9),
+        numDays: 3,
+        minTime: 9,
+        maxTime: 9,
+      })
+
+      expect(rendered.instance.dates.map((dayOfTimes) => dayOfTimes[0].getHours())).toEqual([9, 9, 9])
+      expect(rendered.getByRole('button', { name: 'Available Saturday, March 9, 2024 at 9 am' })).toBeInTheDocument()
+      expect(rendered.getByRole('button', { name: 'Available Sunday, March 10, 2024 at 9 am' })).toBeInTheDocument()
+      expect(rendered.getByRole('button', { name: 'Available Monday, March 11, 2024 at 9 am' })).toBeInTheDocument()
+      expect(rendered.queryByRole('button', { name: 'Available Sunday, March 10, 2024 at 10 am' })).toBe(null)
+    } finally {
+      if (previousTimeZone === undefined) {
+        delete process.env.TZ
+      } else {
+        process.env.TZ = previousTimeZone
+      }
+    }
+  })
+
   it('renders no date cells when the time range has no slots', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: 10, maxTime: 9 })
 

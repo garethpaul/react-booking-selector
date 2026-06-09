@@ -109,6 +109,9 @@ const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
   return hours
 }
 
+const createLocalTime = (day: Date, hour: number): Date =>
+  new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0)
+
 const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): Array<Array<Date>> => {
   if (!isWholeNumber(numDays) || numDays <= 0) return []
 
@@ -119,8 +122,9 @@ const buildDates = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType)
   const dates = []
   for (let d = 0; d < numDays; d += 1) {
     const currentDay = []
+    const day = addDays(startTime, d)
     visibleHours.forEach((h) => {
-      currentDay.push(addHours(addDays(startTime, d), h))
+      currentDay.push(createLocalTime(day, h))
     })
     dates.push(currentDay)
   }

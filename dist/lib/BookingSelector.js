@@ -86,6 +86,9 @@ var getVisibleHours = function getVisibleHours(minTime, maxTime) {
   }
   return hours;
 };
+var createLocalTime = function createLocalTime(day, hour) {
+  return new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0);
+};
 var buildDates = function buildDates(_ref) {
   var startDate = _ref.startDate,
     numDays = _ref.numDays,
@@ -96,15 +99,16 @@ var buildDates = function buildDates(_ref) {
   var visibleHours = getVisibleHours(minTime, maxTime);
   if (visibleHours.length === 0) return [];
   var dates = [];
-  var _loop = function _loop(d) {
+  var _loop = function _loop() {
     var currentDay = [];
+    var day = (0, _addDays.addDays)(startTime, d);
     visibleHours.forEach(function (h) {
-      currentDay.push((0, _addHours.addHours)((0, _addDays.addDays)(startTime, d), h));
+      currentDay.push(createLocalTime(day, h));
     });
     dates.push(currentDay);
   };
   for (var d = 0; d < numDays; d += 1) {
-    _loop(d);
+    _loop();
   }
   return dates;
 };
