@@ -57,6 +57,8 @@
   inside the same slot minute.
 - Replaced primitive docs `window.process` shims before assigning
   `process.env.NODE_ENV`.
+- Required docs-plan filename dates to be valid calendar dates, not just
+  date-shaped prefixes.
 
 ## 2026-06-08
 

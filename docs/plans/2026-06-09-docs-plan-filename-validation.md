@@ -13,6 +13,7 @@ convention.
 
 - Keep docs-plan filenames sortable by date.
 - Reject canonical plan files that do not use a `YYYY-MM-DD-*` filename.
+- Reject canonical plan files with impossible calendar dates in the filename.
 - Cover the failure mode in the docs-plan checker tests.
 - Keep the README, VISION, and CHANGES notes aligned with the checker.
 
@@ -20,6 +21,7 @@ convention.
 
 - Added dated filename validation to `scripts/check-docs-plan.js`.
 - Added a regression test for undated plan filenames.
+- Added calendar-date validation with leap-day coverage.
 - Added this completed plan and README/VISION/CHANGES references.
 
 ## Verification

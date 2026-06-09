@@ -60,11 +60,13 @@ describe('check-docs-plan script', () => {
     tempProjects.push(projectPath)
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     const extraPlanPath = path.join('docs', 'plans', '2026-06-08-extra-plan.md')
+    const leapDayPlanPath = path.join('docs', 'plans', '2024-02-29-leap-day-plan.md')
     writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
-    writeReadme(projectPath, [baselinePlanPath, extraPlanPath])
+    writePlan(projectPath, leapDayPlanPath, completedPlan('Leap Day Plan'))
+    writeReadme(projectPath, [baselinePlanPath, extraPlanPath, leapDayPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
-    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 2 plan(s).\n')
+    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 3 plan(s).\n')
   })
 
   it('reports missing status, command, and Makefile requirements', () => {
@@ -140,7 +142,24 @@ describe('check-docs-plan script', () => {
 
     const stderr = runDocsCheckFailure(projectPath)
 
-    expect(stderr).toContain(`${undatedPlanPath} must use a YYYY-MM-DD descriptive filename`)
+    expect(stderr).toContain(`${undatedPlanPath} must use a valid YYYY-MM-DD descriptive filename`)
+  })
+
+  it('reports docs plans with impossible calendar dates', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    const impossibleMonthPlanPath = path.join('docs', 'plans', '2026-13-01-impossible-month.md')
+    const impossibleDayPlanPath = path.join('docs', 'plans', '2026-02-29-impossible-day.md')
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writePlan(projectPath, impossibleMonthPlanPath, completedPlan('Impossible Month Plan'))
+    writePlan(projectPath, impossibleDayPlanPath, completedPlan('Impossible Day Plan'))
+    writeReadme(projectPath, [baselinePlanPath, impossibleMonthPlanPath, impossibleDayPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`${impossibleMonthPlanPath} must use a valid YYYY-MM-DD descriptive filename`)
+    expect(stderr).toContain(`${impossibleDayPlanPath} must use a valid YYYY-MM-DD descriptive filename`)
   })
 
   it('reports README references to missing docs plans', () => {
