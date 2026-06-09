@@ -6,6 +6,7 @@ import {
   timeIsBetween,
   dateHourIsBetween,
   getDateHour,
+  getStartOfDayTimestamp,
   getDateTimestamp,
   isDateObject,
   isValidDate,
@@ -135,27 +136,37 @@ describe('malformed date inputs', () => {
     expect(isDateObject(createCrossRealmDate('2018-01-01T09:00:00.000'))).toBe(true)
   })
 
-  test('Date readers return NaN when intrinsic reads fail after brand checks', () => {
+  test('Date readers use captured prototype methods when Date prototypes change later', () => {
     const originalGetTime = Date.prototype.getTime
     const originalGetHours = Date.prototype.getHours
-    let getTimeCalls = 0
+    const originalSetHours = Date.prototype.setHours
+    const start = new Date(2018, 0, 1, 9)
+    const candidate = new Date(2018, 0, 1, 10)
+    const end = new Date(2018, 0, 1, 11)
+    const startOfDay = new Date(candidate)
+    originalSetHours.call(startOfDay, 0, 0, 0, 0)
 
     try {
       Date.prototype.getTime = function getTime() {
-        getTimeCalls += 1
-        if (getTimeCalls > 1) throw new Error('Cannot read timestamp')
-        return originalGetTime.call(this)
+        throw new Error('Cannot read timestamp')
       }
-      expect(getDateTimestamp(validDate)).toBeNaN()
-
-      Date.prototype.getTime = originalGetTime
       Date.prototype.getHours = function getHours() {
         throw new Error('Cannot read hour')
       }
-      expect(getDateHour(validDate)).toBeNaN()
+      Date.prototype.setHours = function setHours() {
+        throw new Error('Cannot set start of day')
+      }
+
+      expect(getDateTimestamp(candidate)).toBe(originalGetTime.call(candidate))
+      expect(getDateHour(candidate)).toBe(originalGetHours.call(candidate))
+      expect(getStartOfDayTimestamp(candidate)).toBe(originalGetTime.call(startOfDay))
+      expect(dateHourIsBetween(start, candidate, end)).toBe(true)
+      expect(dateIsBetween(start, candidate, end)).toBe(true)
+      expect(timeIsBetween(start, candidate, end)).toBe(true)
     } finally {
       Date.prototype.getTime = originalGetTime
       Date.prototype.getHours = originalGetHours
+      Date.prototype.setHours = originalSetHours
     }
   })
 })

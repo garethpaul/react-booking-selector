@@ -3236,13 +3236,13 @@ describe('cell accessibility', () => {
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
   })
 
-  it('ignores Date values when intrinsic timestamp reads fail', () => {
+  it('normalizes Date values with captured timestamp reads when Date prototypes change later', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const originalGetTime = Date.prototype.getTime
     let rendered
     Date.prototype.getTime = function getTime() {
       if (this === selected) {
-        throw new Error('Unexpected selected date timestamp read')
+        throw new Error('Cannot read selected date timestamp')
       }
       return originalGetTime.call(this)
     }
@@ -3259,9 +3259,9 @@ describe('cell accessibility', () => {
       Date.prototype.getTime = originalGetTime
     }
 
-    expect(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+    expect(rendered.getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
       'aria-pressed',
-      'false',
+      'true',
     )
   })
 

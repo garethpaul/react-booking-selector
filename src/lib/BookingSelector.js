@@ -103,6 +103,12 @@ const getNonEmptyString = (value: mixed): ?string => {
 
 const invalidDate = (): Date => new Date(NaN)
 
+const dateGetTime = Date.prototype.getTime
+const dateGetFullYear = Date.prototype.getFullYear
+const dateGetMonth = Date.prototype.getMonth
+const dateGetDate = Date.prototype.getDate
+const dateGetHours = Date.prototype.getHours
+
 const getDateTimestamp = (value: mixed): ?number => {
   const timestamp = readDateTimestamp(value)
   return Number.isFinite(timestamp) ? timestamp : null
@@ -128,7 +134,7 @@ const toDate = (value: DateValueType): Date => {
 const normalizeDates = (dates: DateListType): Array<Date> =>
   (Array.isArray(dates) ? dates : []).map(toDate).filter((date) => getDateTimestamp(date) != null)
 
-const dateMinuteKey = (value: Date): number => Math.floor(Date.prototype.getTime.call(value) / 60000)
+const dateMinuteKey = (value: Date): number => Math.floor(dateGetTime.call(value) / 60000)
 
 const getValidDate = (value: mixed): ?Date => (getDateTimestamp(value) == null ? null : (value: any))
 
@@ -198,13 +204,13 @@ const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
 }
 
 const createLocalTime = (day: Date, hour: number): Date =>
-  new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0)
+  new Date(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0)
 
 const localTimeExists = (day: Date, hour: number, time: Date): boolean =>
-  Date.prototype.getFullYear.call(time) === Date.prototype.getFullYear.call(day) &&
-  Date.prototype.getMonth.call(time) === Date.prototype.getMonth.call(day) &&
-  Date.prototype.getDate.call(time) === Date.prototype.getDate.call(day) &&
-  Date.prototype.getHours.call(time) === hour
+  dateGetFullYear.call(time) === dateGetFullYear.call(day) &&
+  dateGetMonth.call(time) === dateGetMonth.call(day) &&
+  dateGetDate.call(time) === dateGetDate.call(day) &&
+  dateGetHours.call(time) === hour
 
 const createDateSlotTime = (day: Date, hour: number, createTime: CreateLocalTimeType): ?Date => {
   try {
@@ -266,7 +272,7 @@ const formatHour = (hour: number): string => {
 
 const formatCellLabel = (time: Date, selected: boolean, blocked: boolean): string => {
   const state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available'
-  return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(time.getHours())}`
+  return `${state} ${formatDate(time, 'EEEE, MMMM d, yyyy')} at ${formatHour(dateGetHours.call(time))}`
 }
 
 const formatDateHeader = (time: Date, dateFormat: string): string => {
@@ -375,7 +381,7 @@ const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key 
 const isPrimaryMouseButton = (event?: MouseSelectionEventType): boolean =>
   !event || event.button == null || event.button === 0
 
-const dateKey = (time: Date): number => Date.prototype.getTime.call(time)
+const dateKey = (time: Date): number => dateGetTime.call(time)
 
 const getDateKey = (time: mixed): ?number => {
   const validDate = getValidDate(time)
@@ -1221,7 +1227,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderDateCell = (time: Date, selected: boolean, blocked: boolean): React.Node => {
     if (typeof this.props.renderDateCell === 'function') {
-      return this.props.renderDateCell(new Date(time.getTime()), selected, blocked)
+      return this.props.renderDateCell(new Date(dateGetTime.call(time)), selected, blocked)
     }
 
     return (

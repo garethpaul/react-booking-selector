@@ -3,6 +3,9 @@
 exports.__esModule = true;
 exports.timeIsBetween = exports.isValidDate = exports.isDateObject = exports.hasDateObjectTag = exports.getStartOfDayTimestamp = exports.getDateTimestamp = exports.getDateHour = exports.dateIsBetween = exports.dateHourIsBetween = void 0;
 var objectToString = Object.prototype.toString;
+var dateGetTime = Date.prototype.getTime;
+var dateGetHours = Date.prototype.getHours;
+var dateSetHours = Date.prototype.setHours;
 var hasDateObjectTag = exports.hasDateObjectTag = function hasDateObjectTag(date) {
   if (date instanceof Date) return true;
   if (!date || typeof date !== 'object') return false;
@@ -15,7 +18,7 @@ var hasDateObjectTag = exports.hasDateObjectTag = function hasDateObjectTag(date
 var isDateObject = exports.isDateObject = function isDateObject(date) {
   if (!hasDateObjectTag(date)) return false;
   try {
-    Date.prototype.getTime.call(date);
+    dateGetTime.call(date);
     return true;
   } catch (_unused2) {
     return false;
@@ -23,26 +26,18 @@ var isDateObject = exports.isDateObject = function isDateObject(date) {
 };
 var getDateTimestamp = exports.getDateTimestamp = function getDateTimestamp(date) {
   if (!isDateObject(date)) return Number.NaN;
-  try {
-    return Date.prototype.getTime.call(date);
-  } catch (_unused3) {
-    return Number.NaN;
-  }
+  return dateGetTime.call(date);
 };
 var getDateHour = exports.getDateHour = function getDateHour(date) {
   if (!isDateObject(date)) return Number.NaN;
-  try {
-    return Date.prototype.getHours.call(date);
-  } catch (_unused4) {
-    return Number.NaN;
-  }
+  return dateGetHours.call(date);
 };
 var getStartOfDayTimestamp = exports.getStartOfDayTimestamp = function getStartOfDayTimestamp(date) {
   var timestamp = getDateTimestamp(date);
   if (!Number.isFinite(timestamp)) return Number.NaN;
   var startOfDay = new Date(timestamp);
-  Date.prototype.setHours.call(startOfDay, 0, 0, 0, 0);
-  return Date.prototype.getTime.call(startOfDay);
+  dateSetHours.call(startOfDay, 0, 0, 0, 0);
+  return dateGetTime.call(startOfDay);
 };
 var isValidDate = exports.isValidDate = function isValidDate(date) {
   return Number.isFinite(getDateTimestamp(date));

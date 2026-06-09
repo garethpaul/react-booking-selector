@@ -1,6 +1,9 @@
 // @flow
 
 const objectToString = Object.prototype.toString
+const dateGetTime = Date.prototype.getTime
+const dateGetHours = Date.prototype.getHours
+const dateSetHours = Date.prototype.setHours
 
 export const hasDateObjectTag = (date: any): boolean => {
   if (date instanceof Date) return true
@@ -17,7 +20,7 @@ export const isDateObject = (date: any): boolean => {
   if (!hasDateObjectTag(date)) return false
 
   try {
-    Date.prototype.getTime.call(date)
+    dateGetTime.call(date)
     return true
   } catch {
     return false
@@ -27,21 +30,13 @@ export const isDateObject = (date: any): boolean => {
 export const getDateTimestamp = (date: any): number => {
   if (!isDateObject(date)) return Number.NaN
 
-  try {
-    return Date.prototype.getTime.call(date)
-  } catch {
-    return Number.NaN
-  }
+  return dateGetTime.call(date)
 }
 
 export const getDateHour = (date: any): number => {
   if (!isDateObject(date)) return Number.NaN
 
-  try {
-    return Date.prototype.getHours.call(date)
-  } catch {
-    return Number.NaN
-  }
+  return dateGetHours.call(date)
 }
 
 export const getStartOfDayTimestamp = (date: any): number => {
@@ -49,8 +44,8 @@ export const getStartOfDayTimestamp = (date: any): number => {
   if (!Number.isFinite(timestamp)) return Number.NaN
 
   const startOfDay = new Date(timestamp)
-  Date.prototype.setHours.call(startOfDay, 0, 0, 0, 0)
-  return Date.prototype.getTime.call(startOfDay)
+  dateSetHours.call(startOfDay, 0, 0, 0, 0)
+  return dateGetTime.call(startOfDay)
 }
 
 export const isValidDate = (date: any): boolean => Number.isFinite(getDateTimestamp(date))

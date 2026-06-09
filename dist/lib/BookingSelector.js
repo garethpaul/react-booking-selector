@@ -47,6 +47,11 @@ var getNonEmptyString = function getNonEmptyString(value) {
 var invalidDate = function invalidDate() {
   return new Date(NaN);
 };
+var dateGetTime = Date.prototype.getTime;
+var dateGetFullYear = Date.prototype.getFullYear;
+var dateGetMonth = Date.prototype.getMonth;
+var dateGetDate = Date.prototype.getDate;
+var dateGetHours = Date.prototype.getHours;
 var getDateTimestamp = function getDateTimestamp(value) {
   var timestamp = (0, _dateUtils.getDateTimestamp)(value);
   return Number.isFinite(timestamp) ? timestamp : null;
@@ -72,7 +77,7 @@ var normalizeDates = function normalizeDates(dates) {
   });
 };
 var dateMinuteKey = function dateMinuteKey(value) {
-  return Math.floor(Date.prototype.getTime.call(value) / 60000);
+  return Math.floor(dateGetTime.call(value) / 60000);
 };
 var getValidDate = function getValidDate(value) {
   return getDateTimestamp(value) == null ? null : value;
@@ -138,10 +143,10 @@ var getVisibleHours = function getVisibleHours(minTime, maxTime) {
   return hours;
 };
 var createLocalTime = function createLocalTime(day, hour) {
-  return new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0);
+  return new Date(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0);
 };
 var localTimeExists = function localTimeExists(day, hour, time) {
-  return Date.prototype.getFullYear.call(time) === Date.prototype.getFullYear.call(day) && Date.prototype.getMonth.call(time) === Date.prototype.getMonth.call(day) && Date.prototype.getDate.call(time) === Date.prototype.getDate.call(day) && Date.prototype.getHours.call(time) === hour;
+  return dateGetFullYear.call(time) === dateGetFullYear.call(day) && dateGetMonth.call(time) === dateGetMonth.call(day) && dateGetDate.call(time) === dateGetDate.call(day) && dateGetHours.call(time) === hour;
 };
 var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
   try {
@@ -207,7 +212,7 @@ var formatHour = function formatHour(hour) {
 };
 var formatCellLabel = function formatCellLabel(time, selected, blocked) {
   var state = blocked ? 'Blocked' : selected ? 'Selected' : 'Available';
-  return state + " " + (0, _format.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(time.getHours());
+  return state + " " + (0, _format.format)(time, 'EEEE, MMMM d, yyyy') + " at " + formatHour(dateGetHours.call(time));
 };
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
@@ -282,7 +287,7 @@ var isPrimaryMouseButton = function isPrimaryMouseButton(event) {
   return !event || event.button == null || event.button === 0;
 };
 var dateKey = function dateKey(time) {
-  return Date.prototype.getTime.call(time);
+  return dateGetTime.call(time);
 };
 var getDateKey = function getDateKey(time) {
   var validDate = getValidDate(time);
@@ -443,7 +448,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.renderDateCell = function (time, selected, blocked) {
       if (typeof _this.props.renderDateCell === 'function') {
-        return _this.props.renderDateCell(new Date(time.getTime()), selected, blocked);
+        return _this.props.renderDateCell(new Date(dateGetTime.call(time)), selected, blocked);
       }
       return /*#__PURE__*/React.createElement(DateCell, {
         $blocked: blocked,
