@@ -154,7 +154,8 @@
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/dist/"
+      "/dist/",
+      "/src/docs/"
     ],
     "coverageThreshold": {
       "global": {

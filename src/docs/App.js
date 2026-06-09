@@ -95,7 +95,7 @@ type StateType = {
 
 const getDemoDate = (day: number, hour: number = 0): Date => new Date(2020, 3, day, hour)
 
-class App extends React.Component<{}, StateType> {
+export class App extends React.Component<{}, StateType> {
   constructor() {
     super()
     this.state = {
@@ -134,7 +134,12 @@ class App extends React.Component<{}, StateType> {
             />
           </BookingSelectorCard>
           <Links>
-            <ExternalLink $color="#24292e" href="https://github.com/garethpaul/react-booking-selector">
+            <ExternalLink
+              $color="#24292e"
+              href="https://github.com/garethpaul/react-booking-selector"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               GitHub
             </ExternalLink>
           </Links>
