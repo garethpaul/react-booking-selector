@@ -1,9 +1,7 @@
 // @flow
 import * as React from 'react'
 
-import { addDays } from 'date-fns/addDays'
 import { format as formatDate } from 'date-fns/format'
-import { startOfDay } from 'date-fns/startOfDay'
 
 import styled from './styled.js'
 import { Text, Subtitle } from './typography.js'
@@ -108,6 +106,8 @@ const dateGetFullYear = Date.prototype.getFullYear
 const dateGetMonth = Date.prototype.getMonth
 const dateGetDate = Date.prototype.getDate
 const dateGetHours = Date.prototype.getHours
+const dateSetDate = Date.prototype.setDate
+const dateSetHours = Date.prototype.setHours
 const dateNow = Date.now
 
 const getCurrentTimestamp = (): number => {
@@ -126,6 +126,22 @@ const getCurrentTimestamp = (): number => {
 const getDateTimestamp = (value: mixed): ?number => {
   const timestamp = readDateTimestamp(value)
   return Number.isFinite(timestamp) ? timestamp : null
+}
+
+const cloneDate = (date: Date): Date => new Date(dateGetTime.call(date))
+
+const startOfDayDate = (date: Date): Date => {
+  const startTime = cloneDate(date)
+  dateSetHours.call(startTime, 0, 0, 0, 0)
+  return startTime
+}
+
+const addDaysToDate = (value: Date, amount: number): Date => {
+  const date = cloneDate(value)
+  if (amount !== 0) {
+    dateSetDate.call(date, dateGetDate.call(date) + amount)
+  }
+  return date
 }
 
 const toDate = (value: DateValueType): Date => {
@@ -197,7 +213,7 @@ const getNumberSignaturePart = (value: mixed): string =>
 
 const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
   [
-    dateMinuteKey(startOfDay(getStartDate(startDate))),
+    dateMinuteKey(startOfDayDate(getStartDate(startDate))),
     getNumberSignaturePart(numDays),
     getNumberSignaturePart(minTime),
     getNumberSignaturePart(maxTime),
@@ -244,13 +260,13 @@ export const buildDateColumns = (
 ): Array<DateColumnType> => {
   if (!isWholeNumber(numDays) || numDays <= 0) return []
 
-  const startTime = startOfDay(getStartDate(startDate))
+  const startTime = startOfDayDate(getStartDate(startDate))
   const visibleHours = getVisibleHours(minTime, maxTime)
   if (visibleHours.length === 0) return []
 
   const dateColumns = []
   for (let d = 0; d < numDays; d += 1) {
-    const day = addDays(startTime, d)
+    const day = addDaysToDate(startTime, d)
     const slots = []
     visibleHours.forEach((h) => {
       slots.push({

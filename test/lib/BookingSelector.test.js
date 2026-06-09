@@ -2817,6 +2817,41 @@ describe('prop updates', () => {
     expect(rendered.instance.dates).toEqual([[new Date(2032, 4, 15, 9)]])
   })
 
+  it('builds date grids with captured Date mutators when Date prototypes change later', () => {
+    const originalGetDate = Date.prototype.getDate
+    const originalSetDate = Date.prototype.setDate
+    const originalSetHours = Date.prototype.setHours
+    let dateColumns
+
+    try {
+      Date.prototype.getDate = function getDate() {
+        throw new Error('Cannot read day of month')
+      }
+      Date.prototype.setDate = function setDate() {
+        throw new Error('Cannot set day of month')
+      }
+      Date.prototype.setHours = function setHours() {
+        throw new Error('Cannot set start of day')
+      }
+
+      dateColumns = buildDateColumns({
+        startDate: new Date(2032, 4, 15, 12),
+        numDays: 2,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      Date.prototype.getDate = originalGetDate
+      Date.prototype.setDate = originalSetDate
+      Date.prototype.setHours = originalSetHours
+    }
+
+    expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([
+      [new Date(2032, 4, 15), new Date(2032, 4, 15, 9)],
+      [new Date(2032, 4, 16), new Date(2032, 4, 16, 9)],
+    ])
+  })
+
   it('uses the current day when startDate is not a Date object', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()

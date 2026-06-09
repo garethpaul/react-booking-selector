@@ -36,6 +36,8 @@
   later overwritten or throw.
 - Verified docs smoke PNG chunk checksums and exact header lengths before
   accepting screenshots.
+- Built date grids with captured Date mutators instead of live `date-fns`
+  day helpers so later prototype changes cannot break grid construction.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

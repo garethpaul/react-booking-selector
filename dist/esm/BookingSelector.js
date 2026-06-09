@@ -3,9 +3,7 @@ function _inheritsLoose(t, o) { t.prototype = Object.create(o.prototype), t.prot
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
 import * as React from 'react';
-import { addDays } from 'date-fns/addDays';
 import { format as formatDate } from 'date-fns/format';
-import { startOfDay } from 'date-fns/startOfDay';
 import styled from './styled.js';
 import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
@@ -46,6 +44,8 @@ var dateGetFullYear = Date.prototype.getFullYear;
 var dateGetMonth = Date.prototype.getMonth;
 var dateGetDate = Date.prototype.getDate;
 var dateGetHours = Date.prototype.getHours;
+var dateSetDate = Date.prototype.setDate;
+var dateSetHours = Date.prototype.setHours;
 var dateNow = Date.now;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
@@ -61,6 +61,21 @@ var getCurrentTimestamp = function getCurrentTimestamp() {
 var getDateTimestamp = function getDateTimestamp(value) {
   var timestamp = readDateTimestamp(value);
   return Number.isFinite(timestamp) ? timestamp : null;
+};
+var cloneDate = function cloneDate(date) {
+  return new Date(dateGetTime.call(date));
+};
+var startOfDayDate = function startOfDayDate(date) {
+  var startTime = cloneDate(date);
+  dateSetHours.call(startTime, 0, 0, 0, 0);
+  return startTime;
+};
+var addDaysToDate = function addDaysToDate(value, amount) {
+  var date = cloneDate(value);
+  if (amount !== 0) {
+    dateSetDate.call(date, dateGetDate.call(date) + amount);
+  }
+  return date;
 };
 var toDate = function toDate(value) {
   if (value == null) return invalidDate();
@@ -133,7 +148,7 @@ var getDateGridSignature = function getDateGridSignature(_ref) {
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
-  return [dateMinuteKey(startOfDay(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)].join('|');
+  return [dateMinuteKey(startOfDayDate(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)].join('|');
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
@@ -174,12 +189,12 @@ export var buildDateColumns = function buildDateColumns(_ref2, createTime) {
     createTime = createLocalTime;
   }
   if (!isWholeNumber(numDays) || numDays <= 0) return [];
-  var startTime = startOfDay(getStartDate(startDate));
+  var startTime = startOfDayDate(getStartDate(startDate));
   var visibleHours = getVisibleHours(minTime, maxTime);
   if (visibleHours.length === 0) return [];
   var dateColumns = [];
   var _loop = function _loop() {
-    var day = addDays(startTime, d);
+    var day = addDaysToDate(startTime, d);
     var slots = [];
     visibleHours.forEach(function (h) {
       slots.push({
