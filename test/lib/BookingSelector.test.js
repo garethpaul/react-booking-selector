@@ -1848,6 +1848,16 @@ describe('prop updates', () => {
     expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
   })
 
+  it('uses the current day when startDate is not a Date object', () => {
+    const currentDate = new Date('2032-05-15T12:00:00.000Z')
+    jest.useFakeTimers()
+    jest.setSystemTime(currentDate)
+
+    const rendered = renderSelector({ startDate: 0, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
+  })
+
   it('falls back to the default date header format when dateFormat is invalid', () => {
     const rendered = renderSelector({
       startDate,

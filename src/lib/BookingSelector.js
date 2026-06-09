@@ -118,7 +118,8 @@ const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDate
 
 const getDateListSignature = (dates: DateListType): string => normalizeSelectionDraft(dates).map(dateKey).join('|')
 
-const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
+const getStartDate = (startDate: ?Date): Date =>
+  startDate instanceof Date && isValid(startDate) ? startDate : new Date()
 
 const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
   [dateMinuteKey(startOfDay(getStartDate(startDate))), numDays, minTime, maxTime].join('|')

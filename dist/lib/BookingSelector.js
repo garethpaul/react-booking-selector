@@ -74,7 +74,7 @@ var getDateListSignature = function getDateListSignature(dates) {
   return normalizeSelectionDraft(dates).map(dateKey).join('|');
 };
 var getStartDate = function getStartDate(startDate) {
-  return startDate && (0, _isValid.isValid)(startDate) ? startDate : new Date();
+  return startDate instanceof Date && (0, _isValid.isValid)(startDate) ? startDate : new Date();
 };
 var getDateGridSignature = function getDateGridSignature(_ref) {
   var startDate = _ref.startDate,
