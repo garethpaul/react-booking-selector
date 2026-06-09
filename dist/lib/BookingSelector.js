@@ -284,7 +284,7 @@ var preventScroll = exports.preventScroll = function preventScroll(e) {
   preventDefault(e);
 };
 var preventDefault = function preventDefault(event) {
-  if (typeof event.preventDefault === 'function') {
+  if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
 };
@@ -578,7 +578,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (this.state.selectionType === null) return;
     if (this.shouldIgnoreMouseEvent()) return;
     if (!isPrimaryMouseButton(event)) return;
-    var dateCell = this.getDateCellFromEventTarget(event.target);
+    var dateCell = this.getDateCellFromEventTarget(event && event.target);
     var dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null;
     if (dateCellTime && !this.isBlocked(dateCellTime)) return;
     if (this.state.selectionDraft === this.state.selectionBase) {
@@ -710,13 +710,17 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this4 = this;
-    if (isKeyboardNavigationKey(event.key)) {
-      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, event.key, this.blockedMinuteKeys);
+    if (blocked === void 0) {
+      blocked = false;
+    }
+    var key = event && typeof event.key === 'string' ? event.key : '';
+    if (isKeyboardNavigationKey(key)) {
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, key, this.blockedMinuteKeys);
       preventDefault(event);
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
     }
-    if (blocked || !isKeyboardSelectionKey(event.key)) return;
+    if (blocked || !isKeyboardSelectionKey(key)) return;
     preventDefault(event);
     var timeSelected = this.isSelected(time);
     this.setState({

@@ -489,6 +489,25 @@ describe('mouse handlers', () => {
     })
   })
 
+  it('ends active document mouse selections without event target metadata', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    await setStateAsync(instance, {
+      selectionDraft: [selected],
+      selectionBase: [],
+      selectionType: 'add',
+      selectionStart: selected,
+    })
+    act(() => {
+      instance.handleDocumentMouseUpEvent(null)
+    })
+
+    expect(changeSpy).toHaveBeenCalledWith([selected])
+    expect(instance.state.selectionType).toBe(null)
+  })
+
   it('selects the start cell when the mouse is released outside before entering another cell', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
@@ -2660,6 +2679,18 @@ describe('keyboard interaction', () => {
     expect(mondayTen).toHaveFocus()
   })
 
+  it('ignores keyboard events without key metadata', () => {
+    const changeSpy = jest.fn()
+    const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(() => {
+      instance.handleCellKeyDownEvent(null, addHours(startOfDay(startDate), 9))
+      instance.handleCellKeyDownEvent({ key: true }, addHours(startOfDay(startDate), 9))
+    }).not.toThrow()
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionType).toBe(null)
+  })
+
   it('reports when an unblocked focus target is not registered', () => {
     const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
@@ -2738,6 +2769,7 @@ describe('preventScroll', () => {
 
   it('ignores events without callable default prevention', () => {
     expect(() => {
+      preventScroll(null)
       preventScroll({ preventDefault: true })
     }).not.toThrow()
   })

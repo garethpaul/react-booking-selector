@@ -33,7 +33,7 @@ type MouseSelectionEventType = {
 }
 
 type KeyboardSelectionEventType = {
-  key: string,
+  key?: mixed,
   preventDefault?: mixed,
 }
 
@@ -535,12 +535,12 @@ type DerivedStateType = {
   isTouchDragging: boolean,
 }
 
-export const preventScroll = (e: TouchEvent) => {
+export const preventScroll = (e: ?TouchEvent) => {
   preventDefault(e)
 }
 
-const preventDefault = (event: PreventableEventType) => {
-  if (typeof event.preventDefault === 'function') {
+const preventDefault = (event: ?PreventableEventType) => {
+  if (event && typeof event.preventDefault === 'function') {
     event.preventDefault()
   }
 }
@@ -759,11 +759,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return null
   }
 
-  handleDocumentMouseUpEvent(event: MouseEvent) {
+  handleDocumentMouseUpEvent(event: ?MouseEvent) {
     if (this.state.selectionType === null) return
     if (this.shouldIgnoreMouseEvent()) return
     if (!isPrimaryMouseButton(event)) return
-    const dateCell = this.getDateCellFromEventTarget(event.target)
+    const dateCell = this.getDateCellFromEventTarget(event && event.target)
     const dateCellTime = dateCell ? this.cellToDate.get(dateCell) : null
     if (dateCellTime && !this.isBlocked(dateCellTime)) return
     if (this.state.selectionDraft === this.state.selectionBase) {
@@ -891,12 +891,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return true
   }
 
-  handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
-    if (isKeyboardNavigationKey(event.key)) {
+  handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: Date, blocked: boolean = false) {
+    const key = event && typeof event.key === 'string' ? event.key : ''
+
+    if (isKeyboardNavigationKey(key)) {
       const navigationTarget = getKeyboardNavigationTarget(
         buildDateColumns(this.props),
         time,
-        event.key,
+        key,
         this.blockedMinuteKeys,
       )
       preventDefault(event)
@@ -904,7 +906,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
-    if (blocked || !isKeyboardSelectionKey(event.key)) return
+    if (blocked || !isKeyboardSelectionKey(key)) return
     preventDefault(event)
     const timeSelected = this.isSelected(time)
     this.setState(
