@@ -621,6 +621,16 @@ const getParentElement = (target: mixed): ?HTMLElement => {
   }
 }
 
+const getOwnerDocument = (target: mixed): ?BrowserDocumentType => {
+  if (!target || typeof target !== 'object') return null
+  try {
+    const ownerDocument = (target: any).ownerDocument
+    return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null
+  } catch {
+    return null
+  }
+}
+
 export default class BookingSelector extends React.Component<PropsType, StateType> {
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
@@ -858,8 +868,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   getDocument(): ?BrowserDocumentType {
-    const gridDocument = this.gridRef && this.gridRef.ownerDocument
-    return gridDocument && typeof gridDocument === 'object' ? gridDocument : getBrowserDocument()
+    return getOwnerDocument(this.gridRef) || getBrowserDocument()
   }
 
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {

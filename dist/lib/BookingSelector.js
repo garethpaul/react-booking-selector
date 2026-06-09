@@ -347,6 +347,15 @@ var getParentElement = function getParentElement(target) {
     return null;
   }
 };
+var getOwnerDocument = function getOwnerDocument(target) {
+  if (!target || typeof target !== 'object') return null;
+  try {
+    var ownerDocument = target.ownerDocument;
+    return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null;
+  } catch (_unused6) {
+    return null;
+  }
+};
 var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
     var _this;
@@ -544,7 +553,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused6) {
+      } catch (_unused7) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -557,7 +566,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused7) {
+      } catch (_unused8) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -565,7 +574,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused8) {
+        } catch (_unused9) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -607,7 +616,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused9) {
+        } catch (_unused0) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -615,7 +624,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused0) {
+        } catch (_unused1) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -659,8 +668,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     return hasDateMinuteKey(this.selectedMinuteKeys, time);
   };
   _proto.getDocument = function getDocument() {
-    var gridDocument = this.gridRef && this.gridRef.ownerDocument;
-    return gridDocument && typeof gridDocument === 'object' ? gridDocument : getBrowserDocument();
+    return getOwnerDocument(this.gridRef) || getBrowserDocument();
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
     if (!target || typeof target !== 'object') return null;
@@ -706,7 +714,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused1) {
+    } catch (_unused10) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -838,7 +846,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     try {
       dateCell.focus();
       return true;
-    } catch (_unused10) {
+    } catch (_unused11) {
       return false;
     }
   };

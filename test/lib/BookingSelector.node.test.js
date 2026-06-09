@@ -88,4 +88,42 @@ describe('BookingSelector without a browser document', () => {
     })
     expect(documentValue.elementFromPoint).toHaveBeenCalledWith(1, 2)
   })
+
+  it('uses a valid browser document fallback when the grid owner document is malformed', () => {
+    const instance = createSelectorInstance()
+    const cell = {}
+    const time = new Date('2018-01-01T09:00:00.000')
+    const documentValue = {
+      elementFromPoint: jest.fn().mockReturnValue(cell),
+    }
+
+    instance.gridRef = { ownerDocument: true }
+    instance.registerDateCell(cell, time)
+    withGlobalWindow({ document: documentValue }, () => {
+      expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toEqual(time)
+    })
+    expect(documentValue.elementFromPoint).toHaveBeenCalledWith(1, 2)
+  })
+
+  it('uses a valid browser document fallback when the grid owner document getter throws', () => {
+    const instance = createSelectorInstance()
+    const cell = {}
+    const time = new Date('2018-01-01T09:00:00.000')
+    const gridRef = {}
+    const documentValue = {
+      elementFromPoint: jest.fn().mockReturnValue(cell),
+    }
+    Object.defineProperty(gridRef, 'ownerDocument', {
+      get() {
+        throw new Error('Cannot read owner document')
+      },
+    })
+
+    instance.gridRef = gridRef
+    instance.registerDateCell(cell, time)
+    withGlobalWindow({ document: documentValue }, () => {
+      expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toEqual(time)
+    })
+    expect(documentValue.elementFromPoint).toHaveBeenCalledWith(1, 2)
+  })
 })
