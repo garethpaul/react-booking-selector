@@ -1,10 +1,37 @@
 // @flow
 
-export const getDateTimestamp = (date: any): number =>
-  date instanceof Date ? Date.prototype.getTime.call(date) : Number.NaN
+const objectToString = Object.prototype.toString
 
-export const getDateHour = (date: any): number =>
-  date instanceof Date ? Date.prototype.getHours.call(date) : Number.NaN
+const isDateObject = (date: any): boolean => {
+  if (date instanceof Date) return true
+  if (!date || typeof date !== 'object') return false
+
+  try {
+    return objectToString.call(date) === '[object Date]'
+  } catch {
+    return false
+  }
+}
+
+export const getDateTimestamp = (date: any): number => {
+  if (!isDateObject(date)) return Number.NaN
+
+  try {
+    return Date.prototype.getTime.call(date)
+  } catch {
+    return Number.NaN
+  }
+}
+
+export const getDateHour = (date: any): number => {
+  if (!isDateObject(date)) return Number.NaN
+
+  try {
+    return Date.prototype.getHours.call(date)
+  } catch {
+    return Number.NaN
+  }
+}
 
 export const getStartOfDayTimestamp = (date: any): number => {
   const timestamp = getDateTimestamp(date)

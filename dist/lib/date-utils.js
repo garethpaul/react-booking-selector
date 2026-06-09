@@ -2,11 +2,31 @@
 
 exports.__esModule = true;
 exports.timeIsBetween = exports.isValidDate = exports.getStartOfDayTimestamp = exports.getDateTimestamp = exports.getDateHour = exports.dateIsBetween = exports.dateHourIsBetween = void 0;
+var objectToString = Object.prototype.toString;
+var isDateObject = function isDateObject(date) {
+  if (date instanceof Date) return true;
+  if (!date || typeof date !== 'object') return false;
+  try {
+    return objectToString.call(date) === '[object Date]';
+  } catch (_unused) {
+    return false;
+  }
+};
 var getDateTimestamp = exports.getDateTimestamp = function getDateTimestamp(date) {
-  return date instanceof Date ? Date.prototype.getTime.call(date) : Number.NaN;
+  if (!isDateObject(date)) return Number.NaN;
+  try {
+    return Date.prototype.getTime.call(date);
+  } catch (_unused2) {
+    return Number.NaN;
+  }
 };
 var getDateHour = exports.getDateHour = function getDateHour(date) {
-  return date instanceof Date ? Date.prototype.getHours.call(date) : Number.NaN;
+  if (!isDateObject(date)) return Number.NaN;
+  try {
+    return Date.prototype.getHours.call(date);
+  } catch (_unused3) {
+    return Number.NaN;
+  }
 };
 var getStartOfDayTimestamp = exports.getStartOfDayTimestamp = function getStartOfDayTimestamp(date) {
   var timestamp = getDateTimestamp(date);

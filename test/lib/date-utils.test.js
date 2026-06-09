@@ -1,8 +1,18 @@
 import { addDays, subDays } from 'date-fns'
+import { runInNewContext } from 'vm'
 
-import { dateIsBetween, timeIsBetween, dateHourIsBetween } from '../../src/lib/date-utils'
+import {
+  dateIsBetween,
+  timeIsBetween,
+  dateHourIsBetween,
+  getDateHour,
+  getDateTimestamp,
+  isValidDate,
+} from '../../src/lib/date-utils'
 
 const baseDate = new Date('2018-01-01T00:00:00.000')
+
+const createCrossRealmDate = (value) => runInNewContext('new Date(value)', { value })
 
 const withThrowingInstanceDateMethods = (date) => {
   const mutatedDate = new Date(date)
@@ -80,6 +90,37 @@ describe('malformed date inputs', () => {
     expect(dateHourIsBetween(start, candidate, end)).toBe(true)
     expect(dateIsBetween(start, candidate, end)).toBe(true)
     expect(timeIsBetween(start, candidate, end)).toBe(true)
+  })
+
+  test('between helpers accept Date objects created in another JavaScript realm', () => {
+    const start = createCrossRealmDate('2018-01-01T09:00:00.000')
+    const candidate = createCrossRealmDate('2018-01-01T10:00:00.000')
+    const end = createCrossRealmDate('2018-01-01T11:00:00.000')
+
+    expect(start).not.toBeInstanceOf(Date)
+    expect(dateHourIsBetween(start, candidate, end)).toBe(true)
+    expect(dateIsBetween(start, candidate, end)).toBe(true)
+    expect(timeIsBetween(start, candidate, end)).toBe(true)
+  })
+
+  test('Date readers reject objects that only spoof the Date brand', () => {
+    const dateTaggedObject = { [Symbol.toStringTag]: 'Date' }
+    const throwingTagObject = new Proxy(
+      {},
+      {
+        get(target, property) {
+          if (property === Symbol.toStringTag) {
+            throw new Error('Cannot read tag')
+          }
+          return target[property]
+        },
+      },
+    )
+
+    expect(getDateTimestamp(dateTaggedObject)).toBeNaN()
+    expect(getDateHour(dateTaggedObject)).toBeNaN()
+    expect(isValidDate({})).toBe(false)
+    expect(isValidDate(throwingTagObject)).toBe(false)
   })
 })
 

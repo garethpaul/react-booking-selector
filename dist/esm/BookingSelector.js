@@ -9,6 +9,7 @@ import { startOfDay } from 'date-fns/startOfDay';
 import styled from './styled.js';
 import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
+import { getDateTimestamp as readDateTimestamp } from './date-utils.js';
 import selectionSchemes from './selection-schemes/index.js';
 var DEFAULT_DATE_FORMAT = 'd';
 var DEFAULT_ARIA_LABEL = 'Booking time slots';
@@ -41,13 +42,8 @@ var invalidDate = function invalidDate() {
   return new Date(NaN);
 };
 var getDateTimestamp = function getDateTimestamp(value) {
-  if (!(value instanceof Date)) return null;
-  try {
-    var timestamp = Date.prototype.getTime.call(value);
-    return Number.isFinite(timestamp) ? timestamp : null;
-  } catch (_unused) {
-    return null;
-  }
+  var timestamp = readDateTimestamp(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
 };
 var toDate = function toDate(value) {
   if (value == null) return invalidDate();
@@ -60,7 +56,7 @@ var toDate = function toDate(value) {
   try {
     var primitiveValue = value.valueOf();
     return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate();
-  } catch (_unused2) {
+  } catch (_unused) {
     return invalidDate();
   }
 };
@@ -144,7 +140,7 @@ var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
   try {
     var time = createTime(day, hour);
     return time instanceof Date && localTimeExists(day, hour, time) ? time : null;
-  } catch (_unused3) {
+  } catch (_unused2) {
     return null;
   }
 };
@@ -206,7 +202,7 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
     return formatDate(time, dateFormat);
-  } catch (_unused4) {
+  } catch (_unused3) {
     return formatDate(time, DEFAULT_DATE_FORMAT);
   }
 };
@@ -523,7 +519,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused5) {
+        } catch (_unused4) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -565,7 +561,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused6) {
+        } catch (_unused5) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -573,7 +569,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused7) {
+        } catch (_unused6) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -657,7 +653,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var targetElement;
     try {
       targetElement = document.elementFromPoint(clientX, clientY);
-    } catch (_unused8) {
+    } catch (_unused7) {
       return null;
     }
     while (targetElement) {
@@ -794,7 +790,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused9) {
+    } catch (_unused8) {
       return false;
     }
   };

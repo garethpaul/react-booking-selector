@@ -8,6 +8,7 @@ import { startOfDay } from 'date-fns/startOfDay'
 import styled from './styled.js'
 import { Text, Subtitle } from './typography.js'
 import colors from './colors.js'
+import { getDateTimestamp as readDateTimestamp } from './date-utils.js'
 import selectionSchemes from './selection-schemes/index.js'
 
 type DateValueType = Date | string | number | { valueOf: () => number } | null | void
@@ -97,13 +98,8 @@ const getNonEmptyString = (value: mixed): ?string => {
 const invalidDate = (): Date => new Date(NaN)
 
 const getDateTimestamp = (value: mixed): ?number => {
-  if (!(value instanceof Date)) return null
-  try {
-    const timestamp = Date.prototype.getTime.call(value)
-    return Number.isFinite(timestamp) ? timestamp : null
-  } catch {
-    return null
-  }
+  const timestamp = readDateTimestamp(value)
+  return Number.isFinite(timestamp) ? timestamp : null
 }
 
 const toDate = (value: DateValueType): Date => {

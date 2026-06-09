@@ -1,6 +1,7 @@
 import React, { act } from 'react'
 import { addDays, addHours, format as formatDate, startOfDay } from 'date-fns'
 import { createEvent, fireEvent, render, waitFor, within } from '@testing-library/react'
+import { runInNewContext } from 'vm'
 
 import BookingSelector, {
   buildDateColumns,
@@ -11,6 +12,8 @@ import BookingSelector, {
 import colors from '../../src/lib/colors'
 
 const startDate = new Date('2018-01-01T00:00:00.000')
+
+const createCrossRealmDate = (value) => runInNewContext('new Date(value)', { value })
 
 const getTestSchedule = () => [addHours(startOfDay(startDate), 12), addHours(addDays(startOfDay(startDate), 1), 13)]
 
@@ -3084,6 +3087,29 @@ describe('cell accessibility', () => {
       selection: [selectedWithThrowingGetTime],
       blocked: [blockedWithThrowingGetTime],
       startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
+  })
+
+  it('normalizes Date values created in another JavaScript realm', () => {
+    const crossRealmStartDate = createCrossRealmDate('2018-01-01T00:00:00.000')
+    const selected = createCrossRealmDate('2018-01-01T09:00:00.000')
+    const blocked = createCrossRealmDate('2018-01-01T10:00:00.000')
+
+    expect(selected).not.toBeInstanceOf(Date)
+
+    const { getByRole } = renderSelector({
+      selection: [selected],
+      blocked: [blocked],
+      startDate: crossRealmStartDate,
       numDays: 1,
       minTime: 9,
       maxTime: 10,
