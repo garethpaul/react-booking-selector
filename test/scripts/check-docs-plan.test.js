@@ -4,7 +4,8 @@ import { tmpdir } from 'os'
 import path from 'path'
 
 const scriptPath = path.join(process.cwd(), 'scripts/check-docs-plan.js')
-const baselinePlanPath = path.join('docs', 'plans', '2026-06-08-react-booking-selector-baseline.md')
+const planDir = 'docs/plans'
+const baselinePlanPath = `${planDir}/2026-06-08-react-booking-selector-baseline.md`
 
 const completedPlan = (title) => `# ${title}
 
@@ -18,20 +19,50 @@ const completedPlan = (title) => `# ${title}
 
 const createTempProject = () => {
   const projectPath = mkdtempSync(path.join(tmpdir(), 'react-booking-selector-docs-check-'))
-  mkdirSync(path.join(projectPath, 'docs', 'plans'), { recursive: true })
+  mkdirSync(path.join(projectPath, ...planDir.split('/')), { recursive: true })
   return projectPath
 }
 
 const writePlan = (projectPath, planPath, contents) => {
-  writeFileSync(path.join(projectPath, planPath), contents)
+  writeFileSync(path.join(projectPath, ...planPath.split('/')), contents)
 }
 
 const writeReadme = (projectPath, planPaths) => {
   writeFileSync(path.join(projectPath, 'README.md'), planPaths.map((planPath) => `See ${planPath}.`).join('\n'))
 }
 
-const runDocsCheck = (projectPath) =>
-  execFileSync(process.execPath, [scriptPath], {
+const writeWin32PathPreload = (projectPath) => {
+  const preloadPath = path.join(projectPath, 'mock-win32-path.js')
+  writeFileSync(
+    preloadPath,
+    `const Module = require('node:module')
+const nativeFs = require('node:fs')
+const win32Path = require('node:path').win32
+
+const normalizePath = (value) => (typeof value === 'string' ? value.replace(/\\\\/g, '/') : value)
+const fsProxy = new Proxy(nativeFs, {
+  get(target, property) {
+    const value = target[property]
+    if (['existsSync', 'statSync', 'readdirSync', 'readFileSync'].includes(property)) {
+      return (filePath, ...args) => value.call(target, normalizePath(filePath), ...args)
+    }
+    return value
+  },
+})
+const originalLoad = Module._load
+
+Module._load = function load(request, parent, isMain) {
+  if (request === 'node:fs' || request === 'fs') return fsProxy
+  if (request === 'node:path' || request === 'path') return win32Path
+  return originalLoad.call(this, request, parent, isMain)
+}
+`,
+  )
+  return preloadPath
+}
+
+const runDocsCheck = (projectPath, nodeArgs = []) =>
+  execFileSync(process.execPath, [...nodeArgs, scriptPath], {
     cwd: projectPath,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -59,14 +90,25 @@ describe('check-docs-plan script', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
-    const extraPlanPath = path.join('docs', 'plans', '2026-06-08-extra-plan.md')
-    const leapDayPlanPath = path.join('docs', 'plans', '2024-02-29-leap-day-plan.md')
+    const extraPlanPath = `${planDir}/2026-06-08-extra-plan.md`
+    const leapDayPlanPath = `${planDir}/2024-02-29-leap-day-plan.md`
     writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
     writePlan(projectPath, leapDayPlanPath, completedPlan('Leap Day Plan'))
     writeReadme(projectPath, [baselinePlanPath, extraPlanPath, leapDayPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
     expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 3 plan(s).\n')
+  })
+
+  it('matches README links against slash-separated plan paths when native paths use backslashes', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeReadme(projectPath, [baselinePlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    const preloadPath = writeWin32PathPreload(projectPath)
+
+    expect(runDocsCheck(projectPath, ['--require', preloadPath])).toBe('Docs plan check passed for 1 plan(s).\n')
   })
 
   it('reports missing status, command, and Makefile requirements', () => {
@@ -123,7 +165,7 @@ describe('check-docs-plan script', () => {
   it('reports when the canonical baseline plan is missing', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
-    const extraPlanPath = path.join('docs', 'plans', '2026-06-08-extra-plan.md')
+    const extraPlanPath = `${planDir}/2026-06-08-extra-plan.md`
     writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
     writeReadme(projectPath, [extraPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
@@ -148,7 +190,7 @@ describe('check-docs-plan script', () => {
   it('reports docs plans without dated filenames', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
-    const undatedPlanPath = path.join('docs', 'plans', 'undated-plan.md')
+    const undatedPlanPath = `${planDir}/undated-plan.md`
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     writePlan(projectPath, undatedPlanPath, completedPlan('Undated Plan'))
     writeReadme(projectPath, [baselinePlanPath, undatedPlanPath])
@@ -162,8 +204,8 @@ describe('check-docs-plan script', () => {
   it('reports docs plans with impossible calendar dates', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
-    const impossibleMonthPlanPath = path.join('docs', 'plans', '2026-13-01-impossible-month.md')
-    const impossibleDayPlanPath = path.join('docs', 'plans', '2026-02-29-impossible-day.md')
+    const impossibleMonthPlanPath = `${planDir}/2026-13-01-impossible-month.md`
+    const impossibleDayPlanPath = `${planDir}/2026-02-29-impossible-day.md`
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     writePlan(projectPath, impossibleMonthPlanPath, completedPlan('Impossible Month Plan'))
     writePlan(projectPath, impossibleDayPlanPath, completedPlan('Impossible Day Plan'))
@@ -179,7 +221,7 @@ describe('check-docs-plan script', () => {
   it('reports README references to missing docs plans', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
-    const missingPlanPath = path.join('docs', 'plans', '2026-06-09-missing-plan.md')
+    const missingPlanPath = `${planDir}/2026-06-09-missing-plan.md`
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     writeReadme(projectPath, [baselinePlanPath, missingPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')

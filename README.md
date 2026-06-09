@@ -324,3 +324,4 @@ See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link 
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-filename-validation.md` for dated docs-plan filename validation.
 See `docs/plans/2026-06-09-date-utils-malformed-inputs.md` for malformed date utility input handling.
+See `docs/plans/2026-06-09-docs-plan-path-normalization.md` for cross-platform docs-plan path validation.

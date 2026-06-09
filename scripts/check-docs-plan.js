@@ -4,25 +4,30 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const planDir = 'docs/plans'
-const baselinePlanPath = path.join(planDir, '2026-06-08-react-booking-selector-baseline.md')
+const toPlanPath = (name) => `${planDir}/${name}`
+const toFsPath = (planPath) => path.join(...planPath.split('/'))
+
+const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.md')
+const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
 
 const errors = []
 const planFilenamePattern = /^(\d{4})-(\d{2})-(\d{2})-[-\w.]+\.md$/u
+const getPlanFilename = (planPath) => planPath.split('/').pop()
 
 const getPlanPaths = () => {
-  if (!fs.existsSync(planDir)) return []
-  if (!fs.statSync(planDir).isDirectory()) {
+  if (!fs.existsSync(planDirFsPath)) return []
+  if (!fs.statSync(planDirFsPath).isDirectory()) {
     errors.push(`${planDir} must be a directory`)
     return []
   }
 
   return fs
-    .readdirSync(planDir)
+    .readdirSync(planDirFsPath)
     .filter((name) => name.endsWith('.md'))
     .sort()
-    .map((name) => path.join(planDir, name))
+    .map(toPlanPath)
 }
 
 const planPaths = getPlanPaths()
@@ -59,8 +64,8 @@ if (!planPaths.includes(baselinePlanPath)) {
 }
 
 for (const planPath of planPaths) {
-  const planFilename = path.basename(planPath)
-  const plan = fs.readFileSync(planPath, 'utf8')
+  const planFilename = getPlanFilename(planPath)
+  const plan = fs.readFileSync(toFsPath(planPath), 'utf8')
   if (!isValidPlanFilename(planFilename)) {
     errors.push(`${planPath} must use a valid YYYY-MM-DD descriptive filename`)
   }

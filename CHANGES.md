@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Normalized `docs:check` plan paths so README validation remains stable
+  across native path separators.
 - Tightened `docs:check` so README cannot duplicate canonical `docs/plans`
   links.
 - Hardened date range helpers so malformed arguments return `false` instead of
