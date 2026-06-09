@@ -6,6 +6,8 @@
   minute-unique dates, matching the grid's slot comparison behavior.
 - Guarded numeric CSS lengths so non-finite values cannot emit invalid
   `NaNpx` or `Infinitypx` styles.
+- Added an optional `docs:smoke` script for local headless Chrome checks of the
+  built docs DOM and desktop/mobile screenshots.
 
 ## 2026-06-08
 

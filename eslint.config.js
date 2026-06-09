@@ -6,13 +6,17 @@ const react = require('eslint-plugin-react')
 const prettier = require('eslint-config-prettier')
 
 const browserGlobals = {
+  Buffer: 'readonly',
+  clearTimeout: 'readonly',
   document: 'readonly',
   HTMLElement: 'readonly',
   MouseEvent: 'readonly',
   Node: 'readonly',
   process: 'readonly',
   require: 'readonly',
+  setTimeout: 'readonly',
   TouchEvent: 'readonly',
+  URL: 'readonly',
   window: 'readonly',
 }
 

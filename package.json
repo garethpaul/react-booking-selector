@@ -95,6 +95,7 @@
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html && rm -rf .cache .parcel-cache",
     "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
+    "docs:smoke": "yarn docs:build && node scripts/smoke-docs.js",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "docs:check": "node scripts/check-docs-plan.js",
     "pack:check": "npm pack --dry-run; status=$?; rm -f react-booking-selector-*.tgz; exit $status",
