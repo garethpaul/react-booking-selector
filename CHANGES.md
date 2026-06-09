@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Pinned the Makefile default goal to `check` so future target reordering cannot
+  weaken the repository-standard gate.
 - Added Makefile `lint`, `test`, and `build` wrappers with Jest coverage for
   the repository-standard gate aliases.
 - Ran the normal Jest test script serially after `lib:build` so generated

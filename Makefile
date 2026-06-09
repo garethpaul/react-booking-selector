@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := check
+
 .PHONY: build check lint test verify
 
 check: verify

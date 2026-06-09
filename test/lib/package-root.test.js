@@ -23,6 +23,7 @@ it('exposes repository Makefile gate wrappers', () => {
   const makefile = readFileSync('Makefile', 'utf8')
 
   expect(packageJson.scripts.test).toBe('yarn lib:build && jest --runInBand')
+  expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
   expect(makefile).toMatch(/^check: verify$/m)
   expect(makefile).toMatch(/^lint:\n\tcorepack yarn lint$/m)
   expect(makefile).toMatch(/^test:\n\tcorepack yarn test$/m)
