@@ -382,8 +382,8 @@ var preventDefault = function preventDefault(event) {
   }
 };
 var getBrowserDocument = function getBrowserDocument() {
-  if (typeof window === 'undefined') return null;
   try {
+    if (typeof window === 'undefined') return null;
     var browserDocument = window.document;
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
   } catch (_unused6) {

@@ -68,6 +68,28 @@ describe('BookingSelector without a browser document', () => {
     expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
   })
 
+  it('returns null when the global window getter throws', () => {
+    const instance = createSelectorInstance()
+    const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'window')
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      get() {
+        throw new Error('Cannot read window')
+      },
+    })
+
+    try {
+      expect(instance.getDocument()).toBe(null)
+      expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+    } finally {
+      if (windowDescriptor) {
+        Object.defineProperty(globalThis, 'window', windowDescriptor)
+      } else {
+        delete globalThis.window
+      }
+    }
+  })
+
   it('returns null when the host document getter throws', () => {
     const instance = createSelectorInstance()
     const windowValue = {

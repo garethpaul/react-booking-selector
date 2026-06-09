@@ -673,8 +673,8 @@ const preventDefault = (event: ?PreventableEventType) => {
 }
 
 const getBrowserDocument = (): ?BrowserDocumentType => {
-  if (typeof window === 'undefined') return null
   try {
+    if (typeof window === 'undefined') return null
     const browserDocument = window.document
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null
   } catch {
