@@ -115,17 +115,23 @@ const runChrome = (chrome, args) =>
     let stdout = ''
     let stderr = ''
     let settled = false
+    let timedOut = false
+    let killTimeout = null
 
     const finish = (error, output = '') => {
       if (settled) return
       settled = true
       clearTimeout(timeout)
+      if (killTimeout) clearTimeout(killTimeout)
       if (error) reject(error)
       else resolve(output)
     }
     const timeout = setTimeout(() => {
+      timedOut = true
       chromeProcess.kill('SIGTERM')
-      finish(new Error(`Chrome timed out after ${chromeTimeoutMs}ms`))
+      killTimeout = setTimeout(() => {
+        chromeProcess.kill('SIGKILL')
+      }, 1000)
     }, chromeTimeoutMs)
 
     chromeProcess.stdout.setEncoding('utf8')
@@ -140,6 +146,10 @@ const runChrome = (chrome, args) =>
       finish(error)
     })
     chromeProcess.on('close', (status, signal) => {
+      if (timedOut) {
+        finish(new Error(`Chrome timed out after ${chromeTimeoutMs}ms`))
+        return
+      }
       if (status !== 0) {
         const detail = [stdout, stderr].filter(Boolean).join('\n')
         finish(new Error(`Chrome exited with ${signal || `status ${status}`}${detail ? `\n${detail}` : ''}`))

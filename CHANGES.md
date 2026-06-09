@@ -13,6 +13,8 @@
 - Hardened keyboard navigation helper lookup against sparse date-column arrays.
 - Passed a cloned date into custom cell renderers so renderer mutations cannot
   corrupt grid interaction state.
+- Tightened docs smoke timeout handling so a stuck browser process is terminated
+  before the script exits.
 
 ## 2026-06-08
 
