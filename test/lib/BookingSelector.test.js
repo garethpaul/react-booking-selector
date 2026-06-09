@@ -165,6 +165,7 @@ it('getTimeFromTouchEvent returns null when the touch is inside the grid but not
 it('getTimeFromTouchEvent returns null when there are no touches', () => {
   const { instance } = renderSelector()
 
+  expect(instance.getTimeFromTouchEvent(null)).toBe(null)
   expect(instance.getTimeFromTouchEvent({ touches: [] })).toBe(null)
   expect(instance.getTimeFromTouchEvent({})).toBe(null)
   expect(document.elementFromPoint).not.toHaveBeenCalled()

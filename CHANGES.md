@@ -34,6 +34,7 @@
   completes.
 - Guarded keyboard default-prevention calls against malformed event objects.
 - Guarded event-target lookup when DOM constructors are unavailable.
+- Ignored nullish touch events before reading touch coordinates.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

@@ -768,7 +768,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   // Performs a lookup into this.cellToDate to retrieve the Date that corresponds to
   // the cell where this touch event is right now. Note that this method will only work
   // if the event is a `touchmove` event since it's the only one that has a `touches` list.
-  getTimeFromTouchEvent(event: TouchSelectionEventType): ?Date {
+  getTimeFromTouchEvent(event: ?TouchSelectionEventType): ?Date {
+    if (!event) return null
     const { touches } = event
     if (!touches || touches.length === 0) return null
     const touch = touches[0]

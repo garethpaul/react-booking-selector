@@ -580,6 +580,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   // if the event is a `touchmove` event since it's the only one that has a `touches` list.
 ;
   _proto.getTimeFromTouchEvent = function getTimeFromTouchEvent(event) {
+    if (!event) return null;
     var touches = event.touches;
     if (!touches || touches.length === 0) return null;
     var touch = touches[0];
