@@ -402,6 +402,7 @@ type PropsType = {
   hoveredColor: string,
   blockedColor: string,
   ariaLabel: string,
+  'aria-describedby'?: string,
   'aria-label'?: string,
   'aria-labelledby'?: string,
   style?: StyleType,
@@ -945,6 +946,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey))
+    const gridAriaDescribedBy = this.props['aria-describedby']
     const gridAriaLabelledBy = this.props['aria-labelledby']
     const gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel
 
@@ -953,6 +955,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         {
           <Grid
             role="group"
+            aria-describedby={gridAriaDescribedBy}
             aria-label={gridAriaLabel}
             aria-labelledby={gridAriaLabelledBy}
             ref={(el) => {

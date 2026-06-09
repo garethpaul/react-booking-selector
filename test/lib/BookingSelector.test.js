@@ -1602,6 +1602,25 @@ describe('cell accessibility', () => {
     expect(group).not.toHaveAttribute('aria-label')
   })
 
+  it('supports aria-describedby for describing the slot group', () => {
+    const { getByRole } = render(
+      <>
+        <p id="availability-help">Choose every hour your team can accept appointments.</p>
+        <BookingSelector
+          aria-describedby="availability-help"
+          startDate={startDate}
+          numDays={1}
+          minTime={9}
+          maxTime={9}
+        />
+      </>,
+    )
+    const group = getByRole('group', { name: 'Booking time slots' })
+
+    expect(group).toHaveAttribute('aria-describedby', 'availability-help')
+    expect(group).toHaveAccessibleDescription('Choose every hour your team can accept appointments.')
+  })
+
   it('renders cells as native buttons', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

@@ -98,3 +98,4 @@
 - Preserved in-progress selections when controlled `selection` props are reordered or duplicated without changing slots.
 - Passed `id` through to the outer component wrapper.
 - Ignored blocked cells as mouse or touch drag endpoints.
+- Supported `aria-describedby` for describing the booking slot group with visible helper text.

@@ -15,6 +15,7 @@ const id: BookingSelectorProps['id'] = 'booking-selector'
 const style: BookingSelectorProps['style'] = { maxWidth: 480 }
 const margin: BookingSelectorCssLength = '0.25rem'
 const ariaLabel: BookingSelectorProps['ariaLabel'] = 'Appointment availability'
+const ariaDescribedBy: BookingSelectorProps['aria-describedby'] = 'team-availability-help'
 const standardAriaLabel: BookingSelectorProps['aria-label'] = 'Team appointment availability'
 const ariaLabelledBy: BookingSelectorProps['aria-labelledby'] = 'team-availability-heading'
 
@@ -33,6 +34,7 @@ void id
 void style
 void margin
 void ariaLabel
+void ariaDescribedBy
 void standardAriaLabel
 void ariaLabelledBy
 void onChange

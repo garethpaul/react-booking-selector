@@ -26,6 +26,7 @@ export interface BookingSelectorProps {
   hoveredColor?: string
   blockedColor?: string
   ariaLabel?: string
+  'aria-describedby'?: string
   'aria-label'?: string
   'aria-labelledby'?: string
   style?: React.CSSProperties

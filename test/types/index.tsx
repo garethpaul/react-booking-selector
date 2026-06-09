@@ -46,6 +46,7 @@ const defaultExport = (
     hoveredColor="rgba(162, 198, 248, 1)"
     blockedColor="rgba(79, 79, 79, 1)"
     ariaLabel="Appointment availability"
+    aria-describedby="team-availability-help"
     aria-label="Team appointment availability"
     aria-labelledby="team-availability-heading"
     renderDateCell={renderDateCell}

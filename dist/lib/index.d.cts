@@ -29,6 +29,7 @@ declare namespace BookingSelectorComponent {
     hoveredColor?: string
     blockedColor?: string
     ariaLabel?: string
+    'aria-describedby'?: string
     'aria-label'?: string
     'aria-labelledby'?: string
     style?: React.CSSProperties

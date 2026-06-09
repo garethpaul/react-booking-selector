@@ -262,6 +262,16 @@ Invalid format strings fall back to the default day-of-month header format.
 
 **default value**: `'Booking time slots'`
 
+### `aria-describedby`
+
+**type**: `string`
+
+**description**: ID reference for visible helper text that describes the booking slot group.
+
+**required**: no
+
+**default value**: none
+
 ### `aria-labelledby`
 
 **type**: `string`

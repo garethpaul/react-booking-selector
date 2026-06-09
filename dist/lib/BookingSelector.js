@@ -701,6 +701,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
+    var gridAriaDescribedBy = this.props['aria-describedby'];
     var gridAriaLabelledBy = this.props['aria-labelledby'];
     var gridAriaLabel = gridAriaLabelledBy ? undefined : this.props['aria-label'] || this.props.ariaLabel;
     return /*#__PURE__*/React.createElement(Wrapper, {
@@ -709,6 +710,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       style: this.props.style
     }, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
+      "aria-describedby": gridAriaDescribedBy,
       "aria-label": gridAriaLabel,
       "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
