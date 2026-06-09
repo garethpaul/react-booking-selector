@@ -76,7 +76,7 @@ const renderDateCell = (time, selected, blocked) => (
 
 ## Date and Time Behavior
 
-`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. If `startDate` is omitted or invalid, the grid starts from today. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`. Slots are built from local calendar dates and visible hours so daylight-saving-time offset changes do not shift ordinary wall-clock hours. Nonexistent local hours during spring-forward transitions render as empty placeholders rather than duplicate selectable slots, and keyboard navigation follows the rendered grid instead of normalizing missing hours into another row.
+`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` prop must be a valid `Date` object; its time portion is ignored, and the grid starts at local midnight for that date. If `startDate` is omitted, invalid, or not a `Date` object, the grid starts from today. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`. Slots are built from local calendar dates and visible hours so daylight-saving-time offset changes do not shift ordinary wall-clock hours. Nonexistent local hours during spring-forward transitions render as empty placeholders rather than duplicate selectable slots, and keyboard navigation follows the rendered grid instead of normalizing missing hours into another row.
 
 Values in `selection` and `blocked` may be `Date` objects, timestamps, date strings, date-like objects with a numeric `valueOf()`, `null`, or `undefined`, and are normalized to `Date` objects before comparison. Nullish, invalid, malformed, or unsupported values are ignored rather than coerced. Valid values are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
 
@@ -160,7 +160,7 @@ value while preserving the order of distinct selected slots.
 
 **type**: `Date`
 
-**description**: The date on which the grid should start. The time portion is ignored; specify the visible hours with `minTime` and `maxTime`.
+**description**: The valid `Date` object on which the grid should start. The time portion is ignored; specify the visible hours with `minTime` and `maxTime`.
 
 **required**: no
 
