@@ -38,6 +38,8 @@
   accepting screenshots.
 - Built date grids with captured Date mutators instead of live `date-fns`
   day helpers so later prototype changes cannot break grid construction.
+- Used an explicit empty touch timestamp sentinel so compatibility mouse events
+  are still suppressed when the clock reports `0`.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

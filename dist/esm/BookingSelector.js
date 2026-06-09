@@ -504,7 +504,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.cellToDate = new Map();
     _this.dateToCell = new Map();
     _this.touchScrollCells = new Set();
-    _this.lastTouchEventTime = 0;
+    _this.lastTouchEventTime = null;
     var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var selectionPropListSignature = getDateListSignature(_this.props.selection);
@@ -822,8 +822,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.lastTouchEventTime = getCurrentTimestamp();
   };
   _proto.shouldIgnoreMouseEvent = function shouldIgnoreMouseEvent() {
+    if (this.lastTouchEventTime == null) return false;
     var elapsedTouchTime = getCurrentTimestamp() - this.lastTouchEventTime;
-    return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS;
+    return elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS;
   };
   _proto.clearTouchDragState = function clearTouchDragState() {
     var shouldClearSelectionStart = this.state.selectionStart !== null && !isSelectionType(this.state.selectionType);

@@ -672,7 +672,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   dateToCell: Map<number, HTMLElement>
   touchScrollCells: Set<HTMLElement>
   gridRef: ?HTMLElement
-  lastTouchEventTime: number
+  lastTouchEventTime: ?number
   blockedMinuteKeys: Set<number>
   selectedMinuteKeys: Set<number>
 
@@ -699,7 +699,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.cellToDate = new Map()
     this.dateToCell = new Map()
     this.touchScrollCells = new Set()
-    this.lastTouchEventTime = 0
+    this.lastTouchEventTime = null
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
@@ -1029,8 +1029,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   shouldIgnoreMouseEvent(): boolean {
+    if (this.lastTouchEventTime == null) return false
     const elapsedTouchTime = getCurrentTimestamp() - this.lastTouchEventTime
-    return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS
+    return elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS
   }
 
   clearTouchDragState() {

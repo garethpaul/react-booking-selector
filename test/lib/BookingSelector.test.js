@@ -857,6 +857,20 @@ describe('touch handlers', () => {
     }
   })
 
+  it('suppresses mouse events when the touch clock starts at zero', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(0)
+    const { instance } = renderSelector()
+
+    try {
+      instance.recordTouchEvent()
+
+      expect(instance.lastTouchEventTime).toBe(0)
+      expect(instance.shouldIgnoreMouseEvent()).toBe(true)
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
   it('falls back when Date.now throws during touch mouse suppression', () => {
     const nowSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
       throw new Error('Cannot read current time')
