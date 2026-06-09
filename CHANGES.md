@@ -26,6 +26,8 @@
   page description.
 - Retried transient pending docs smoke layout dumps before failing the browser
   smoke check.
+- Guarded public date lookup helpers and keyboard navigation against malformed
+  date arguments.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

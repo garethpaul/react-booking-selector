@@ -40,8 +40,12 @@ var normalizeDates = function normalizeDates(dates) {
 var dateMinuteKey = function dateMinuteKey(value) {
   return Math.floor(value.getTime() / 60000);
 };
+var getDateMinuteKey = function getDateMinuteKey(value) {
+  return value instanceof Date && isValid(value) ? dateMinuteKey(value) : null;
+};
 var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
-  return dateMinuteKeys.has(dateMinuteKey(time));
+  var key = getDateMinuteKey(time);
+  return key != null && dateMinuteKeys.has(key);
 };
 var getDateMinuteSetSignature = function getDateMinuteSetSignature(dates) {
   return Array.from(new Set(normalizeDates(dates).map(dateMinuteKey))).sort(function (a, b) {
@@ -170,7 +174,8 @@ var getDateSlotTime = function getDateSlotTime(dateSlot) {
   return dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null;
 };
 var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
-  var targetKey = dateKey(time);
+  var targetKey = getDateKey(time);
+  if (targetKey == null) return null;
   for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
     var dateColumn = dateColumns[columnIndex];
     var slots = getDateColumnSlots(dateColumn);
@@ -229,6 +234,9 @@ var isPrimaryMouseButton = function isPrimaryMouseButton(event) {
 };
 var dateKey = function dateKey(time) {
   return time.getTime();
+};
+var getDateKey = function getDateKey(time) {
+  return time instanceof Date && isValid(time) ? dateKey(time) : null;
 };
 var TOUCH_MOUSE_SUPPRESSION_MS = 500;
 var Wrapper = styled.div(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["\n  box-sizing: border-box;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  min-width: 0;\n  user-select: none;\n"])));
@@ -675,7 +683,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.focusDateCell = function focusDateCell(time) {
     if (this.isBlocked(time)) return false;
-    var dateCell = this.dateToCell.get(dateKey(time));
+    var key = getDateKey(time);
+    if (key == null) return false;
+    var dateCell = this.dateToCell.get(key);
     if (!dateCell || typeof dateCell.focus !== 'function') return false;
     dateCell.focus();
     return true;

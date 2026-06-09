@@ -92,7 +92,13 @@ const normalizeDates = (dates: DateListType): Array<Date> =>
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
-const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: Date): boolean => dateMinuteKeys.has(dateMinuteKey(time))
+const getDateMinuteKey = (value: mixed): ?number =>
+  value instanceof Date && isValid(value) ? dateMinuteKey(value) : null
+
+const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: mixed): boolean => {
+  const key = getDateMinuteKey(time)
+  return key != null && dateMinuteKeys.has(key)
+}
 
 const getDateMinuteSetSignature = (dates: DateListType): string =>
   Array.from(new Set(normalizeDates(dates).map(dateMinuteKey)))
@@ -223,7 +229,9 @@ const getDateSlotTime = (dateSlot: ?DateSlotType): ?Date =>
   dateSlot && dateSlot.time instanceof Date ? dateSlot.time : null
 
 const findDateSlotPosition = (dateColumns: Array<DateColumnType>, time: Date): ?DateSlotPositionType => {
-  const targetKey = dateKey(time)
+  const targetKey = getDateKey(time)
+  if (targetKey == null) return null
+
   for (let columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
     const dateColumn = dateColumns[columnIndex]
     const slots = getDateColumnSlots(dateColumn)
@@ -314,6 +322,8 @@ const isPrimaryMouseButton = (event?: MouseSelectionEventType): boolean =>
   !event || event.button == null || event.button === 0
 
 const dateKey = (time: Date): number => time.getTime()
+
+const getDateKey = (time: mixed): ?number => (time instanceof Date && isValid(time) ? dateKey(time) : null)
 
 const TOUCH_MOUSE_SUPPRESSION_MS = 500
 
@@ -854,7 +864,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   focusDateCell(time: Date): boolean {
     if (this.isBlocked(time)) return false
-    const dateCell = this.dateToCell.get(dateKey(time))
+    const key = getDateKey(time)
+    if (key == null) return false
+    const dateCell = this.dateToCell.get(key)
     if (!dateCell || typeof dateCell.focus !== 'function') return false
     dateCell.focus()
     return true

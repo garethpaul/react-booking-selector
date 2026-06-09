@@ -1594,6 +1594,22 @@ describe('prop updates', () => {
     expect(rendered.instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
   })
 
+  it('reports malformed dates as neither blocked nor selected', () => {
+    const rendered = renderSelector({
+      selection: [addHours(startOfDay(startDate), 9)],
+      blocked: [addHours(startOfDay(startDate), 10)],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.isBlocked({ getTime: true })).toBe(false)
+    expect(rendered.instance.isSelected({ getTime: true })).toBe(false)
+    expect(rendered.instance.isBlocked(new Date(NaN))).toBe(false)
+    expect(rendered.instance.isSelected(new Date(NaN))).toBe(false)
+  })
+
   it('deduplicates selection props at minute precision', () => {
     const selected = addHours(startOfDay(startDate), 9)
     const duplicateSameMinute = new Date(selected.getTime() + 30000)
@@ -1822,6 +1838,8 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowRight')).toBe(thursdayNine)
     expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowDown')).toBe(mondayNoon)
     expect(getKeyboardNavigationTarget([{ day: startDate, slots: null }], mondayNine, 'ArrowRight')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, { getTime: true }, 'ArrowRight')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, new Date(NaN), 'ArrowRight')).toBe(null)
   })
 
   it('skips placeholder rows when vertically navigating daylight-saving-time gaps', () => {
@@ -2568,6 +2586,13 @@ describe('keyboard interaction', () => {
     const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
     expect(instance.focusDateCell(addHours(startOfDay(startDate), 10))).toBe(false)
+  })
+
+  it('reports when a focus target is not a valid Date object', () => {
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(instance.focusDateCell({ getTime: true })).toBe(false)
+    expect(instance.focusDateCell(new Date(NaN))).toBe(false)
   })
 
   it('reports when a registered focus target cannot receive focus', () => {
