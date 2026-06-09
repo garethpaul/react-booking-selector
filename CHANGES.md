@@ -41,6 +41,7 @@
   `:focus-visible` support.
 - Made the CommonJS entry writer create its output directory when run directly.
 - Added docs smoke regression coverage for encoded path traversal attempts.
+- Reported incomplete docs smoke PNG screenshots with explicit parser errors.
 
 ## 2026-06-08
 

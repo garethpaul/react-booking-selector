@@ -20,7 +20,7 @@ const createChunk = (type, data) => {
   return Buffer.concat([length, Buffer.from(type), data, Buffer.alloc(4)])
 }
 
-const writePng = (filePath, width, height, blank = false) => {
+const createPng = (width, height, blank = false, complete = true) => {
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(width, 0)
   ihdr.writeUInt32BE(height, 4)
@@ -40,15 +40,17 @@ const writePng = (filePath, width, height, blank = false) => {
     rows.push(row)
   }
 
-  fs.writeFileSync(
-    filePath,
-    Buffer.concat([
-      pngSignature,
-      createChunk('IHDR', ihdr),
-      createChunk('IDAT', zlib.deflateSync(Buffer.concat(rows))),
-      createChunk('IEND', Buffer.alloc(0)),
-    ]),
-  )
+  const chunks = [pngSignature, createChunk('IHDR', ihdr), createChunk('IDAT', zlib.deflateSync(Buffer.concat(rows)))]
+  if (complete) chunks.push(createChunk('IEND', Buffer.alloc(0)))
+  return Buffer.concat(chunks)
+}
+
+const writePng = (filePath, width, height, blank = false) => {
+  fs.writeFileSync(filePath, createPng(width, height, blank))
+}
+
+const writeIncompletePng = (filePath, width, height) => {
+  fs.writeFileSync(filePath, createPng(width, height, false, false))
 }
 
 const args = process.argv.slice(2)
@@ -88,12 +90,12 @@ if (screenshotArg) {
   const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
   const [width, height] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
   requestSmokePath(args[args.length - 1], () => {
-    writePng(
-      screenshotArg.replace('--screenshot=', ''),
-      width,
-      height,
-      process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1',
-    )
+    const screenshotPath = screenshotArg.replace('--screenshot=', '')
+    if (process.env.FAKE_CHROME_INCOMPLETE_SCREENSHOTS === '1') {
+      writeIncompletePng(screenshotPath, width, height)
+    } else {
+      writePng(screenshotPath, width, height, process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1')
+    }
     process.exit(0)
   })
 }
@@ -175,6 +177,16 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_BLANK_SCREENSHOTS: '1' })
     }).toThrow(/desktop screenshot looks blank/u)
+  })
+
+  it('fails clearly when screenshots are incomplete PNG files', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_INCOMPLETE_SCREENSHOTS: '1' })
+    }).toThrow(/desktop\.png is missing PNG terminator/u)
   })
 
   it('handles malformed docs server request paths', () => {

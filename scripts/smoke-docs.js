@@ -204,33 +204,57 @@ const parsePng = (filePath) => {
   let height = 0
   let bitDepth = 0
   let colorType = 0
+  let hasHeader = false
+  let hasTerminator = false
   const idatChunks = []
 
   while (offset < png.length) {
+    if (offset + 12 > png.length) {
+      throw new Error(`${filePath} has a truncated PNG chunk header`)
+    }
     const length = png.readUInt32BE(offset)
     const type = png.toString('ascii', offset + 4, offset + 8)
     const dataStart = offset + 8
     const dataEnd = dataStart + length
+    if (dataEnd + 4 > png.length) {
+      throw new Error(`${filePath} has a truncated ${type} PNG chunk`)
+    }
     const data = png.subarray(dataStart, dataEnd)
 
     if (type === 'IHDR') {
+      if (length < 13) throw new Error(`${filePath} has a truncated PNG header`)
       width = data.readUInt32BE(0)
       height = data.readUInt32BE(4)
       bitDepth = data[8]
       colorType = data[9]
+      hasHeader = true
     } else if (type === 'IDAT') {
       idatChunks.push(data)
     } else if (type === 'IEND') {
+      hasTerminator = true
       break
     }
 
     offset = dataEnd + 4
   }
 
+  if (!hasHeader) throw new Error(`${filePath} is missing PNG header`)
+  if (!hasTerminator) throw new Error(`${filePath} is missing PNG terminator`)
+  if (width <= 0 || height <= 0) throw new Error(`${filePath} has invalid PNG dimensions ${width}x${height}`)
+  if (idatChunks.length === 0) throw new Error(`${filePath} is missing PNG image data`)
   if (bitDepth !== 8) throw new Error(`${filePath} uses unsupported PNG bit depth ${bitDepth}`)
   const bytesPerPixel = getBytesPerPixel(colorType)
   const stride = width * bytesPerPixel
-  const inflated = zlib.inflateSync(Buffer.concat(idatChunks))
+  let inflated
+  try {
+    inflated = zlib.inflateSync(Buffer.concat(idatChunks))
+  } catch (error) {
+    throw new Error(`${filePath} has invalid PNG image data: ${error.message}`)
+  }
+  const expectedInflatedLength = height * (stride + 1)
+  if (inflated.length !== expectedInflatedLength) {
+    throw new Error(`${filePath} has ${inflated.length} decoded PNG bytes, expected ${expectedInflatedLength}`)
+  }
   const pixels = Buffer.alloc(height * stride)
   let sourceOffset = 0
   let targetOffset = 0
