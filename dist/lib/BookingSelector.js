@@ -386,7 +386,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       }, _this.renderDateCell(time, selected, blocked));
     };
     _this.renderDateCell = function (time, selected, blocked) {
-      if (_this.props.renderDateCell) {
+      if (typeof _this.props.renderDateCell === 'function') {
         return _this.props.renderDateCell(new Date(time.getTime()), selected, blocked);
       }
       return /*#__PURE__*/React.createElement(DateCell, {

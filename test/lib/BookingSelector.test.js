@@ -97,6 +97,18 @@ describe('snapshot tests', () => {
     expect(getByTestId('slot-10')).toHaveAttribute('data-blocked', 'true')
   })
 
+  it('falls back to default cells when the custom renderer is not callable', () => {
+    const { getByRole } = renderSelector({
+      renderDateCell: true,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toBeInTheDocument()
+  })
+
   it('isolates custom renderer date mutations from grid behavior', async () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)

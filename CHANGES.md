@@ -28,6 +28,8 @@
   smoke check.
 - Guarded public date lookup helpers and keyboard navigation against malformed
   date arguments.
+- Ignored non-callable custom date-cell renderers instead of throwing during
+  render.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

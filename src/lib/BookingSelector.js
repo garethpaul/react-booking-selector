@@ -1059,7 +1059,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   renderDateCell = (time: Date, selected: boolean, blocked: boolean): React.Node => {
-    if (this.props.renderDateCell) {
+    if (typeof this.props.renderDateCell === 'function') {
       return this.props.renderDateCell(new Date(time.getTime()), selected, blocked)
     }
 
