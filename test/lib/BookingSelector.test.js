@@ -1245,6 +1245,22 @@ describe('componentDidMount', () => {
 
     expect(instance.getDateCellFromEventTarget(null)).toBe(null)
   })
+
+  it('returns null when DOM constructors are unavailable', () => {
+    const { instance } = renderSelector()
+    const nodeConstructor = window.Node
+    const htmlElementConstructor = window.HTMLElement
+
+    window.Node = undefined
+    window.HTMLElement = undefined
+
+    try {
+      expect(instance.getDateCellFromEventTarget(document.createElement('div'))).toBe(null)
+    } finally {
+      window.Node = nodeConstructor
+      window.HTMLElement = htmlElementConstructor
+    }
+  })
 })
 
 describe('componentWillUnmount', () => {

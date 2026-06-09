@@ -33,6 +33,7 @@
 - Ignored non-callable `onChange` props instead of throwing when a selection
   completes.
 - Guarded keyboard default-prevention calls against malformed event objects.
+- Guarded event-target lookup when DOM constructors are unavailable.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.
