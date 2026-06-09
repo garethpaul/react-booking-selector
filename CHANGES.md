@@ -44,6 +44,8 @@
   custom-render date copies so later global replacements cannot break them.
 - Keyed rendered date columns and cells through captured timestamp reads instead
   of live `toISOString` methods.
+- Traversed selection-scheme date grids without live Array iteration methods so
+  later Array prototype changes cannot break drag selection.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

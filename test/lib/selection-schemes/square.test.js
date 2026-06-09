@@ -101,4 +101,35 @@ describe('square selection scheme', () => {
 
     expect(toTimeValues(result)).toEqual(toTimeValues(mutatedDates[0]))
   })
+
+  test('it traverses date lists without live Array iteration methods', () => {
+    const originalReduce = Array.prototype.reduce
+    const originalFilter = Array.prototype.filter
+    const originalConcat = Array.prototype.concat
+    const dayOfTimes = [dates[0][5], dates[0][6], dates[0][7]]
+    const dateList = [dayOfTimes]
+    dayOfTimes.filter = () => {
+      throw new Error('Unexpected day filter call')
+    }
+    Array.prototype.reduce = function reduce() {
+      throw new Error('Unexpected array reduce call')
+    }
+    Array.prototype.filter = function filter() {
+      throw new Error('Unexpected array filter call')
+    }
+    Array.prototype.concat = function concat() {
+      throw new Error('Unexpected array concat call')
+    }
+
+    let result
+    try {
+      result = square(dayOfTimes[0], dayOfTimes[2], dateList)
+    } finally {
+      Array.prototype.reduce = originalReduce
+      Array.prototype.filter = originalFilter
+      Array.prototype.concat = originalConcat
+    }
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(dayOfTimes))
+  })
 })

@@ -1,16 +1,27 @@
 import * as dateUtils from '../date-utils.js';
+var collectMatchingDates = function collectMatchingDates(dateList, matches) {
+  var selected = [];
+  if (!Array.isArray(dateList)) return selected;
+  for (var dayIndex = 0; dayIndex < dateList.length; dayIndex += 1) {
+    var dayOfTimes = dateList[dayIndex];
+    if (!Array.isArray(dayOfTimes)) continue;
+    for (var timeIndex = 0; timeIndex < dayOfTimes.length; timeIndex += 1) {
+      var time = dayOfTimes[timeIndex];
+      if (matches(time)) selected.push(time);
+    }
+  }
+  return selected;
+};
 var linear = function linear(selectionStart, selectionEnd, dateList) {
   var selected = [];
   if (!dateUtils.isValidDate(selectionStart)) return selected;
   if (selectionEnd == null) {
     selected = [selectionStart];
-  } else if (dateUtils.isValidDate(selectionEnd) && Array.isArray(dateList)) {
+  } else if (dateUtils.isValidDate(selectionEnd)) {
     var reverseSelection = dateUtils.getDateTimestamp(selectionEnd) < dateUtils.getDateTimestamp(selectionStart);
-    selected = dateList.reduce(function (acc, dayOfTimes) {
-      return Array.isArray(dayOfTimes) ? acc.concat(dayOfTimes.filter(function (t) {
-        return dateUtils.isValidDate(t) && dateUtils.dateHourIsBetween(reverseSelection ? selectionEnd : selectionStart, t, reverseSelection ? selectionStart : selectionEnd);
-      })) : acc;
-    }, []);
+    selected = collectMatchingDates(dateList, function (time) {
+      return dateUtils.isValidDate(time) && dateUtils.dateHourIsBetween(reverseSelection ? selectionEnd : selectionStart, time, reverseSelection ? selectionStart : selectionEnd);
+    });
   }
   return selected;
 };

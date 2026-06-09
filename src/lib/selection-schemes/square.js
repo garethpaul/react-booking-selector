@@ -2,38 +2,48 @@
 
 import * as dateUtils from '../date-utils.js'
 
+const collectMatchingDates = (dateList: mixed, matches: (mixed) => boolean): Array<Date> => {
+  const selected: Array<Date> = []
+  if (!Array.isArray(dateList)) return selected
+
+  for (let dayIndex = 0; dayIndex < dateList.length; dayIndex += 1) {
+    const dayOfTimes = dateList[dayIndex]
+    if (!Array.isArray(dayOfTimes)) continue
+
+    for (let timeIndex = 0; timeIndex < dayOfTimes.length; timeIndex += 1) {
+      const time = dayOfTimes[timeIndex]
+      if (matches(time)) selected.push((time: any))
+    }
+  }
+
+  return selected
+}
+
 const square = (selectionStart: ?Date, selectionEnd: ?Date, dateList: Array<Array<Date>>): Array<Date> => {
   let selected: Array<Date> = []
   if (!dateUtils.isValidDate(selectionStart)) return selected
 
   if (selectionEnd == null) {
     selected = [selectionStart]
-  } else if (dateUtils.isValidDate(selectionEnd) && Array.isArray(dateList)) {
+  } else if (dateUtils.isValidDate(selectionEnd)) {
     const dateIsReversed =
       dateUtils.getStartOfDayTimestamp(selectionEnd) < dateUtils.getStartOfDayTimestamp(selectionStart)
     const timeIsReversed = dateUtils.getDateHour(selectionStart) > dateUtils.getDateHour(selectionEnd)
 
-    selected = dateList.reduce(
-      (acc, dayOfTimes) =>
-        Array.isArray(dayOfTimes)
-          ? acc.concat(
-              dayOfTimes.filter(
-                (t) =>
-                  dateUtils.isValidDate(t) &&
-                  dateUtils.dateIsBetween(
-                    dateIsReversed ? selectionEnd : selectionStart,
-                    t,
-                    dateIsReversed ? selectionStart : selectionEnd,
-                  ) &&
-                  dateUtils.timeIsBetween(
-                    timeIsReversed ? selectionEnd : selectionStart,
-                    t,
-                    timeIsReversed ? selectionStart : selectionEnd,
-                  ),
-              ),
-            )
-          : acc,
-      [],
+    selected = collectMatchingDates(
+      dateList,
+      (time) =>
+        dateUtils.isValidDate(time) &&
+        dateUtils.dateIsBetween(
+          dateIsReversed ? selectionEnd : selectionStart,
+          time,
+          dateIsReversed ? selectionStart : selectionEnd,
+        ) &&
+        dateUtils.timeIsBetween(
+          timeIsReversed ? selectionEnd : selectionStart,
+          time,
+          timeIsReversed ? selectionStart : selectionEnd,
+        ),
     )
   }
 
