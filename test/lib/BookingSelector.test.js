@@ -281,6 +281,22 @@ it('endSelection clears malformed active selection types without calling onChang
   expect(changeSpy).not.toHaveBeenCalled()
 })
 
+it('endSelection clears malformed selection modes without other dangling state', async () => {
+  const changeSpy = jest.fn()
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, { selectionType: 'toggle' })
+
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(instance.state.selectionType).toBe(null)
+  expect(instance.state.selectionStart).toBe(null)
+  expect(instance.state.isTouchDragging).toBe(false)
+  expect(changeSpy).not.toHaveBeenCalled()
+})
+
 it('endSelection passes cloned selection dates to onChange', async () => {
   const changeSpy = jest.fn()
   const selected = addHours(startOfDay(startDate), 9)

@@ -630,7 +630,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.endSelection = function endSelection() {
     var hasValidSelectionType = isSelectionType(this.state.selectionType);
-    if (!hasValidSelectionType && this.state.selectionStart === null && !this.state.isTouchDragging) return;
+    var hasDanglingSelectionState = this.state.selectionType != null || this.state.selectionStart !== null || this.state.isTouchDragging;
+    if (!hasValidSelectionType && !hasDanglingSelectionState) return;
     var nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null;
     this.setState({
       selectionType: null,

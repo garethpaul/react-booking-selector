@@ -825,7 +825,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   endSelection() {
     const hasValidSelectionType = isSelectionType(this.state.selectionType)
-    if (!hasValidSelectionType && this.state.selectionStart === null && !this.state.isTouchDragging) return
+    const hasDanglingSelectionState =
+      this.state.selectionType != null || this.state.selectionStart !== null || this.state.isTouchDragging
+    if (!hasValidSelectionType && !hasDanglingSelectionState) return
 
     const nextSelection = hasValidSelectionType ? normalizeSelectionDraft(this.state.selectionDraft) : null
     this.setState({
