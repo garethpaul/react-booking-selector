@@ -644,7 +644,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const blockedPropSignature = getDateMinuteSetSignature(props.blocked)
     const dateGridPropSignature = getDateGridSignature(props)
     const selectionSchemePropSignature = getSelectionScheme(props.selectionScheme)
-    const selectionIsActive = isSelectionType(state.selectionType)
+    const selectionIsActive = isSelectionType(state.selectionType) && getValidDate(state.selectionStart) != null
     if (
       selectionPropSignature === state.selectionPropSignature &&
       (selectionPropListSignature === state.selectionPropListSignature || selectionIsActive) &&
