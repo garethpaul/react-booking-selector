@@ -130,7 +130,7 @@ const getCurrentTimestamp = (): number => {
     // Fall back to the captured Date.now below.
   }
 
-  return dateNow.call(Date)
+  return dateNow.call(DateConstructor)
 }
 
 const getDateTimestamp = (value: mixed): ?number => {

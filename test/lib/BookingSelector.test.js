@@ -911,6 +911,37 @@ describe('touch handlers', () => {
     }
   })
 
+  it('falls back when the global Date binding throws during touch mouse suppression', () => {
+    const OriginalDate = Date
+    const { instance } = renderSelector()
+    let clockError
+
+    try {
+      Object.defineProperty(globalThis, 'Date', {
+        configurable: true,
+        get() {
+          throw new Error('Cannot read Date')
+        },
+      })
+
+      try {
+        instance.recordTouchEvent()
+        instance.shouldIgnoreMouseEvent()
+      } catch (error) {
+        clockError = error
+      }
+    } finally {
+      Object.defineProperty(globalThis, 'Date', {
+        configurable: true,
+        writable: true,
+        value: OriginalDate,
+      })
+    }
+
+    expect(clockError).toBeUndefined()
+    expect(instance.lastTouchEventTime).toBeGreaterThan(0)
+  })
+
   it('falls back when Date.now returns a non-finite touch mouse suppression time', () => {
     const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(NaN)
     const { instance } = renderSelector()

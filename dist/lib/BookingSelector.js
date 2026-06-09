@@ -71,7 +71,7 @@ var getCurrentTimestamp = function getCurrentTimestamp() {
   } catch (_unused) {
     // Fall back to the captured Date.now below.
   }
-  return dateNow.call(Date);
+  return dateNow.call(DateConstructor);
 };
 var getDateTimestamp = function getDateTimestamp(value) {
   var timestamp = (0, _dateUtils.getDateTimestamp)(value);
