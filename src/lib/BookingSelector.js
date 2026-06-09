@@ -784,7 +784,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       selectionStart: null,
       isTouchDragging: false,
     })
-    if (nextSelection) {
+    if (nextSelection && typeof this.props.onChange === 'function') {
       this.props.onChange(nextSelection)
     }
   }

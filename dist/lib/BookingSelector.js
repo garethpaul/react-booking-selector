@@ -606,7 +606,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       selectionStart: null,
       isTouchDragging: false
     });
-    if (nextSelection) {
+    if (nextSelection && typeof this.props.onChange === 'function') {
       this.props.onChange(nextSelection);
     }
   }

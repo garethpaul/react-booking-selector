@@ -276,6 +276,20 @@ it('endSelection passes cloned selection dates to onChange', async () => {
   expect(nextSelection[0]).not.toBe(instance.state.selectionDraft[0])
 })
 
+it('endSelection ignores non-callable onChange props', async () => {
+  const selected = addHours(startOfDay(startDate), 9)
+  const { instance } = renderSelector({ onChange: true })
+
+  await setStateAsync(instance, { selectionDraft: [selected], selectionType: 'add' })
+
+  expect(() => {
+    act(() => {
+      instance.endSelection()
+    })
+  }).not.toThrow()
+  expect(instance.state.selectionType).toBe(null)
+})
+
 it('endSelection emits minute-unique selection dates', async () => {
   const changeSpy = jest.fn()
   const selected = addHours(startOfDay(startDate), 9)

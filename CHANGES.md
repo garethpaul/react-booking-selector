@@ -30,6 +30,8 @@
   date arguments.
 - Ignored non-callable custom date-cell renderers instead of throwing during
   render.
+- Ignored non-callable `onChange` props instead of throwing when a selection
+  completes.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.
