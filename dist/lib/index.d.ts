@@ -23,6 +23,7 @@ export interface BookingSelectorProps {
   selectedColor?: string
   hoveredColor?: string
   blockedColor?: string
+  ariaLabel?: string
   renderDateCell?: (time: Date, selected: boolean, blocked: boolean) => React.ReactNode
 }
 

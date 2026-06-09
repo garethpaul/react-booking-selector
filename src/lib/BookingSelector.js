@@ -399,6 +399,7 @@ type PropsType = {
   selectedColor: string,
   hoveredColor: string,
   blockedColor: string,
+  ariaLabel: string,
   renderDateCell?: (Date, boolean, boolean) => React.Node,
 }
 
@@ -454,6 +455,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     unselectedColor: colors.paleBlue,
     hoveredColor: colors.lightBlue,
     blockedColor: colors.black,
+    ariaLabel: 'Booking time slots',
     onChange: () => {},
   }
 
@@ -942,7 +944,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         {
           <Grid
             role="group"
-            aria-label="Booking time slots"
+            aria-label={this.props.ariaLabel}
             ref={(el) => {
               this.gridRef = el
             }}

@@ -704,7 +704,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var selectedMinuteKeys = new Set(this.state.selectionDraft.map(dateMinuteKey));
     return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Grid, {
       role: "group",
-      "aria-label": "Booking time slots",
+      "aria-label": this.props.ariaLabel,
       ref: function ref(el) {
         _this6.gridRef = el;
       }
@@ -727,5 +727,6 @@ BookingSelector.defaultProps = {
   unselectedColor: _colors.default.paleBlue,
   hoveredColor: _colors.default.lightBlue,
   blockedColor: _colors.default.black,
+  ariaLabel: 'Booking time slots',
   onChange: function onChange() {}
 };

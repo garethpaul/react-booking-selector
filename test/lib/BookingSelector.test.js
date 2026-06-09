@@ -1463,6 +1463,18 @@ describe('cell accessibility', () => {
     expect(getByRole('group', { name: 'Booking time slots' })).toBeInTheDocument()
   })
 
+  it('allows the slot group label to be customized', () => {
+    const { getByRole } = renderSelector({
+      ariaLabel: 'Morning appointment availability',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(getByRole('group', { name: 'Morning appointment availability' })).toBeInTheDocument()
+  })
+
   it('renders cells as native buttons', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

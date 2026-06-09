@@ -220,6 +220,16 @@ Invalid format strings fall back to the default day-of-month header format.
 
 **default value**: `'rgba(79, 79, 79, 1)'`
 
+### `ariaLabel`
+
+**type**: `string`
+
+**description**: Accessible label for the booking slot group. Use a unique label when rendering more than one selector on the same page.
+
+**required**: no
+
+**default value**: `'Booking time slots'`
+
 ### `renderDateCell`
 
 **type**: `(time: Date, selected: boolean, blocked: boolean) => React.ReactNode`
