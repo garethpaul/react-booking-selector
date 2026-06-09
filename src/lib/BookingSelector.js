@@ -776,6 +776,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS
   }
 
+  clearTouchDragState() {
+    if (this.state.isTouchDragging) {
+      this.setState({ isTouchDragging: false })
+    }
+  }
+
   handleMouseDownEvent(time: Date, event?: MouseSelectionEventType) {
     if (!isPrimaryMouseButton(event)) return
     if (this.shouldIgnoreMouseEvent()) return
@@ -854,7 +860,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   handleTouchEndEvent() {
     this.recordTouchEvent()
     if (this.state.selectionType === null) {
-      this.setState({ isTouchDragging: false })
+      this.clearTouchDragState()
       return
     }
 
@@ -876,7 +882,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.recordTouchEvent()
 
     if (this.state.selectionType === null) {
-      this.setState({ isTouchDragging: false })
+      this.clearTouchDragState()
       return
     }
 

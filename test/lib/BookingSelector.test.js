@@ -795,6 +795,36 @@ it('handleTouchMoveEvent avoids redundant drag-state updates while already dragg
   getTimeSpy.mockRestore()
 })
 
+it.each([
+  { label: 'touch end', cleanupTouch: (instance) => instance.handleTouchEndEvent() },
+  { label: 'touch cancel', cleanupTouch: (instance) => instance.handleTouchCancelEvent() },
+])('avoids redundant idle drag-state cleanup on $label', ({ cleanupTouch }) => {
+  const { instance } = renderSelector()
+  const setStateSpy = jest.spyOn(instance, 'setState')
+
+  act(() => {
+    cleanupTouch(instance)
+  })
+
+  expect(setStateSpy).not.toHaveBeenCalled()
+
+  setStateSpy.mockRestore()
+})
+
+it.each([
+  { label: 'touch end', cleanupTouch: (instance) => instance.handleTouchEndEvent() },
+  { label: 'touch cancel', cleanupTouch: (instance) => instance.handleTouchCancelEvent() },
+])('clears dangling idle drag state on $label', async ({ cleanupTouch }) => {
+  const { instance } = renderSelector()
+
+  await setStateAsync(instance, { isTouchDragging: true })
+  act(() => {
+    cleanupTouch(instance)
+  })
+
+  expect(instance.state.isTouchDragging).toBe(false)
+})
+
 describe('updateAvailabilityDraft', () => {
   it.each([
     ['add', 1],

@@ -625,6 +625,13 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.shouldIgnoreMouseEvent = function shouldIgnoreMouseEvent() {
     return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS;
   };
+  _proto.clearTouchDragState = function clearTouchDragState() {
+    if (this.state.isTouchDragging) {
+      this.setState({
+        isTouchDragging: false
+      });
+    }
+  };
   _proto.handleMouseDownEvent = function handleMouseDownEvent(time, event) {
     if (!isPrimaryMouseButton(event)) return;
     if (this.shouldIgnoreMouseEvent()) return;
@@ -690,9 +697,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var _this5 = this;
     this.recordTouchEvent();
     if (this.state.selectionType === null) {
-      this.setState({
-        isTouchDragging: false
-      });
+      this.clearTouchDragState();
       return;
     }
     if (!this.state.isTouchDragging) {
@@ -711,9 +716,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.handleTouchCancelEvent = function handleTouchCancelEvent() {
     this.recordTouchEvent();
     if (this.state.selectionType === null) {
-      this.setState({
-        isTouchDragging: false
-      });
+      this.clearTouchDragState();
       return;
     }
     this.setState({
