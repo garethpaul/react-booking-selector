@@ -26,6 +26,8 @@
   document when possible.
 - Fell back to Date object-tag checks when `instanceof Date` throws in hostile
   host environments.
+- Ignored throwing event default-prevention methods instead of failing keyboard
+  navigation or touch-scroll handling.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

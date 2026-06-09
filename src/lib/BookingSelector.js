@@ -598,7 +598,11 @@ export const preventScroll = (e: ?TouchEvent) => {
 
 const preventDefault = (event: ?PreventableEventType) => {
   if (event && typeof event.preventDefault === 'function') {
-    event.preventDefault()
+    try {
+      event.preventDefault()
+    } catch {
+      // Ignore non-standard event objects that expose throwing default prevention.
+    }
   }
 }
 

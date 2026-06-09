@@ -3618,6 +3618,25 @@ describe('keyboard interaction', () => {
     expect(mondayTen).toHaveFocus()
   })
 
+  it('handles keyboard navigation events when default prevention throws', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const mondayTen = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+    const event = {
+      key: 'ArrowDown',
+      preventDefault() {
+        throw new Error('Cannot prevent default')
+      },
+    }
+
+    mondayNine.focus()
+
+    expect(() => {
+      instance.handleCellKeyDownEvent(event, addHours(startOfDay(startDate), 9))
+    }).not.toThrow()
+    expect(mondayTen).toHaveFocus()
+  })
+
   it('ignores keyboard events without key metadata', () => {
     const changeSpy = jest.fn()
     const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
@@ -3747,6 +3766,16 @@ describe('preventScroll', () => {
     expect(() => {
       preventScroll(null)
       preventScroll({ preventDefault: true })
+    }).not.toThrow()
+  })
+
+  it('ignores events with throwing default prevention', () => {
+    expect(() => {
+      preventScroll({
+        preventDefault() {
+          throw new Error('Cannot prevent default')
+        },
+      })
     }).not.toThrow()
   })
 })
