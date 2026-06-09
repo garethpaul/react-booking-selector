@@ -27,8 +27,8 @@ Priority:
 Next priorities:
 
 - Add visual regression coverage before larger layout or styling changes.
-- Research daylight-saving-time edge cases in the generated day/hour grid before
-  changing date construction semantics.
+- Keep daylight-saving-time placeholder behavior and keyboard navigation covered
+  as the day/hour grid evolves.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.
 - Revisit the ESLint 10 major when the active parser and plugin peer ranges
