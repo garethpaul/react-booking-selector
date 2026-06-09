@@ -1090,6 +1090,26 @@ describe('updateAvailabilityDraft', () => {
     expect(callback).toHaveBeenCalled()
   })
 
+  it('ignores malformed active selection types without changing the visible draft', async () => {
+    const callback = jest.fn()
+    const selected = addHours(startDate, 5)
+    const { instance } = renderSelector()
+
+    await setStateAsync(instance, {
+      selectionDraft: [selected],
+      selectionType: 'toggle',
+      selectionStart: selected,
+      selectionBase: [],
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(selected, callback)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([selected])
+    expect(callback).toHaveBeenCalled()
+  })
+
   it('keeps blocked cells out of selection drafts', async () => {
     const start = addHours(startDate, 5)
     const blocked = addHours(start, 1)

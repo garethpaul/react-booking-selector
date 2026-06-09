@@ -841,7 +841,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const validSelectionStart = getValidDate(selectionStart)
     const validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd)
 
-    if (selectionType === null || !validSelectionStart || (selectionEnd != null && !validSelectionEnd)) {
+    if (
+      (selectionType !== 'add' && selectionType !== 'remove') ||
+      !validSelectionStart ||
+      (selectionEnd != null && !validSelectionEnd)
+    ) {
       if (callback) callback()
       return
     }

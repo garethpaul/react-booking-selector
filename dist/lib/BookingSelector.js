@@ -653,7 +653,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       selectionStart = _this$state.selectionStart;
     var validSelectionStart = getValidDate(selectionStart);
     var validSelectionEnd = selectionEnd == null ? null : getValidDate(selectionEnd);
-    if (selectionType === null || !validSelectionStart || selectionEnd != null && !validSelectionEnd) {
+    if (selectionType !== 'add' && selectionType !== 'remove' || !validSelectionStart || selectionEnd != null && !validSelectionEnd) {
       if (callback) callback();
       return;
     }
