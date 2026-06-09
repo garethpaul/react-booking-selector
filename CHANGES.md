@@ -79,3 +79,4 @@
 - Hardened the docs HTML process shim when a host already defines `window.process` without `env`.
 - Kept generated slot hours stable across daylight-saving-time offset changes.
 - Rendered nonexistent spring-forward hours as placeholders instead of duplicate selectable slots.
+- Kept arrow-key focus on the rendered slot grid across daylight-saving-time placeholders.

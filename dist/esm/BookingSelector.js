@@ -4,7 +4,6 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw = t, e; }
 import * as React from 'react';
 import { addDays } from 'date-fns/addDays';
-import { addHours } from 'date-fns/addHours';
 import { format as formatDate } from 'date-fns/format';
 import { isValid } from 'date-fns/isValid';
 import { startOfDay } from 'date-fns/startOfDay';
@@ -149,12 +148,47 @@ var formatDateHeader = function formatDateHeader(time, dateFormat) {
     return formatDate(time, DEFAULT_DATE_FORMAT);
   }
 };
-var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(time, key) {
-  if (key === 'ArrowRight') return addDays(time, 1);
-  if (key === 'ArrowLeft') return addDays(time, -1);
-  if (key === 'ArrowDown') return addHours(time, 1);
-  if (key === 'ArrowUp') return addHours(time, -1);
+var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
+  var targetKey = dateKey(time);
+  for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
+    var slots = dateColumns[columnIndex].slots;
+    for (var slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+      var slotTime = slots[slotIndex].time;
+      if (slotTime && dateKey(slotTime) === targetKey) return {
+        columnIndex: columnIndex,
+        slotIndex: slotIndex
+      };
+    }
+  }
   return null;
+};
+var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigationTarget(dateColumn, slotIndex, direction) {
+  for (var nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
+    if (nextSlotIndex >= dateColumn.slots.length) return null;
+    var nextTime = dateColumn.slots[nextSlotIndex].time;
+    if (nextTime) return nextTime;
+  }
+  return null;
+};
+export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key) {
+  var position = findDateSlotPosition(dateColumns, time);
+  if (!position) return null;
+  if (key === 'ArrowRight' || key === 'ArrowLeft') {
+    var targetColumnIndex = position.columnIndex + (key === 'ArrowRight' ? 1 : -1);
+    var targetColumn = dateColumns[targetColumnIndex];
+    var targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null;
+    return targetSlot && targetSlot.time ? targetSlot.time : null;
+  }
+  if (key === 'ArrowDown') {
+    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, 1);
+  }
+  if (key === 'ArrowUp') {
+    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, -1);
+  }
+  return null;
+};
+var isKeyboardNavigationKey = function isKeyboardNavigationKey(key) {
+  return key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp';
 };
 var isKeyboardSelectionKey = function isKeyboardSelectionKey(key) {
   return key === 'Enter' || key === ' ' || key === 'Spacebar';
@@ -575,10 +609,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this4 = this;
-    var navigationTarget = getKeyboardNavigationTarget(time, event.key);
-    if (navigationTarget) {
+    if (isKeyboardNavigationKey(event.key)) {
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, event.key);
       event.preventDefault();
-      this.focusDateCell(navigationTarget);
+      if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
     }
     if (blocked || !isKeyboardSelectionKey(event.key)) return;

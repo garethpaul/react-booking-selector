@@ -48,7 +48,7 @@ Selection schemes:
 - `square` selects a rectangular block between the start and end cells.
 - `linear` selects every chronological slot between the start and end cells.
 
-Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. Arrow keys move focus between adjacent slots, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
+Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. Arrow keys move focus across the rendered slot grid, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 
@@ -73,7 +73,7 @@ const renderDateCell = (time, selected, blocked) => (
 
 ## Date and Time Behavior
 
-`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. If `startDate` is omitted or invalid, the grid starts from today. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`. Slots are built from local calendar dates and visible hours so daylight-saving-time offset changes do not shift ordinary wall-clock hours. Nonexistent local hours during spring-forward transitions render as empty placeholders rather than duplicate selectable slots.
+`BookingSelector` uses JavaScript `Date` values in the runtime's local timezone. The `startDate` time portion is ignored, and the grid starts at local midnight for that date. If `startDate` is omitted or invalid, the grid starts from today. `minTime` and `maxTime` are local 24-hour clock values from `0` to `23`. Slots are built from local calendar dates and visible hours so daylight-saving-time offset changes do not shift ordinary wall-clock hours. Nonexistent local hours during spring-forward transitions render as empty placeholders rather than duplicate selectable slots, and keyboard navigation follows the rendered grid instead of normalizing missing hours into another row.
 
 Values in `selection` and `blocked` may be `Date` objects, timestamps, date strings, date-like objects with a numeric `valueOf()`, `null`, or `undefined`, and are normalized to `Date` objects before comparison. Nullish, invalid, malformed, or unsupported values are ignored rather than coerced. Valid values are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
 

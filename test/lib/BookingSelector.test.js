@@ -1,8 +1,13 @@
 import React, { act } from 'react'
-import { addDays, addHours, startOfDay } from 'date-fns'
+import { addDays, addHours, format as formatDate, startOfDay } from 'date-fns'
 import { createEvent, fireEvent, render, waitFor, within } from '@testing-library/react'
 
-import BookingSelector, { buildDateColumns, buildDates, preventScroll } from '../../src/lib/BookingSelector'
+import BookingSelector, {
+  buildDateColumns,
+  buildDates,
+  getKeyboardNavigationTarget,
+  preventScroll,
+} from '../../src/lib/BookingSelector'
 
 const startDate = new Date('2018-01-01T00:00:00.000')
 
@@ -1156,6 +1161,52 @@ describe('prop updates', () => {
     expect(rendered.queryByRole('button', { name: 'Available Sunday, March 10, 2024 at 10 am' })).toBe(null)
   })
 
+  it('keeps horizontal keyboard navigation on the rendered row when a daylight-saving-time hour is missing', () => {
+    const dateColumns = buildDateColumns(
+      {
+        startDate: new Date(2024, 2, 9),
+        numDays: 2,
+        minTime: 1,
+        maxTime: 3,
+      },
+      (day, hour) => {
+        const visibleHour = day.getDate() === 10 && hour === 2 ? 3 : hour
+        return new Date(day.getFullYear(), day.getMonth(), day.getDate(), visibleHour, 0, 0, 0)
+      },
+    )
+    const saturdayTwo = dateColumns[0].slots[1].time
+    const saturdayThree = dateColumns[0].slots[2].time
+    const sundayThree = dateColumns[1].slots[2].time
+
+    expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'ArrowRight')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, saturdayThree, 'ArrowRight')).toBe(sundayThree)
+    expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'ArrowLeft')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, new Date(2040, 0, 1), 'ArrowRight')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'Escape')).toBe(null)
+  })
+
+  it('skips placeholder rows when vertically navigating daylight-saving-time gaps', () => {
+    const dateColumns = buildDateColumns(
+      {
+        startDate: new Date(2024, 2, 10),
+        numDays: 1,
+        minTime: 1,
+        maxTime: 3,
+      },
+      (day, hour) => {
+        const visibleHour = hour === 2 ? 3 : hour
+        return new Date(day.getFullYear(), day.getMonth(), day.getDate(), visibleHour, 0, 0, 0)
+      },
+    )
+    const one = dateColumns[0].slots[0].time
+    const three = dateColumns[0].slots[2].time
+
+    expect(getKeyboardNavigationTarget(dateColumns, one, 'ArrowDown')).toBe(three)
+    expect(getKeyboardNavigationTarget(dateColumns, three, 'ArrowUp')).toBe(one)
+    expect(getKeyboardNavigationTarget(dateColumns, one, 'ArrowUp')).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, three, 'ArrowDown')).toBe(null)
+  })
+
   it('renders no date cells when the time range has no slots', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: 10, maxTime: 9 })
 
@@ -1481,7 +1532,9 @@ describe('cell accessibility', () => {
       maxTime: 0,
     })
 
-    const cell = getByRole('button', { name: 'Available Thursday, January 1, 1970 at 12 am' })
+    const cell = getByRole('button', {
+      name: `Available ${formatDate(startOfDay(epoch), 'EEEE, MMMM d, yyyy')} at 12 am`,
+    })
     expect(cell).toHaveAttribute('aria-pressed', 'false')
     expect(cell).not.toBeDisabled()
   })
@@ -1655,6 +1708,12 @@ describe('keyboard interaction', () => {
     expect(mondayNine).toHaveFocus()
   })
 
+  it('reports when an unblocked focus target is not registered', () => {
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(instance.focusDateCell(addHours(startOfDay(startDate), 10))).toBe(false)
+  })
+
   it('does not move focus outside the rendered grid with arrow keys', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
@@ -1663,6 +1722,16 @@ describe('keyboard interaction', () => {
     fireEvent.keyDown(mondayNine, { key: 'ArrowUp' })
 
     expect(mondayNine).toHaveFocus()
+  })
+
+  it('prevents page scrolling when arrow keys cannot move focus', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const event = createEvent.keyDown(mondayNine, { key: 'ArrowUp' })
+
+    fireEvent(mondayNine, event)
+
+    expect(event.defaultPrevented).toBe(true)
   })
 
   it('does not toggle blocked cells with Enter', () => {
