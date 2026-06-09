@@ -1205,6 +1205,27 @@ describe('componentDidMount', () => {
     removeSpy.mockRestore()
   })
 
+  it('ignores nullish date cells during registration cleanup', () => {
+    const { instance } = renderSelector()
+    const time = addHours(startOfDay(startDate), 7)
+
+    expect(() => {
+      instance.registerDateCell(null, time)
+      instance.unregisterDateCell(null)
+    }).not.toThrow()
+    expect(instance.cellToDate.has(null)).toBe(false)
+    expect(instance.dateToCell.has(time.getTime())).toBe(false)
+  })
+
+  it('ignores nullish date cells when syncing touchmove listeners', () => {
+    const { instance } = renderSelector()
+
+    expect(() => {
+      instance.syncDateCellTouchMoveListener(null, true)
+    }).not.toThrow()
+    expect(instance.touchScrollCells.has(null)).toBe(false)
+  })
+
   it('unregisters date cells even when touchmove listeners cannot be removed', () => {
     const { instance } = renderSelector()
     const cell = { addEventListener: jest.fn(), removeEventListener: true }
@@ -1268,6 +1289,22 @@ describe('componentDidMount', () => {
     expect(instance.dateToCell.get(nextTime.getTime())).toBe(cell)
     expect(instance.touchScrollCells.has(cell)).toBe(true)
     addSpy.mockRestore()
+  })
+
+  it('clears stale date lookup entries when a mounted cell has a malformed previous time', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const staleTime = addHours(startOfDay(startDate), 8)
+    const nextTime = addHours(startOfDay(startDate), 9)
+    instance.cellToDate.set(cell, { getTime: true })
+    instance.dateToCell.set(staleTime.getTime(), cell)
+
+    expect(() => {
+      instance.registerDateCell(cell, nextTime)
+    }).not.toThrow()
+    expect(instance.dateToCell.has(staleTime.getTime())).toBe(false)
+    expect(instance.cellToDate.get(cell)).toEqual(nextTime)
+    expect(instance.dateToCell.get(nextTime.getTime())).toBe(cell)
   })
 
   it('finds a registered date cell from SVG content inside it', () => {

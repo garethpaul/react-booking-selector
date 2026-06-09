@@ -698,14 +698,19 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
   }
 
-  clearDateCellTimeLookup(dateCell: HTMLElement, time: Date) {
-    const registeredTime = dateKey(time)
+  clearDateCellTimeLookup(dateCell: HTMLElement, time: mixed) {
+    const registeredTime = getDateKey(time)
+    if (registeredTime == null) {
+      this.clearDateCellLookup(dateCell)
+      return
+    }
     if (this.dateToCell.get(registeredTime) === dateCell) {
       this.dateToCell.delete(registeredTime)
     }
   }
 
-  syncDateCellTouchMoveListener(dateCell: HTMLElement, shouldPreventTouchScroll: boolean) {
+  syncDateCellTouchMoveListener(dateCell: ?HTMLElement, shouldPreventTouchScroll: boolean) {
+    if (!dateCell) return
     const isPreventingTouchScroll = this.touchScrollCells.has(dateCell)
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       if (typeof dateCell.addEventListener === 'function') {
@@ -720,7 +725,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
   }
 
-  registerDateCell(dateCell: HTMLElement, time: mixed, shouldPreventTouchScroll: boolean = true) {
+  registerDateCell(dateCell: ?HTMLElement, time: mixed, shouldPreventTouchScroll: boolean = true) {
+    if (!dateCell) return
     const validTime = getValidDate(time)
     const previousTime = this.cellToDate.get(dateCell)
     if (this.cellToDate.has(dateCell) && previousTime) {
@@ -735,7 +741,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
   }
 
-  unregisterDateCell(dateCell: HTMLElement) {
+  unregisterDateCell(dateCell: ?HTMLElement) {
+    if (!dateCell) return
     const time = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) return
     this.syncDateCellTouchMoveListener(dateCell, false)

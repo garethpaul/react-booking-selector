@@ -516,12 +516,17 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     });
   };
   _proto.clearDateCellTimeLookup = function clearDateCellTimeLookup(dateCell, time) {
-    var registeredTime = dateKey(time);
+    var registeredTime = getDateKey(time);
+    if (registeredTime == null) {
+      this.clearDateCellLookup(dateCell);
+      return;
+    }
     if (this.dateToCell.get(registeredTime) === dateCell) {
       this.dateToCell.delete(registeredTime);
     }
   };
   _proto.syncDateCellTouchMoveListener = function syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll) {
+    if (!dateCell) return;
     var isPreventingTouchScroll = this.touchScrollCells.has(dateCell);
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       if (typeof dateCell.addEventListener === 'function') {
@@ -541,6 +546,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (shouldPreventTouchScroll === void 0) {
       shouldPreventTouchScroll = true;
     }
+    if (!dateCell) return;
     var validTime = getValidDate(time);
     var previousTime = this.cellToDate.get(dateCell);
     if (this.cellToDate.has(dateCell) && previousTime) {
@@ -555,6 +561,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     }
   };
   _proto.unregisterDateCell = function unregisterDateCell(dateCell) {
+    if (!dateCell) return;
     var time = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) return;
     this.syncDateCellTouchMoveListener(dateCell, false);
