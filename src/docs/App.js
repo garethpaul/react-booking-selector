@@ -80,6 +80,10 @@ const ExternalLink = styled.a`
   text-decoration: none;
   margin: 5px;
   &:focus {
+    outline: 2px solid #599af2;
+    outline-offset: 3px;
+  }
+  &:focus:not(:focus-visible) {
     outline: none;
   }
   &:focus-visible {

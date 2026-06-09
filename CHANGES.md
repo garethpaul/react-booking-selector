@@ -33,6 +33,8 @@
   already idle.
 - Rejected decoded null-byte docs smoke server paths with `400 Bad request`
   instead of letting invalid filesystem paths throw.
+- Kept the docs GitHub link focus outline visible in browsers without
+  `:focus-visible` support.
 
 ## 2026-06-08
 

@@ -17,6 +17,9 @@ it('renders the GitHub link as a safe external link', () => {
   expect(link).toHaveAttribute('href', 'https://github.com/garethpaul/react-booking-selector')
   expect(link).toHaveAttribute('target', '_blank')
   expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  expect(link).toHaveStyleRule('outline', '2px solid #599af2', { modifier: ':focus' })
+  expect(link).toHaveStyleRule('outline', 'none', { modifier: ':focus:not(:focus-visible)' })
+  expect(link).toHaveStyleRule('outline', '2px solid #599af2', { modifier: ':focus-visible' })
 })
 
 it('updates the visible selection count when the demo grid changes', async () => {
