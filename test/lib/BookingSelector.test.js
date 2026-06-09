@@ -3572,6 +3572,39 @@ describe('cell accessibility', () => {
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
   })
 
+  it('derives prop state with captured Array statics when globals change later', () => {
+    const originalArrayFrom = Array.from
+    const originalIsArray = Array.isArray
+    const selected = addHours(startOfDay(startDate), 9)
+    const rendered = renderSelector({
+      selection: [selected],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const props = rendered.instance.props
+    const state = rendered.instance.state
+    let derivedState
+
+    try {
+      Array.from = () => {
+        throw new Error('Unexpected Array.from call')
+      }
+      Array.isArray = () => {
+        throw new Error('Unexpected Array.isArray call')
+      }
+
+      derivedState = BookingSelector.getDerivedStateFromProps(props, state)
+    } finally {
+      Array.from = originalArrayFrom
+      Array.isArray = originalIsArray
+      rendered.unmount()
+    }
+
+    expect(derivedState).toBe(null)
+  })
+
   it('normalizes Date values created in another JavaScript realm', () => {
     const crossRealmStartDate = withThrowingDateCoercion(createCrossRealmDate('2018-01-01T00:00:00.000'))
     const selected = withThrowingDateCoercion(createCrossRealmDate('2018-01-01T09:00:00.000'))

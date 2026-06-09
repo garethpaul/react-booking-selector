@@ -111,11 +111,14 @@ const dateGetHours = DateConstructor.prototype.getHours
 const dateSetDate = DateConstructor.prototype.setDate
 const dateSetHours = DateConstructor.prototype.setHours
 const dateNow = DateConstructor.now
+const ArrayConstructor = Array
+const arrayFrom = ArrayConstructor.from
 const arrayFilter = Array.prototype.filter
 const arrayForEach = Array.prototype.forEach
 const arrayJoin = Array.prototype.join
 const arrayMap = Array.prototype.map
 const arraySort = Array.prototype.sort
+const isArray = ArrayConstructor.isArray
 
 const getCurrentTimestamp = (): number => {
   try {
@@ -169,7 +172,7 @@ const toDate = (value: DateValueType): Date => {
 }
 
 const normalizeDates = (dates: DateListType): Array<Date> => {
-  const dateValues = Array.isArray(dates) ? dates : []
+  const dateValues = isArray(dates) ? dates : []
   return arrayFilter.call(arrayMap.call(dateValues, toDate), (date) => getDateTimestamp(date) != null)
 }
 
@@ -188,7 +191,7 @@ const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: mixed): boolean => 
 }
 
 const getDateMinuteSetSignature = (dates: DateListType): string => {
-  const dateMinuteKeys = Array.from(new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)))
+  const dateMinuteKeys = arrayFrom.call(ArrayConstructor, new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)))
   arraySort.call(dateMinuteKeys, (a, b) => a - b)
   return arrayJoin.call(dateMinuteKeys, '|')
 }
@@ -340,7 +343,7 @@ const formatDateHeader = (time: Date, dateFormat: string): string => {
 }
 
 const getDateColumnSlots = (dateColumn: ?DateColumnType): Array<DateSlotType> =>
-  dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : []
+  dateColumn && isArray(dateColumn.slots) ? dateColumn.slots : []
 
 const getDateSlotTime = (dateSlot: ?DateSlotType): ?Date => (dateSlot ? getValidDate(dateSlot.time) : null)
 

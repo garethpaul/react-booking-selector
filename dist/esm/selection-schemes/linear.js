@@ -1,10 +1,11 @@
 import * as dateUtils from '../date-utils.js';
+var isArray = Array.isArray;
 var collectMatchingDates = function collectMatchingDates(dateList, matches) {
   var selected = [];
-  if (!Array.isArray(dateList)) return selected;
+  if (!isArray(dateList)) return selected;
   for (var dayIndex = 0; dayIndex < dateList.length; dayIndex += 1) {
     var dayOfTimes = dateList[dayIndex];
-    if (!Array.isArray(dayOfTimes)) continue;
+    if (!isArray(dayOfTimes)) continue;
     for (var timeIndex = 0; timeIndex < dayOfTimes.length; timeIndex += 1) {
       var time = dayOfTimes[timeIndex];
       if (matches(time)) selected.push(time);

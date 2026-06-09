@@ -132,4 +132,22 @@ describe('linear selection scheme', () => {
 
     expect(toTimeValues(result)).toEqual(toTimeValues(dayOfTimes))
   })
+
+  test('it validates date lists with the captured Array.isArray when the global changes later', () => {
+    const originalIsArray = Array.isArray
+    const dayOfTimes = [dates[0][8], dates[0][9], dates[0][10]]
+    let result
+
+    try {
+      Array.isArray = () => {
+        throw new Error('Unexpected Array.isArray call')
+      }
+
+      result = linear(dayOfTimes[0], dayOfTimes[2], [dayOfTimes])
+    } finally {
+      Array.isArray = originalIsArray
+    }
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(dayOfTimes))
+  })
 })

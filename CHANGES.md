@@ -48,6 +48,8 @@
   later Array prototype changes cannot break drag selection.
 - Captured Array callbacks for selection normalization, draft updates, and grid
   rendering so shadowed array helpers cannot break component behavior.
+- Captured Array statics used by component and selection-scheme normalization so
+  later global replacements cannot break date-list checks.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

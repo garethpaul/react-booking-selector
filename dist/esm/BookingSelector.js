@@ -48,11 +48,14 @@ var dateGetHours = DateConstructor.prototype.getHours;
 var dateSetDate = DateConstructor.prototype.setDate;
 var dateSetHours = DateConstructor.prototype.setHours;
 var dateNow = DateConstructor.now;
+var ArrayConstructor = Array;
+var arrayFrom = ArrayConstructor.from;
 var arrayFilter = Array.prototype.filter;
 var arrayForEach = Array.prototype.forEach;
 var arrayJoin = Array.prototype.join;
 var arrayMap = Array.prototype.map;
 var arraySort = Array.prototype.sort;
+var isArray = ArrayConstructor.isArray;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
     if (typeof Date.now === 'function') {
@@ -99,7 +102,7 @@ var toDate = function toDate(value) {
   }
 };
 var normalizeDates = function normalizeDates(dates) {
-  var dateValues = Array.isArray(dates) ? dates : [];
+  var dateValues = isArray(dates) ? dates : [];
   return arrayFilter.call(arrayMap.call(dateValues, toDate), function (date) {
     return getDateTimestamp(date) != null;
   });
@@ -119,7 +122,7 @@ var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
   return key != null && dateMinuteKeys.has(key);
 };
 var getDateMinuteSetSignature = function getDateMinuteSetSignature(dates) {
-  var dateMinuteKeys = Array.from(new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)));
+  var dateMinuteKeys = arrayFrom.call(ArrayConstructor, new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)));
   arraySort.call(dateMinuteKeys, function (a, b) {
     return a - b;
   });
@@ -262,7 +265,7 @@ var formatDateHeader = function formatDateHeader(time, dateFormat) {
   }
 };
 var getDateColumnSlots = function getDateColumnSlots(dateColumn) {
-  return dateColumn && Array.isArray(dateColumn.slots) ? dateColumn.slots : [];
+  return dateColumn && isArray(dateColumn.slots) ? dateColumn.slots : [];
 };
 var getDateSlotTime = function getDateSlotTime(dateSlot) {
   return dateSlot ? getValidDate(dateSlot.time) : null;
