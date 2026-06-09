@@ -19,7 +19,7 @@ const createChunk = (type, data) => {
   return Buffer.concat([length, Buffer.from(type), data, Buffer.alloc(4)])
 }
 
-const writePng = (filePath, width, height) => {
+const writePng = (filePath, width, height, blank = false) => {
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(width, 0)
   ihdr.writeUInt32BE(height, 4)
@@ -32,9 +32,9 @@ const writePng = (filePath, width, height) => {
     row[0] = 0
     for (let x = 0; x < width; x += 1) {
       const offset = 1 + x * 3
-      row[offset] = x % 256
-      row[offset + 1] = y % 256
-      row[offset + 2] = (x + y) % 256
+      row[offset] = blank ? 255 : x % 256
+      row[offset + 1] = blank ? 255 : y % 256
+      row[offset + 2] = blank ? 255 : (x + y) % 256
     }
     rows.push(row)
   }
@@ -61,7 +61,7 @@ const screenshotArg = args.find((arg) => arg.startsWith('--screenshot='))
 if (screenshotArg) {
   const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
   const [width, height] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
-  writePng(screenshotArg.replace('--screenshot=', ''), width, height)
+  writePng(screenshotArg.replace('--screenshot=', ''), width, height, process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1')
   process.exit(0)
 }
 
@@ -91,6 +91,19 @@ const writeFakeChrome = (projectPath) => {
   return fakeChromePath
 }
 
+const runSmoke = (projectPath, fakeChromePath, env = {}) =>
+  execFileSync(process.execPath, [scriptPath], {
+    cwd: projectPath,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: {
+      ...process.env,
+      CHROME_BIN: fakeChromePath,
+      TMPDIR: projectPath,
+      ...env,
+    },
+  })
+
 describe('smoke-docs script', () => {
   const tempPaths = []
 
@@ -105,18 +118,21 @@ describe('smoke-docs script', () => {
     tempPaths.push(projectPath)
     const fakeChromePath = writeFakeChrome(projectPath)
 
-    const output = execFileSync(process.execPath, [scriptPath], {
-      cwd: projectPath,
-      encoding: 'utf8',
-      env: {
-        ...process.env,
-        CHROME_BIN: fakeChromePath,
-      },
-    })
+    const output = runSmoke(projectPath, fakeChromePath)
     const screenshotDirectory = output.match(/Screenshots: (.+)\n/u)
 
     expect(screenshotDirectory).not.toBe(null)
     tempPaths.push(screenshotDirectory[1])
     expect(output).toContain('Docs smoke passed. Screenshots:')
+  })
+
+  it('fails when screenshots look blank', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_BLANK_SCREENSHOTS: '1' })
+    }).toThrow(/desktop screenshot looks blank/u)
   })
 })

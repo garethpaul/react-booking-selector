@@ -18,6 +18,7 @@
 - Added regression coverage for in-place `blocked` prop array updates.
 - Hardened selection-scheme helpers so sparse day buckets are skipped instead
   of throwing.
+- Added docs smoke regression coverage for blank screenshot failures.
 
 ## 2026-06-08
 
