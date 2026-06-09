@@ -13,6 +13,10 @@
     "type": "git",
     "url": "git+https://github.com/garethpaul/react-booking-selector.git"
   },
+  "bugs": {
+    "url": "https://github.com/garethpaul/react-booking-selector/issues"
+  },
+  "homepage": "https://github.com/garethpaul/react-booking-selector#readme",
   "keywords": [
     "react",
     "styled-components",
