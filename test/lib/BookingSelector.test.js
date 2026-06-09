@@ -2516,6 +2516,17 @@ describe('prop updates', () => {
     expect(rendered.instance.dates).toEqual([[addHours(startOfDay(currentDate), 9)]])
   })
 
+  it('uses valid startDate values without calling overwritten instance methods', () => {
+    const mutatedStartDate = new Date(2032, 4, 15, 12)
+    mutatedStartDate.getTime = () => {
+      throw new Error('Unexpected startDate getTime call')
+    }
+
+    const rendered = renderSelector({ startDate: mutatedStartDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(rendered.instance.dates).toEqual([[new Date(2032, 4, 15, 9)]])
+  })
+
   it('uses the current day when startDate is not a Date object', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()
@@ -3043,6 +3054,63 @@ describe('cell accessibility', () => {
       'true',
     )
     expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
+  })
+
+  it('normalizes Date values without calling overwritten instance methods', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 10)
+    const selectedWithThrowingGetTime = new Date(selected)
+    const blockedWithThrowingGetTime = new Date(blocked)
+    selectedWithThrowingGetTime.getTime = () => {
+      throw new Error('Unexpected selected date getTime call')
+    }
+    blockedWithThrowingGetTime.getTime = () => {
+      throw new Error('Unexpected blocked date getTime call')
+    }
+
+    const { getByRole } = renderSelector({
+      selection: [selectedWithThrowingGetTime],
+      blocked: [blockedWithThrowingGetTime],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
+  })
+
+  it('ignores Date values when intrinsic timestamp reads fail', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const originalGetTime = Date.prototype.getTime
+    let rendered
+    Date.prototype.getTime = function getTime() {
+      if (this === selected) {
+        throw new Error('Unexpected selected date timestamp read')
+      }
+      return originalGetTime.call(this)
+    }
+
+    try {
+      rendered = renderSelector({
+        selection: [selected],
+        startDate,
+        numDays: 1,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      Date.prototype.getTime = originalGetTime
+    }
+
+    expect(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
   })
 
   it('ignores unsupported values instead of coercing them into dates', () => {

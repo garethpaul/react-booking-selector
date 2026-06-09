@@ -3,7 +3,6 @@ import * as React from 'react'
 
 import { addDays } from 'date-fns/addDays'
 import { format as formatDate } from 'date-fns/format'
-import { isValid } from 'date-fns/isValid'
 import { startOfDay } from 'date-fns/startOfDay'
 
 import styled from './styled.js'
@@ -97,9 +96,22 @@ const getNonEmptyString = (value: mixed): ?string => {
 
 const invalidDate = (): Date => new Date(NaN)
 
+const getDateTimestamp = (value: mixed): ?number => {
+  if (!(value instanceof Date)) return null
+  try {
+    const timestamp = Date.prototype.getTime.call(value)
+    return Number.isFinite(timestamp) ? timestamp : null
+  } catch {
+    return null
+  }
+}
+
 const toDate = (value: DateValueType): Date => {
   if (value == null) return invalidDate()
-  if (value instanceof Date) return new Date(value.getTime())
+  if (value instanceof Date) {
+    const timestamp = getDateTimestamp(value)
+    return timestamp == null ? invalidDate() : new Date(timestamp)
+  }
   if (typeof value === 'string' || typeof value === 'number') return new Date(value)
   if (typeof value !== 'object') return invalidDate()
 
@@ -112,11 +124,11 @@ const toDate = (value: DateValueType): Date => {
 }
 
 const normalizeDates = (dates: DateListType): Array<Date> =>
-  (Array.isArray(dates) ? dates : []).map(toDate).filter(isValid)
+  (Array.isArray(dates) ? dates : []).map(toDate).filter((date) => getDateTimestamp(date) != null)
 
-const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
+const dateMinuteKey = (value: Date): number => Math.floor(Date.prototype.getTime.call(value) / 60000)
 
-const getValidDate = (value: mixed): ?Date => (value instanceof Date && isValid(value) ? value : null)
+const getValidDate = (value: mixed): ?Date => (getDateTimestamp(value) == null ? null : (value: any))
 
 const getDateMinuteKey = (value: mixed): ?number => {
   const validDate = getValidDate(value)
@@ -153,8 +165,7 @@ const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDate
 
 const getDateListSignature = (dates: DateListType): string => normalizeSelectionDraft(dates).map(dateKey).join('|')
 
-const getStartDate = (startDate: ?Date): Date =>
-  startDate instanceof Date && isValid(startDate) ? startDate : new Date()
+const getStartDate = (startDate: ?Date): Date => getValidDate(startDate) || new Date()
 
 const getNumberSignaturePart = (value: mixed): string =>
   typeof value === 'number' ? `number:${value}` : `invalid:${typeof value}`
@@ -356,7 +367,7 @@ const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key 
 const isPrimaryMouseButton = (event?: MouseSelectionEventType): boolean =>
   !event || event.button == null || event.button === 0
 
-const dateKey = (time: Date): number => time.getTime()
+const dateKey = (time: Date): number => Date.prototype.getTime.call(time)
 
 const getDateKey = (time: mixed): ?number => {
   const validDate = getValidDate(time)

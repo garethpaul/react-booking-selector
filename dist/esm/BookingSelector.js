@@ -5,7 +5,6 @@ function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw
 import * as React from 'react';
 import { addDays } from 'date-fns/addDays';
 import { format as formatDate } from 'date-fns/format';
-import { isValid } from 'date-fns/isValid';
 import { startOfDay } from 'date-fns/startOfDay';
 import styled from './styled.js';
 import { Text, Subtitle } from './typography.js';
@@ -41,26 +40,40 @@ var getNonEmptyString = function getNonEmptyString(value) {
 var invalidDate = function invalidDate() {
   return new Date(NaN);
 };
+var getDateTimestamp = function getDateTimestamp(value) {
+  if (!(value instanceof Date)) return null;
+  try {
+    var timestamp = Date.prototype.getTime.call(value);
+    return Number.isFinite(timestamp) ? timestamp : null;
+  } catch (_unused) {
+    return null;
+  }
+};
 var toDate = function toDate(value) {
   if (value == null) return invalidDate();
-  if (value instanceof Date) return new Date(value.getTime());
+  if (value instanceof Date) {
+    var timestamp = getDateTimestamp(value);
+    return timestamp == null ? invalidDate() : new Date(timestamp);
+  }
   if (typeof value === 'string' || typeof value === 'number') return new Date(value);
   if (typeof value !== 'object') return invalidDate();
   try {
     var primitiveValue = value.valueOf();
     return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate();
-  } catch (_unused) {
+  } catch (_unused2) {
     return invalidDate();
   }
 };
 var normalizeDates = function normalizeDates(dates) {
-  return (Array.isArray(dates) ? dates : []).map(toDate).filter(isValid);
+  return (Array.isArray(dates) ? dates : []).map(toDate).filter(function (date) {
+    return getDateTimestamp(date) != null;
+  });
 };
 var dateMinuteKey = function dateMinuteKey(value) {
-  return Math.floor(value.getTime() / 60000);
+  return Math.floor(Date.prototype.getTime.call(value) / 60000);
 };
 var getValidDate = function getValidDate(value) {
-  return value instanceof Date && isValid(value) ? value : null;
+  return getDateTimestamp(value) == null ? null : value;
 };
 var getDateMinuteKey = function getDateMinuteKey(value) {
   var validDate = getValidDate(value);
@@ -96,7 +109,7 @@ var getDateListSignature = function getDateListSignature(dates) {
   return normalizeSelectionDraft(dates).map(dateKey).join('|');
 };
 var getStartDate = function getStartDate(startDate) {
-  return startDate instanceof Date && isValid(startDate) ? startDate : new Date();
+  return getValidDate(startDate) || new Date();
 };
 var getNumberSignaturePart = function getNumberSignaturePart(value) {
   return typeof value === 'number' ? "number:" + value : "invalid:" + typeof value;
@@ -131,7 +144,7 @@ var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
   try {
     var time = createTime(day, hour);
     return time instanceof Date && localTimeExists(day, hour, time) ? time : null;
-  } catch (_unused2) {
+  } catch (_unused3) {
     return null;
   }
 };
@@ -193,7 +206,7 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
     return formatDate(time, dateFormat);
-  } catch (_unused3) {
+  } catch (_unused4) {
     return formatDate(time, DEFAULT_DATE_FORMAT);
   }
 };
@@ -263,7 +276,7 @@ var isPrimaryMouseButton = function isPrimaryMouseButton(event) {
   return !event || event.button == null || event.button === 0;
 };
 var dateKey = function dateKey(time) {
-  return time.getTime();
+  return Date.prototype.getTime.call(time);
 };
 var getDateKey = function getDateKey(time) {
   var validDate = getValidDate(time);
@@ -510,7 +523,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused4) {
+        } catch (_unused5) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -552,7 +565,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused5) {
+        } catch (_unused6) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -560,7 +573,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused6) {
+        } catch (_unused7) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -776,7 +789,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused7) {
+    } catch (_unused8) {
       return false;
     }
   };
