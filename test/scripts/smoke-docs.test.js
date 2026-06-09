@@ -13,15 +13,34 @@ const http = require('http')
 const zlib = require('zlib')
 
 const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+const crc32Table = Array.from({ length: 256 }, (unused, value) => {
+  let crc = value
+  for (let bit = 0; bit < 8; bit += 1) {
+    crc = crc & 1 ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1
+  }
+  return crc >>> 0
+})
 
-const createChunk = (type, data) => {
-  const length = Buffer.alloc(4)
-  length.writeUInt32BE(data.length, 0)
-  return Buffer.concat([length, Buffer.from(type), data, Buffer.alloc(4)])
+const getCrc32 = (buffer) => {
+  let crc = 0xffffffff
+  for (let index = 0; index < buffer.length; index += 1) {
+    crc = crc32Table[(crc ^ buffer[index]) & 0xff] ^ (crc >>> 8)
+  }
+  return (crc ^ 0xffffffff) >>> 0
 }
 
-const createPng = (width, height, blank = false, complete = true) => {
-  const ihdr = Buffer.alloc(13)
+const createChunk = (type, data, corruptCrc = false) => {
+  const length = Buffer.alloc(4)
+  const chunkType = Buffer.from(type)
+  const crc = Buffer.alloc(4)
+  const checksum = getCrc32(Buffer.concat([chunkType, data]))
+  length.writeUInt32BE(data.length, 0)
+  crc.writeUInt32BE(corruptCrc ? (checksum ^ 0xffffffff) >>> 0 : checksum, 0)
+  return Buffer.concat([length, chunkType, data, crc])
+}
+
+const createPng = (width, height, blank = false, complete = true, options = {}) => {
+  const ihdr = Buffer.alloc(options.extraHeaderData ? 14 : 13)
   ihdr.writeUInt32BE(width, 0)
   ihdr.writeUInt32BE(height, 4)
   ihdr[8] = 8
@@ -40,13 +59,17 @@ const createPng = (width, height, blank = false, complete = true) => {
     rows.push(row)
   }
 
-  const chunks = [pngSignature, createChunk('IHDR', ihdr), createChunk('IDAT', zlib.deflateSync(Buffer.concat(rows)))]
+  const chunks = [
+    pngSignature,
+    createChunk('IHDR', ihdr),
+    createChunk('IDAT', zlib.deflateSync(Buffer.concat(rows)), options.corruptCrc),
+  ]
   if (complete) chunks.push(createChunk('IEND', Buffer.alloc(0)))
   return Buffer.concat(chunks)
 }
 
-const writePng = (filePath, width, height, blank = false) => {
-  fs.writeFileSync(filePath, createPng(width, height, blank))
+const writePng = (filePath, width, height, blank = false, options = {}) => {
+  fs.writeFileSync(filePath, createPng(width, height, blank, true, options))
 }
 
 const writeIncompletePng = (filePath, width, height) => {
@@ -94,7 +117,10 @@ if (screenshotArg) {
     if (process.env.FAKE_CHROME_INCOMPLETE_SCREENSHOTS === '1') {
       writeIncompletePng(screenshotPath, width, height)
     } else {
-      writePng(screenshotPath, width, height, process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1')
+      writePng(screenshotPath, width, height, process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1', {
+        corruptCrc: process.env.FAKE_CHROME_BAD_SCREENSHOT_CRC === '1',
+        extraHeaderData: process.env.FAKE_CHROME_EXTRA_IHDR_DATA === '1',
+      })
     }
     process.exit(0)
   })
@@ -228,6 +254,26 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_INCOMPLETE_SCREENSHOTS: '1' })
     }).toThrow(/desktop\.png is missing PNG terminator/u)
+  })
+
+  it('fails clearly when screenshot PNG chunk checksums are invalid', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_BAD_SCREENSHOT_CRC: '1' })
+    }).toThrow(/desktop\.png has invalid IDAT PNG chunk checksum/u)
+  })
+
+  it('fails clearly when screenshots have malformed PNG headers', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    expect(() => {
+      runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_EXTRA_IHDR_DATA: '1' })
+    }).toThrow(/desktop\.png has invalid PNG header length 14/u)
   })
 
   it('fails when a checked viewport has horizontal layout overflow', () => {

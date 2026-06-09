@@ -63,6 +63,21 @@ const expectedDomSnippets = [
 ]
 const chromeTimeoutMs = 30000
 const layoutSmokeAttempts = 3
+const crc32Table = Array.from({ length: 256 }, (unused, value) => {
+  let crc = value
+  for (let bit = 0; bit < 8; bit += 1) {
+    crc = crc & 1 ? 0xedb88320 ^ (crc >>> 1) : crc >>> 1
+  }
+  return crc >>> 0
+})
+
+const getCrc32 = (buffer) => {
+  let crc = 0xffffffff
+  for (let index = 0; index < buffer.length; index += 1) {
+    crc = crc32Table[(crc ^ buffer[index]) & 0xff] ^ (crc >>> 8)
+  }
+  return (crc ^ 0xffffffff) >>> 0
+}
 
 const sendResponse = (response, statusCode, body) => {
   response.writeHead(statusCode, { 'content-type': 'text/plain; charset=utf-8' })
@@ -297,9 +312,14 @@ const parsePng = (filePath) => {
       throw new Error(`${filePath} has a truncated ${type} PNG chunk`)
     }
     const data = png.subarray(dataStart, dataEnd)
+    const expectedCrc = png.readUInt32BE(dataEnd)
+    const actualCrc = getCrc32(png.subarray(offset + 4, dataEnd))
+    if (actualCrc !== expectedCrc) {
+      throw new Error(`${filePath} has invalid ${type} PNG chunk checksum`)
+    }
 
     if (type === 'IHDR') {
-      if (length < 13) throw new Error(`${filePath} has a truncated PNG header`)
+      if (length !== 13) throw new Error(`${filePath} has invalid PNG header length ${length}`)
       width = data.readUInt32BE(0)
       height = data.readUInt32BE(4)
       bitDepth = data[8]

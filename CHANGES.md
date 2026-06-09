@@ -34,6 +34,8 @@
   throwing `window.process` setters.
 - Fell back to a captured `Date.now` when touch/mouse suppression clocks are
   later overwritten or throw.
+- Verified docs smoke PNG chunk checksums and exact header lengths before
+  accepting screenshots.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do
