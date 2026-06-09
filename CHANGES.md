@@ -51,6 +51,7 @@
 - Finished selection cleanup callbacks even when no draft update can run.
 - Reset wrapper and grid minimum widths for flex host layouts.
 - Refreshed idle controlled selection drafts when prop order changes.
+- Ignored non-callable listener cleanup entries during unmount.
 
 ## 2026-06-08
 

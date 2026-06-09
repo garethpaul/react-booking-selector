@@ -1209,6 +1209,17 @@ describe('componentWillUnmount', () => {
     expect(instance.cellToDate.size).toBe(0)
   })
 
+  it('ignores registered date cell entries with non-callable listener cleanup', () => {
+    const { instance, unmount } = renderSelector()
+    const mockDateCell = { removeEventListener: true }
+    instance.cellToDate.set(mockDateCell, new Date())
+
+    expect(() => {
+      unmount()
+    }).not.toThrow()
+    expect(instance.cellToDate.size).toBe(0)
+  })
+
   it('unregisters cells even when no previous time is tracked', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')

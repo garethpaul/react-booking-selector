@@ -465,7 +465,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
   _proto.componentWillUnmount = function componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
     this.cellToDate.forEach(function (value, dateCell) {
-      if (dateCell && dateCell.removeEventListener) {
+      if (dateCell && typeof dateCell.removeEventListener === 'function') {
         dateCell.removeEventListener('touchmove', preventScroll);
       }
     });

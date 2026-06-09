@@ -631,7 +631,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
     this.cellToDate.forEach((value, dateCell) => {
-      if (dateCell && dateCell.removeEventListener) {
+      if (dateCell && typeof dateCell.removeEventListener === 'function') {
         dateCell.removeEventListener('touchmove', preventScroll)
       }
     })
