@@ -21,6 +21,8 @@
 - Added docs smoke regression coverage for blank screenshot failures.
 - Tightened docs smoke DOM checks to assert representative available and
   blocked slot labels survive the production bundle.
+- Returned `400 Bad request` for malformed docs smoke server paths instead of
+  letting malformed percent-encoding crash the smoke process.
 
 ## 2026-06-08
 

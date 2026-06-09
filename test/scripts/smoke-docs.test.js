@@ -9,6 +9,7 @@ const fakeChromeScript = `#!/usr/bin/env node
 'use strict'
 
 const fs = require('fs')
+const http = require('http')
 const zlib = require('zlib')
 
 const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
@@ -52,6 +53,31 @@ const writePng = (filePath, width, height, blank = false) => {
 
 const args = process.argv.slice(2)
 
+const requestSmokePath = (targetUrl, callback) => {
+  const requestPath = process.env.FAKE_CHROME_REQUEST_PATH
+  if (!requestPath) {
+    callback()
+    return
+  }
+
+  const expectedStatus = Number(process.env.FAKE_CHROME_EXPECT_STATUS || 200)
+  http
+    .get(new URL(requestPath, targetUrl), (response) => {
+      response.resume()
+      response.on('end', () => {
+        if (response.statusCode !== expectedStatus) {
+          process.stderr.write('Expected smoke server status ' + expectedStatus + ', received ' + response.statusCode)
+          process.exit(1)
+        }
+        callback()
+      })
+    })
+    .on('error', (error) => {
+      process.stderr.write(error.message)
+      process.exit(1)
+    })
+}
+
 if (args.includes('--version')) {
   process.stdout.write('Fake Chrome 1.0\\n')
   process.exit(0)
@@ -61,24 +87,33 @@ const screenshotArg = args.find((arg) => arg.startsWith('--screenshot='))
 if (screenshotArg) {
   const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
   const [width, height] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
-  writePng(screenshotArg.replace('--screenshot=', ''), width, height, process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1')
-  process.exit(0)
+  requestSmokePath(args[args.length - 1], () => {
+    writePng(
+      screenshotArg.replace('--screenshot=', ''),
+      width,
+      height,
+      process.env.FAKE_CHROME_BLANK_SCREENSHOTS === '1',
+    )
+    process.exit(0)
+  })
 }
 
 if (args.includes('--dump-dom')) {
-  const buttons = [
-    '<button aria-label="Available Monday, April 6, 2020 at 8 am"></button>',
-    '<button aria-label="Blocked Wednesday, April 8, 2020 at 10 am"></button>',
-    ...Array.from({ length: 68 }, () => '<button></button>'),
-  ].join('')
-  process.stdout.write(
-    '<!doctype html><html><head><title>React Booking Selector</title></head><body><main>' +
-      '<p id="booking-selector-demo-status" role="status">0 selected - 3 blocked</p>' +
-      '<div role="group" aria-describedby="booking-selector-demo-status" aria-label="Booking time slots">' +
-      buttons +
-      '</div></main></body></html>',
-  )
-  process.exit(0)
+  requestSmokePath(args[args.length - 1], () => {
+    const buttons = [
+      '<button aria-label="Available Monday, April 6, 2020 at 8 am"></button>',
+      '<button aria-label="Blocked Wednesday, April 8, 2020 at 10 am"></button>',
+      ...Array.from({ length: 68 }, () => '<button></button>'),
+    ].join('')
+    process.stdout.write(
+      '<!doctype html><html><head><title>React Booking Selector</title></head><body><main>' +
+        '<p id="booking-selector-demo-status" role="status">0 selected - 3 blocked</p>' +
+        '<div role="group" aria-describedby="booking-selector-demo-status" aria-label="Booking time slots">' +
+        buttons +
+        '</div></main></body></html>',
+    )
+    process.exit(0)
+  })
 }
 `
 
@@ -138,5 +173,18 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_BLANK_SCREENSHOTS: '1' })
     }).toThrow(/desktop screenshot looks blank/u)
+  })
+
+  it('handles malformed docs server request paths', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, {
+      FAKE_CHROME_EXPECT_STATUS: '400',
+      FAKE_CHROME_REQUEST_PATH: '/%E0%A4%A',
+    })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
   })
 })

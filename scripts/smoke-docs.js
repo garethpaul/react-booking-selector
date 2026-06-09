@@ -60,8 +60,14 @@ const isInsideDocsRoot = (filePath) => filePath === docsRoot || filePath.startsW
 
 const createDocsServer = () =>
   http.createServer((request, response) => {
-    const requestUrl = new URL(request.url || '/', 'http://127.0.0.1')
-    const pathname = decodeURIComponent(requestUrl.pathname)
+    let pathname
+    try {
+      const requestUrl = new URL(request.url || '/', 'http://127.0.0.1')
+      pathname = decodeURIComponent(requestUrl.pathname)
+    } catch {
+      sendResponse(response, 400, 'Bad request')
+      return
+    }
     const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '')
     const filePath = path.resolve(docsRoot, relativePath)
 
