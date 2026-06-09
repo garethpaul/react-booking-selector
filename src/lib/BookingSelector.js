@@ -78,6 +78,8 @@ const toCssUnit = (value: ?(number | string)): string => {
   return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
 }
 
+const toCssColor = (value: mixed, fallback: string): string => (typeof value === 'string' ? value : fallback)
+
 const invalidDate = (): Date => new Date(NaN)
 
 const toDate = (value: DateValueType): Date => {
@@ -427,12 +429,18 @@ const DateCell = styled.div`
   transition:
     background-color 120ms ease,
     transform 120ms ease;
-  ${(props) => props.$selected && !props.$blocked && `background-color: ${props.$selectedColor};`}
-  ${(props) => !props.$selected && !props.$blocked && `background-color: ${props.$unselectedColor};`}
-  ${(props) => props.$blocked && `background-color: ${props.$blockedColor};`}
+  ${(props) =>
+    props.$selected && !props.$blocked && `background-color: ${toCssColor(props.$selectedColor, colors.blue)};`}
+  ${(props) =>
+    !props.$selected && !props.$blocked && `background-color: ${toCssColor(props.$unselectedColor, colors.paleBlue)};`}
+  ${(props) => props.$blocked && `background-color: ${toCssColor(props.$blockedColor, colors.black)};`}
   &:hover {
     background-color: ${(props) =>
-      props.$blocked ? props.$blockedColor : props.$selected ? props.$selectedColor : props.$hoveredColor};
+      props.$blocked
+        ? toCssColor(props.$blockedColor, colors.black)
+        : props.$selected
+          ? toCssColor(props.$selectedColor, colors.blue)
+          : toCssColor(props.$hoveredColor, colors.lightBlue)};
   }
 `
 

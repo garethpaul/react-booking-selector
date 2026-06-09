@@ -28,6 +28,9 @@ var toCssUnit = function toCssUnit(value) {
   if (typeof value !== 'string') return '0px';
   return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };
+var toCssColor = function toCssColor(value, fallback) {
+  return typeof value === 'string' ? value : fallback;
+};
 var invalidDate = function invalidDate() {
   return new Date(NaN);
 };
@@ -276,13 +279,13 @@ var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_temp
 
 // Style the Date Cell
 var DateCell = _styled.default.div(_templateObject6 || (_templateObject6 = _taggedTemplateLiteralLoose(["\n  width: 100%;\n  height: 100%;\n  border-radius: 4px;\n  transition:\n    background-color 120ms ease,\n    transform 120ms ease;\n  ", "\n  ", "\n  ", "\n  &:hover {\n    background-color: ", ";\n  }\n"])), function (props) {
-  return props.$selected && !props.$blocked && "background-color: " + props.$selectedColor + ";";
+  return props.$selected && !props.$blocked && "background-color: " + toCssColor(props.$selectedColor, _colors.default.blue) + ";";
 }, function (props) {
-  return !props.$selected && !props.$blocked && "background-color: " + props.$unselectedColor + ";";
+  return !props.$selected && !props.$blocked && "background-color: " + toCssColor(props.$unselectedColor, _colors.default.paleBlue) + ";";
 }, function (props) {
-  return props.$blocked && "background-color: " + props.$blockedColor + ";";
+  return props.$blocked && "background-color: " + toCssColor(props.$blockedColor, _colors.default.black) + ";";
 }, function (props) {
-  return props.$blocked ? props.$blockedColor : props.$selected ? props.$selectedColor : props.$hoveredColor;
+  return props.$blocked ? toCssColor(props.$blockedColor, _colors.default.black) : props.$selected ? toCssColor(props.$selectedColor, _colors.default.blue) : toCssColor(props.$hoveredColor, _colors.default.lightBlue);
 });
 var DateLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject7 || (_templateObject7 = _taggedTemplateLiteralLoose(["\n  height: 20px;\n  font-size: 19px;\n  line-height: 1;\n  margin: 0px;\n  margin-top: 5px;\n  padding: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  @media (max-width: 699px) {\n    height: 15px;\n    font-size: 12px;\n  }\n"])));
 var DayLabel = (0, _styled.default)(_typography.Subtitle)(_templateObject8 || (_templateObject8 = _taggedTemplateLiteralLoose(["\n  height: 15px;\n  font-size: 10px;\n  line-height: 1;\n  margin: 0px;\n  padding: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  @media (max-width: 699px) {\n    font-size: 8px;\n  }\n"])));

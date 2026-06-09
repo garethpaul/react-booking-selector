@@ -2576,6 +2576,38 @@ describe('cell accessibility', () => {
     expect(availableContent).toHaveStyleRule('background-color', '#abcdef', { modifier: ':hover' })
   })
 
+  it('falls back from malformed cell colors without coercing them', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 11)
+    const throwingColor = {
+      toString() {
+        throw new Error('Unexpected color coercion')
+      },
+    }
+    const { getByRole } = renderSelector({
+      selection: [selected],
+      blocked: [blocked],
+      selectedColor: Symbol('selected'),
+      unselectedColor: throwingColor,
+      hoveredColor: Symbol('hovered'),
+      blockedColor: throwingColor,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11,
+    })
+    const selectedContent = getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' }).firstChild
+    const availableContent = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' }).firstChild
+    const blockedContent = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 11 am' }).firstChild
+
+    expect(selectedContent).toHaveStyleRule('background-color', colors.blue)
+    expect(selectedContent).toHaveStyleRule('background-color', colors.blue, { modifier: ':hover' })
+    expect(availableContent).toHaveStyleRule('background-color', colors.paleBlue)
+    expect(availableContent).toHaveStyleRule('background-color', colors.lightBlue, { modifier: ':hover' })
+    expect(blockedContent).toHaveStyleRule('background-color', colors.black)
+    expect(blockedContent).toHaveStyleRule('background-color', colors.black, { modifier: ':hover' })
+  })
+
   it('hides visual time labels from assistive technology', () => {
     const { getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
