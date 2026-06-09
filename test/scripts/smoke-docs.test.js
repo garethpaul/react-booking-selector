@@ -66,7 +66,11 @@ if (screenshotArg) {
 }
 
 if (args.includes('--dump-dom')) {
-  const buttons = Array.from({ length: 70 }, () => '<button></button>').join('')
+  const buttons = [
+    '<button aria-label="Available Monday, April 6, 2020 at 8 am"></button>',
+    '<button aria-label="Blocked Wednesday, April 8, 2020 at 10 am"></button>',
+    ...Array.from({ length: 68 }, () => '<button></button>'),
+  ].join('')
   process.stdout.write(
     '<!doctype html><html><head><title>React Booking Selector</title></head><body><main>' +
       '<p id="booking-selector-demo-status" role="status">0 selected - 3 blocked</p>' +

@@ -19,6 +19,8 @@
 - Hardened selection-scheme helpers so sparse day buckets are skipped instead
   of throwing.
 - Added docs smoke regression coverage for blank screenshot failures.
+- Tightened docs smoke DOM checks to assert representative available and
+  blocked slot labels survive the production bundle.
 
 ## 2026-06-08
 

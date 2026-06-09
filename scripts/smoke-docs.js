@@ -45,6 +45,8 @@ const expectedDomSnippets = [
   'role="group"',
   'aria-describedby="booking-selector-demo-status"',
   'aria-label="Booking time slots"',
+  'aria-label="Available Monday, April 6, 2020 at 8 am"',
+  'aria-label="Blocked Wednesday, April 8, 2020 at 10 am"',
   '0 selected - 3 blocked',
 ]
 const chromeTimeoutMs = 30000
