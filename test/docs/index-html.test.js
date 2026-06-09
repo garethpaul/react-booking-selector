@@ -60,3 +60,27 @@ it('replaces primitive docs process env values before assigning NODE_ENV', () =>
   expect(windowGlobal.process).toBe(processGlobal)
   expect(windowGlobal.process.env).toEqual({ NODE_ENV: 'production' })
 })
+
+it('recovers when an existing docs process shim cannot receive env values', () => {
+  const runProcessShim = new Function('window', getProcessShimScript())
+  const windowGlobal = { process: Object.freeze({}) }
+
+  runProcessShim(windowGlobal)
+
+  expect(windowGlobal.process).toEqual({ env: { NODE_ENV: 'production' } })
+})
+
+it('recovers when an existing docs process env getter throws', () => {
+  const runProcessShim = new Function('window', getProcessShimScript())
+  const processGlobal = {}
+  Object.defineProperty(processGlobal, 'env', {
+    get() {
+      throw new Error('Cannot read process.env')
+    },
+  })
+  const windowGlobal = { process: processGlobal }
+
+  runProcessShim(windowGlobal)
+
+  expect(windowGlobal.process).toEqual({ env: { NODE_ENV: 'production' } })
+})

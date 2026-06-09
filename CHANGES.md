@@ -16,6 +16,8 @@
   not fall back to unsafe instance coercion.
 - Normalized valid custom slot time values before grid validation so
   cross-realm `Date` values remain real booking slots.
+- Recovered the docs process shim when host pages expose immutable or throwing
+  `window.process` globals.
 - Normalized `docs:check` plan paths so README validation remains stable
   across native path separators.
 - Tightened `docs:check` so README cannot duplicate canonical `docs/plans`
