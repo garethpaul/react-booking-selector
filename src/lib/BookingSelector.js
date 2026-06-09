@@ -701,7 +701,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
-        dateCell.removeEventListener('touchmove', preventScroll)
+        try {
+          dateCell.removeEventListener('touchmove', preventScroll)
+        } catch {
+          // Ignore cleanup failures from stale or non-standard registered cells.
+        }
       }
     })
     this.cellToDate.clear()
@@ -739,12 +743,20 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const isPreventingTouchScroll = this.touchScrollCells.has(dateCell)
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       if (typeof dateCell.addEventListener === 'function') {
-        dateCell.addEventListener('touchmove', preventScroll, { passive: false })
-        this.touchScrollCells.add(dateCell)
+        try {
+          dateCell.addEventListener('touchmove', preventScroll, { passive: false })
+          this.touchScrollCells.add(dateCell)
+        } catch {
+          // Leave the date registered even if this cell cannot accept touch listener options.
+        }
       }
     } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
       if (typeof dateCell.removeEventListener === 'function') {
-        dateCell.removeEventListener('touchmove', preventScroll)
+        try {
+          dateCell.removeEventListener('touchmove', preventScroll)
+        } catch {
+          // Continue clearing lookup state even when listener cleanup fails.
+        }
       }
       this.touchScrollCells.delete(dateCell)
     }

@@ -1469,6 +1469,24 @@ describe('componentDidMount', () => {
     expect(instance.touchScrollCells.has(cell)).toBe(false)
   })
 
+  it('registers date cells even when touchmove listener attachment throws', () => {
+    const { instance } = renderSelector()
+    const cell = {
+      addEventListener() {
+        throw new Error('Cannot attach touch listener')
+      },
+      removeEventListener: jest.fn(),
+    }
+    const time = addHours(startOfDay(startDate), 9)
+
+    expect(() => {
+      instance.registerDateCell(cell, time)
+    }).not.toThrow()
+    expect(instance.cellToDate.get(cell)).toEqual(time)
+    expect(instance.dateToCell.get(time.getTime())).toBe(cell)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+  })
+
   it('treats malformed date cell times as untracked placeholders', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')
@@ -1513,6 +1531,27 @@ describe('componentDidMount', () => {
   it('unregisters date cells even when touchmove listeners cannot be removed', () => {
     const { instance } = renderSelector()
     const cell = { addEventListener: jest.fn(), removeEventListener: true }
+    const time = addHours(startOfDay(startDate), 9)
+
+    instance.registerDateCell(cell, time)
+
+    expect(instance.touchScrollCells.has(cell)).toBe(true)
+    expect(() => {
+      instance.unregisterDateCell(cell)
+    }).not.toThrow()
+    expect(instance.cellToDate.has(cell)).toBe(false)
+    expect(instance.dateToCell.has(time.getTime())).toBe(false)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+  })
+
+  it('unregisters date cells even when touchmove listener cleanup throws', () => {
+    const { instance } = renderSelector()
+    const cell = {
+      addEventListener: jest.fn(),
+      removeEventListener() {
+        throw new Error('Cannot remove touch listener')
+      },
+    }
     const time = addHours(startOfDay(startDate), 9)
 
     instance.registerDateCell(cell, time)
@@ -1665,6 +1704,21 @@ describe('componentWillUnmount', () => {
   it('ignores registered date cell entries with non-callable listener cleanup', () => {
     const { instance, unmount } = renderSelector()
     const mockDateCell = { removeEventListener: true }
+    instance.cellToDate.set(mockDateCell, new Date())
+
+    expect(() => {
+      unmount()
+    }).not.toThrow()
+    expect(instance.cellToDate.size).toBe(0)
+  })
+
+  it('ignores registered date cell entries with throwing listener cleanup', () => {
+    const { instance, unmount } = renderSelector()
+    const mockDateCell = {
+      removeEventListener() {
+        throw new Error('Cannot remove touch listener')
+      },
+    }
     instance.cellToDate.set(mockDateCell, new Date())
 
     expect(() => {

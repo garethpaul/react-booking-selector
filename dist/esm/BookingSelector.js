@@ -508,7 +508,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
-        dateCell.removeEventListener('touchmove', preventScroll);
+        try {
+          dateCell.removeEventListener('touchmove', preventScroll);
+        } catch (_unused4) {
+          // Ignore cleanup failures from stale or non-standard registered cells.
+        }
       }
     });
     this.cellToDate.clear();
@@ -543,14 +547,22 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var isPreventingTouchScroll = this.touchScrollCells.has(dateCell);
     if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       if (typeof dateCell.addEventListener === 'function') {
-        dateCell.addEventListener('touchmove', preventScroll, {
-          passive: false
-        });
-        this.touchScrollCells.add(dateCell);
+        try {
+          dateCell.addEventListener('touchmove', preventScroll, {
+            passive: false
+          });
+          this.touchScrollCells.add(dateCell);
+        } catch (_unused5) {
+          // Leave the date registered even if this cell cannot accept touch listener options.
+        }
       }
     } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
       if (typeof dateCell.removeEventListener === 'function') {
-        dateCell.removeEventListener('touchmove', preventScroll);
+        try {
+          dateCell.removeEventListener('touchmove', preventScroll);
+        } catch (_unused6) {
+          // Continue clearing lookup state even when listener cleanup fails.
+        }
       }
       this.touchScrollCells.delete(dateCell);
     }
@@ -764,7 +776,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused4) {
+    } catch (_unused7) {
       return false;
     }
   };
