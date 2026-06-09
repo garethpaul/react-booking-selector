@@ -22,6 +22,10 @@
 - Guarded keyboard focus restoration against malformed date-cell lookup
   entries.
 - Ignored malformed touch scroll events without callable default prevention.
+- Polished package and docs metadata with regression coverage for the generated
+  page description.
+- Retried transient pending docs smoke layout dumps before failing the browser
+  smoke check.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

@@ -1,11 +1,24 @@
 import { readFileSync } from 'fs'
 import path from 'path'
 
-const getProcessShimScript = () => {
-  const html = readFileSync(path.join(process.cwd(), 'src/docs/index.html'), 'utf8')
-  const [, script] = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)
-  return script
+const getDocsHtml = () => readFileSync(path.join(process.cwd(), 'src/docs/index.html'), 'utf8')
+
+const getDocsDocument = () => {
+  const docsDocument = document.implementation.createHTMLDocument('')
+  docsDocument.documentElement.innerHTML = getDocsHtml()
+  return docsDocument
 }
+
+const getProcessShimScript = () => getDocsDocument().querySelector('script').textContent
+
+it('defines polished docs metadata', () => {
+  const docsDocument = getDocsDocument()
+
+  expect(docsDocument.title).toBe('React Booking Selector')
+  expect(docsDocument.querySelector('meta[name="description"]').getAttribute('content')).toBe(
+    'A grid-based booking selector.',
+  )
+})
 
 it('initializes the docs process shim without clobbering existing globals', () => {
   const runProcessShim = new Function('window', getProcessShimScript())

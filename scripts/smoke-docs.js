@@ -419,8 +419,11 @@ const parseLayoutResult = (dom) => {
   const resultMatch = dom.match(/<pre id="layout-result">([\s\S]*?)<\/pre>/u)
   if (!resultMatch) throw new Error('Docs layout smoke result is missing')
 
+  const resultText = resultMatch[1].trim()
+  if (resultText === 'pending') throw new Error('Docs layout smoke result is pending')
+
   try {
-    return JSON.parse(decodeHtmlText(resultMatch[1].trim()))
+    return JSON.parse(decodeHtmlText(resultText))
   } catch (error) {
     throw new Error(`Docs layout smoke result is invalid JSON: ${error.message}`)
   }
@@ -467,7 +470,8 @@ const assertLayout = (screenshot, dom) => {
   }
 }
 
-const isRetriableLayoutError = (error) => error.message === 'Docs layout smoke result is missing'
+const isRetriableLayoutError = (error) =>
+  error.message === 'Docs layout smoke result is missing' || error.message === 'Docs layout smoke result is pending'
 
 const runLayoutSmoke = async (chrome, url, screenshot) => {
   for (let attempt = 1; attempt <= layoutSmokeAttempts; attempt += 1) {

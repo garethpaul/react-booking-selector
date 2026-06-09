@@ -110,6 +110,12 @@ if (args.includes('--dump-dom')) {
         process.stdout.write('<!doctype html><html><body></body></html>')
         process.exit(0)
       }
+      const pendingOnceFile = process.env.FAKE_CHROME_LAYOUT_PENDING_ONCE_FILE
+      if (pendingOnceFile && !fs.existsSync(pendingOnceFile)) {
+        fs.writeFileSync(pendingOnceFile, '1')
+        process.stdout.write('<!doctype html><html><body><pre id="layout-result">pending</pre></body></html>')
+        process.exit(0)
+      }
       const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
       const [width] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
       const layout = {
@@ -241,6 +247,18 @@ describe('smoke-docs script', () => {
 
     const output = runSmoke(projectPath, fakeChromePath, {
       FAKE_CHROME_LAYOUT_MISSING_ONCE_FILE: path.join(projectPath, 'layout-missing-once'),
+    })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
+  })
+
+  it('retries when a layout smoke dump is still pending once', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, {
+      FAKE_CHROME_LAYOUT_PENDING_ONCE_FILE: path.join(projectPath, 'layout-pending-once'),
     })
 
     expect(output).toContain('Docs smoke passed. Screenshots:')
