@@ -111,6 +111,11 @@ const dateGetHours = DateConstructor.prototype.getHours
 const dateSetDate = DateConstructor.prototype.setDate
 const dateSetHours = DateConstructor.prototype.setHours
 const dateNow = DateConstructor.now
+const arrayFilter = Array.prototype.filter
+const arrayForEach = Array.prototype.forEach
+const arrayJoin = Array.prototype.join
+const arrayMap = Array.prototype.map
+const arraySort = Array.prototype.sort
 
 const getCurrentTimestamp = (): number => {
   try {
@@ -163,8 +168,10 @@ const toDate = (value: DateValueType): Date => {
   }
 }
 
-const normalizeDates = (dates: DateListType): Array<Date> =>
-  (Array.isArray(dates) ? dates : []).map(toDate).filter((date) => getDateTimestamp(date) != null)
+const normalizeDates = (dates: DateListType): Array<Date> => {
+  const dateValues = Array.isArray(dates) ? dates : []
+  return arrayFilter.call(arrayMap.call(dateValues, toDate), (date) => getDateTimestamp(date) != null)
+}
 
 const dateMinuteKey = (value: Date): number => Math.floor(dateGetTime.call(value) / 60000)
 
@@ -180,18 +187,20 @@ const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: mixed): boolean => 
   return key != null && dateMinuteKeys.has(key)
 }
 
-const getDateMinuteSetSignature = (dates: DateListType): string =>
-  Array.from(new Set(normalizeDates(dates).map(dateMinuteKey)))
-    .sort((a, b) => a - b)
-    .join('|')
+const getDateMinuteSetSignature = (dates: DateListType): string => {
+  const dateMinuteKeys = Array.from(new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)))
+  arraySort.call(dateMinuteKeys, (a, b) => a - b)
+  return arrayJoin.call(dateMinuteKeys, '|')
+}
 
-const getDateMinuteKeySet = (dates: DateListType): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
+const getDateMinuteKeySet = (dates: DateListType): Set<number> =>
+  new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey))
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   const dateMinuteKeys = new Set()
   const uniqueDates: Array<Date> = []
 
-  dates.forEach((date) => {
+  arrayForEach.call(dates, (date) => {
     const key = dateMinuteKey(date)
     if (dateMinuteKeys.has(key)) return
     dateMinuteKeys.add(key)
@@ -201,9 +210,21 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   return uniqueDates
 }
 
+const concatDates = (firstDates: Array<Date>, secondDates: Array<Date>): Array<Date> => {
+  const dates: Array<Date> = []
+  arrayForEach.call(firstDates, (date) => {
+    dates.push(date)
+  })
+  arrayForEach.call(secondDates, (date) => {
+    dates.push(date)
+  })
+  return dates
+}
+
 const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDatesByMinute(normalizeDates(dates))
 
-const getDateListSignature = (dates: DateListType): string => normalizeSelectionDraft(dates).map(dateKey).join('|')
+const getDateListSignature = (dates: DateListType): string =>
+  arrayJoin.call(arrayMap.call(normalizeSelectionDraft(dates), dateKey), '|')
 
 const getStartDate = (startDate: ?Date): Date => {
   const timestamp = getDateTimestamp(startDate)
@@ -214,12 +235,15 @@ const getNumberSignaturePart = (value: mixed): string =>
   typeof value === 'number' ? `number:${value}` : `invalid:${typeof value}`
 
 const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
-  [
-    dateMinuteKey(startOfDayDate(getStartDate(startDate))),
-    getNumberSignaturePart(numDays),
-    getNumberSignaturePart(minTime),
-    getNumberSignaturePart(maxTime),
-  ].join('|')
+  arrayJoin.call(
+    [
+      dateMinuteKey(startOfDayDate(getStartDate(startDate))),
+      getNumberSignaturePart(numDays),
+      getNumberSignaturePart(minTime),
+      getNumberSignaturePart(maxTime),
+    ],
+    '|',
+  )
 
 const isWholeNumber = (value: number): boolean => Number.isFinite(value) && Math.floor(value) === value
 
@@ -270,7 +294,7 @@ export const buildDateColumns = (
   for (let d = 0; d < numDays; d += 1) {
     const day = addDaysToDate(startTime, d)
     const slots = []
-    visibleHours.forEach((h) => {
+    arrayForEach.call(visibleHours, (h) => {
       slots.push({
         hour: h,
         time: createDateSlotTime(day, h, createTime),
@@ -286,9 +310,9 @@ export const buildDates = (
   createTime: CreateLocalTimeType = createLocalTime,
 ): Array<Array<Date>> => {
   const dates = []
-  buildDateColumns(dateGridProps, createTime).forEach((dateColumn) => {
+  arrayForEach.call(buildDateColumns(dateGridProps, createTime), (dateColumn) => {
     const columnDates = []
-    dateColumn.slots.forEach((slot) => {
+    arrayForEach.call(dateColumn.slots, (slot) => {
       if (slot.time) columnDates.push(slot.time)
     })
     dates.push(columnDates)
@@ -998,15 +1022,16 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
 
     const selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)]
-    const availableSelection = selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates).filter(
+    const availableSelection = arrayFilter.call(
+      selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates),
       (time) => !this.isBlocked(time),
     )
-    let nextDraft = normalizeSelectionDraft(this.state.selectionBase).filter((time) => !this.isBlocked(time))
+    let nextDraft = arrayFilter.call(normalizeSelectionDraft(this.state.selectionBase), (time) => !this.isBlocked(time))
     if (selectionType === 'add') {
-      nextDraft = uniqueDatesByMinute([...nextDraft, ...availableSelection])
+      nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection))
     } else {
-      const availableSelectionKeys = new Set(availableSelection.map(dateMinuteKey))
-      nextDraft = nextDraft.filter((date) => !availableSelectionKeys.has(dateMinuteKey(date)))
+      const availableSelectionKeys = new Set(arrayMap.call(availableSelection, dateMinuteKey))
+      nextDraft = arrayFilter.call(nextDraft, (date) => !availableSelectionKeys.has(dateMinuteKey(date)))
     }
     this.setState({ selectionDraft: nextDraft }, callback)
   }
@@ -1180,7 +1205,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderTimeLabels = (): React.Element<*> => {
     const labels = [<GridCell $height="40" key={-1} />] // Ensures time labels start at correct location
-    getVisibleHours(this.props.minTime, this.props.maxTime).forEach((t) => {
+    arrayForEach.call(getVisibleHours(this.props.minTime, this.props.maxTime), (t) => {
       labels.push(
         <TimeLabelCell key={t}>
           <TimeText>{formatHour(t)}</TimeText>
@@ -1200,7 +1225,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         <DayLabel>{formatDate(dateColumn.day, 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDateHeader(dateColumn.day, this.props.dateFormat)}</DateLabel>
       </GridCell>
-      {dateColumn.slots.map((slot) =>
+      {arrayMap.call(dateColumn.slots, (slot) =>
         slot.time
           ? this.renderDateCellWrapperWithLookups(slot.time, blockedMinuteKeys, selectedMinuteKeys)
           : this.renderDateCellPlaceholder(dateColumn.day, slot.hour),
@@ -1320,7 +1345,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
             }}
           >
             {dateColumns.length > 0 && this.renderTimeLabels()}
-            {dateColumns.map((dateColumn) => this.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys))}
+            {arrayMap.call(dateColumns, (dateColumn) =>
+              this.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys),
+            )}
           </Grid>
         }
       </Wrapper>

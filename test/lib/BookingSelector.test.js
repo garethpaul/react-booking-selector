@@ -25,6 +25,29 @@ const withThrowingDateCoercion = (date) => {
   return date
 }
 
+const withThrowingArrayHelpers = (values) => {
+  const array = values.slice()
+  array.concat = () => {
+    throw new Error('Unexpected array concat call')
+  }
+  array.filter = () => {
+    throw new Error('Unexpected array filter call')
+  }
+  array.forEach = () => {
+    throw new Error('Unexpected array forEach call')
+  }
+  array.join = () => {
+    throw new Error('Unexpected array join call')
+  }
+  array.map = () => {
+    throw new Error('Unexpected array map call')
+  }
+  array.sort = () => {
+    throw new Error('Unexpected array sort call')
+  }
+  return array
+}
+
 const getTestSchedule = () => [addHours(startOfDay(startDate), 12), addHours(addDays(startOfDay(startDate), 1), 13)]
 
 const renderSelector = (props = {}) => {
@@ -1382,6 +1405,27 @@ describe('updateAvailabilityDraft', () => {
       selectionType: 'add',
       selectionStart: added,
       selectionBase: [{ getTime: true }, new Date(NaN), existing, existingSameMinute],
+    })
+
+    await act(async () => {
+      instance.updateAvailabilityDraft(added)
+    })
+
+    expect(instance.state.selectionDraft).toEqual([existing, added])
+  })
+
+  it('updates drafts without calling overwritten array helpers', async () => {
+    const existing = addHours(startOfDay(startDate), 9)
+    const added = addHours(startOfDay(startDate), 10)
+    const selectionBase = withThrowingArrayHelpers([existing])
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    instance.selectionSchemeHandlers.square = () => withThrowingArrayHelpers([existing, added])
+
+    await setStateAsync(instance, {
+      selectionDraft: selectionBase,
+      selectionType: 'add',
+      selectionStart: existing,
+      selectionBase,
     })
 
     await act(async () => {
@@ -3496,6 +3540,25 @@ describe('cell accessibility', () => {
     const { getByRole } = renderSelector({
       selection: [selectedWithThrowingGetTime],
       blocked: [blockedWithThrowingGetTime],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 10 am' })).toBeDisabled()
+  })
+
+  it('normalizes selection and blocked arrays without calling overwritten array helpers', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const blocked = addHours(startOfDay(startDate), 10)
+    const { getByRole } = renderSelector({
+      selection: withThrowingArrayHelpers([selected]),
+      blocked: withThrowingArrayHelpers([blocked]),
       startDate,
       numDays: 1,
       minTime: 9,

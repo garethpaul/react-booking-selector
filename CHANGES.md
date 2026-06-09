@@ -46,6 +46,8 @@
   of live `toISOString` methods.
 - Traversed selection-scheme date grids without live Array iteration methods so
   later Array prototype changes cannot break drag selection.
+- Captured Array callbacks for selection normalization, draft updates, and grid
+  rendering so shadowed array helpers cannot break component behavior.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

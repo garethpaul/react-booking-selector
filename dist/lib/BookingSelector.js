@@ -54,6 +54,11 @@ var dateGetHours = DateConstructor.prototype.getHours;
 var dateSetDate = DateConstructor.prototype.setDate;
 var dateSetHours = DateConstructor.prototype.setHours;
 var dateNow = DateConstructor.now;
+var arrayFilter = Array.prototype.filter;
+var arrayForEach = Array.prototype.forEach;
+var arrayJoin = Array.prototype.join;
+var arrayMap = Array.prototype.map;
+var arraySort = Array.prototype.sort;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
     if (typeof Date.now === 'function') {
@@ -100,7 +105,8 @@ var toDate = function toDate(value) {
   }
 };
 var normalizeDates = function normalizeDates(dates) {
-  return (Array.isArray(dates) ? dates : []).map(toDate).filter(function (date) {
+  var dateValues = Array.isArray(dates) ? dates : [];
+  return arrayFilter.call(arrayMap.call(dateValues, toDate), function (date) {
     return getDateTimestamp(date) != null;
   });
 };
@@ -119,17 +125,19 @@ var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
   return key != null && dateMinuteKeys.has(key);
 };
 var getDateMinuteSetSignature = function getDateMinuteSetSignature(dates) {
-  return Array.from(new Set(normalizeDates(dates).map(dateMinuteKey))).sort(function (a, b) {
+  var dateMinuteKeys = Array.from(new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)));
+  arraySort.call(dateMinuteKeys, function (a, b) {
     return a - b;
-  }).join('|');
+  });
+  return arrayJoin.call(dateMinuteKeys, '|');
 };
 var getDateMinuteKeySet = function getDateMinuteKeySet(dates) {
-  return new Set(normalizeDates(dates).map(dateMinuteKey));
+  return new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey));
 };
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   var dateMinuteKeys = new Set();
   var uniqueDates = [];
-  dates.forEach(function (date) {
+  arrayForEach.call(dates, function (date) {
     var key = dateMinuteKey(date);
     if (dateMinuteKeys.has(key)) return;
     dateMinuteKeys.add(key);
@@ -137,11 +145,21 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   });
   return uniqueDates;
 };
+var concatDates = function concatDates(firstDates, secondDates) {
+  var dates = [];
+  arrayForEach.call(firstDates, function (date) {
+    dates.push(date);
+  });
+  arrayForEach.call(secondDates, function (date) {
+    dates.push(date);
+  });
+  return dates;
+};
 var normalizeSelectionDraft = function normalizeSelectionDraft(dates) {
   return uniqueDatesByMinute(normalizeDates(dates));
 };
 var getDateListSignature = function getDateListSignature(dates) {
-  return normalizeSelectionDraft(dates).map(dateKey).join('|');
+  return arrayJoin.call(arrayMap.call(normalizeSelectionDraft(dates), dateKey), '|');
 };
 var getStartDate = function getStartDate(startDate) {
   var timestamp = getDateTimestamp(startDate);
@@ -155,7 +173,7 @@ var getDateGridSignature = function getDateGridSignature(_ref) {
     numDays = _ref.numDays,
     minTime = _ref.minTime,
     maxTime = _ref.maxTime;
-  return [dateMinuteKey(startOfDayDate(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)].join('|');
+  return arrayJoin.call([dateMinuteKey(startOfDayDate(getStartDate(startDate))), getNumberSignaturePart(numDays), getNumberSignaturePart(minTime), getNumberSignaturePart(maxTime)], '|');
 };
 var isWholeNumber = function isWholeNumber(value) {
   return Number.isFinite(value) && Math.floor(value) === value;
@@ -203,7 +221,7 @@ var buildDateColumns = exports.buildDateColumns = function buildDateColumns(_ref
   var _loop = function _loop() {
     var day = addDaysToDate(startTime, d);
     var slots = [];
-    visibleHours.forEach(function (h) {
+    arrayForEach.call(visibleHours, function (h) {
       slots.push({
         hour: h,
         time: createDateSlotTime(day, h, createTime)
@@ -224,9 +242,9 @@ var buildDates = exports.buildDates = function buildDates(dateGridProps, createT
     createTime = createLocalTime;
   }
   var dates = [];
-  buildDateColumns(dateGridProps, createTime).forEach(function (dateColumn) {
+  arrayForEach.call(buildDateColumns(dateGridProps, createTime), function (dateColumn) {
     var columnDates = [];
-    dateColumn.slots.forEach(function (slot) {
+    arrayForEach.call(dateColumn.slots, function (slot) {
       if (slot.time) columnDates.push(slot.time);
     });
     dates.push(columnDates);
@@ -406,7 +424,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         $height: "40",
         key: -1
       })]; // Ensures time labels start at correct location
-      getVisibleHours(_this.props.minTime, _this.props.maxTime).forEach(function (t) {
+      arrayForEach.call(getVisibleHours(_this.props.minTime, _this.props.maxTime), function (t) {
         labels.push(/*#__PURE__*/React.createElement(TimeLabelCell, {
           key: t
         }, /*#__PURE__*/React.createElement(TimeText, null, formatHour(t))));
@@ -422,7 +440,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         $height: "50",
         $margin: _this.props.margin,
         "aria-hidden": "true"
-      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _format.format)(dateColumn.day, 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dateColumn.day, _this.props.dateFormat))), dateColumn.slots.map(function (slot) {
+      }, /*#__PURE__*/React.createElement(DayLabel, null, (0, _format.format)(dateColumn.day, 'EEE').toUpperCase()), /*#__PURE__*/React.createElement(DateLabel, null, formatDateHeader(dateColumn.day, _this.props.dateFormat))), arrayMap.call(dateColumn.slots, function (slot) {
         return slot.time ? _this.renderDateCellWrapperWithLookups(slot.time, blockedMinuteKeys, selectedMinuteKeys) : _this.renderDateCellPlaceholder(dateColumn.day, slot.hour);
       }));
     };
@@ -791,17 +809,17 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       return;
     }
     var selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)];
-    var availableSelection = selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates).filter(function (time) {
+    var availableSelection = arrayFilter.call(selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates), function (time) {
       return !_this3.isBlocked(time);
     });
-    var nextDraft = normalizeSelectionDraft(this.state.selectionBase).filter(function (time) {
+    var nextDraft = arrayFilter.call(normalizeSelectionDraft(this.state.selectionBase), function (time) {
       return !_this3.isBlocked(time);
     });
     if (selectionType === 'add') {
-      nextDraft = uniqueDatesByMinute([].concat(nextDraft, availableSelection));
+      nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection));
     } else {
-      var availableSelectionKeys = new Set(availableSelection.map(dateMinuteKey));
-      nextDraft = nextDraft.filter(function (date) {
+      var availableSelectionKeys = new Set(arrayMap.call(availableSelection, dateMinuteKey));
+      nextDraft = arrayFilter.call(nextDraft, function (date) {
         return !availableSelectionKeys.has(dateMinuteKey(date));
       });
     }
@@ -980,7 +998,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       ref: function ref(el) {
         _this6.gridRef = el;
       }
-    }, dateColumns.length > 0 && this.renderTimeLabels(), dateColumns.map(function (dateColumn) {
+    }, dateColumns.length > 0 && this.renderTimeLabels(), arrayMap.call(dateColumns, function (dateColumn) {
       return _this6.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };
