@@ -66,3 +66,4 @@
 - Hid orphaned time labels when no date columns are rendered.
 - Added black-box coverage for the docs-plan checker success and failure paths.
 - Moved completed custom-renderer plans into the verified `docs/plans` inventory.
+- Preserved newer reverse date-cell lookups when older cells unregister or re-register.

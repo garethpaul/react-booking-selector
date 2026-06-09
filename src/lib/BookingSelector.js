@@ -460,12 +460,19 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
   }
 
+  clearDateCellTimeLookup(dateCell: HTMLElement, time: Date) {
+    const registeredTime = dateKey(time)
+    if (this.dateToCell.get(registeredTime) === dateCell) {
+      this.dateToCell.delete(registeredTime)
+    }
+  }
+
   registerDateCell(dateCell: HTMLElement, time: Date) {
     const previousTime = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) {
       dateCell.addEventListener('touchmove', preventScroll, { passive: false })
     } else if (previousTime) {
-      this.dateToCell.delete(dateKey(previousTime))
+      this.clearDateCellTimeLookup(dateCell, previousTime)
     } else {
       this.clearDateCellLookup(dateCell)
     }
@@ -479,7 +486,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     dateCell.removeEventListener('touchmove', preventScroll)
     this.cellToDate.delete(dateCell)
     if (time) {
-      this.dateToCell.delete(dateKey(time))
+      this.clearDateCellTimeLookup(dateCell, time)
     } else {
       this.clearDateCellLookup(dateCell)
     }

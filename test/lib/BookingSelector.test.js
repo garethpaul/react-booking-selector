@@ -762,6 +762,36 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
+  it('keeps newer date lookup entries when an older cell unregisters the same time', () => {
+    const { instance } = renderSelector()
+    const firstCell = document.createElement('div')
+    const secondCell = document.createElement('div')
+    const time = addHours(startOfDay(startDate), 9)
+
+    instance.registerDateCell(firstCell, time)
+    instance.registerDateCell(secondCell, time)
+    instance.unregisterDateCell(firstCell)
+
+    expect(instance.cellToDate.has(firstCell)).toBe(false)
+    expect(instance.cellToDate.get(secondCell)).toEqual(time)
+    expect(instance.dateToCell.get(time.getTime())).toBe(secondCell)
+  })
+
+  it('keeps newer date lookup entries when an older cell re-registers away from a shared time', () => {
+    const { instance } = renderSelector()
+    const firstCell = document.createElement('div')
+    const secondCell = document.createElement('div')
+    const firstTime = addHours(startOfDay(startDate), 9)
+    const secondTime = addHours(startOfDay(startDate), 10)
+
+    instance.registerDateCell(firstCell, firstTime)
+    instance.registerDateCell(secondCell, firstTime)
+    instance.registerDateCell(firstCell, secondTime)
+
+    expect(instance.dateToCell.get(firstTime.getTime())).toBe(secondCell)
+    expect(instance.dateToCell.get(secondTime.getTime())).toBe(firstCell)
+  })
+
   it('removes stale date lookup entries when a mounted cell has no previous time', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')

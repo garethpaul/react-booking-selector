@@ -355,6 +355,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       }
     });
   };
+  _proto.clearDateCellTimeLookup = function clearDateCellTimeLookup(dateCell, time) {
+    var registeredTime = dateKey(time);
+    if (this.dateToCell.get(registeredTime) === dateCell) {
+      this.dateToCell.delete(registeredTime);
+    }
+  };
   _proto.registerDateCell = function registerDateCell(dateCell, time) {
     var previousTime = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) {
@@ -362,7 +368,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         passive: false
       });
     } else if (previousTime) {
-      this.dateToCell.delete(dateKey(previousTime));
+      this.clearDateCellTimeLookup(dateCell, previousTime);
     } else {
       this.clearDateCellLookup(dateCell);
     }
@@ -375,7 +381,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     dateCell.removeEventListener('touchmove', preventScroll);
     this.cellToDate.delete(dateCell);
     if (time) {
-      this.dateToCell.delete(dateKey(time));
+      this.clearDateCellTimeLookup(dateCell, time);
     } else {
       this.clearDateCellLookup(dateCell);
     }
