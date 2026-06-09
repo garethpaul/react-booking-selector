@@ -67,6 +67,7 @@ const toCssUnit = (value: ?(number | string)): string => {
   if (value == null) return '0px'
   if (typeof value === 'number' && !Number.isFinite(value)) return '0px'
   if (typeof value === 'number') return `${value}px`
+  if (typeof value !== 'string') return '0px'
   return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value
 }
 

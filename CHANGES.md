@@ -18,6 +18,7 @@
   smoke check.
 - Hardened date-cell registration when touchmove listener methods are missing
   or malformed.
+- Guarded CSS length normalization against malformed non-string margin values.
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must be
   referenced from README.
 - Tightened `docs:check` so canonical plans must use dated filenames.

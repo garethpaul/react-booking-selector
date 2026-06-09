@@ -2190,6 +2190,35 @@ describe('cell accessibility', () => {
     expect(dateHeaderCell).toHaveStyleRule('margin', '0px')
   })
 
+  it('falls back from malformed grid cell margins', () => {
+    const throwingValue = {
+      toString() {
+        throw new Error('Unexpected margin coercion')
+      },
+    }
+    const first = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: Symbol('gap'),
+    })
+    const second = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: throwingValue,
+    })
+
+    expect(
+      within(first.container).getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }),
+    ).toHaveStyleRule('margin', '0px')
+    expect(
+      within(second.container).getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }),
+    ).toHaveStyleRule('margin', '0px')
+  })
+
   it('limits touch-action suppression to interactive cells', () => {
     const { getByRole, getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
