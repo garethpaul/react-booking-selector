@@ -2608,6 +2608,19 @@ describe('keyboard interaction', () => {
     expect(mondayEleven).toHaveFocus()
   })
 
+  it('handles keyboard navigation events without callable default prevention', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const mondayTen = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+
+    mondayNine.focus()
+
+    expect(() => {
+      instance.handleCellKeyDownEvent({ key: 'ArrowDown', preventDefault: true }, addHours(startOfDay(startDate), 9))
+    }).not.toThrow()
+    expect(mondayTen).toHaveFocus()
+  })
+
   it('reports when an unblocked focus target is not registered', () => {
     const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 

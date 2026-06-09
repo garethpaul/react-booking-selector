@@ -34,7 +34,11 @@ type MouseSelectionEventType = {
 
 type KeyboardSelectionEventType = {
   key: string,
-  preventDefault: () => void,
+  preventDefault?: mixed,
+}
+
+type PreventableEventType = {
+  preventDefault?: mixed,
 }
 
 type DateGridPropsType = {
@@ -524,8 +528,12 @@ type DerivedStateType = {
 }
 
 export const preventScroll = (e: TouchEvent) => {
-  if (typeof e.preventDefault === 'function') {
-    e.preventDefault()
+  preventDefault(e)
+}
+
+const preventDefault = (event: PreventableEventType) => {
+  if (typeof event.preventDefault === 'function') {
+    event.preventDefault()
   }
 }
 
@@ -880,13 +888,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         event.key,
         this.blockedMinuteKeys,
       )
-      event.preventDefault()
+      preventDefault(event)
       if (navigationTarget) this.focusDateCell(navigationTarget)
       return
     }
 
     if (blocked || !isKeyboardSelectionKey(event.key)) return
-    event.preventDefault()
+    preventDefault(event)
     const timeSelected = this.isSelected(time)
     this.setState(
       {
