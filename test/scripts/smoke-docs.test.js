@@ -1,5 +1,5 @@
 import { execFileSync } from 'child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import path from 'path'
 
@@ -166,6 +166,9 @@ describe('smoke-docs script', () => {
 
     expect(screenshotDirectory).not.toBe(null)
     tempPaths.push(screenshotDirectory[1])
+    expect(existsSync(path.join(screenshotDirectory[1], 'desktop.png'))).toBe(true)
+    expect(existsSync(path.join(screenshotDirectory[1], 'mobile.png'))).toBe(true)
+    expect(existsSync(path.join(screenshotDirectory[1], 'small-mobile.png'))).toBe(true)
     expect(output).toContain('Docs smoke passed. Screenshots:')
   })
 
