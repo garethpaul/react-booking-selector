@@ -22,6 +22,7 @@ Priority:
 - Keep square and linear selection behavior deterministic
 - Maintain package build, docs, lint, and test scripts
 - Keep styling customizable without hiding selection state
+- Emit minute-unique selection payloads that match the grid comparison model
 - Keep every completed maintenance plan under `docs/plans` verified by `docs:check`
 
 Next priorities:

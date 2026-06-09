@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-09
+
+- Normalized controlled selection drafts and emitted `onChange` payloads to
+  minute-unique dates, matching the grid's slot comparison behavior.
+
 ## 2026-06-08
 
 - Expanded `docs:check` so every canonical plan under `docs/plans/` must

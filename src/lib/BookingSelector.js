@@ -113,6 +113,8 @@ const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   return uniqueDates
 }
 
+const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDatesByMinute(normalizeDates(dates))
+
 const getStartDate = (startDate: ?Date): Date => (startDate && isValid(startDate) ? startDate : new Date())
 
 const getDateGridSignature = ({ startDate, numDays, minTime, maxTime }: DateGridPropsType): string =>
@@ -517,7 +519,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.touchScrollCells = new Set()
     this.lastTouchEventTime = 0
 
-    const selectionDraft = normalizeDates(this.props.selection)
+    const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
     const blockedPropSignature = getDateMinuteSetSignature(this.props.blocked)
     const dateGridPropSignature = getDateGridSignature(this.props)
@@ -563,7 +565,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return null
     }
 
-    const selectionDraft = normalizeDates(props.selection)
+    const selectionDraft = normalizeSelectionDraft(props.selection)
     return {
       selectionDraft,
       selectionBase: selectionDraft,
@@ -710,7 +712,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   endSelection() {
-    const nextSelection = this.state.selectionType !== null ? normalizeDates(this.state.selectionDraft) : null
+    const nextSelection = this.state.selectionType !== null ? normalizeSelectionDraft(this.state.selectionDraft) : null
     this.setState({
       selectionType: null,
       selectionStart: null,

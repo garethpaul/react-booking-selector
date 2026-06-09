@@ -79,6 +79,10 @@ const renderDateCell = (time, selected, blocked) => (
 
 Values in `selection` and `blocked` may be `Date` objects, timestamps, date strings, date-like objects with a numeric `valueOf()`, `null`, or `undefined`, and are normalized to `Date` objects before comparison. Nullish, invalid, malformed, or unsupported values are ignored rather than coerced. Valid values are matched to grid slots at minute precision. For predictable results, prefer `Date` objects that represent the same local timezone and hour/minute values as the rendered grid.
 
+Selection draft state and `onChange` payloads are also normalized at minute
+precision. Duplicate values in the same minute collapse to the first valid
+value while preserving the order of distinct selected slots.
+
 ## Props
 
 ### `className`
@@ -308,3 +312,4 @@ Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
+See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.

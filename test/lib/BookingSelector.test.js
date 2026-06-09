@@ -195,6 +195,22 @@ it('endSelection passes cloned selection dates to onChange', async () => {
   expect(nextSelection[0]).not.toBe(instance.state.selectionDraft[0])
 })
 
+it('endSelection emits minute-unique selection dates', async () => {
+  const changeSpy = jest.fn()
+  const selected = addHours(startOfDay(startDate), 9)
+  const duplicateSameMinute = new Date(selected.getTime() + 30000)
+  const { instance } = renderSelector({ onChange: changeSpy })
+
+  await setStateAsync(instance, { selectionDraft: [selected, duplicateSameMinute], selectionType: 'add' })
+  act(() => {
+    instance.endSelection()
+  })
+
+  const [nextSelection] = changeSpy.mock.calls[0]
+  expect(nextSelection).toEqual([selected])
+  expect(nextSelection[0]).not.toBe(selected)
+})
+
 it('keeps internal selection state isolated from onChange mutations', async () => {
   const selected = addHours(startOfDay(startDate), 9)
   const changeSpy = jest.fn((nextSelection) => {
@@ -1300,6 +1316,24 @@ describe('prop updates', () => {
     selected.setHours(10)
 
     expect(rendered.instance.state.selectionDraft).toEqual([addHours(startOfDay(startDate), 9)])
+  })
+
+  it('deduplicates selection props at minute precision', () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const duplicateSameMinute = new Date(selected.getTime() + 30000)
+    const rendered = renderSelector({
+      selection: [selected, duplicateSameMinute],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([selected])
+    expect(rendered.getByRole('button', { name: 'Selected Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
   })
 
   it('detects selection prop updates when the array is mutated in place', () => {

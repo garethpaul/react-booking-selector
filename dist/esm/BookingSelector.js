@@ -60,6 +60,9 @@ var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
   });
   return uniqueDates;
 };
+var normalizeSelectionDraft = function normalizeSelectionDraft(dates) {
+  return uniqueDatesByMinute(normalizeDates(dates));
+};
 var getStartDate = function getStartDate(startDate) {
   return startDate && isValid(startDate) ? startDate : new Date();
 };
@@ -368,7 +371,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.dateToCell = new Map();
     _this.touchScrollCells = new Set();
     _this.lastTouchEventTime = 0;
-    var selectionDraft = normalizeDates(_this.props.selection);
+    var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var blockedPropSignature = getDateMinuteSetSignature(_this.props.blocked);
     var dateGridPropSignature = getDateGridSignature(_this.props);
@@ -408,7 +411,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (selectionPropSignature === state.selectionPropSignature && blockedPropSignature === state.blockedPropSignature && dateGridPropSignature === state.dateGridPropSignature) {
       return null;
     }
-    var selectionDraft = normalizeDates(props.selection);
+    var selectionDraft = normalizeSelectionDraft(props.selection);
     return {
       selectionDraft: selectionDraft,
       selectionBase: selectionDraft,
@@ -550,7 +553,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return null;
   };
   _proto.endSelection = function endSelection() {
-    var nextSelection = this.state.selectionType !== null ? normalizeDates(this.state.selectionDraft) : null;
+    var nextSelection = this.state.selectionType !== null ? normalizeSelectionDraft(this.state.selectionDraft) : null;
     this.setState({
       selectionType: null,
       selectionStart: null,
