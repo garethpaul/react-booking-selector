@@ -697,7 +697,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
+    if (typeof document.addEventListener === 'function') {
+      try {
+        document.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      } catch {
+        // Continue mounting in non-standard hosts that cannot register document listeners.
+      }
+    }
   }
 
   componentDidUpdate() {
@@ -705,7 +711,13 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+    if (typeof document.removeEventListener === 'function') {
+      try {
+        document.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      } catch {
+        // Continue instance cleanup even if the document listener cannot be removed.
+      }
+    }
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {

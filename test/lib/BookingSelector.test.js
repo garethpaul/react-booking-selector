@@ -1409,6 +1409,33 @@ describe('componentDidMount', () => {
     renderSelector()
   })
 
+  it('mounts when document mouseup listener registration is unavailable', () => {
+    const { instance } = renderSelector()
+    const addEventListener = document.addEventListener
+    document.addEventListener = true
+
+    try {
+      expect(() => {
+        instance.componentDidMount()
+      }).not.toThrow()
+    } finally {
+      document.addEventListener = addEventListener
+    }
+  })
+
+  it('mounts when document mouseup listener registration throws', () => {
+    const { instance } = renderSelector()
+    const addSpy = jest.spyOn(document, 'addEventListener').mockImplementation(() => {
+      throw new Error('Cannot attach document listener')
+    })
+
+    expect(() => {
+      instance.componentDidMount()
+    }).not.toThrow()
+
+    addSpy.mockRestore()
+  })
+
   it('attaches non-passive touchmove listeners as date cells mount', () => {
     const addSpy = jest.spyOn(HTMLElement.prototype, 'addEventListener')
 
@@ -1687,6 +1714,44 @@ describe('componentWillUnmount', () => {
     unmount()
 
     expect(removeSpy).toHaveBeenCalledWith('mouseup', endSelectionMethod)
+    removeSpy.mockRestore()
+  })
+
+  it('cleans up when document mouseup listener removal is unavailable', () => {
+    const { instance, unmount } = renderSelector()
+    const removeEventListener = document.removeEventListener
+    const mockDateCell = { removeEventListener: jest.fn() }
+    instance.cellToDate.set(mockDateCell, new Date())
+    document.removeEventListener = true
+
+    try {
+      expect(() => {
+        unmount()
+      }).not.toThrow()
+    } finally {
+      document.removeEventListener = removeEventListener
+    }
+
+    expect(instance.cellToDate.size).toBe(0)
+    expect(instance.dateToCell.size).toBe(0)
+    expect(instance.touchScrollCells.size).toBe(0)
+  })
+
+  it('cleans up when document mouseup listener removal throws', () => {
+    const { instance, unmount } = renderSelector()
+    const mockDateCell = { removeEventListener: jest.fn() }
+    const removeSpy = jest.spyOn(document, 'removeEventListener').mockImplementation(() => {
+      throw new Error('Cannot remove document listener')
+    })
+    instance.cellToDate.set(mockDateCell, new Date())
+
+    expect(() => {
+      unmount()
+    }).not.toThrow()
+
+    expect(instance.cellToDate.size).toBe(0)
+    expect(instance.dateToCell.size).toBe(0)
+    expect(instance.touchScrollCells.size).toBe(0)
     removeSpy.mockRestore()
   })
 
