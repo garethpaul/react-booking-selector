@@ -857,6 +857,50 @@ describe('touch handlers', () => {
     }
   })
 
+  it('falls back when Date.now throws during touch mouse suppression', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
+      throw new Error('Cannot read current time')
+    })
+    const { instance } = renderSelector()
+
+    try {
+      expect(() => {
+        instance.recordTouchEvent()
+        instance.shouldIgnoreMouseEvent()
+      }).not.toThrow()
+      expect(instance.lastTouchEventTime).toBeGreaterThan(0)
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
+  it('falls back when Date.now returns a non-finite touch mouse suppression time', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(NaN)
+    const { instance } = renderSelector()
+
+    try {
+      instance.recordTouchEvent()
+
+      expect(instance.lastTouchEventTime).toBeGreaterThan(0)
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
+  it('falls back when Date.now is not callable during touch mouse suppression', () => {
+    const originalDateNow = Date.now
+    const { instance } = renderSelector()
+
+    Date.now = true
+    try {
+      instance.recordTouchEvent()
+
+      expect(instance.lastTouchEventTime).toBeGreaterThan(0)
+    } finally {
+      Date.now = originalDateNow
+    }
+  })
+
   it('selects cells while touch dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })

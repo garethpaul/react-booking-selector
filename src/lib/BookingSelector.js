@@ -108,6 +108,20 @@ const dateGetFullYear = Date.prototype.getFullYear
 const dateGetMonth = Date.prototype.getMonth
 const dateGetDate = Date.prototype.getDate
 const dateGetHours = Date.prototype.getHours
+const dateNow = Date.now
+
+const getCurrentTimestamp = (): number => {
+  try {
+    if (typeof Date.now === 'function') {
+      const timestamp = Date.now()
+      if (Number.isFinite(timestamp)) return timestamp
+    }
+  } catch {
+    // Fall back to the captured Date.now below.
+  }
+
+  return dateNow.call(Date)
+}
 
 const getDateTimestamp = (value: mixed): ?number => {
   const timestamp = readDateTimestamp(value)
@@ -995,11 +1009,11 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   recordTouchEvent() {
-    this.lastTouchEventTime = Date.now()
+    this.lastTouchEventTime = getCurrentTimestamp()
   }
 
   shouldIgnoreMouseEvent(): boolean {
-    const elapsedTouchTime = Date.now() - this.lastTouchEventTime
+    const elapsedTouchTime = getCurrentTimestamp() - this.lastTouchEventTime
     return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS
   }
 

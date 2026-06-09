@@ -46,6 +46,18 @@ var dateGetFullYear = Date.prototype.getFullYear;
 var dateGetMonth = Date.prototype.getMonth;
 var dateGetDate = Date.prototype.getDate;
 var dateGetHours = Date.prototype.getHours;
+var dateNow = Date.now;
+var getCurrentTimestamp = function getCurrentTimestamp() {
+  try {
+    if (typeof Date.now === 'function') {
+      var timestamp = Date.now();
+      if (Number.isFinite(timestamp)) return timestamp;
+    }
+  } catch (_unused) {
+    // Fall back to the captured Date.now below.
+  }
+  return dateNow.call(Date);
+};
 var getDateTimestamp = function getDateTimestamp(value) {
   var timestamp = readDateTimestamp(value);
   return Number.isFinite(timestamp) ? timestamp : null;
@@ -61,7 +73,7 @@ var toDate = function toDate(value) {
   try {
     var primitiveValue = value.valueOf();
     return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate();
-  } catch (_unused) {
+  } catch (_unused2) {
     return invalidDate();
   }
 };
@@ -149,7 +161,7 @@ var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
     if (timestamp == null) return null;
     var slotTime = new Date(timestamp);
     return localTimeExists(day, hour, slotTime) ? slotTime : null;
-  } catch (_unused2) {
+  } catch (_unused3) {
     return null;
   }
 };
@@ -211,7 +223,7 @@ var formatCellLabel = function formatCellLabel(time, selected, blocked) {
 var formatDateHeader = function formatDateHeader(time, dateFormat) {
   try {
     return formatDate(time, dateFormat);
-  } catch (_unused3) {
+  } catch (_unused4) {
     return formatDate(time, DEFAULT_DATE_FORMAT);
   }
 };
@@ -323,7 +335,7 @@ var preventDefault = function preventDefault(event) {
   if (event && typeof event.preventDefault === 'function') {
     try {
       event.preventDefault();
-    } catch (_unused4) {
+    } catch (_unused5) {
       // Ignore non-standard event objects that expose throwing default prevention.
     }
   }
@@ -333,7 +345,7 @@ var getBrowserDocument = function getBrowserDocument() {
   try {
     var browserDocument = window.document;
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
-  } catch (_unused5) {
+  } catch (_unused6) {
     return null;
   }
 };
@@ -341,7 +353,7 @@ var getParentElement = function getParentElement(target) {
   try {
     var parentElement = target.parentElement;
     return parentElement && typeof parentElement === 'object' ? parentElement : null;
-  } catch (_unused6) {
+  } catch (_unused7) {
     return null;
   }
 };
@@ -350,7 +362,7 @@ var getOwnerDocument = function getOwnerDocument(target) {
   try {
     var ownerDocument = target.ownerDocument;
     return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null;
-  } catch (_unused7) {
+  } catch (_unused8) {
     return null;
   }
 };
@@ -551,7 +563,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused8) {
+      } catch (_unused9) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -564,7 +576,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused9) {
+      } catch (_unused0) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -572,7 +584,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused0) {
+        } catch (_unused1) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -614,7 +626,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused1) {
+        } catch (_unused10) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -622,7 +634,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused10) {
+        } catch (_unused11) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -712,7 +724,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused11) {
+    } catch (_unused12) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -792,10 +804,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     });
   };
   _proto.recordTouchEvent = function recordTouchEvent() {
-    this.lastTouchEventTime = Date.now();
+    this.lastTouchEventTime = getCurrentTimestamp();
   };
   _proto.shouldIgnoreMouseEvent = function shouldIgnoreMouseEvent() {
-    var elapsedTouchTime = Date.now() - this.lastTouchEventTime;
+    var elapsedTouchTime = getCurrentTimestamp() - this.lastTouchEventTime;
     return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS;
   };
   _proto.clearTouchDragState = function clearTouchDragState() {
@@ -844,7 +856,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused12) {
+    } catch (_unused13) {
       return false;
     }
   };
