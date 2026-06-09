@@ -70,6 +70,11 @@ Example:
   opacity: 1;
   ${e=>e.$touchActionEnabled&&"touch-action: none;"}
   &:focus {
+    outline: 2px solid ${ni};
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  &:focus:not(:focus-visible) {
     outline: none;
   }
   &:focus-visible {

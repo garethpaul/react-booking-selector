@@ -352,6 +352,11 @@ export const GridCell = styled.div`
   opacity: 1;
   ${(props) => props.$touchActionEnabled && 'touch-action: none;'}
   &:focus {
+    outline: 2px solid ${colors.blue};
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  &:focus:not(:focus-visible) {
     outline: none;
   }
   &:focus-visible {

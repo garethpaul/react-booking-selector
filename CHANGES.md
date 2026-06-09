@@ -37,6 +37,8 @@
   `:focus-visible` support.
 - Asserted the safe external GitHub link in the production docs smoke DOM
   checks.
+- Kept booking grid cell focus outlines visible in browsers without
+  `:focus-visible` support.
 
 ## 2026-06-08
 

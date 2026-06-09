@@ -8,6 +8,7 @@ import BookingSelector, {
   getKeyboardNavigationTarget,
   preventScroll,
 } from '../../src/lib/BookingSelector'
+import colors from '../../src/lib/colors'
 
 const startDate = new Date('2018-01-01T00:00:00.000')
 
@@ -1895,6 +1896,17 @@ describe('cell accessibility', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
     expect(getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }).tagName).toBe('BUTTON')
+  })
+
+  it('keeps grid cell focus outlines visible without focus-visible support', () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    expect(cell).toHaveStyleRule('outline', `2px solid ${colors.blue}`, { modifier: ':focus' })
+    expect(cell).toHaveStyleRule('outline-offset', '2px', { modifier: ':focus' })
+    expect(cell).toHaveStyleRule('border-radius', '6px', { modifier: ':focus' })
+    expect(cell).toHaveStyleRule('outline', 'none', { modifier: ':focus:not(:focus-visible)' })
+    expect(cell).toHaveStyleRule('outline', `2px solid ${colors.blue}`, { modifier: ':focus-visible' })
   })
 
   it('resets host button sizing constraints on grid cells', () => {
