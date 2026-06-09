@@ -104,6 +104,12 @@ if (args.includes('--dump-dom')) {
   requestSmokePath(args[args.length - 1], () => {
     const targetUrl = new URL(args[args.length - 1])
     if (targetUrl.pathname === '/__smoke__/layout.html') {
+      const missingOnceFile = process.env.FAKE_CHROME_LAYOUT_MISSING_ONCE_FILE
+      if (missingOnceFile && !fs.existsSync(missingOnceFile)) {
+        fs.writeFileSync(missingOnceFile, '1')
+        process.stdout.write('<!doctype html><html><body></body></html>')
+        process.exit(0)
+      }
       const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
       const [width] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
       const layout = {
@@ -226,6 +232,18 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_LAYOUT_OVERFLOW: '1' })
     }).toThrow(/desktop layout has horizontal overflow/u)
+  })
+
+  it('retries when a layout smoke dump is missing once', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, {
+      FAKE_CHROME_LAYOUT_MISSING_ONCE_FILE: path.join(projectPath, 'layout-missing-once'),
+    })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
   })
 
   it('fails when the layout smoke result is missing a metric', () => {

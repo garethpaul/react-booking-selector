@@ -61,6 +61,7 @@ const expectedDomSnippets = [
   '0 selected - 3 blocked',
 ]
 const chromeTimeoutMs = 30000
+const layoutSmokeAttempts = 3
 
 const sendResponse = (response, statusCode, body) => {
   response.writeHead(statusCode, { 'content-type': 'text/plain; charset=utf-8' })
@@ -466,6 +467,26 @@ const assertLayout = (screenshot, dom) => {
   }
 }
 
+const isRetriableLayoutError = (error) => error.message === 'Docs layout smoke result is missing'
+
+const runLayoutSmoke = async (chrome, url, screenshot) => {
+  for (let attempt = 1; attempt <= layoutSmokeAttempts; attempt += 1) {
+    const layoutDom = await runChrome(chrome, [
+      `--window-size=${screenshot.width},${screenshot.height}`,
+      '--virtual-time-budget=5000',
+      '--dump-dom',
+      `${url}${layoutCheckPath}`,
+    ])
+
+    try {
+      assertLayout(screenshot, layoutDom)
+      return
+    } catch (error) {
+      if (attempt === layoutSmokeAttempts || !isRetriableLayoutError(error)) throw error
+    }
+  }
+}
+
 const main = async () => {
   if (!fs.existsSync(path.join(docsRoot, 'index.html'))) {
     throw new Error('dist/docs/index.html is missing. Run corepack yarn docs:build before smoke-docs.js.')
@@ -487,13 +508,7 @@ const main = async () => {
     }
 
     for (const screenshot of screenshots) {
-      const layoutDom = await runChrome(chrome, [
-        `--window-size=${screenshot.width},${screenshot.height}`,
-        '--virtual-time-budget=5000',
-        '--dump-dom',
-        `${url}${layoutCheckPath}`,
-      ])
-      assertLayout(screenshot, layoutDom)
+      await runLayoutSmoke(chrome, url, screenshot)
     }
 
     const dom = await runChrome(chrome, ['--dump-dom', url])
