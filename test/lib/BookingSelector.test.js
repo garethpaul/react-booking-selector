@@ -1552,6 +1552,28 @@ describe('prop updates', () => {
     expect(buildDates(dateGridProps, createTime)[0].map((time) => time.getHours())).toEqual([1, 3])
   })
 
+  it('marks non-Date custom time values as placeholders', () => {
+    const start = new Date(2024, 2, 10)
+    const dateGridProps = {
+      startDate: start,
+      numDays: 1,
+      minTime: 1,
+      maxTime: 3,
+    }
+    const createTime = (day, hour) => {
+      if (hour === 2) return null
+      return new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0, 0, 0)
+    }
+    const dateColumns = buildDateColumns(dateGridProps, createTime)
+
+    expect(dateColumns[0].slots.map((slot) => [slot.hour, slot.time ? slot.time.getHours() : null])).toEqual([
+      [1, 1],
+      [2, null],
+      [3, 3],
+    ])
+    expect(buildDates(dateGridProps, createTime)[0].map((time) => time.getHours())).toEqual([1, 3])
+  })
+
   it('renders nonexistent daylight-saving-time hours as placeholders instead of duplicate slots', () => {
     const start = new Date(2024, 2, 10)
     const host = renderSelector({ startDate: start, numDays: 1, minTime: 1, maxTime: 3 })

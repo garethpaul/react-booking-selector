@@ -46,6 +46,7 @@
 - Asserted the CommonJS package root's ESM interop marker at runtime.
 - Skipped sparse time entries inside selection-scheme day buckets.
 - Avoided redundant `endSelection` state writes when selection is already idle.
+- Treated non-Date custom time values as grid placeholders.
 
 ## 2026-06-08
 

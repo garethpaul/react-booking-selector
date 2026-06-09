@@ -119,7 +119,7 @@ var buildDateColumns = exports.buildDateColumns = function buildDateColumns(_ref
       var time = createTime(day, h);
       slots.push({
         hour: h,
-        time: localTimeExists(day, h, time) ? time : null
+        time: time instanceof Date && localTimeExists(day, h, time) ? time : null
       });
     });
     dateColumns.push({
