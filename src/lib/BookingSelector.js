@@ -209,35 +209,72 @@ const findDateSlotPosition = (dateColumns: Array<DateColumnType>, time: Date): ?
   return null
 }
 
-const getVerticalKeyboardNavigationTarget = (
-  dateColumn: DateColumnType,
-  slotIndex: number,
+const getHorizontalKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  position: DateSlotPositionType,
   direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
 ): ?Date => {
-  for (let nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
-    if (nextSlotIndex >= dateColumn.slots.length) return null
-    const nextTime = dateColumn.slots[nextSlotIndex].time
-    if (nextTime) return nextTime
+  for (
+    let targetColumnIndex = position.columnIndex + direction;
+    targetColumnIndex >= 0 && targetColumnIndex < dateColumns.length;
+    targetColumnIndex += direction
+  ) {
+    const targetColumn = dateColumns[targetColumnIndex]
+    const targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null
+    const targetTime = targetSlot ? targetSlot.time : null
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
   }
   return null
 }
 
-export const getKeyboardNavigationTarget = (dateColumns: Array<DateColumnType>, time: Date, key: string): ?Date => {
+const getVerticalKeyboardNavigationTarget = (
+  dateColumn: DateColumnType,
+  slotIndex: number,
+  direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
+): ?Date => {
+  for (let nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
+    if (nextSlotIndex >= dateColumn.slots.length) return null
+    const nextTime = dateColumn.slots[nextSlotIndex].time
+    if (nextTime && !hasDateMinuteKey(blockedMinuteKeys, nextTime)) return nextTime
+  }
+  return null
+}
+
+export const getKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  time: Date,
+  key: string,
+  blockedMinuteKeys: Set<number> = new Set(),
+): ?Date => {
   const position = findDateSlotPosition(dateColumns, time)
   if (!position) return null
 
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
-    const targetColumnIndex = position.columnIndex + (key === 'ArrowRight' ? 1 : -1)
-    const targetColumn = dateColumns[targetColumnIndex]
-    const targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null
-    return targetSlot && targetSlot.time ? targetSlot.time : null
+    return getHorizontalKeyboardNavigationTarget(
+      dateColumns,
+      position,
+      key === 'ArrowRight' ? 1 : -1,
+      blockedMinuteKeys,
+    )
   }
 
   if (key === 'ArrowDown') {
-    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, 1)
+    return getVerticalKeyboardNavigationTarget(
+      dateColumns[position.columnIndex],
+      position.slotIndex,
+      1,
+      blockedMinuteKeys,
+    )
   }
   if (key === 'ArrowUp') {
-    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, -1)
+    return getVerticalKeyboardNavigationTarget(
+      dateColumns[position.columnIndex],
+      position.slotIndex,
+      -1,
+      blockedMinuteKeys,
+    )
   }
   return null
 }
@@ -748,7 +785,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   handleCellKeyDownEvent(event: KeyboardSelectionEventType, time: Date, blocked: boolean) {
     if (isKeyboardNavigationKey(event.key)) {
-      const navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, event.key)
+      const navigationTarget = getKeyboardNavigationTarget(
+        buildDateColumns(this.props),
+        time,
+        event.key,
+        this.blockedMinuteKeys,
+      )
       event.preventDefault()
       if (navigationTarget) this.focusDateCell(navigationTarget)
       return

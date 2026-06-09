@@ -166,28 +166,37 @@ var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
   }
   return null;
 };
-var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigationTarget(dateColumn, slotIndex, direction) {
-  for (var nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
-    if (nextSlotIndex >= dateColumn.slots.length) return null;
-    var nextTime = dateColumn.slots[nextSlotIndex].time;
-    if (nextTime) return nextTime;
+var getHorizontalKeyboardNavigationTarget = function getHorizontalKeyboardNavigationTarget(dateColumns, position, direction, blockedMinuteKeys) {
+  for (var targetColumnIndex = position.columnIndex + direction; targetColumnIndex >= 0 && targetColumnIndex < dateColumns.length; targetColumnIndex += direction) {
+    var targetColumn = dateColumns[targetColumnIndex];
+    var targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null;
+    var targetTime = targetSlot ? targetSlot.time : null;
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
   }
   return null;
 };
-export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key) {
+var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigationTarget(dateColumn, slotIndex, direction, blockedMinuteKeys) {
+  for (var nextSlotIndex = slotIndex + direction; nextSlotIndex >= 0; nextSlotIndex += direction) {
+    if (nextSlotIndex >= dateColumn.slots.length) return null;
+    var nextTime = dateColumn.slots[nextSlotIndex].time;
+    if (nextTime && !hasDateMinuteKey(blockedMinuteKeys, nextTime)) return nextTime;
+  }
+  return null;
+};
+export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys) {
+  if (blockedMinuteKeys === void 0) {
+    blockedMinuteKeys = new Set();
+  }
   var position = findDateSlotPosition(dateColumns, time);
   if (!position) return null;
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
-    var targetColumnIndex = position.columnIndex + (key === 'ArrowRight' ? 1 : -1);
-    var targetColumn = dateColumns[targetColumnIndex];
-    var targetSlot = targetColumn ? targetColumn.slots[position.slotIndex] : null;
-    return targetSlot && targetSlot.time ? targetSlot.time : null;
+    return getHorizontalKeyboardNavigationTarget(dateColumns, position, key === 'ArrowRight' ? 1 : -1, blockedMinuteKeys);
   }
   if (key === 'ArrowDown') {
-    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, 1);
+    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, 1, blockedMinuteKeys);
   }
   if (key === 'ArrowUp') {
-    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, -1);
+    return getVerticalKeyboardNavigationTarget(dateColumns[position.columnIndex], position.slotIndex, -1, blockedMinuteKeys);
   }
   return null;
 };
@@ -622,7 +631,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
     var _this4 = this;
     if (isKeyboardNavigationKey(event.key)) {
-      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, event.key);
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), time, event.key, this.blockedMinuteKeys);
       event.preventDefault();
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;

@@ -101,3 +101,4 @@
 - Supported `aria-describedby` for describing the booking slot group with visible helper text.
 - Added npm package issue tracker and README homepage metadata.
 - Connected the docs demo selected-slot status to the booking grid as an accessible description.
+- Skipped blocked slots during arrow-key navigation instead of stopping focus on disabled cells.

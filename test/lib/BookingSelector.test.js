@@ -1346,6 +1346,19 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'Escape')).toBe(null)
   })
 
+  it('skips sparse horizontal keyboard navigation cells', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const thursdayNine = addHours(addDays(startOfDay(startDate), 3), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      undefined,
+      { day: addDays(startDate, 2), slots: [] },
+      { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
+    ]
+
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowRight')).toBe(thursdayNine)
+  })
+
   it('skips placeholder rows when vertically navigating daylight-saving-time gaps', () => {
     const dateColumns = buildDateColumns(
       {
@@ -1963,10 +1976,53 @@ describe('keyboard interaction', () => {
     expect(mondayNine).toHaveFocus()
   })
 
+  it('moves focus past blocked cells with arrow keys', () => {
+    const blockedTuesday = addHours(addDays(startOfDay(startDate), 1), 9)
+    const { getByRole } = renderSelector({
+      blocked: [blockedTuesday],
+      startDate,
+      numDays: 3,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const wednesdayNine = getByRole('button', { name: 'Available Wednesday, January 3, 2018 at 9 am' })
+
+    mondayNine.focus()
+    fireEvent.keyDown(mondayNine, { key: 'ArrowRight' })
+
+    expect(wednesdayNine).toHaveFocus()
+  })
+
+  it('moves focus vertically past blocked cells with arrow keys', () => {
+    const blockedTen = addHours(startOfDay(startDate), 10)
+    const { getByRole } = renderSelector({
+      blocked: [blockedTen],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 11,
+    })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const mondayEleven = getByRole('button', { name: 'Available Monday, January 1, 2018 at 11 am' })
+
+    mondayNine.focus()
+    fireEvent.keyDown(mondayNine, { key: 'ArrowDown' })
+
+    expect(mondayEleven).toHaveFocus()
+  })
+
   it('reports when an unblocked focus target is not registered', () => {
     const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
     expect(instance.focusDateCell(addHours(startOfDay(startDate), 10))).toBe(false)
+  })
+
+  it('reports when a blocked focus target is not focusable', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ blocked: [blocked], startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(instance.focusDateCell(blocked)).toBe(false)
   })
 
   it('does not move focus outside the rendered grid with arrow keys', () => {
