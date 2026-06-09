@@ -1024,8 +1024,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
+    const restoredSelectionBase = normalizeSelectionDraft(this.state.selectionBase)
     this.setState({
-      selectionDraft: this.state.selectionBase,
+      selectionDraft: restoredSelectionBase,
+      selectionBase: restoredSelectionBase,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false,

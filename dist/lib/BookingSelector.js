@@ -824,8 +824,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       this.clearTouchDragState();
       return;
     }
+    var restoredSelectionBase = normalizeSelectionDraft(this.state.selectionBase);
     this.setState({
-      selectionDraft: this.state.selectionBase,
+      selectionDraft: restoredSelectionBase,
+      selectionBase: restoredSelectionBase,
       selectionType: null,
       selectionStart: null,
       isTouchDragging: false

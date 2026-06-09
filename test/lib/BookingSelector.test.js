@@ -980,6 +980,31 @@ describe('touch handlers', () => {
     expect(selectedCell).toHaveAttribute('aria-pressed', 'true')
   })
 
+  it('normalizes malformed selection bases when touch drags are canceled', async () => {
+    const selected = addHours(startOfDay(startDate), 9)
+    const duplicateSameMinute = new Date(selected.getTime() + 30000)
+    const activeDraft = addHours(startOfDay(startDate), 10)
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+
+    await setStateAsync(instance, {
+      selectionBase: [{ getTime: true }, new Date(NaN), selected, duplicateSameMinute],
+      selectionDraft: [activeDraft],
+      selectionType: 'add',
+      selectionStart: selected,
+      isTouchDragging: true,
+    })
+
+    act(() => {
+      instance.handleTouchCancelEvent()
+    })
+
+    expect(instance.state.selectionDraft).toEqual([selected])
+    expect(instance.state.selectionBase).toEqual([selected])
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
+    expect(instance.state.isTouchDragging).toBe(false)
+  })
+
   afterEach(() => {
     Object.keys(spies).forEach((spyName) => {
       spies[spyName].mockRestore()
