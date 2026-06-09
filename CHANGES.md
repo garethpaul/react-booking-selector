@@ -74,3 +74,4 @@
 - Exposed the docs GitHub link's new-tab behavior in its accessible name.
 - Aligned margin prop declarations and docs with runtime support for CSS length strings.
 - Aligned source Flow props with runtime and TypeScript support for nullish selection lists.
+- Avoided suppressing touch scrolling from disabled blocked cells.

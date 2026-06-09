@@ -149,7 +149,7 @@ var GridCell = exports.GridCell = _styled.default.div(_templateObject5 || (_temp
 }, function (props) {
   return props.$interactive && "cursor: " + (props.$blocked ? 'not-allowed' : 'pointer') + ";";
 }, function (props) {
-  return props.$interactive && 'touch-action: none;';
+  return props.$touchActionEnabled && 'touch-action: none;';
 }, _colors.default.blue);
 
 // Style the Date Cell
@@ -177,6 +177,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     _this.selectionSchemeHandlers = void 0;
     _this.cellToDate = void 0;
     _this.dateToCell = void 0;
+    _this.touchScrollCells = void 0;
     _this.gridRef = void 0;
     _this.lastTouchEventTime = void 0;
     _this.blockedMinuteKeys = void 0;
@@ -224,7 +225,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
           _this.unregisterDateCell(currentDateCell);
         }
         if (dateCell) {
-          _this.registerDateCell(dateCell, time);
+          _this.registerDateCell(dateCell, time, !blocked);
         }
         currentDateCell = dateCell;
       };
@@ -238,6 +239,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
         $height: "40px",
         $blocked: blocked,
         $interactive: true,
+        $touchActionEnabled: !blocked,
         $margin: _this.props.margin,
         key: time.toISOString(),
         ref: refSetter
@@ -279,6 +281,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     };
     _this.cellToDate = new Map();
     _this.dateToCell = new Map();
+    _this.touchScrollCells = new Set();
     _this.lastTouchEventTime = 0;
     var selectionDraft = normalizeDates(_this.props.selection);
     var selectionPropSignature = getDatesSignature(_this.props.selection);
@@ -350,6 +353,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     });
     this.cellToDate.clear();
     this.dateToCell.clear();
+    this.touchScrollCells.clear();
   };
   _proto.refreshInstanceLookups = function refreshInstanceLookups(props, selectionDraft) {
     this.dates = buildDates(props);
@@ -370,24 +374,36 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       this.dateToCell.delete(registeredTime);
     }
   };
-  _proto.registerDateCell = function registerDateCell(dateCell, time) {
-    var previousTime = this.cellToDate.get(dateCell);
-    if (!this.cellToDate.has(dateCell)) {
+  _proto.syncDateCellTouchMoveListener = function syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll) {
+    var isPreventingTouchScroll = this.touchScrollCells.has(dateCell);
+    if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       dateCell.addEventListener('touchmove', preventScroll, {
         passive: false
       });
-    } else if (previousTime) {
+      this.touchScrollCells.add(dateCell);
+    } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
+      dateCell.removeEventListener('touchmove', preventScroll);
+      this.touchScrollCells.delete(dateCell);
+    }
+  };
+  _proto.registerDateCell = function registerDateCell(dateCell, time, shouldPreventTouchScroll) {
+    if (shouldPreventTouchScroll === void 0) {
+      shouldPreventTouchScroll = true;
+    }
+    var previousTime = this.cellToDate.get(dateCell);
+    if (this.cellToDate.has(dateCell) && previousTime) {
       this.clearDateCellTimeLookup(dateCell, previousTime);
-    } else {
+    } else if (this.cellToDate.has(dateCell)) {
       this.clearDateCellLookup(dateCell);
     }
+    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll);
     this.cellToDate.set(dateCell, time);
     this.dateToCell.set(dateKey(time), dateCell);
   };
   _proto.unregisterDateCell = function unregisterDateCell(dateCell) {
     var time = this.cellToDate.get(dateCell);
     if (!this.cellToDate.has(dateCell)) return;
-    dateCell.removeEventListener('touchmove', preventScroll);
+    this.syncDateCellTouchMoveListener(dateCell, false);
     this.cellToDate.delete(dateCell);
     if (time) {
       this.clearDateCellTimeLookup(dateCell, time);

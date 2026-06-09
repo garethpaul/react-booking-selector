@@ -210,7 +210,7 @@ export const GridCell = styled.div`
   ${(props) => props.$interactive && `cursor: ${props.$blocked ? 'not-allowed' : 'pointer'};`}
   font: inherit;
   opacity: 1;
-  ${(props) => props.$interactive && 'touch-action: none;'}
+  ${(props) => props.$touchActionEnabled && 'touch-action: none;'}
   &:focus {
     outline: none;
   }
@@ -342,6 +342,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
   cellToDate: Map<HTMLElement, ?Date>
   dateToCell: Map<number, HTMLElement>
+  touchScrollCells: Set<HTMLElement>
   gridRef: ?HTMLElement
   lastTouchEventTime: number
   blockedMinuteKeys: Set<number>
@@ -368,6 +369,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     this.cellToDate = new Map()
     this.dateToCell = new Map()
+    this.touchScrollCells = new Set()
     this.lastTouchEventTime = 0
 
     const selectionDraft = normalizeDates(this.props.selection)
@@ -447,6 +449,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     })
     this.cellToDate.clear()
     this.dateToCell.clear()
+    this.touchScrollCells.clear()
   }
 
   refreshInstanceLookups(props: PropsType, selectionDraft: Array<Date>) {
@@ -470,15 +473,25 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
   }
 
-  registerDateCell(dateCell: HTMLElement, time: Date) {
-    const previousTime = this.cellToDate.get(dateCell)
-    if (!this.cellToDate.has(dateCell)) {
+  syncDateCellTouchMoveListener(dateCell: HTMLElement, shouldPreventTouchScroll: boolean) {
+    const isPreventingTouchScroll = this.touchScrollCells.has(dateCell)
+    if (shouldPreventTouchScroll && !isPreventingTouchScroll) {
       dateCell.addEventListener('touchmove', preventScroll, { passive: false })
-    } else if (previousTime) {
+      this.touchScrollCells.add(dateCell)
+    } else if (!shouldPreventTouchScroll && isPreventingTouchScroll) {
+      dateCell.removeEventListener('touchmove', preventScroll)
+      this.touchScrollCells.delete(dateCell)
+    }
+  }
+
+  registerDateCell(dateCell: HTMLElement, time: Date, shouldPreventTouchScroll: boolean = true) {
+    const previousTime = this.cellToDate.get(dateCell)
+    if (this.cellToDate.has(dateCell) && previousTime) {
       this.clearDateCellTimeLookup(dateCell, previousTime)
-    } else {
+    } else if (this.cellToDate.has(dateCell)) {
       this.clearDateCellLookup(dateCell)
     }
+    this.syncDateCellTouchMoveListener(dateCell, shouldPreventTouchScroll)
     this.cellToDate.set(dateCell, time)
     this.dateToCell.set(dateKey(time), dateCell)
   }
@@ -486,7 +499,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   unregisterDateCell(dateCell: HTMLElement) {
     const time = this.cellToDate.get(dateCell)
     if (!this.cellToDate.has(dateCell)) return
-    dateCell.removeEventListener('touchmove', preventScroll)
+    this.syncDateCellTouchMoveListener(dateCell, false)
     this.cellToDate.delete(dateCell)
     if (time) {
       this.clearDateCellTimeLookup(dateCell, time)
@@ -750,7 +763,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         this.unregisterDateCell(currentDateCell)
       }
       if (dateCell) {
-        this.registerDateCell(dateCell, time)
+        this.registerDateCell(dateCell, time, !blocked)
       }
       currentDateCell = dateCell
     }
@@ -766,6 +779,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         $height="40px"
         $blocked={blocked}
         $interactive
+        $touchActionEnabled={!blocked}
         $margin={this.props.margin}
         key={time.toISOString()}
         ref={refSetter}

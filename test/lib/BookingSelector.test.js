@@ -746,6 +746,24 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
+  it('does not suppress touch scrolling from blocked cells', () => {
+    const addSpy = jest.spyOn(HTMLElement.prototype, 'addEventListener')
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      blocked: [blocked],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const blockedCell = getByRole('button', { name: 'Blocked Monday, January 1, 2018 at 9 am' })
+
+    expect(addSpy).not.toHaveBeenCalledWith('touchmove', preventScroll, { passive: false })
+    expect(blockedCell).toHaveStyleRule('cursor', 'not-allowed')
+    expect(blockedCell).not.toHaveStyleRule('touch-action', 'none')
+    addSpy.mockRestore()
+  })
+
   it('updates date lookup maps when a mounted date cell receives a new time', () => {
     const { instance } = renderSelector()
     const cell = document.createElement('div')
@@ -762,6 +780,22 @@ describe('componentDidMount', () => {
     addSpy.mockRestore()
   })
 
+  it('removes touchmove prevention when a registered cell becomes blocked', () => {
+    const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const removeSpy = jest.spyOn(cell, 'removeEventListener')
+    const time = addHours(startOfDay(startDate), 9)
+
+    instance.registerDateCell(cell, time)
+    instance.registerDateCell(cell, time, false)
+
+    expect(removeSpy).toHaveBeenCalledWith('touchmove', preventScroll)
+    expect(instance.cellToDate.get(cell)).toEqual(time)
+    expect(instance.dateToCell.get(time.getTime())).toBe(cell)
+    expect(instance.touchScrollCells.has(cell)).toBe(false)
+    removeSpy.mockRestore()
+  })
+
   it('keeps newer date lookup entries when an older cell unregisters the same time', () => {
     const { instance } = renderSelector()
     const firstCell = document.createElement('div')
@@ -773,6 +807,7 @@ describe('componentDidMount', () => {
     instance.unregisterDateCell(firstCell)
 
     expect(instance.cellToDate.has(firstCell)).toBe(false)
+    expect(instance.touchScrollCells.has(firstCell)).toBe(false)
     expect(instance.cellToDate.get(secondCell)).toEqual(time)
     expect(instance.dateToCell.get(time.getTime())).toBe(secondCell)
   })
@@ -803,9 +838,10 @@ describe('componentDidMount', () => {
 
     instance.registerDateCell(cell, nextTime)
 
-    expect(addSpy).not.toHaveBeenCalled()
+    expect(addSpy).toHaveBeenCalledWith('touchmove', preventScroll, { passive: false })
     expect(instance.dateToCell.has(staleTime.getTime())).toBe(false)
     expect(instance.dateToCell.get(nextTime.getTime())).toBe(cell)
+    expect(instance.touchScrollCells.has(cell)).toBe(true)
     addSpy.mockRestore()
   })
 
@@ -869,6 +905,7 @@ describe('componentWillUnmount', () => {
     const cell = document.createElement('div')
     const removeSpy = jest.spyOn(cell, 'removeEventListener')
     const staleTime = addHours(startOfDay(startDate), 8)
+    instance.registerDateCell(cell, staleTime)
     instance.cellToDate.set(cell, null)
     instance.dateToCell.set(staleTime.getTime(), cell)
 
