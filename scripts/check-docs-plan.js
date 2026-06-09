@@ -16,6 +16,7 @@ const planPaths = fs.existsSync(planDir)
       .sort()
       .map((name) => path.join(planDir, name))
   : []
+const readmePlanReferences = Array.from(readme.matchAll(/docs\/plans\/[-\w.]+\.md/gu), (match) => match[0]).sort()
 
 if (planPaths.length === 0) {
   errors.push(`${planDir} must contain completed plan markdown files`)
@@ -38,6 +39,12 @@ for (const planPath of planPaths) {
   }
   if (!readme.includes(planPath)) {
     errors.push(`README.md must reference ${planPath}`)
+  }
+}
+
+for (const readmePlanReference of readmePlanReferences) {
+  if (!planPaths.includes(readmePlanReference)) {
+    errors.push(`README.md references missing plan ${readmePlanReference}`)
   }
 }
 

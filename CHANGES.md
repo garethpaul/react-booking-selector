@@ -25,6 +25,8 @@
   blocked slot labels survive the production bundle.
 - Returned `400 Bad request` for malformed docs smoke server paths instead of
   letting malformed percent-encoding crash the smoke process.
+- Tightened `docs:check` so README cannot keep stale links to deleted
+  `docs/plans` files.
 
 ## 2026-06-08
 

@@ -128,4 +128,17 @@ describe('check-docs-plan script', () => {
 
     expect(stderr).toContain(`README.md must reference ${baselinePlanPath}`)
   })
+
+  it('reports README references to missing docs plans', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    const missingPlanPath = path.join('docs', 'plans', '2026-06-09-missing-plan.md')
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeReadme(projectPath, [baselinePlanPath, missingPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`README.md references missing plan ${missingPlanPath}`)
+  })
 })
