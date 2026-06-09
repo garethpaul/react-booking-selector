@@ -91,3 +91,4 @@
 - Cancelled active selections when the rendered date or hour grid changes.
 - Exposed the docs demo content through a main landmark.
 - Added an `ariaLabel` prop for customizing the booking slot group name.
+- Added direct coverage for the CommonJS entry writer script.
