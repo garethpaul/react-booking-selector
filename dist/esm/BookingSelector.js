@@ -411,7 +411,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     };
     _this.renderDateColumn = function (dateColumn, blockedMinuteKeys, selectedMinuteKeys) {
       return /*#__PURE__*/React.createElement(Column, {
-        key: dateColumn.day.toISOString()
+        key: dateKey(dateColumn.day)
       }, /*#__PURE__*/React.createElement(GridCell, {
         $height: "50",
         $margin: _this.props.margin,
@@ -425,7 +425,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         $height: "40px",
         $margin: _this.props.margin,
         "aria-hidden": "true",
-        key: day.toISOString() + "-" + hour
+        key: dateKey(day) + "-" + hour
       });
     };
     _this.renderDateCellWrapper = function (time) {
@@ -468,7 +468,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         $interactive: true,
         $touchActionEnabled: !blocked,
         $margin: _this.props.margin,
-        key: time.toISOString(),
+        key: dateKey(time),
         ref: refSetter
         // Mouse handlers
         ,

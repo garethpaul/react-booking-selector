@@ -1195,7 +1195,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     blockedMinuteKeys: Set<number>,
     selectedMinuteKeys: Set<number>,
   ): React.Element<*> => (
-    <Column key={dateColumn.day.toISOString()}>
+    <Column key={dateKey(dateColumn.day)}>
       <GridCell $height="50" $margin={this.props.margin} aria-hidden="true">
         <DayLabel>{formatDate(dateColumn.day, 'EEE').toUpperCase()}</DayLabel>
         <DateLabel>{formatDateHeader(dateColumn.day, this.props.dateFormat)}</DateLabel>
@@ -1209,7 +1209,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   )
 
   renderDateCellPlaceholder = (day: Date, hour: number): React.Element<*> => (
-    <GridCell $height="40px" $margin={this.props.margin} aria-hidden="true" key={`${day.toISOString()}-${hour}`} />
+    <GridCell $height="40px" $margin={this.props.margin} aria-hidden="true" key={`${dateKey(day)}-${hour}`} />
   )
 
   renderDateCellWrapper = (time: Date): React.Element<*> =>
@@ -1258,7 +1258,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         $interactive
         $touchActionEnabled={!blocked}
         $margin={this.props.margin}
-        key={time.toISOString()}
+        key={dateKey(time)}
         ref={refSetter}
         // Mouse handlers
         onMouseDown={mouseStartHandler}

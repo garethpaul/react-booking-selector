@@ -3561,6 +3561,34 @@ describe('cell accessibility', () => {
     )
   })
 
+  it('renders date keys with captured timestamp reads when Date prototypes change later', () => {
+    const originalToISOString = Date.prototype.toISOString
+    let rendered
+    Date.prototype.toISOString = function toISOString() {
+      throw new Error('Unexpected Date toISOString call')
+    }
+
+    try {
+      rendered = renderSelector({
+        startDate,
+        numDays: 2,
+        minTime: 9,
+        maxTime: 10,
+      })
+
+      expect(rendered.getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })).toHaveAttribute(
+        'aria-pressed',
+        'false',
+      )
+      expect(() => {
+        rendered.instance.renderDateCellPlaceholder(startDate, 11)
+      }).not.toThrow()
+    } finally {
+      Date.prototype.toISOString = originalToISOString
+      if (rendered) rendered.unmount()
+    }
+  })
+
   it('ignores unsupported values instead of coercing them into dates', () => {
     const epoch = new Date(0)
     const { getByRole } = renderSelector({

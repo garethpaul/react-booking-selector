@@ -42,6 +42,8 @@
   are still suppressed when the clock reports `0`.
 - Captured the Date constructor for date normalization, grid construction, and
   custom-render date copies so later global replacements cannot break them.
+- Keyed rendered date columns and cells through captured timestamp reads instead
+  of live `toISOString` methods.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do
