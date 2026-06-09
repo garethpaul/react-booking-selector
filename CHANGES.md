@@ -4,6 +4,8 @@
 
 - Normalized controlled selection drafts and emitted `onChange` payloads to
   minute-unique dates, matching the grid's slot comparison behavior.
+- Guarded numeric CSS lengths so non-finite values cannot emit invalid
+  `NaNpx` or `Infinitypx` styles.
 
 ## 2026-06-08
 

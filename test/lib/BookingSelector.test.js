@@ -1835,6 +1835,21 @@ describe('cell accessibility', () => {
     expect(dateHeaderCell).toHaveStyleRule('margin', '0.25rem')
   })
 
+  it('falls back from non-finite numeric grid cell margins', () => {
+    const { getByRole, getByText } = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: Number.NaN,
+    })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const dateHeaderCell = getByText('MON').closest('[aria-hidden="true"]')
+
+    expect(cell).toHaveStyleRule('margin', '0px')
+    expect(dateHeaderCell).toHaveStyleRule('margin', '0px')
+  })
+
   it('limits touch-action suppression to interactive cells', () => {
     const { getByRole, getByText } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
     const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })

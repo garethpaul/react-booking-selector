@@ -20,6 +20,7 @@ function _taggedTemplateLiteralLoose(e, t) { return t || (t = e.slice(0)), e.raw
 var DEFAULT_DATE_FORMAT = 'd';
 var toCssUnit = function toCssUnit(value) {
   if (value == null) return '0px';
+  if (typeof value === 'number' && !Number.isFinite(value)) return '0px';
   if (typeof value === 'number') return value + "px";
   return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
 };

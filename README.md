@@ -211,6 +211,7 @@ Invalid format strings fall back to the default day-of-month header format.
 **type**: `number | string`
 
 **description**: Margin between grid cells. Numbers are treated as pixels; strings may use any valid CSS length.
+Non-finite numbers fall back to `0px`.
 
 **required**: no
 
