@@ -888,9 +888,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   clearTouchDragState() {
-    if (this.state.isTouchDragging) {
-      this.setState({ isTouchDragging: false })
-    }
+    const shouldClearSelectionStart = this.state.selectionStart !== null && !isSelectionType(this.state.selectionType)
+    if (!this.state.isTouchDragging && !shouldClearSelectionStart) return
+
+    this.setState({ selectionStart: null, isTouchDragging: false })
   }
 
   handleMouseDownEvent(time: mixed, event?: MouseSelectionEventType) {

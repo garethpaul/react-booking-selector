@@ -1042,6 +1042,21 @@ it.each([
   expect(instance.state.isTouchDragging).toBe(false)
 })
 
+it.each([
+  { label: 'touch end', cleanupTouch: (instance) => instance.handleTouchEndEvent() },
+  { label: 'touch cancel', cleanupTouch: (instance) => instance.handleTouchCancelEvent() },
+])('clears dangling idle selection starts on $label', async ({ cleanupTouch }) => {
+  const { instance } = renderSelector()
+
+  await setStateAsync(instance, { selectionStart: startDate })
+  act(() => {
+    cleanupTouch(instance)
+  })
+
+  expect(instance.state.selectionStart).toBe(null)
+  expect(instance.state.isTouchDragging).toBe(false)
+})
+
 describe('updateAvailabilityDraft', () => {
   it.each([
     ['add', 1],

@@ -698,11 +698,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS;
   };
   _proto.clearTouchDragState = function clearTouchDragState() {
-    if (this.state.isTouchDragging) {
-      this.setState({
-        isTouchDragging: false
-      });
-    }
+    var shouldClearSelectionStart = this.state.selectionStart !== null && !isSelectionType(this.state.selectionType);
+    if (!this.state.isTouchDragging && !shouldClearSelectionStart) return;
+    this.setState({
+      selectionStart: null,
+      isTouchDragging: false
+    });
   };
   _proto.handleMouseDownEvent = function handleMouseDownEvent(time, event) {
     if (!isPrimaryMouseButton(event)) return;
