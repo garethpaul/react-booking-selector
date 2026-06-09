@@ -10,13 +10,22 @@ const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8')
 
 const errors = []
 const planFilenamePattern = /^(\d{4})-(\d{2})-(\d{2})-[-\w.]+\.md$/u
-const planPaths = fs.existsSync(planDir)
-  ? fs
-      .readdirSync(planDir)
-      .filter((name) => name.endsWith('.md'))
-      .sort()
-      .map((name) => path.join(planDir, name))
-  : []
+
+const getPlanPaths = () => {
+  if (!fs.existsSync(planDir)) return []
+  if (!fs.statSync(planDir).isDirectory()) {
+    errors.push(`${planDir} must be a directory`)
+    return []
+  }
+
+  return fs
+    .readdirSync(planDir)
+    .filter((name) => name.endsWith('.md'))
+    .sort()
+    .map((name) => path.join(planDir, name))
+}
+
+const planPaths = getPlanPaths()
 const readmePlanReferences = Array.from(readme.matchAll(/docs\/plans\/[-\w.]+\.md/gu), (match) => match[0]).sort()
 const readmePlanReferenceCounts = readmePlanReferences.reduce(
   (counts, planPath) => counts.set(planPath, (counts.get(planPath) ?? 0) + 1),

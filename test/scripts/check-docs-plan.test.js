@@ -106,6 +106,20 @@ describe('check-docs-plan script', () => {
     expect(stderr).toContain(`${baselinePlanPath} is missing`)
   })
 
+  it('reports when the docs plan path is not a directory', () => {
+    const projectPath = mkdtempSync(path.join(tmpdir(), 'react-booking-selector-docs-check-'))
+    tempProjects.push(projectPath)
+    mkdirSync(path.join(projectPath, 'docs'), { recursive: true })
+    writeFileSync(path.join(projectPath, 'docs', 'plans'), 'not a directory')
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain('docs/plans must be a directory')
+    expect(stderr).toContain('docs/plans must contain completed plan markdown files')
+    expect(stderr).toContain(`${baselinePlanPath} is missing`)
+  })
+
   it('reports when the canonical baseline plan is missing', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
