@@ -152,6 +152,21 @@ it('endSelection calls the onChange prop and resets selection state', async () =
   setStateSpy.mockRestore()
 })
 
+it('queues the selection reset before calling onChange', async () => {
+  const changeSpy = jest.fn()
+  const { instance } = renderSelector({ onChange: changeSpy })
+  const setStateSpy = jest.spyOn(instance, 'setState')
+
+  await setStateAsync(instance, { selectionType: 'add' })
+  act(() => {
+    instance.endSelection()
+  })
+
+  expect(setStateSpy.mock.invocationCallOrder[0]).toBeLessThan(changeSpy.mock.invocationCallOrder[0])
+
+  setStateSpy.mockRestore()
+})
+
 it('endSelection does not call onChange when no selection is active', () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })

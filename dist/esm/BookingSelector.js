@@ -527,13 +527,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return null;
   };
   _proto.endSelection = function endSelection() {
-    if (this.state.selectionType !== null) {
-      this.props.onChange(normalizeDates(this.state.selectionDraft));
-    }
+    var nextSelection = this.state.selectionType !== null ? normalizeDates(this.state.selectionDraft) : null;
     this.setState({
       selectionType: null,
       selectionStart: null
     });
+    if (nextSelection) {
+      this.props.onChange(nextSelection);
+    }
   }
 
   // Given an ending Date, determines all the dates that should be selected in this draft
