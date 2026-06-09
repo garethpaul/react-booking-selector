@@ -202,4 +202,17 @@ describe('smoke-docs script', () => {
 
     expect(output).toContain('Docs smoke passed. Screenshots:')
   })
+
+  it('blocks encoded traversal outside the docs root', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, {
+      FAKE_CHROME_EXPECT_STATUS: '403',
+      FAKE_CHROME_REQUEST_PATH: '/..%2fpackage.json',
+    })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
+  })
 })
