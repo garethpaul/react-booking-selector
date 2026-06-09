@@ -30,7 +30,9 @@ var toCssUnit = function toCssUnit(value) {
   if (typeof value === 'number' && !Number.isFinite(value)) return '0px';
   if (typeof value === 'number') return value + "px";
   if (typeof value !== 'string') return '0px';
-  return /^-?\d+(\.\d+)?$/.test(value) ? value + "px" : value;
+  var cssValue = value.trim();
+  if (!cssValue) return '0px';
+  return /^-?\d+(\.\d+)?$/.test(cssValue) ? cssValue + "px" : cssValue;
 };
 var toCssColor = function toCssColor(value, fallback) {
   return typeof value === 'string' ? value : fallback;

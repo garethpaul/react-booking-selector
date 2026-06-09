@@ -2744,6 +2744,30 @@ describe('cell accessibility', () => {
     expect(dateHeaderCell).toHaveStyleRule('margin', '0.25rem')
   })
 
+  it('normalizes whitespace-padded grid cell margin strings', () => {
+    const first = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: ' 4 ',
+    })
+    const second = renderSelector({
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      margin: '   ',
+    })
+
+    expect(
+      within(first.container).getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }),
+    ).toHaveStyleRule('margin', '4px')
+    expect(
+      within(second.container).getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' }),
+    ).toHaveStyleRule('margin', '0px')
+  })
+
   it('falls back from non-finite numeric grid cell margins', () => {
     const { getByRole, getByText } = renderSelector({
       startDate,
