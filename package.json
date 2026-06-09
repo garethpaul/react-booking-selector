@@ -88,7 +88,7 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,mts,cts,html}\" \"src/**/*.d.ts\" \"test/**/*.{js,jsx,ts,tsx,mts,cts}\" \"scripts/**/*.js\" \"docs/plans/**/*.md\" \".vscode/**/*.json\" \".babelrc\" \"*.{js,json,md}\"",
     "cover": "jest --coverage",
     "cover:check": "yarn lib:build && jest --coverage --runInBand; status=$?; rm -rf coverage; exit $status",
-    "test": "yarn lib:build && jest",
+    "test": "yarn lib:build && jest --runInBand",
     "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && BABEL_ENV=esm babel src/lib -d dist/esm --extensions .js,.jsx && node scripts/write-cjs-entry.js && cp src/lib/index.d.ts dist/lib/index.d.ts && cp src/lib/index.d.cts dist/lib/index.d.cts && cp src/lib/index.d.ts dist/esm/index.d.ts && cp src/lib/index.d.ts dist/esm/index.d.mts && node -e \"const fs = require('fs'); fs.writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}\\n')\"",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html && rm -rf .cache .parcel-cache",

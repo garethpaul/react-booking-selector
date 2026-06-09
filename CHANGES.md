@@ -2,6 +2,10 @@
 
 ## 2026-06-09
 
+- Added Makefile `lint`, `test`, and `build` wrappers with Jest coverage for
+  the repository-standard gate aliases.
+- Ran the normal Jest test script serially after `lib:build` so generated
+  package metadata is stable before Jest crawls the workspace.
 - Normalized `docs:check` plan paths so README validation remains stable
   across native path separators.
 - Tightened `docs:check` so README cannot duplicate canonical `docs/plans`

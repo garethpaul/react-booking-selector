@@ -301,13 +301,17 @@ Non-finite numbers fall back to `0px`.
 ## Development
 
 ```bash
+make lint
+make test
+make build
 make check
 corepack yarn verify
 corepack yarn build
 corepack yarn docs:smoke
 ```
 
-`make check` is the repository-standard wrapper around `corepack yarn verify`.
+`make lint`, `make test`, `make build`, and `make check` are repository-standard wrappers around the matching
+`corepack yarn` gates.
 `corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
 `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
@@ -325,3 +329,4 @@ See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique REA
 See `docs/plans/2026-06-09-docs-plan-filename-validation.md` for dated docs-plan filename validation.
 See `docs/plans/2026-06-09-date-utils-malformed-inputs.md` for malformed date utility input handling.
 See `docs/plans/2026-06-09-docs-plan-path-normalization.md` for cross-platform docs-plan path validation.
+See `docs/plans/2026-06-09-make-gate-wrapper-aliases.md` for Makefile gate wrapper aliases.

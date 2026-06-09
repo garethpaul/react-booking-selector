@@ -22,6 +22,7 @@ Priority:
 - Preserve the controlled `selection`, `blocked`, and `onChange` API
 - Keep square and linear selection behavior deterministic
 - Maintain package build, docs, lint, and test scripts
+- Maintain Makefile wrappers for lint, test, build, verify, and check gates
 - Keep styling customizable without hiding selection state
 - Emit minute-unique selection payloads that match the grid comparison model
 - Keep every completed maintenance plan under `docs/plans` verified by `docs:check`

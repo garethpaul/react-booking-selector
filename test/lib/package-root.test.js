@@ -1,4 +1,5 @@
 import { execFileSync } from 'child_process'
+import { readFileSync } from 'fs'
 
 import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'
 import packageJson from 'react-booking-selector/package.json'
@@ -16,6 +17,17 @@ it('exports package metadata', () => {
 
 it('marks the published package as side-effect free', () => {
   expect(packageJson.sideEffects).toBe(false)
+})
+
+it('exposes repository Makefile gate wrappers', () => {
+  const makefile = readFileSync('Makefile', 'utf8')
+
+  expect(packageJson.scripts.test).toBe('yarn lib:build && jest --runInBand')
+  expect(makefile).toMatch(/^check: verify$/m)
+  expect(makefile).toMatch(/^lint:\n\tcorepack yarn lint$/m)
+  expect(makefile).toMatch(/^test:\n\tcorepack yarn test$/m)
+  expect(makefile).toMatch(/^build:\n\tcorepack yarn build$/m)
+  expect(makefile).toMatch(/^verify:\n\tcorepack yarn verify$/m)
 })
 
 it('keeps package entry metadata aligned with the generated builds', () => {
