@@ -14,6 +14,8 @@ import selectionSchemes from './selection-schemes/index.js'
 
 type DateValueType = Date | string | number | { valueOf: () => number } | null | void
 
+type DateListType = ?Array<DateValueType>
+
 type SelectionType = 'add' | 'remove'
 
 type SelectionSchemeType = 'linear' | 'square'
@@ -61,22 +63,21 @@ const toDate = (value: DateValueType): Date => {
   }
 }
 
-const normalizeDates = (dates: ?Array<DateValueType>): Array<Date> =>
+const normalizeDates = (dates: DateListType): Array<Date> =>
   (Array.isArray(dates) ? dates : []).map(toDate).filter(isValid)
 
 const dateMinuteKey = (value: Date): number => Math.floor(value.getTime() / 60000)
 
 const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: Date): boolean => dateMinuteKeys.has(dateMinuteKey(time))
 
-const getDatesSignature = (dates: ?Array<DateValueType>): string => normalizeDates(dates).map(dateMinuteKey).join('|')
+const getDatesSignature = (dates: DateListType): string => normalizeDates(dates).map(dateMinuteKey).join('|')
 
-const getDateMinuteSetSignature = (dates: ?Array<DateValueType>): string =>
+const getDateMinuteSetSignature = (dates: DateListType): string =>
   Array.from(new Set(normalizeDates(dates).map(dateMinuteKey)))
     .sort((a, b) => a - b)
     .join('|')
 
-const getDateMinuteKeySet = (dates: ?Array<DateValueType>): Set<number> =>
-  new Set(normalizeDates(dates).map(dateMinuteKey))
+const getDateMinuteKeySet = (dates: DateListType): Set<number> => new Set(normalizeDates(dates).map(dateMinuteKey))
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
   const dateMinuteKeys = new Set()
@@ -293,8 +294,8 @@ const TimeText = styled(Text)`
 `
 
 type PropsType = {
-  selection: Array<DateValueType>,
-  blocked: Array<DateValueType>,
+  selection: DateListType,
+  blocked: DateListType,
   selectionScheme: SelectionSchemeType,
   onChange: (Array<Date>) => void,
   startDate?: Date,
