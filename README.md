@@ -291,7 +291,7 @@ Non-finite numbers fall back to `0px`.
 
 **type**: `(time: Date, selected: boolean, blocked: boolean) => React.ReactNode`
 
-**description**: Optional render prop for custom slot content. The outer grid cell still supplies selection handlers, keyboard handlers, and accessibility attributes. Color props do not affect custom cell content.
+**description**: Optional render prop for custom slot content. The `time` argument is a copy of the slot date. The outer grid cell still supplies selection handlers, keyboard handlers, and accessibility attributes. Color props do not affect custom cell content.
 
 **required**: no
 

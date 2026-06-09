@@ -11,6 +11,8 @@
 - Added black-box coverage for the docs smoke script without requiring a real
   browser in the default verification gate.
 - Hardened keyboard navigation helper lookup against sparse date-column arrays.
+- Passed a cloned date into custom cell renderers so renderer mutations cannot
+  corrupt grid interaction state.
 
 ## 2026-06-08
 

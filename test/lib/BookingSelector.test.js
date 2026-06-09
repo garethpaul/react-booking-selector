@@ -95,6 +95,30 @@ describe('snapshot tests', () => {
     expect(getByTestId('slot-10')).toHaveAttribute('data-selected', 'false')
     expect(getByTestId('slot-10')).toHaveAttribute('data-blocked', 'true')
   })
+
+  it('isolates custom renderer date mutations from grid behavior', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const mutatingDateCellRenderer = (date) => {
+      date.setHours(17)
+      return <span>{date.getHours()}</span>
+    }
+    const { getByRole } = renderSelector({
+      onChange: changeSpy,
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+      renderDateCell: mutatingDateCellRenderer,
+    })
+    const cell = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+
+    clickCell(cell)
+
+    await waitFor(() => {
+      expect(changeSpy).toHaveBeenCalledWith([selected])
+    })
+  })
 })
 
 it('getTimeFromTouchEvent returns the time for that cell', () => {

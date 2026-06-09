@@ -359,7 +359,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     };
     _this.renderDateCell = function (time, selected, blocked) {
       if (_this.props.renderDateCell) {
-        return _this.props.renderDateCell(time, selected, blocked);
+        return _this.props.renderDateCell(new Date(time.getTime()), selected, blocked);
       }
       return /*#__PURE__*/React.createElement(DateCell, {
         $blocked: blocked,
