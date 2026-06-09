@@ -1928,6 +1928,38 @@ describe('componentDidMount', () => {
     expect(instance.getDateCellFromEventTarget(child)).toBe(cell)
   })
 
+  it('initializes lookup collections with captured Map and Set constructors when globals change later', () => {
+    const OriginalMap = Map
+    const OriginalSet = Set
+    let instance
+    let initializeError
+
+    try {
+      globalThis.Map = function Map() {
+        throw new Error('Unexpected Map constructor call')
+      }
+      globalThis.Set = function Set() {
+        throw new Error('Unexpected Set constructor call')
+      }
+
+      try {
+        instance = new BookingSelector({ ...BookingSelector.defaultProps })
+      } catch (error) {
+        initializeError = error
+      }
+    } finally {
+      globalThis.Map = OriginalMap
+      globalThis.Set = OriginalSet
+    }
+
+    expect(initializeError).toBeUndefined()
+    expect(instance.cellToDate).toBeInstanceOf(OriginalMap)
+    expect(instance.dateToCell).toBeInstanceOf(OriginalMap)
+    expect(instance.touchScrollCells).toBeInstanceOf(OriginalSet)
+    expect(instance.blockedMinuteKeys).toBeInstanceOf(OriginalSet)
+    expect(instance.selectedMinuteKeys).toBeInstanceOf(OriginalSet)
+  })
+
   it('returns null when event target parent lookup throws', () => {
     const { instance } = renderSelector()
     const target = {}
@@ -2818,6 +2850,35 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'ArrowLeft')).toBe(null)
     expect(getKeyboardNavigationTarget(dateColumns, new Date(2040, 0, 1), 'ArrowRight')).toBe(null)
     expect(getKeyboardNavigationTarget(dateColumns, saturdayTwo, 'Escape')).toBe(null)
+  })
+
+  it('uses the captured Set constructor for keyboard navigation defaults when globals change later', () => {
+    const OriginalSet = Set
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      { day: addDays(startDate, 1), slots: [{ hour: 9, time: tuesdayNine }] },
+    ]
+    let navigationTarget
+    let navigationError
+
+    try {
+      globalThis.Set = function Set() {
+        throw new Error('Unexpected Set constructor call')
+      }
+
+      try {
+        navigationTarget = getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowRight')
+      } catch (error) {
+        navigationError = error
+      }
+    } finally {
+      globalThis.Set = OriginalSet
+    }
+
+    expect(navigationError).toBeUndefined()
+    expect(navigationTarget).toBe(tuesdayNine)
   })
 
   it('skips sparse horizontal keyboard navigation cells', () => {

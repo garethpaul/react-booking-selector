@@ -49,6 +49,8 @@ var dateSetDate = DateConstructor.prototype.setDate;
 var dateSetHours = DateConstructor.prototype.setHours;
 var dateNow = DateConstructor.now;
 var ArrayConstructor = Array;
+var MapConstructor = Map;
+var SetConstructor = Set;
 var arrayFrom = ArrayConstructor.from;
 var arrayFilter = Array.prototype.filter;
 var arrayForEach = Array.prototype.forEach;
@@ -124,17 +126,17 @@ var hasDateMinuteKey = function hasDateMinuteKey(dateMinuteKeys, time) {
   return key != null && dateMinuteKeys.has(key);
 };
 var getDateMinuteSetSignature = function getDateMinuteSetSignature(dates) {
-  var dateMinuteKeys = arrayFrom.call(ArrayConstructor, new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)));
+  var dateMinuteKeys = arrayFrom.call(ArrayConstructor, new SetConstructor(arrayMap.call(normalizeDates(dates), dateMinuteKey)));
   arraySort.call(dateMinuteKeys, function (a, b) {
     return a - b;
   });
   return arrayJoin.call(dateMinuteKeys, '|');
 };
 var getDateMinuteKeySet = function getDateMinuteKeySet(dates) {
-  return new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey));
+  return new SetConstructor(arrayMap.call(normalizeDates(dates), dateMinuteKey));
 };
 var uniqueDatesByMinute = function uniqueDatesByMinute(dates) {
-  var dateMinuteKeys = new Set();
+  var dateMinuteKeys = new SetConstructor();
   var uniqueDates = [];
   arrayForEach.call(dates, function (date) {
     var key = dateMinuteKey(date);
@@ -307,7 +309,7 @@ var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigation
 };
 export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys) {
   if (blockedMinuteKeys === void 0) {
-    blockedMinuteKeys = new Set();
+    blockedMinuteKeys = new SetConstructor();
   }
   var position = findDateSlotPosition(dateColumns, time);
   if (!position) return null;
@@ -525,9 +527,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         $blockedColor: _this.props.blockedColor
       });
     };
-    _this.cellToDate = new Map();
-    _this.dateToCell = new Map();
-    _this.touchScrollCells = new Set();
+    _this.cellToDate = new MapConstructor();
+    _this.dateToCell = new MapConstructor();
+    _this.touchScrollCells = new SetConstructor();
     _this.lastTouchEventTime = null;
     var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
@@ -721,7 +723,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
     if (!target || typeof target !== 'object') return null;
-    var seenElements = new Set();
+    var seenElements = new SetConstructor();
     var targetElement = this.cellToDate.has(target) ? target : getParentElement(target);
     while (targetElement) {
       if (seenElements.has(targetElement)) return null;
@@ -817,7 +819,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection));
     } else {
-      var availableSelectionKeys = new Set(arrayMap.call(availableSelection, dateMinuteKey));
+      var availableSelectionKeys = new SetConstructor(arrayMap.call(availableSelection, dateMinuteKey));
       nextDraft = arrayFilter.call(nextDraft, function (date) {
         return !availableSelectionKeys.has(dateMinuteKey(date));
       });

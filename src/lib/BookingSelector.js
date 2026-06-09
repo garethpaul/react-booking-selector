@@ -112,6 +112,8 @@ const dateSetDate = DateConstructor.prototype.setDate
 const dateSetHours = DateConstructor.prototype.setHours
 const dateNow = DateConstructor.now
 const ArrayConstructor = Array
+const MapConstructor = Map
+const SetConstructor = Set
 const arrayFrom = ArrayConstructor.from
 const arrayFilter = Array.prototype.filter
 const arrayForEach = Array.prototype.forEach
@@ -193,16 +195,19 @@ const hasDateMinuteKey = (dateMinuteKeys: Set<number>, time: mixed): boolean => 
 }
 
 const getDateMinuteSetSignature = (dates: DateListType): string => {
-  const dateMinuteKeys = arrayFrom.call(ArrayConstructor, new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey)))
+  const dateMinuteKeys = arrayFrom.call(
+    ArrayConstructor,
+    new SetConstructor(arrayMap.call(normalizeDates(dates), dateMinuteKey)),
+  )
   arraySort.call(dateMinuteKeys, (a, b) => a - b)
   return arrayJoin.call(dateMinuteKeys, '|')
 }
 
 const getDateMinuteKeySet = (dates: DateListType): Set<number> =>
-  new Set(arrayMap.call(normalizeDates(dates), dateMinuteKey))
+  new SetConstructor(arrayMap.call(normalizeDates(dates), dateMinuteKey))
 
 const uniqueDatesByMinute = (dates: Array<Date>): Array<Date> => {
-  const dateMinuteKeys = new Set()
+  const dateMinuteKeys = new SetConstructor()
   const uniqueDates: Array<Date> = []
 
   arrayForEach.call(dates, (date) => {
@@ -401,7 +406,7 @@ export const getKeyboardNavigationTarget = (
   dateColumns: Array<DateColumnType>,
   time: Date,
   key: string,
-  blockedMinuteKeys: Set<number> = new Set(),
+  blockedMinuteKeys: Set<number> = new SetConstructor(),
 ): ?Date => {
   const position = findDateSlotPosition(dateColumns, time)
   if (!position) return null
@@ -727,9 +732,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   constructor(props: PropsType) {
     super(props)
 
-    this.cellToDate = new Map()
-    this.dateToCell = new Map()
-    this.touchScrollCells = new Set()
+    this.cellToDate = new MapConstructor()
+    this.dateToCell = new MapConstructor()
+    this.touchScrollCells = new SetConstructor()
     this.lastTouchEventTime = null
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
@@ -939,7 +944,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   getDateCellFromEventTarget(target: mixed): ?HTMLElement {
     if (!target || typeof target !== 'object') return null
 
-    const seenElements = new Set()
+    const seenElements = new SetConstructor()
     let targetElement = this.cellToDate.has((target: any)) ? (target: any) : getParentElement(target)
     while (targetElement) {
       if (seenElements.has(targetElement)) return null
@@ -1035,7 +1040,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection))
     } else {
-      const availableSelectionKeys = new Set(arrayMap.call(availableSelection, dateMinuteKey))
+      const availableSelectionKeys = new SetConstructor(arrayMap.call(availableSelection, dateMinuteKey))
       nextDraft = arrayFilter.call(nextDraft, (date) => !availableSelectionKeys.has(dateMinuteKey(date)))
     }
     this.setState({ selectionDraft: nextDraft }, callback)
