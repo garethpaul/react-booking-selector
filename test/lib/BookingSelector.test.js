@@ -192,6 +192,15 @@ it('getTimeFromTouchEvent returns null when hit testing is unavailable', () => {
   }
 })
 
+it('getTimeFromTouchEvent returns null when hit testing throws', () => {
+  const { instance } = renderSelector()
+  document.elementFromPoint.mockImplementation(() => {
+    throw new Error('Cannot hit test')
+  })
+
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+})
+
 it('endSelection calls the onChange prop and resets selection state', async () => {
   const changeSpy = jest.fn()
   const { instance } = renderSelector({ onChange: changeSpy })

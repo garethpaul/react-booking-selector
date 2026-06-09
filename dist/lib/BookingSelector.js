@@ -660,7 +660,12 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (typeof document.elementFromPoint !== 'function') return null;
     var clientX = touch.clientX,
       clientY = touch.clientY;
-    var targetElement = document.elementFromPoint(clientX, clientY);
+    var targetElement;
+    try {
+      targetElement = document.elementFromPoint(clientX, clientY);
+    } catch (_unused8) {
+      return null;
+    }
     while (targetElement) {
       var cellTime = this.cellToDate.get(targetElement);
       if (cellTime) return cellTime;
@@ -795,7 +800,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     try {
       dateCell.focus();
       return true;
-    } catch (_unused8) {
+    } catch (_unused9) {
       return false;
     }
   };

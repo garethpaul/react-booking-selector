@@ -849,7 +849,12 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!touch || !Number.isFinite(touch.clientX) || !Number.isFinite(touch.clientY)) return null
     if (typeof document.elementFromPoint !== 'function') return null
     const { clientX, clientY } = touch
-    let targetElement = document.elementFromPoint(clientX, clientY)
+    let targetElement
+    try {
+      targetElement = document.elementFromPoint(clientX, clientY)
+    } catch {
+      return null
+    }
     while (targetElement) {
       const cellTime = this.cellToDate.get(targetElement)
       if (cellTime) return cellTime
