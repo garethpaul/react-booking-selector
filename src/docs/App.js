@@ -136,6 +136,7 @@ export class App extends React.Component<{}, StateType> {
           <Links>
             <ExternalLink
               $color="#24292e"
+              aria-label="GitHub repository, opens in a new tab"
               href="https://github.com/garethpaul/react-booking-selector"
               rel="noopener noreferrer"
               target="_blank"

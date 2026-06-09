@@ -71,3 +71,4 @@
 - Aligned TypeScript declarations with runtime support for null `selection` and `blocked` props.
 - Made the docs GitHub link open as a safe external link and covered it with a docs test.
 - Kept Jest coverage thresholds focused on package code while allowing docs-app tests.
+- Exposed the docs GitHub link's new-tab behavior in its accessible name.

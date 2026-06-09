@@ -5,7 +5,7 @@ import { App } from '../../src/docs/App'
 
 it('renders the GitHub link as a safe external link', () => {
   const { getByRole } = render(React.createElement(App))
-  const link = getByRole('link', { name: 'GitHub' })
+  const link = getByRole('link', { name: 'GitHub repository, opens in a new tab' })
 
   expect(link).toHaveAttribute('href', 'https://github.com/garethpaul/react-booking-selector')
   expect(link).toHaveAttribute('target', '_blank')
