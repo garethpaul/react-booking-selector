@@ -8,6 +8,7 @@
   `NaNpx` or `Infinitypx` styles.
 - Added an optional `docs:smoke` script for local headless Chrome checks of the
   built docs DOM and desktop/mobile screenshots.
+- Hardened keyboard navigation helper lookup against sparse date-column arrays.
 
 ## 2026-06-08
 

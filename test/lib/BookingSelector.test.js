@@ -1516,6 +1516,7 @@ describe('prop updates', () => {
 
   it('skips sparse horizontal keyboard navigation cells', () => {
     const mondayNine = addHours(startOfDay(startDate), 9)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
     const thursdayNine = addHours(addDays(startOfDay(startDate), 3), 9)
     const dateColumns = [
       { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
@@ -1523,8 +1524,10 @@ describe('prop updates', () => {
       { day: addDays(startDate, 2), slots: [] },
       { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
     ]
+    const sparseBeforeTarget = [undefined, { day: addDays(startDate, 1), slots: [{ hour: 9, time: tuesdayNine }] }]
 
     expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'ArrowRight')).toBe(thursdayNine)
+    expect(getKeyboardNavigationTarget(sparseBeforeTarget, tuesdayNine, 'ArrowLeft')).toBe(null)
   })
 
   it('skips placeholder rows when vertically navigating daylight-saving-time gaps', () => {

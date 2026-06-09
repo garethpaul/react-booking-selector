@@ -165,7 +165,9 @@ var formatDateHeader = function formatDateHeader(time, dateFormat) {
 var findDateSlotPosition = function findDateSlotPosition(dateColumns, time) {
   var targetKey = dateKey(time);
   for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
-    var slots = dateColumns[columnIndex].slots;
+    var dateColumn = dateColumns[columnIndex];
+    if (!dateColumn) continue;
+    var slots = dateColumn.slots;
     for (var slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
       var slotTime = slots[slotIndex].time;
       if (slotTime && dateKey(slotTime) === targetKey) return {

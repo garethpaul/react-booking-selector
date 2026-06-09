@@ -207,7 +207,9 @@ const formatDateHeader = (time: Date, dateFormat: string): string => {
 const findDateSlotPosition = (dateColumns: Array<DateColumnType>, time: Date): ?DateSlotPositionType => {
   const targetKey = dateKey(time)
   for (let columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
-    const { slots } = dateColumns[columnIndex]
+    const dateColumn = dateColumns[columnIndex]
+    if (!dateColumn) continue
+    const { slots } = dateColumn
     for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
       const slotTime = slots[slotIndex].time
       if (slotTime && dateKey(slotTime) === targetKey) return { columnIndex, slotIndex }
