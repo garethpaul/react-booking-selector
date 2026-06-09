@@ -312,8 +312,8 @@ corepack yarn docs:smoke
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types
 Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and
 `LICENSE`.
-`corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop and mobile screenshots with
-headless Chrome or Chromium, and checks the rendered DOM and screenshots.
+`corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
+screenshots with headless Chrome or Chromium, and checks the rendered DOM and screenshots.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.

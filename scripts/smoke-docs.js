@@ -22,6 +22,12 @@ const screenshots = [
     height: 844,
     filePath: path.join(outputDir, 'mobile.png'),
   },
+  {
+    name: 'small-mobile',
+    width: 320,
+    height: 568,
+    filePath: path.join(outputDir, 'small-mobile.png'),
+  },
 ]
 const chromeCandidates = [
   process.env.CHROME_BIN,

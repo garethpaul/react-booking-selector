@@ -59,6 +59,7 @@
   `process.env.NODE_ENV`.
 - Required docs-plan filename dates to be valid calendar dates, not just
   date-shaped prefixes.
+- Added narrow-mobile docs smoke screenshots to catch 320px layout regressions.
 
 ## 2026-06-08
 
