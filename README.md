@@ -309,9 +309,9 @@ corepack yarn docs:smoke
 
 `make check` is the repository-standard wrapper around `corepack yarn verify`.
 `corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
-TypeScript checks, Jest with coverage thresholds, a dependency audit, a package dry run, `publint`, and Are The Types
-Wrong. The package intentionally publishes `dist/lib`, `dist/esm`, `docs/readme-overview.svg`, `README.md`, and
-`LICENSE`.
+TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
+`publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
+`docs/readme-overview.svg`, `README.md`, and `LICENSE`.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
 screenshots with headless Chrome or Chromium, and checks the rendered DOM and screenshots.
 
