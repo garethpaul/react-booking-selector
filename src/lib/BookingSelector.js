@@ -851,15 +851,16 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   // Isomorphic (mouse and touch) handler since starting a selection works the same way for both classes of user input
-  handleSelectionStartEvent(startTime: Date) {
-    if (this.isBlocked(startTime)) return
+  handleSelectionStartEvent(startTime: mixed) {
+    const validStartTime = getValidDate(startTime)
+    if (!validStartTime || this.isBlocked(validStartTime)) return
 
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    const timeSelected = this.isSelected(startTime)
+    const timeSelected = this.isSelected(validStartTime)
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: startTime,
+      selectionStart: validStartTime,
       selectionBase: this.state.selectionDraft,
     })
   }
@@ -879,7 +880,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     }
   }
 
-  handleMouseDownEvent(time: Date, event?: MouseSelectionEventType) {
+  handleMouseDownEvent(time: mixed, event?: MouseSelectionEventType) {
     if (!isPrimaryMouseButton(event)) return
     if (this.shouldIgnoreMouseEvent()) return
     this.handleSelectionStartEvent(time)
@@ -925,22 +926,23 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
       return
     }
 
-    if (blocked || !isKeyboardSelectionKey(key)) return
+    const validTime = getValidDate(time)
+    if (blocked || !validTime || !isKeyboardSelectionKey(key)) return
     preventDefault(event)
-    const timeSelected = this.isSelected(time)
+    const timeSelected = this.isSelected(validTime)
     this.setState(
       {
         selectionType: timeSelected ? 'remove' : 'add',
-        selectionStart: time,
+        selectionStart: validTime,
         selectionBase: this.state.selectionDraft,
       },
       () => {
-        this.updateAvailabilityDraft(time, this.endSelection)
+        this.updateAvailabilityDraft(validTime, this.endSelection)
       },
     )
   }
 
-  handleTouchStartEvent(startTime: Date) {
+  handleTouchStartEvent(startTime: mixed) {
     this.recordTouchEvent()
     this.handleSelectionStartEvent(startTime)
   }

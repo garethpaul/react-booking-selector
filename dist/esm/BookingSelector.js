@@ -669,14 +669,15 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   // Isomorphic (mouse and touch) handler since starting a selection works the same way for both classes of user input
 ;
   _proto.handleSelectionStartEvent = function handleSelectionStartEvent(startTime) {
-    if (this.isBlocked(startTime)) return;
+    var validStartTime = getValidDate(startTime);
+    if (!validStartTime || this.isBlocked(validStartTime)) return;
 
     // Check if the startTime cell is selected/unselected to determine if this drag-select should
     // add values or remove values
-    var timeSelected = this.isSelected(startTime);
+    var timeSelected = this.isSelected(validStartTime);
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: startTime,
+      selectionStart: validStartTime,
       selectionBase: this.state.selectionDraft
     });
   };
@@ -733,15 +734,16 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
     }
-    if (blocked || !isKeyboardSelectionKey(key)) return;
+    var validTime = getValidDate(time);
+    if (blocked || !validTime || !isKeyboardSelectionKey(key)) return;
     preventDefault(event);
-    var timeSelected = this.isSelected(time);
+    var timeSelected = this.isSelected(validTime);
     this.setState({
       selectionType: timeSelected ? 'remove' : 'add',
-      selectionStart: time,
+      selectionStart: validTime,
       selectionBase: this.state.selectionDraft
     }, function () {
-      _this4.updateAvailabilityDraft(time, _this4.endSelection);
+      _this4.updateAvailabilityDraft(validTime, _this4.endSelection);
     });
   };
   _proto.handleTouchStartEvent = function handleTouchStartEvent(startTime) {

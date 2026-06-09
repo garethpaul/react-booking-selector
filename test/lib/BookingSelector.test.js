@@ -404,6 +404,18 @@ describe('mouse handlers', () => {
     })
   })
 
+  it('ignores malformed selection start times', () => {
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(() => {
+      instance.handleSelectionStartEvent({ getTime: true })
+      instance.handleMouseDownEvent(new Date(NaN))
+      instance.handleTouchStartEvent('not-a-date')
+    }).not.toThrow()
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
+  })
+
   it('finishes incomplete active mouse selections when no draft update can run', async () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
@@ -2790,6 +2802,20 @@ describe('keyboard interaction', () => {
       instance.handleCellKeyDownEvent(null, addHours(startOfDay(startDate), 9))
       instance.handleCellKeyDownEvent({ key: true }, addHours(startOfDay(startDate), 9))
     }).not.toThrow()
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(instance.state.selectionType).toBe(null)
+  })
+
+  it('ignores keyboard selection events for malformed times', () => {
+    const changeSpy = jest.fn()
+    const preventDefault = jest.fn()
+    const { instance } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 9 })
+
+    expect(() => {
+      instance.handleCellKeyDownEvent({ key: 'Enter', preventDefault }, { getTime: true })
+      instance.handleCellKeyDownEvent({ key: ' ', preventDefault }, new Date(NaN))
+    }).not.toThrow()
+    expect(preventDefault).not.toHaveBeenCalled()
     expect(changeSpy).not.toHaveBeenCalled()
     expect(instance.state.selectionType).toBe(null)
   })
