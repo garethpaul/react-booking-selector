@@ -27,6 +27,7 @@ declare namespace BookingSelectorComponent {
     hoveredColor?: string
     blockedColor?: string
     ariaLabel?: string
+    'aria-label'?: string
     renderDateCell?: (time: Date, selected: boolean, blocked: boolean) => React.ReactNode
   }
 

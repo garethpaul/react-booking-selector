@@ -11,6 +11,7 @@ const selection: BookingSelector.BookingSelectorProps['selection'] = [
 const blocked: BookingSelector.BookingSelectorProps['blocked'] = null
 const margin: BookingSelector.BookingSelectorCssLength = '0.25rem'
 const ariaLabel: BookingSelector.BookingSelectorProps['ariaLabel'] = 'Appointment availability'
+const standardAriaLabel: BookingSelector.BookingSelectorProps['aria-label'] = 'Team appointment availability'
 
 const onChange: NonNullable<BookingSelector.BookingSelectorProps['onChange']> = (nextSelection) => {
   nextSelection.forEach((time) => {
@@ -24,4 +25,5 @@ void selection
 void blocked
 void margin
 void ariaLabel
+void standardAriaLabel
 void onChange

@@ -220,11 +220,11 @@ Invalid format strings fall back to the default day-of-month header format.
 
 **default value**: `'rgba(79, 79, 79, 1)'`
 
-### `ariaLabel`
+### `aria-label` / `ariaLabel`
 
 **type**: `string`
 
-**description**: Accessible label for the booking slot group. Use a unique label when rendering more than one selector on the same page.
+**description**: Accessible label for the booking slot group. Prefer the standard `aria-label` prop; `ariaLabel` is also supported. Use a unique label when rendering more than one selector on the same page.
 
 **required**: no
 

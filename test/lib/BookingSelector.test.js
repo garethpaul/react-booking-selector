@@ -1475,6 +1475,20 @@ describe('cell accessibility', () => {
     expect(getByRole('group', { name: 'Morning appointment availability' })).toBeInTheDocument()
   })
 
+  it('supports the standard aria-label prop for the slot group', () => {
+    const { getByRole, queryByRole } = renderSelector({
+      ariaLabel: 'Alias label',
+      'aria-label': 'Standard appointment availability',
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+
+    expect(getByRole('group', { name: 'Standard appointment availability' })).toBeInTheDocument()
+    expect(queryByRole('group', { name: 'Alias label' })).toBe(null)
+  })
+
   it('renders cells as native buttons', () => {
     const { getByRole } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 9 })
 
