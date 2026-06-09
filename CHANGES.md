@@ -19,6 +19,7 @@
   cannot affect date normalization and slot bookkeeping.
 - Used the rendered grid's owner document for mouseup listener wiring and touch
   hit testing.
+- Resolved date-cell event targets without relying on global DOM constructors.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

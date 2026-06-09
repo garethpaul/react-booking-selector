@@ -1727,24 +1727,62 @@ describe('componentDidMount', () => {
     expect(instance.getDateCellFromEventTarget(svg)).toBe(cell)
   })
 
+  it('finds registered date cells from constructor-independent event targets', () => {
+    const { instance } = renderSelector()
+    const cell = { parentElement: null }
+    const child = { parentElement: cell }
+
+    instance.registerDateCell(cell, startDate)
+
+    expect(instance.getDateCellFromEventTarget(cell)).toBe(cell)
+    expect(instance.getDateCellFromEventTarget(child)).toBe(cell)
+  })
+
+  it('returns null when event target parent lookup throws', () => {
+    const { instance } = renderSelector()
+    const target = {}
+    Object.defineProperty(target, 'parentElement', {
+      get() {
+        throw new Error('Cannot read parent element')
+      },
+    })
+
+    expect(instance.getDateCellFromEventTarget(target)).toBe(null)
+  })
+
+  it('returns null for cyclic event target parent chains', () => {
+    const { instance } = renderSelector()
+    const parent = {}
+    const child = { parentElement: parent }
+    parent.parentElement = child
+
+    expect(instance.getDateCellFromEventTarget(child)).toBe(null)
+  })
+
   it('returns null for mouseup targets outside the DOM node tree', () => {
     const { instance } = renderSelector()
 
     expect(instance.getDateCellFromEventTarget(null)).toBe(null)
   })
 
-  it('returns null when DOM constructors are unavailable', () => {
+  it('finds registered date cells when DOM constructors are unavailable', () => {
     const { instance } = renderSelector()
+    const cell = document.createElement('div')
+    const child = document.createElement('span')
     const nodeConstructor = window.Node
     const htmlElementConstructor = window.HTMLElement
+
+    cell.appendChild(child)
+    instance.registerDateCell(cell, startDate)
 
     window.Node = undefined
     window.HTMLElement = undefined
 
     try {
-      expect(instance.getDateCellFromEventTarget(document.createElement('div'))).toBe(null)
+      expect(instance.getDateCellFromEventTarget(child)).toBe(cell)
       window.Node = {}
       window.HTMLElement = {}
+      expect(instance.getDateCellFromEventTarget(child)).toBe(cell)
       expect(instance.getDateCellFromEventTarget(document.createElement('div'))).toBe(null)
     } finally {
       window.Node = nodeConstructor

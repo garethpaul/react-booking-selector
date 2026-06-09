@@ -339,6 +339,14 @@ var getBrowserDocument = function getBrowserDocument() {
     return null;
   }
 };
+var getParentElement = function getParentElement(target) {
+  try {
+    var parentElement = target.parentElement;
+    return parentElement && typeof parentElement === 'object' ? parentElement : null;
+  } catch (_unused5) {
+    return null;
+  }
+};
 var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
     var _this;
@@ -536,7 +544,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused5) {
+      } catch (_unused6) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -549,7 +557,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused6) {
+      } catch (_unused7) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -557,7 +565,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused7) {
+        } catch (_unused8) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -599,7 +607,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused8) {
+        } catch (_unused9) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -607,7 +615,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused9) {
+        } catch (_unused0) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -655,13 +663,15 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     return gridDocument && typeof gridDocument === 'object' ? gridDocument : getBrowserDocument();
   };
   _proto.getDateCellFromEventTarget = function getDateCellFromEventTarget(target) {
-    if (typeof Node !== 'function') return null;
-    if (!(target instanceof Node)) return null;
-    var targetElement = typeof HTMLElement === 'function' && target instanceof HTMLElement ? target : target.parentElement;
+    if (!target || typeof target !== 'object') return null;
+    var seenElements = new Set();
+    var targetElement = this.cellToDate.has(target) ? target : getParentElement(target);
     while (targetElement) {
+      if (seenElements.has(targetElement)) return null;
+      seenElements.add(targetElement);
       if (this.cellToDate.has(targetElement)) return targetElement;
       if (targetElement === this.gridRef) return null;
-      targetElement = targetElement.parentElement;
+      targetElement = getParentElement(targetElement);
     }
     return null;
   };
@@ -696,7 +706,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused0) {
+    } catch (_unused1) {
       return null;
     }
     while (targetElement) {
@@ -833,7 +843,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     try {
       dateCell.focus();
       return true;
-    } catch (_unused1) {
+    } catch (_unused10) {
       return false;
     }
   };
