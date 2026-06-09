@@ -590,7 +590,10 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var _this$state = this.state,
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
-    if (selectionType === null || selectionStart === null) return;
+    if (selectionType === null || selectionStart === null) {
+      if (callback) callback();
+      return;
+    }
     var selectionSchemeHandler = this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square;
     var availableSelection = selectionSchemeHandler(selectionStart, selectionEnd, this.dates).filter(function (time) {
       return !_this3.isBlocked(time);

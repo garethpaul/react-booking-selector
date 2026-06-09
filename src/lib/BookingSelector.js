@@ -750,7 +750,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   updateAvailabilityDraft(selectionEnd: ?Date, callback?: () => void) {
     const { selectionType, selectionStart } = this.state
 
-    if (selectionType === null || selectionStart === null) return
+    if (selectionType === null || selectionStart === null) {
+      if (callback) callback()
+      return
+    }
 
     const selectionSchemeHandler =
       this.selectionSchemeHandlers[this.props.selectionScheme] || this.selectionSchemeHandlers.square

@@ -356,6 +356,27 @@ describe('mouse handlers', () => {
     })
   })
 
+  it('finishes incomplete active mouse selections when no draft update can run', async () => {
+    const changeSpy = jest.fn()
+    const selected = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ onChange: changeSpy })
+
+    await setStateAsync(instance, {
+      selectionDraft: [selected],
+      selectionType: 'add',
+      selectionStart: null,
+    })
+
+    act(() => {
+      instance.handleMouseUpEvent(selected)
+    })
+
+    expect(instance.state.selectionType).toBe(null)
+    expect(instance.state.selectionStart).toBe(null)
+    expect(instance.state.isTouchDragging).toBe(false)
+    expect(changeSpy).toHaveBeenCalledWith([selected])
+  })
+
   it('does not end an active drag from a non-primary cell mouseup', async () => {
     const changeSpy = jest.fn()
     const { container, instance } = renderSelector({

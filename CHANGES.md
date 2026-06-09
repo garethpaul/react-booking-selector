@@ -48,6 +48,7 @@
 - Avoided redundant `endSelection` state writes when selection is already idle.
 - Treated non-Date custom time values as grid placeholders.
 - Hardened keyboard navigation against malformed slot lists and entries.
+- Finished selection cleanup callbacks even when no draft update can run.
 
 ## 2026-06-08
 
