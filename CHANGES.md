@@ -50,6 +50,7 @@
 - Hardened keyboard navigation against malformed slot lists and entries.
 - Finished selection cleanup callbacks even when no draft update can run.
 - Reset wrapper and grid minimum widths for flex host layouts.
+- Refreshed idle controlled selection drafts when prop order changes.
 
 ## 2026-06-08
 

@@ -1399,6 +1399,29 @@ describe('prop updates', () => {
     expect(changeSpy).toHaveBeenCalledWith([selectedTwo, selectedOne, selectedThree])
   })
 
+  it('updates idle selection drafts when controlled selection order changes', () => {
+    const selectedOne = addHours(startOfDay(startDate), 9)
+    const selectedTwo = addHours(startOfDay(startDate), 10)
+    const rendered = renderSelector({
+      selection: [selectedTwo, selectedOne],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    rendered.rerenderWithProps({
+      selection: [selectedOne, selectedTwo],
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 10,
+    })
+
+    expect(rendered.instance.state.selectionDraft).toEqual([selectedOne, selectedTwo])
+    expect(rendered.instance.state.selectionBase).toEqual([selectedOne, selectedTwo])
+  })
+
   it('cancels active selections when grid range props change', () => {
     const changeSpy = jest.fn()
     const selected = addHours(startOfDay(startDate), 9)
