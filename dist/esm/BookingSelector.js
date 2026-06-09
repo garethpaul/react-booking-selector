@@ -773,7 +773,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.handleTouchMoveEvent = function handleTouchMoveEvent(event) {
     this.recordTouchEvent();
-    if (this.state.selectionType === null) return;
+    if (!isSelectionType(this.state.selectionType) || !getValidDate(this.state.selectionStart)) return;
     if (!this.state.isTouchDragging) {
       this.setState({
         isTouchDragging: true

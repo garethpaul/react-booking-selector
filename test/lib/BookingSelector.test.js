@@ -1012,6 +1012,30 @@ it('handleTouchMoveEvent avoids redundant drag-state updates while already dragg
   getTimeSpy.mockRestore()
 })
 
+it('handleTouchMoveEvent ignores malformed active selection state', async () => {
+  const getTimeSpy = jest.spyOn(BookingSelector.prototype, 'getTimeFromTouchEvent').mockReturnValue(startDate)
+  const { instance } = renderSelector()
+
+  await setStateAsync(instance, {
+    selectionType: 'add',
+    selectionStart: new Date(NaN),
+  })
+  const setStateSpy = jest.spyOn(instance, 'setState')
+  const updateDraftSpy = jest.spyOn(instance, 'updateAvailabilityDraft')
+
+  act(() => {
+    instance.handleTouchMoveEvent({})
+  })
+
+  expect(setStateSpy).not.toHaveBeenCalled()
+  expect(updateDraftSpy).not.toHaveBeenCalled()
+  expect(instance.state.isTouchDragging).toBe(false)
+
+  updateDraftSpy.mockRestore()
+  setStateSpy.mockRestore()
+  getTimeSpy.mockRestore()
+})
+
 it.each([
   { label: 'touch end', cleanupTouch: (instance) => instance.handleTouchEndEvent() },
   { label: 'touch cancel', cleanupTouch: (instance) => instance.handleTouchCancelEvent() },
