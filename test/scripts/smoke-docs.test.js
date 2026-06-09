@@ -92,17 +92,17 @@ const writeFakeChrome = (projectPath) => {
 }
 
 describe('smoke-docs script', () => {
-  const tempProjects = []
+  const tempPaths = []
 
   afterEach(() => {
-    while (tempProjects.length > 0) {
-      rmSync(tempProjects.pop(), { force: true, recursive: true })
+    while (tempPaths.length > 0) {
+      rmSync(tempPaths.pop(), { force: true, recursive: true })
     }
   })
 
   it('passes with a compatible Chrome binary', () => {
     const projectPath = createTempProject()
-    tempProjects.push(projectPath)
+    tempPaths.push(projectPath)
     const fakeChromePath = writeFakeChrome(projectPath)
 
     const output = execFileSync(process.execPath, [scriptPath], {
@@ -113,7 +113,10 @@ describe('smoke-docs script', () => {
         CHROME_BIN: fakeChromePath,
       },
     })
+    const screenshotDirectory = output.match(/Screenshots: (.+)\n/u)
 
+    expect(screenshotDirectory).not.toBe(null)
+    tempPaths.push(screenshotDirectory[1])
     expect(output).toContain('Docs smoke passed. Screenshots:')
   })
 })
