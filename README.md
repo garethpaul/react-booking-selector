@@ -316,4 +316,7 @@ headless Chrome or Chromium, and checks the rendered DOM and screenshots.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
+See `docs/plans/2026-06-08-custom-render-state-coverage.md` for custom cell renderer state coverage.
+See `docs/plans/2026-06-08-custom-render-keyboard-coverage.md` for keyboard coverage around custom-rendered cells.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
+See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.

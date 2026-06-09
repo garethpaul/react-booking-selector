@@ -24,6 +24,7 @@ Priority:
 - Keep styling customizable without hiding selection state
 - Emit minute-unique selection payloads that match the grid comparison model
 - Keep every completed maintenance plan under `docs/plans` verified by `docs:check`
+- Keep every canonical maintenance plan linked from README
 
 Next priorities:
 

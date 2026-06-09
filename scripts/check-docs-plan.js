@@ -6,6 +6,7 @@ const path = require('node:path')
 const planDir = 'docs/plans'
 const baselinePlanPath = path.join(planDir, '2026-06-08-react-booking-selector-baseline.md')
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
+const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
 
 const errors = []
 const planPaths = fs.existsSync(planDir)
@@ -34,6 +35,9 @@ for (const planPath of planPaths) {
   }
   if (!plan.includes('make check')) {
     errors.push(`${planPath} must record make check`)
+  }
+  if (!readme.includes(planPath)) {
+    errors.push(`README.md must reference ${planPath}`)
   }
 }
 

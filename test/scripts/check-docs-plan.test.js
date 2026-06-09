@@ -26,6 +26,10 @@ const writePlan = (projectPath, planPath, contents) => {
   writeFileSync(path.join(projectPath, planPath), contents)
 }
 
+const writeReadme = (projectPath, planPaths) => {
+  writeFileSync(path.join(projectPath, 'README.md'), planPaths.map((planPath) => `See ${planPath}.`).join('\n'))
+}
+
 const runDocsCheck = (projectPath) =>
   execFileSync(process.execPath, [scriptPath], {
     cwd: projectPath,
@@ -55,7 +59,9 @@ describe('check-docs-plan script', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
-    writePlan(projectPath, path.join('docs', 'plans', '2026-06-08-extra-plan.md'), completedPlan('Extra Plan'))
+    const extraPlanPath = path.join('docs', 'plans', '2026-06-08-extra-plan.md')
+    writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
+    writeReadme(projectPath, [baselinePlanPath, extraPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
     expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 2 plan(s).\n')
@@ -73,9 +79,10 @@ describe('check-docs-plan script', () => {
 
 ## Verification
 
-- corepack yarn test
+      - corepack yarn test
 `,
     )
+    writeReadme(projectPath, [baselinePlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tyarn verify\n')
 
     const stderr = runDocsCheckFailure(projectPath)
@@ -100,11 +107,25 @@ describe('check-docs-plan script', () => {
   it('reports when the canonical baseline plan is missing', () => {
     const projectPath = createTempProject()
     tempProjects.push(projectPath)
-    writePlan(projectPath, path.join('docs', 'plans', '2026-06-08-extra-plan.md'), completedPlan('Extra Plan'))
+    const extraPlanPath = path.join('docs', 'plans', '2026-06-08-extra-plan.md')
+    writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
+    writeReadme(projectPath, [extraPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
     const stderr = runDocsCheckFailure(projectPath)
 
     expect(stderr).toContain(`${baselinePlanPath} is missing`)
+  })
+
+  it('reports when README does not reference a docs plan', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeFileSync(path.join(projectPath, 'README.md'), 'No maintenance links yet.\n')
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`README.md must reference ${baselinePlanPath}`)
   })
 })

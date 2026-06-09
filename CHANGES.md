@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Expanded `docs:check` so every canonical plan under `docs/plans/` must be
+  referenced from README.
 - Normalized controlled selection drafts and emitted `onChange` payloads to
   minute-unique dates, matching the grid's slot comparison behavior.
 - Guarded numeric CSS lengths so non-finite values cannot emit invalid
