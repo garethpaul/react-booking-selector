@@ -36,17 +36,18 @@ var getNonEmptyString = function getNonEmptyString(value) {
   var trimmedValue = value.trim();
   return trimmedValue ? trimmedValue : undefined;
 };
+var DateConstructor = Date;
 var invalidDate = function invalidDate() {
-  return new Date(NaN);
+  return new DateConstructor(NaN);
 };
-var dateGetTime = Date.prototype.getTime;
-var dateGetFullYear = Date.prototype.getFullYear;
-var dateGetMonth = Date.prototype.getMonth;
-var dateGetDate = Date.prototype.getDate;
-var dateGetHours = Date.prototype.getHours;
-var dateSetDate = Date.prototype.setDate;
-var dateSetHours = Date.prototype.setHours;
-var dateNow = Date.now;
+var dateGetTime = DateConstructor.prototype.getTime;
+var dateGetFullYear = DateConstructor.prototype.getFullYear;
+var dateGetMonth = DateConstructor.prototype.getMonth;
+var dateGetDate = DateConstructor.prototype.getDate;
+var dateGetHours = DateConstructor.prototype.getHours;
+var dateSetDate = DateConstructor.prototype.setDate;
+var dateSetHours = DateConstructor.prototype.setHours;
+var dateNow = DateConstructor.now;
 var getCurrentTimestamp = function getCurrentTimestamp() {
   try {
     if (typeof Date.now === 'function') {
@@ -63,7 +64,7 @@ var getDateTimestamp = function getDateTimestamp(value) {
   return Number.isFinite(timestamp) ? timestamp : null;
 };
 var cloneDate = function cloneDate(date) {
-  return new Date(dateGetTime.call(date));
+  return new DateConstructor(dateGetTime.call(date));
 };
 var startOfDayDate = function startOfDayDate(date) {
   var startTime = cloneDate(date);
@@ -81,13 +82,13 @@ var toDate = function toDate(value) {
   if (value == null) return invalidDate();
   if (hasDateObjectTag(value)) {
     var timestamp = getDateTimestamp(value);
-    return timestamp == null ? invalidDate() : new Date(timestamp);
+    return timestamp == null ? invalidDate() : new DateConstructor(timestamp);
   }
-  if (typeof value === 'string' || typeof value === 'number') return new Date(value);
+  if (typeof value === 'string' || typeof value === 'number') return new DateConstructor(value);
   if (typeof value !== 'object') return invalidDate();
   try {
     var primitiveValue = value.valueOf();
-    return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate();
+    return typeof primitiveValue === 'number' ? new DateConstructor(primitiveValue) : invalidDate();
   } catch (_unused2) {
     return invalidDate();
   }
@@ -138,7 +139,7 @@ var getDateListSignature = function getDateListSignature(dates) {
 };
 var getStartDate = function getStartDate(startDate) {
   var timestamp = getDateTimestamp(startDate);
-  return timestamp == null ? new Date() : new Date(timestamp);
+  return timestamp == null ? new DateConstructor(getCurrentTimestamp()) : new DateConstructor(timestamp);
 };
 var getNumberSignaturePart = function getNumberSignaturePart(value) {
   return typeof value === 'number' ? "number:" + value : "invalid:" + typeof value;
@@ -164,7 +165,7 @@ var getVisibleHours = function getVisibleHours(minTime, maxTime) {
   return hours;
 };
 var createLocalTime = function createLocalTime(day, hour) {
-  return new Date(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0);
+  return new DateConstructor(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0);
 };
 var localTimeExists = function localTimeExists(day, hour, time) {
   return dateGetFullYear.call(time) === dateGetFullYear.call(day) && dateGetMonth.call(time) === dateGetMonth.call(day) && dateGetDate.call(time) === dateGetDate.call(day) && dateGetHours.call(time) === hour;
@@ -174,7 +175,7 @@ var createDateSlotTime = function createDateSlotTime(day, hour, createTime) {
     var time = createTime(day, hour);
     var timestamp = getDateTimestamp(time);
     if (timestamp == null) return null;
-    var slotTime = new Date(timestamp);
+    var slotTime = new DateConstructor(timestamp);
     return localTimeExists(day, hour, slotTime) ? slotTime : null;
   } catch (_unused3) {
     return null;
@@ -490,7 +491,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     };
     _this.renderDateCell = function (time, selected, blocked) {
       if (typeof _this.props.renderDateCell === 'function') {
-        return _this.props.renderDateCell(new Date(dateGetTime.call(time)), selected, blocked);
+        return _this.props.renderDateCell(new DateConstructor(dateGetTime.call(time)), selected, blocked);
       }
       return /*#__PURE__*/React.createElement(DateCell, {
         $blocked: blocked,

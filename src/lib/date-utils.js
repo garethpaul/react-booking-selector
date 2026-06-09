@@ -1,13 +1,14 @@
 // @flow
 
+const DateConstructor = Date
 const objectToString = Object.prototype.toString
-const dateGetTime = Date.prototype.getTime
-const dateGetHours = Date.prototype.getHours
-const dateSetHours = Date.prototype.setHours
+const dateGetTime = DateConstructor.prototype.getTime
+const dateGetHours = DateConstructor.prototype.getHours
+const dateSetHours = DateConstructor.prototype.setHours
 
 const isDateInstance = (date: any): boolean => {
   try {
-    return date instanceof Date
+    return date instanceof DateConstructor
   } catch {
     return false
   }
@@ -51,7 +52,7 @@ export const getStartOfDayTimestamp = (date: any): number => {
   const timestamp = getDateTimestamp(date)
   if (!Number.isFinite(timestamp)) return Number.NaN
 
-  const startOfDay = new Date(timestamp)
+  const startOfDay = new DateConstructor(timestamp)
   dateSetHours.call(startOfDay, 0, 0, 0, 0)
   return dateGetTime.call(startOfDay)
 }

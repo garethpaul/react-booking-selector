@@ -193,6 +193,25 @@ describe('malformed date inputs', () => {
       Date.prototype.setHours = originalSetHours
     }
   })
+
+  test('Date readers use the captured Date constructor when the global changes later', () => {
+    const OriginalDate = Date
+    const candidate = new OriginalDate(2018, 0, 1, 10)
+    const startOfDay = new OriginalDate(candidate)
+    OriginalDate.prototype.setHours.call(startOfDay, 0, 0, 0, 0)
+
+    try {
+      globalThis.Date = function Date() {
+        throw new Error('Unexpected Date constructor call')
+      }
+
+      expect(isDateObject(candidate)).toBe(true)
+      expect(getDateTimestamp(candidate)).toBe(OriginalDate.prototype.getTime.call(candidate))
+      expect(getStartOfDayTimestamp(candidate)).toBe(OriginalDate.prototype.getTime.call(startOfDay))
+    } finally {
+      globalThis.Date = OriginalDate
+    }
+  })
 })
 
 describe('timeIsBetween', () => {

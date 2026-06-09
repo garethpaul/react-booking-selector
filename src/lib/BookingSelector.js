@@ -99,16 +99,18 @@ const getNonEmptyString = (value: mixed): ?string => {
   return trimmedValue ? trimmedValue : undefined
 }
 
-const invalidDate = (): Date => new Date(NaN)
+const DateConstructor = Date
 
-const dateGetTime = Date.prototype.getTime
-const dateGetFullYear = Date.prototype.getFullYear
-const dateGetMonth = Date.prototype.getMonth
-const dateGetDate = Date.prototype.getDate
-const dateGetHours = Date.prototype.getHours
-const dateSetDate = Date.prototype.setDate
-const dateSetHours = Date.prototype.setHours
-const dateNow = Date.now
+const invalidDate = (): Date => new DateConstructor(NaN)
+
+const dateGetTime = DateConstructor.prototype.getTime
+const dateGetFullYear = DateConstructor.prototype.getFullYear
+const dateGetMonth = DateConstructor.prototype.getMonth
+const dateGetDate = DateConstructor.prototype.getDate
+const dateGetHours = DateConstructor.prototype.getHours
+const dateSetDate = DateConstructor.prototype.setDate
+const dateSetHours = DateConstructor.prototype.setHours
+const dateNow = DateConstructor.now
 
 const getCurrentTimestamp = (): number => {
   try {
@@ -128,7 +130,7 @@ const getDateTimestamp = (value: mixed): ?number => {
   return Number.isFinite(timestamp) ? timestamp : null
 }
 
-const cloneDate = (date: Date): Date => new Date(dateGetTime.call(date))
+const cloneDate = (date: Date): Date => new DateConstructor(dateGetTime.call(date))
 
 const startOfDayDate = (date: Date): Date => {
   const startTime = cloneDate(date)
@@ -148,14 +150,14 @@ const toDate = (value: DateValueType): Date => {
   if (value == null) return invalidDate()
   if (hasDateObjectTag(value)) {
     const timestamp = getDateTimestamp(value)
-    return timestamp == null ? invalidDate() : new Date(timestamp)
+    return timestamp == null ? invalidDate() : new DateConstructor(timestamp)
   }
-  if (typeof value === 'string' || typeof value === 'number') return new Date(value)
+  if (typeof value === 'string' || typeof value === 'number') return new DateConstructor(value)
   if (typeof value !== 'object') return invalidDate()
 
   try {
     const primitiveValue = value.valueOf()
-    return typeof primitiveValue === 'number' ? new Date(primitiveValue) : invalidDate()
+    return typeof primitiveValue === 'number' ? new DateConstructor(primitiveValue) : invalidDate()
   } catch {
     return invalidDate()
   }
@@ -205,7 +207,7 @@ const getDateListSignature = (dates: DateListType): string => normalizeSelection
 
 const getStartDate = (startDate: ?Date): Date => {
   const timestamp = getDateTimestamp(startDate)
-  return timestamp == null ? new Date() : new Date(timestamp)
+  return timestamp == null ? new DateConstructor(getCurrentTimestamp()) : new DateConstructor(timestamp)
 }
 
 const getNumberSignaturePart = (value: mixed): string =>
@@ -234,7 +236,7 @@ const getVisibleHours = (minTime: number, maxTime: number): Array<number> => {
 }
 
 const createLocalTime = (day: Date, hour: number): Date =>
-  new Date(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0)
+  new DateConstructor(dateGetFullYear.call(day), dateGetMonth.call(day), dateGetDate.call(day), hour, 0, 0, 0)
 
 const localTimeExists = (day: Date, hour: number, time: Date): boolean =>
   dateGetFullYear.call(time) === dateGetFullYear.call(day) &&
@@ -247,7 +249,7 @@ const createDateSlotTime = (day: Date, hour: number, createTime: CreateLocalTime
     const time = createTime(day, hour)
     const timestamp = getDateTimestamp(time)
     if (timestamp == null) return null
-    const slotTime = new Date(timestamp)
+    const slotTime = new DateConstructor(timestamp)
     return localTimeExists(day, hour, slotTime) ? slotTime : null
   } catch {
     return null
@@ -1281,7 +1283,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   renderDateCell = (time: Date, selected: boolean, blocked: boolean): React.Node => {
     if (typeof this.props.renderDateCell === 'function') {
-      return this.props.renderDateCell(new Date(dateGetTime.call(time)), selected, blocked)
+      return this.props.renderDateCell(new DateConstructor(dateGetTime.call(time)), selected, blocked)
     }
 
     return (

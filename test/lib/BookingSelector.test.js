@@ -2866,6 +2866,92 @@ describe('prop updates', () => {
     ])
   })
 
+  it('builds date grids with the captured Date constructor when the global changes later', () => {
+    const OriginalDate = Date
+    let dateColumns
+
+    try {
+      globalThis.Date = function Date() {
+        throw new Error('Unexpected Date constructor call')
+      }
+
+      dateColumns = buildDateColumns({
+        startDate: new OriginalDate(2032, 4, 15, 12),
+        numDays: 2,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      globalThis.Date = OriginalDate
+    }
+
+    expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([
+      [new Date(2032, 4, 15), new Date(2032, 4, 15, 9)],
+      [new Date(2032, 4, 16), new Date(2032, 4, 16, 9)],
+    ])
+  })
+
+  it('uses the live timestamp fallback with the captured Date constructor when startDate is omitted', () => {
+    const OriginalDate = Date
+    const currentTimestamp = new OriginalDate(2032, 4, 15, 12).getTime()
+    let dateColumns
+
+    function ReplacedDate() {
+      throw new Error('Unexpected Date constructor call')
+    }
+    ReplacedDate.now = () => currentTimestamp
+
+    try {
+      globalThis.Date = ReplacedDate
+
+      dateColumns = buildDateColumns({
+        numDays: 1,
+        minTime: 9,
+        maxTime: 9,
+      })
+    } finally {
+      globalThis.Date = OriginalDate
+    }
+
+    expect(dateColumns.map((dateColumn) => [dateColumn.day, dateColumn.slots[0].time])).toEqual([
+      [new Date(2032, 4, 15), new Date(2032, 4, 15, 9)],
+    ])
+  })
+
+  it('copies custom renderer dates with the captured Date constructor when the global changes later', () => {
+    const OriginalDate = Date
+    const renderedTimes = []
+    const rendered = renderSelector({
+      renderDateCell(time) {
+        renderedTimes.push(time)
+        return null
+      },
+      startDate,
+      numDays: 1,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const slotTime = addHours(startOfDay(startDate), 9)
+    renderedTimes.length = 0
+
+    try {
+      globalThis.Date = function Date() {
+        throw new Error('Unexpected Date constructor call')
+      }
+
+      expect(() => {
+        rendered.instance.renderDateCell(slotTime, false, false)
+      }).not.toThrow()
+    } finally {
+      globalThis.Date = OriginalDate
+      rendered.unmount()
+    }
+
+    expect(renderedTimes).toHaveLength(1)
+    expect(renderedTimes[0]).toEqual(slotTime)
+    expect(renderedTimes[0]).not.toBe(slotTime)
+  })
+
   it('uses the current day when startDate is not a Date object', () => {
     const currentDate = new Date('2032-05-15T12:00:00.000Z')
     jest.useFakeTimers()

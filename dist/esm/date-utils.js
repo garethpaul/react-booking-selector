@@ -1,10 +1,11 @@
+var DateConstructor = Date;
 var objectToString = Object.prototype.toString;
-var dateGetTime = Date.prototype.getTime;
-var dateGetHours = Date.prototype.getHours;
-var dateSetHours = Date.prototype.setHours;
+var dateGetTime = DateConstructor.prototype.getTime;
+var dateGetHours = DateConstructor.prototype.getHours;
+var dateSetHours = DateConstructor.prototype.setHours;
 var isDateInstance = function isDateInstance(date) {
   try {
-    return date instanceof Date;
+    return date instanceof DateConstructor;
   } catch (_unused) {
     return false;
   }
@@ -38,7 +39,7 @@ export var getDateHour = function getDateHour(date) {
 export var getStartOfDayTimestamp = function getStartOfDayTimestamp(date) {
   var timestamp = getDateTimestamp(date);
   if (!Number.isFinite(timestamp)) return Number.NaN;
-  var startOfDay = new Date(timestamp);
+  var startOfDay = new DateConstructor(timestamp);
   dateSetHours.call(startOfDay, 0, 0, 0, 0);
   return dateGetTime.call(startOfDay);
 };
