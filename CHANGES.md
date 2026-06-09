@@ -20,6 +20,8 @@
 - Used the rendered grid's owner document for mouseup listener wiring and touch
   hit testing.
 - Resolved date-cell event targets without relying on global DOM constructors.
+- Reused guarded date-cell target lookup for touch hit testing so malformed
+  hit-test results cannot throw or loop.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

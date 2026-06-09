@@ -154,14 +154,15 @@ it('getTimeFromTouchEvent returns the time for that cell', () => {
   const mockEvent = {
     touches: [{ clientX: 1, clientY: 2 }],
   }
-  const mockElement = {}
+  const mockElement = document.createElement('div')
   document.elementFromPoint.mockReturnValue(mockElement)
-  const cellToDateSpy = jest.spyOn(instance.cellToDate, 'get').mockReturnValue(mockCellTime)
+  instance.registerDateCell(mockElement, mockCellTime)
+  const cellToDateSpy = jest.spyOn(instance.cellToDate, 'get')
 
   instance.getTimeFromTouchEvent(mockEvent)
 
   expect(document.elementFromPoint).toHaveBeenCalledWith(mockEvent.touches[0].clientX, mockEvent.touches[0].clientY)
-  expect(cellToDateSpy).toHaveBeenCalled()
+  expect(cellToDateSpy).toHaveBeenCalledWith(mockElement)
   expect(mainSpy).toHaveReturnedWith(mockCellTime)
 
   mainSpy.mockRestore()
@@ -210,6 +211,29 @@ it('getTimeFromTouchEvent returns null when hit testing throws', () => {
   document.elementFromPoint.mockImplementation(() => {
     throw new Error('Cannot hit test')
   })
+
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+})
+
+it('getTimeFromTouchEvent returns null when hit-tested parent lookup throws', () => {
+  const { instance } = renderSelector()
+  const target = {}
+  Object.defineProperty(target, 'parentElement', {
+    get() {
+      throw new Error('Cannot read parent element')
+    },
+  })
+  document.elementFromPoint.mockReturnValue(target)
+
+  expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
+})
+
+it('getTimeFromTouchEvent returns null for cyclic hit-tested parent chains', () => {
+  const { instance } = renderSelector()
+  const parent = {}
+  const child = { parentElement: parent }
+  parent.parentElement = child
+  document.elementFromPoint.mockReturnValue(child)
 
   expect(instance.getTimeFromTouchEvent({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(null)
 })

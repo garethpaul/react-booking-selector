@@ -909,13 +909,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     } catch {
       return null
     }
-    while (targetElement) {
-      const cellTime = this.cellToDate.get(targetElement)
-      if (cellTime) return cellTime
-      if (targetElement === this.gridRef) return null
-      targetElement = targetElement.parentElement
-    }
-    return null
+    const dateCell = this.getDateCellFromEventTarget(targetElement)
+    return dateCell ? this.cellToDate.get(dateCell) || null : null
   }
 
   endSelection() {

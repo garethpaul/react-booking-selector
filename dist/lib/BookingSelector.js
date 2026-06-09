@@ -709,13 +709,8 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     } catch (_unused1) {
       return null;
     }
-    while (targetElement) {
-      var cellTime = this.cellToDate.get(targetElement);
-      if (cellTime) return cellTime;
-      if (targetElement === this.gridRef) return null;
-      targetElement = targetElement.parentElement;
-    }
-    return null;
+    var dateCell = this.getDateCellFromEventTarget(targetElement);
+    return dateCell ? this.cellToDate.get(dateCell) || null : null;
   };
   _proto.endSelection = function endSelection() {
     var hasValidSelectionType = isSelectionType(this.state.selectionType);
