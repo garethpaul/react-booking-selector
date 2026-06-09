@@ -8,7 +8,7 @@ import { startOfDay } from 'date-fns/startOfDay'
 import styled from './styled.js'
 import { Text, Subtitle } from './typography.js'
 import colors from './colors.js'
-import { getDateTimestamp as readDateTimestamp } from './date-utils.js'
+import { getDateTimestamp as readDateTimestamp, hasDateObjectTag } from './date-utils.js'
 import selectionSchemes from './selection-schemes/index.js'
 
 type DateValueType = Date | string | number | { valueOf: () => number } | null | void
@@ -104,7 +104,7 @@ const getDateTimestamp = (value: mixed): ?number => {
 
 const toDate = (value: DateValueType): Date => {
   if (value == null) return invalidDate()
-  if (value instanceof Date) {
+  if (hasDateObjectTag(value)) {
     const timestamp = getDateTimestamp(value)
     return timestamp == null ? invalidDate() : new Date(timestamp)
   }
@@ -161,7 +161,10 @@ const normalizeSelectionDraft = (dates: DateListType): Array<Date> => uniqueDate
 
 const getDateListSignature = (dates: DateListType): string => normalizeSelectionDraft(dates).map(dateKey).join('|')
 
-const getStartDate = (startDate: ?Date): Date => getValidDate(startDate) || new Date()
+const getStartDate = (startDate: ?Date): Date => {
+  const timestamp = getDateTimestamp(startDate)
+  return timestamp == null ? new Date() : new Date(timestamp)
+}
 
 const getNumberSignaturePart = (value: mixed): string =>
   typeof value === 'number' ? `number:${value}` : `invalid:${typeof value}`

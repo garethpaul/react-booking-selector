@@ -53,7 +53,7 @@ var getDateTimestamp = function getDateTimestamp(value) {
 };
 var toDate = function toDate(value) {
   if (value == null) return invalidDate();
-  if (value instanceof Date) {
+  if ((0, _dateUtils.hasDateObjectTag)(value)) {
     var timestamp = getDateTimestamp(value);
     return timestamp == null ? invalidDate() : new Date(timestamp);
   }
@@ -111,7 +111,8 @@ var getDateListSignature = function getDateListSignature(dates) {
   return normalizeSelectionDraft(dates).map(dateKey).join('|');
 };
 var getStartDate = function getStartDate(startDate) {
-  return getValidDate(startDate) || new Date();
+  var timestamp = getDateTimestamp(startDate);
+  return timestamp == null ? new Date() : new Date(timestamp);
 };
 var getNumberSignaturePart = function getNumberSignaturePart(value) {
   return typeof value === 'number' ? "number:" + value : "invalid:" + typeof value;

@@ -9,7 +9,7 @@ import { startOfDay } from 'date-fns/startOfDay';
 import styled from './styled.js';
 import { Text, Subtitle } from './typography.js';
 import colors from './colors.js';
-import { getDateTimestamp as readDateTimestamp } from './date-utils.js';
+import { getDateTimestamp as readDateTimestamp, hasDateObjectTag } from './date-utils.js';
 import selectionSchemes from './selection-schemes/index.js';
 var DEFAULT_DATE_FORMAT = 'd';
 var DEFAULT_ARIA_LABEL = 'Booking time slots';
@@ -47,7 +47,7 @@ var getDateTimestamp = function getDateTimestamp(value) {
 };
 var toDate = function toDate(value) {
   if (value == null) return invalidDate();
-  if (value instanceof Date) {
+  if (hasDateObjectTag(value)) {
     var timestamp = getDateTimestamp(value);
     return timestamp == null ? invalidDate() : new Date(timestamp);
   }
@@ -105,7 +105,8 @@ var getDateListSignature = function getDateListSignature(dates) {
   return normalizeSelectionDraft(dates).map(dateKey).join('|');
 };
 var getStartDate = function getStartDate(startDate) {
-  return getValidDate(startDate) || new Date();
+  var timestamp = getDateTimestamp(startDate);
+  return timestamp == null ? new Date() : new Date(timestamp);
 };
 var getNumberSignaturePart = function getNumberSignaturePart(value) {
   return typeof value === 'number' ? "number:" + value : "invalid:" + typeof value;

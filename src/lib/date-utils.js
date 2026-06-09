@@ -2,12 +2,23 @@
 
 const objectToString = Object.prototype.toString
 
-const isDateObject = (date: any): boolean => {
+export const hasDateObjectTag = (date: any): boolean => {
   if (date instanceof Date) return true
   if (!date || typeof date !== 'object') return false
 
   try {
     return objectToString.call(date) === '[object Date]'
+  } catch {
+    return false
+  }
+}
+
+export const isDateObject = (date: any): boolean => {
+  if (!hasDateObjectTag(date)) return false
+
+  try {
+    Date.prototype.getTime.call(date)
+    return true
   } catch {
     return false
   }

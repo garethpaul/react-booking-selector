@@ -15,6 +15,16 @@ const startDate = new Date('2018-01-01T00:00:00.000')
 
 const createCrossRealmDate = (value) => runInNewContext('new Date(value)', { value })
 
+const withThrowingDateCoercion = (date) => {
+  date.getTime = () => {
+    throw new Error('Unexpected date getTime call')
+  }
+  date.valueOf = () => {
+    throw new Error('Unexpected date valueOf call')
+  }
+  return date
+}
+
 const getTestSchedule = () => [addHours(startOfDay(startDate), 12), addHours(addDays(startOfDay(startDate), 1), 13)]
 
 const renderSelector = (props = {}) => {
@@ -3204,9 +3214,9 @@ describe('cell accessibility', () => {
   })
 
   it('normalizes Date values created in another JavaScript realm', () => {
-    const crossRealmStartDate = createCrossRealmDate('2018-01-01T00:00:00.000')
-    const selected = createCrossRealmDate('2018-01-01T09:00:00.000')
-    const blocked = createCrossRealmDate('2018-01-01T10:00:00.000')
+    const crossRealmStartDate = withThrowingDateCoercion(createCrossRealmDate('2018-01-01T00:00:00.000'))
+    const selected = withThrowingDateCoercion(createCrossRealmDate('2018-01-01T09:00:00.000'))
+    const blocked = withThrowingDateCoercion(createCrossRealmDate('2018-01-01T10:00:00.000'))
 
     expect(selected).not.toBeInstanceOf(Date)
 

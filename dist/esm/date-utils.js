@@ -1,5 +1,5 @@
 var objectToString = Object.prototype.toString;
-var isDateObject = function isDateObject(date) {
+export var hasDateObjectTag = function hasDateObjectTag(date) {
   if (date instanceof Date) return true;
   if (!date || typeof date !== 'object') return false;
   try {
@@ -8,11 +8,20 @@ var isDateObject = function isDateObject(date) {
     return false;
   }
 };
+export var isDateObject = function isDateObject(date) {
+  if (!hasDateObjectTag(date)) return false;
+  try {
+    Date.prototype.getTime.call(date);
+    return true;
+  } catch (_unused2) {
+    return false;
+  }
+};
 export var getDateTimestamp = function getDateTimestamp(date) {
   if (!isDateObject(date)) return Number.NaN;
   try {
     return Date.prototype.getTime.call(date);
-  } catch (_unused2) {
+  } catch (_unused3) {
     return Number.NaN;
   }
 };
@@ -20,7 +29,7 @@ export var getDateHour = function getDateHour(date) {
   if (!isDateObject(date)) return Number.NaN;
   try {
     return Date.prototype.getHours.call(date);
-  } catch (_unused3) {
+  } catch (_unused4) {
     return Number.NaN;
   }
 };

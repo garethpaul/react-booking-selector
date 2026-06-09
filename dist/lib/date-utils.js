@@ -1,9 +1,9 @@
 "use strict";
 
 exports.__esModule = true;
-exports.timeIsBetween = exports.isValidDate = exports.getStartOfDayTimestamp = exports.getDateTimestamp = exports.getDateHour = exports.dateIsBetween = exports.dateHourIsBetween = void 0;
+exports.timeIsBetween = exports.isValidDate = exports.isDateObject = exports.hasDateObjectTag = exports.getStartOfDayTimestamp = exports.getDateTimestamp = exports.getDateHour = exports.dateIsBetween = exports.dateHourIsBetween = void 0;
 var objectToString = Object.prototype.toString;
-var isDateObject = function isDateObject(date) {
+var hasDateObjectTag = exports.hasDateObjectTag = function hasDateObjectTag(date) {
   if (date instanceof Date) return true;
   if (!date || typeof date !== 'object') return false;
   try {
@@ -12,11 +12,20 @@ var isDateObject = function isDateObject(date) {
     return false;
   }
 };
+var isDateObject = exports.isDateObject = function isDateObject(date) {
+  if (!hasDateObjectTag(date)) return false;
+  try {
+    Date.prototype.getTime.call(date);
+    return true;
+  } catch (_unused2) {
+    return false;
+  }
+};
 var getDateTimestamp = exports.getDateTimestamp = function getDateTimestamp(date) {
   if (!isDateObject(date)) return Number.NaN;
   try {
     return Date.prototype.getTime.call(date);
-  } catch (_unused2) {
+  } catch (_unused3) {
     return Number.NaN;
   }
 };
@@ -24,7 +33,7 @@ var getDateHour = exports.getDateHour = function getDateHour(date) {
   if (!isDateObject(date)) return Number.NaN;
   try {
     return Date.prototype.getHours.call(date);
-  } catch (_unused3) {
+  } catch (_unused4) {
     return Number.NaN;
   }
 };

@@ -12,6 +12,8 @@
   non-standard DOM listener failures cannot break mount or unmount cleanup.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
+- Read Date-branded props through intrinsic timestamps so cross-realm values do
+  not fall back to unsafe instance coercion.
 - Normalized valid custom slot time values before grid validation so
   cross-realm `Date` values remain real booking slots.
 - Normalized `docs:check` plan paths so README validation remains stable

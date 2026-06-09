@@ -7,6 +7,7 @@ import {
   dateHourIsBetween,
   getDateHour,
   getDateTimestamp,
+  isDateObject,
   isValidDate,
 } from '../../src/lib/date-utils'
 
@@ -105,6 +106,7 @@ describe('malformed date inputs', () => {
 
   test('Date readers reject objects that only spoof the Date brand', () => {
     const dateTaggedObject = { [Symbol.toStringTag]: 'Date' }
+    const datePrototypeObject = Object.create(Date.prototype)
     const throwingTagObject = new Proxy(
       {},
       {
@@ -118,9 +120,43 @@ describe('malformed date inputs', () => {
     )
 
     expect(getDateTimestamp(dateTaggedObject)).toBeNaN()
+    expect(getDateTimestamp(datePrototypeObject)).toBeNaN()
     expect(getDateHour(dateTaggedObject)).toBeNaN()
     expect(isValidDate({})).toBe(false)
     expect(isValidDate(throwingTagObject)).toBe(false)
+    expect(isDateObject(dateTaggedObject)).toBe(false)
+    expect(isDateObject(datePrototypeObject)).toBe(false)
+    expect(isDateObject(throwingTagObject)).toBe(false)
+  })
+
+  test('Date brand checks accept valid same-realm and cross-realm Date objects', () => {
+    expect(isDateObject(validDate)).toBe(true)
+    expect(isDateObject(invalidDate)).toBe(true)
+    expect(isDateObject(createCrossRealmDate('2018-01-01T09:00:00.000'))).toBe(true)
+  })
+
+  test('Date readers return NaN when intrinsic reads fail after brand checks', () => {
+    const originalGetTime = Date.prototype.getTime
+    const originalGetHours = Date.prototype.getHours
+    let getTimeCalls = 0
+
+    try {
+      Date.prototype.getTime = function getTime() {
+        getTimeCalls += 1
+        if (getTimeCalls > 1) throw new Error('Cannot read timestamp')
+        return originalGetTime.call(this)
+      }
+      expect(getDateTimestamp(validDate)).toBeNaN()
+
+      Date.prototype.getTime = originalGetTime
+      Date.prototype.getHours = function getHours() {
+        throw new Error('Cannot read hour')
+      }
+      expect(getDateHour(validDate)).toBeNaN()
+    } finally {
+      Date.prototype.getTime = originalGetTime
+      Date.prototype.getHours = originalGetHours
+    }
   })
 })
 
