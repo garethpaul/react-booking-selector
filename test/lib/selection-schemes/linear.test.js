@@ -2,7 +2,18 @@ import { addDays, addHours, startOfDay } from 'date-fns'
 
 import linear from '../../../src/lib/selection-schemes/linear'
 
-const toTimeValues = (dates) => dates.map((date) => date.getTime())
+const toTimeValues = (dates) => dates.map((date) => Date.prototype.getTime.call(date))
+
+const withThrowingInstanceDateMethods = (date) => {
+  const mutatedDate = new Date(date)
+  mutatedDate.getTime = () => {
+    throw new Error('Unexpected getTime call')
+  }
+  mutatedDate.getHours = () => {
+    throw new Error('Unexpected getHours call')
+  }
+  return mutatedDate
+}
 
 describe('linear selection scheme', () => {
   const dates = []
@@ -81,5 +92,13 @@ describe('linear selection scheme', () => {
     const result = linear(dates[0][18], dates[2][1], sparseDates)
 
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
+  })
+
+  test('it uses intrinsic Date reads instead of overwritten instance methods', () => {
+    const mutatedDates = [[dates[0][8], dates[0][9], dates[0][10]].map(withThrowingInstanceDateMethods)]
+
+    const result = linear(mutatedDates[0][0], mutatedDates[0][2], mutatedDates)
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(mutatedDates[0]))
   })
 })

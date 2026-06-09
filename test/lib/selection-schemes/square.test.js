@@ -2,7 +2,18 @@ import { addDays, addHours, startOfDay } from 'date-fns'
 
 import square from '../../../src/lib/selection-schemes/square'
 
-const toTimeValues = (dates) => dates.map((date) => date.getTime())
+const toTimeValues = (dates) => dates.map((date) => Date.prototype.getTime.call(date))
+
+const withThrowingInstanceDateMethods = (date) => {
+  const mutatedDate = new Date(date)
+  mutatedDate.getTime = () => {
+    throw new Error('Unexpected getTime call')
+  }
+  mutatedDate.getHours = () => {
+    throw new Error('Unexpected getHours call')
+  }
+  return mutatedDate
+}
 
 describe('square selection scheme', () => {
   const dates = []
@@ -81,5 +92,13 @@ describe('square selection scheme', () => {
     const result = square(dates[0][5], dates[2][6], sparseDates)
 
     expect(toTimeValues(result)).toEqual(toTimeValues(expected))
+  })
+
+  test('it uses intrinsic Date reads instead of overwritten instance methods', () => {
+    const mutatedDates = [[dates[0][5], dates[0][6], dates[0][7]].map(withThrowingInstanceDateMethods)]
+
+    const result = square(mutatedDates[0][0], mutatedDates[0][2], mutatedDates)
+
+    expect(toTimeValues(result)).toEqual(toTimeValues(mutatedDates[0]))
   })
 })

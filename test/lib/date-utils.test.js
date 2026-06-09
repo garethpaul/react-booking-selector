@@ -4,6 +4,17 @@ import { dateIsBetween, timeIsBetween, dateHourIsBetween } from '../../src/lib/d
 
 const baseDate = new Date('2018-01-01T00:00:00.000')
 
+const withThrowingInstanceDateMethods = (date) => {
+  const mutatedDate = new Date(date)
+  mutatedDate.getTime = () => {
+    throw new Error('Unexpected getTime call')
+  }
+  mutatedDate.getHours = () => {
+    throw new Error('Unexpected getHours call')
+  }
+  return mutatedDate
+}
+
 const getHourlyDates = () => {
   const today = {}
   const tomorrow = {}
@@ -59,6 +70,16 @@ describe('malformed date inputs', () => {
     expect(isBetween(null, validDate, validDate)).toBe(false)
     expect(isBetween(validDate, invalidDate, validDate)).toBe(false)
     expect(isBetween(validDate, validDate, 'not-a-date')).toBe(false)
+  })
+
+  test('between helpers use intrinsic Date reads instead of overwritten instance methods', () => {
+    const start = withThrowingInstanceDateMethods(new Date(2018, 0, 1, 9))
+    const candidate = withThrowingInstanceDateMethods(new Date(2018, 0, 1, 10))
+    const end = withThrowingInstanceDateMethods(new Date(2018, 0, 1, 11))
+
+    expect(dateHourIsBetween(start, candidate, end)).toBe(true)
+    expect(dateIsBetween(start, candidate, end)).toBe(true)
+    expect(timeIsBetween(start, candidate, end)).toBe(true)
   })
 })
 
