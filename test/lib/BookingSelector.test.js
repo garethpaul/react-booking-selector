@@ -684,6 +684,20 @@ describe('touch handlers', () => {
     }
   })
 
+  it('does not suppress mouse events when the clock moves backwards after a touch event', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1000)
+    const { instance } = renderSelector()
+
+    try {
+      instance.recordTouchEvent()
+      nowSpy.mockReturnValue(900)
+
+      expect(instance.shouldIgnoreMouseEvent()).toBe(false)
+    } finally {
+      nowSpy.mockRestore()
+    }
+  })
+
   it('selects cells while touch dragging', async () => {
     const changeSpy = jest.fn()
     const { container } = renderSelector({ onChange: changeSpy, startDate, numDays: 1, minTime: 9, maxTime: 10 })

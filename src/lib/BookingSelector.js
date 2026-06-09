@@ -869,7 +869,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   shouldIgnoreMouseEvent(): boolean {
-    return this.lastTouchEventTime > 0 && Date.now() - this.lastTouchEventTime < TOUCH_MOUSE_SUPPRESSION_MS
+    const elapsedTouchTime = Date.now() - this.lastTouchEventTime
+    return this.lastTouchEventTime > 0 && elapsedTouchTime >= 0 && elapsedTouchTime < TOUCH_MOUSE_SUPPRESSION_MS
   }
 
   clearTouchDragState() {
