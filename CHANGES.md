@@ -64,6 +64,8 @@
   of listing an internal docs entry that is not published.
 - Added a strict package-contents check so `pack:check` fails on missing,
   unexpected, or forbidden published files.
+- Split ESLint globals by source, script, and test targets so environment-only
+  globals do not leak across file types.
 
 ## 2026-06-08
 

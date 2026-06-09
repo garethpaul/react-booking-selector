@@ -5,20 +5,26 @@ const jsxA11y = require('eslint-plugin-jsx-a11y')
 const react = require('eslint-plugin-react')
 const prettier = require('eslint-config-prettier')
 
-const browserGlobals = {
-  Buffer: 'readonly',
+const domGlobals = {
   clearTimeout: 'readonly',
   document: 'readonly',
   HTMLElement: 'readonly',
   MouseEvent: 'readonly',
-  module: 'readonly',
   Node: 'readonly',
-  process: 'readonly',
-  require: 'readonly',
   setTimeout: 'readonly',
   TouchEvent: 'readonly',
   URL: 'readonly',
   window: 'readonly',
+}
+
+const nodeGlobals = {
+  Buffer: 'readonly',
+  clearTimeout: 'readonly',
+  module: 'readonly',
+  process: 'readonly',
+  require: 'readonly',
+  setTimeout: 'readonly',
+  URL: 'readonly',
 }
 
 const jestGlobals = {
@@ -33,71 +39,88 @@ const jestGlobals = {
   test: 'readonly',
 }
 
+const languageOptions = {
+  ecmaVersion: 2022,
+  sourceType: 'module',
+  parser: babelParser,
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: ['@babel/plugin-syntax-flow', '@babel/plugin-transform-react-jsx'],
+    },
+  },
+}
+
+const plugins = {
+  import: importPlugin,
+  'jsx-a11y': jsxA11y,
+  react,
+}
+
+const settings = {
+  react: {
+    version: 'detect',
+  },
+}
+
+const rules = {
+  ...react.configs.recommended.rules,
+  ...react.configs['jsx-runtime'].rules,
+  ...jsxA11y.configs.recommended.rules,
+  'arrow-body-style': ['error', 'as-needed'],
+  'class-methods-use-this': 'warn',
+  'import/extensions': 'off',
+  'import/no-extraneous-dependencies': [
+    'error',
+    {
+      devDependencies: ['src/docs/**', 'test/**', 'setupTests.js'],
+    },
+  ],
+  'import/prefer-default-export': 'off',
+  'no-console': 'warn',
+  'no-else-return': 'off',
+  'no-param-reassign': 'off',
+  'no-use-before-define': [
+    'error',
+    {
+      classes: false,
+      functions: false,
+      variables: false,
+    },
+  ],
+  'react/jsx-filename-extension': 'off',
+  'react/no-unused-prop-types': 'off',
+  'react/prop-types': 'off',
+  'react/require-default-props': 'off',
+  'react/sort-comp': 'off',
+  semi: ['error', 'never'],
+}
+
+const createConfig = (files, globals) => ({
+  files,
+  languageOptions: {
+    ...languageOptions,
+    globals: {
+      ...globals,
+      console: 'readonly',
+    },
+  },
+  plugins,
+  settings,
+  rules,
+})
+
 module.exports = [
   {
     ignores: ['coverage/**', 'dev/**', 'dist/**', 'node_modules/**'],
   },
   js.configs.recommended,
   prettier,
-  {
-    files: ['src/**/*.{js,jsx}', 'test/**/*.{js,jsx}', 'scripts/**/*.js', 'setupTests.js'],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        ...browserGlobals,
-        ...jestGlobals,
-        console: 'readonly',
-      },
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          plugins: ['@babel/plugin-syntax-flow', '@babel/plugin-transform-react-jsx'],
-        },
-      },
-    },
-    plugins: {
-      import: importPlugin,
-      'jsx-a11y': jsxA11y,
-      react,
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-    rules: {
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...jsxA11y.configs.recommended.rules,
-      'arrow-body-style': ['error', 'as-needed'],
-      'class-methods-use-this': 'warn',
-      'import/extensions': 'off',
-      'import/no-extraneous-dependencies': [
-        'error',
-        {
-          devDependencies: ['src/docs/**', 'test/**', 'setupTests.js'],
-        },
-      ],
-      'import/prefer-default-export': 'off',
-      'no-console': 'warn',
-      'no-else-return': 'off',
-      'no-param-reassign': 'off',
-      'no-use-before-define': [
-        'error',
-        {
-          classes: false,
-          functions: false,
-          variables: false,
-        },
-      ],
-      'react/jsx-filename-extension': 'off',
-      'react/no-unused-prop-types': 'off',
-      'react/prop-types': 'off',
-      'react/require-default-props': 'off',
-      'react/sort-comp': 'off',
-      semi: ['error', 'never'],
-    },
-  },
+  createConfig(['src/**/*.{js,jsx}'], domGlobals),
+  createConfig(['scripts/**/*.js'], nodeGlobals),
+  createConfig(['test/**/*.{js,jsx}', 'setupTests.js'], {
+    ...domGlobals,
+    ...nodeGlobals,
+    ...jestGlobals,
+  }),
 ]
