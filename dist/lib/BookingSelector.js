@@ -379,10 +379,17 @@ var preventScroll = exports.preventScroll = function preventScroll(e) {
   preventDefault(e);
 };
 var preventDefault = function preventDefault(event) {
-  if (event && typeof event.preventDefault === 'function') {
+  if (!event) return;
+  var preventDefaultHandler;
+  try {
+    preventDefaultHandler = event.preventDefault;
+  } catch (_unused5) {
+    return;
+  }
+  if (typeof preventDefaultHandler === 'function') {
     try {
-      event.preventDefault();
-    } catch (_unused5) {
+      preventDefaultHandler.call(event);
+    } catch (_unused6) {
       // Ignore non-standard event objects that expose throwing default prevention.
     }
   }
@@ -392,7 +399,7 @@ var getBrowserDocument = function getBrowserDocument() {
     if (typeof window === 'undefined') return null;
     var browserDocument = window.document;
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
-  } catch (_unused6) {
+  } catch (_unused7) {
     return null;
   }
 };
@@ -400,7 +407,7 @@ var getParentElement = function getParentElement(target) {
   try {
     var parentElement = target.parentElement;
     return parentElement && typeof parentElement === 'object' ? parentElement : null;
-  } catch (_unused7) {
+  } catch (_unused8) {
     return null;
   }
 };
@@ -409,7 +416,7 @@ var getOwnerDocument = function getOwnerDocument(target) {
   try {
     var ownerDocument = target.ownerDocument;
     return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null;
-  } catch (_unused8) {
+  } catch (_unused9) {
     return null;
   }
 };
@@ -610,7 +617,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused9) {
+      } catch (_unused0) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -623,7 +630,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused0) {
+      } catch (_unused1) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -631,7 +638,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused1) {
+        } catch (_unused10) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -673,7 +680,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused10) {
+        } catch (_unused11) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -681,7 +688,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused11) {
+        } catch (_unused12) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -771,7 +778,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused12) {
+    } catch (_unused13) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -904,7 +911,7 @@ var BookingSelector = exports.default = /*#__PURE__*/function (_React$Component)
     try {
       dateCell.focus();
       return true;
-    } catch (_unused13) {
+    } catch (_unused14) {
       return false;
     }
   };
