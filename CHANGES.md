@@ -14,6 +14,7 @@
   non-standard DOM listener failures cannot break mount or unmount cleanup.
 - Skipped document-level mouse and touch hit testing when no browser document is
   available.
+- Updated the packaged README overview image to show a seven-day grid.
 - Accepted valid `Date` objects created in another JavaScript realm while still
   rejecting objects that only spoof the Date brand.
 - Read Date-branded props through intrinsic timestamps so cross-realm values do

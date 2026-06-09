@@ -1,18 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
   <title id="title">React Booking Selector grid overview</title>
-  <desc id="desc">A polished preview of a booking selector grid with selected and blocked time slots.</desc>
+  <desc id="desc">A polished preview of a seven-day booking selector grid with selected and blocked time slots.</desc>
   <rect width="1200" height="675" fill="#f8fafc"/>
   <rect x="80" y="58" width="1040" height="559" rx="28" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
   <text x="128" y="129" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700">React Booking Selector</text>
   <text x="130" y="169" fill="#475569" font-family="Inter, Arial, sans-serif" font-size="21">Controlled React grid for selecting bookable time slots.</text>
 
   <rect x="130" y="220" width="940" height="312" rx="18" fill="#f9fafb" stroke="#e5e7eb"/>
-  <text x="242" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">MON</text>
-  <text x="376" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">TUE</text>
-  <text x="510" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">WED</text>
-  <text x="644" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">THU</text>
-  <text x="778" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">FRI</text>
-  <text x="912" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">SAT</text>
+  <text x="237" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">MON</text>
+  <text x="349" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">TUE</text>
+  <text x="461" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">WED</text>
+  <text x="573" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">THU</text>
+  <text x="685" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">FRI</text>
+  <text x="797" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">SAT</text>
+  <text x="909" y="262" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">SUN</text>
 
   <text x="159" y="318" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="16">9 AM</text>
   <text x="151" y="372" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="16">10 AM</text>
@@ -20,45 +21,50 @@
   <text x="150" y="480" fill="#64748b" font-family="Inter, Arial, sans-serif" font-size="16">12 PM</text>
 
   <g fill="#dbeafe">
-    <rect x="230" y="292" width="108" height="38" rx="7"/>
-    <rect x="364" y="292" width="108" height="38" rx="7"/>
-    <rect x="498" y="292" width="108" height="38" rx="7"/>
-    <rect x="632" y="292" width="108" height="38" rx="7"/>
-    <rect x="766" y="292" width="108" height="38" rx="7"/>
-    <rect x="900" y="292" width="108" height="38" rx="7"/>
-    <rect x="230" y="346" width="108" height="38" rx="7"/>
-    <rect x="364" y="346" width="108" height="38" rx="7"/>
-    <rect x="498" y="346" width="108" height="38" rx="7"/>
-    <rect x="632" y="346" width="108" height="38" rx="7"/>
-    <rect x="766" y="346" width="108" height="38" rx="7"/>
-    <rect x="900" y="346" width="108" height="38" rx="7"/>
-    <rect x="230" y="400" width="108" height="38" rx="7"/>
-    <rect x="364" y="400" width="108" height="38" rx="7"/>
-    <rect x="498" y="400" width="108" height="38" rx="7"/>
-    <rect x="632" y="400" width="108" height="38" rx="7"/>
-    <rect x="766" y="400" width="108" height="38" rx="7"/>
-    <rect x="900" y="400" width="108" height="38" rx="7"/>
-    <rect x="230" y="454" width="108" height="38" rx="7"/>
-    <rect x="364" y="454" width="108" height="38" rx="7"/>
-    <rect x="498" y="454" width="108" height="38" rx="7"/>
-    <rect x="632" y="454" width="108" height="38" rx="7"/>
-    <rect x="766" y="454" width="108" height="38" rx="7"/>
-    <rect x="900" y="454" width="108" height="38" rx="7"/>
+    <rect x="226" y="292" width="94" height="38" rx="7"/>
+    <rect x="338" y="292" width="94" height="38" rx="7"/>
+    <rect x="450" y="292" width="94" height="38" rx="7"/>
+    <rect x="562" y="292" width="94" height="38" rx="7"/>
+    <rect x="674" y="292" width="94" height="38" rx="7"/>
+    <rect x="786" y="292" width="94" height="38" rx="7"/>
+    <rect x="898" y="292" width="94" height="38" rx="7"/>
+    <rect x="226" y="346" width="94" height="38" rx="7"/>
+    <rect x="338" y="346" width="94" height="38" rx="7"/>
+    <rect x="450" y="346" width="94" height="38" rx="7"/>
+    <rect x="562" y="346" width="94" height="38" rx="7"/>
+    <rect x="674" y="346" width="94" height="38" rx="7"/>
+    <rect x="786" y="346" width="94" height="38" rx="7"/>
+    <rect x="898" y="346" width="94" height="38" rx="7"/>
+    <rect x="226" y="400" width="94" height="38" rx="7"/>
+    <rect x="338" y="400" width="94" height="38" rx="7"/>
+    <rect x="450" y="400" width="94" height="38" rx="7"/>
+    <rect x="562" y="400" width="94" height="38" rx="7"/>
+    <rect x="674" y="400" width="94" height="38" rx="7"/>
+    <rect x="786" y="400" width="94" height="38" rx="7"/>
+    <rect x="898" y="400" width="94" height="38" rx="7"/>
+    <rect x="226" y="454" width="94" height="38" rx="7"/>
+    <rect x="338" y="454" width="94" height="38" rx="7"/>
+    <rect x="450" y="454" width="94" height="38" rx="7"/>
+    <rect x="562" y="454" width="94" height="38" rx="7"/>
+    <rect x="674" y="454" width="94" height="38" rx="7"/>
+    <rect x="786" y="454" width="94" height="38" rx="7"/>
+    <rect x="898" y="454" width="94" height="38" rx="7"/>
   </g>
 
   <g fill="#599af2">
-    <rect x="498" y="346" width="108" height="38" rx="7"/>
-    <rect x="632" y="346" width="108" height="38" rx="7"/>
-    <rect x="498" y="400" width="108" height="38" rx="7"/>
-    <rect x="632" y="400" width="108" height="38" rx="7"/>
+    <rect x="450" y="346" width="94" height="38" rx="7"/>
+    <rect x="562" y="346" width="94" height="38" rx="7"/>
+    <rect x="450" y="400" width="94" height="38" rx="7"/>
+    <rect x="562" y="400" width="94" height="38" rx="7"/>
   </g>
 
   <g fill="#4f4f4f">
-    <rect x="766" y="454" width="108" height="38" rx="7"/>
-    <rect x="900" y="454" width="108" height="38" rx="7"/>
+    <rect x="674" y="454" width="94" height="38" rx="7"/>
+    <rect x="786" y="454" width="94" height="38" rx="7"/>
+    <rect x="898" y="454" width="94" height="38" rx="7"/>
   </g>
 
-  <rect x="498" y="346" width="108" height="38" rx="7" fill="none" stroke="#1d4ed8" stroke-width="4"/>
+  <rect x="450" y="346" width="94" height="38" rx="7" fill="none" stroke="#1d4ed8" stroke-width="4"/>
 
   <g font-family="Inter, Arial, sans-serif" font-size="18" fill="#334155">
     <circle cx="186" cy="568" r="8" fill="#dbeafe"/>
