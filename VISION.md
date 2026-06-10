@@ -23,6 +23,8 @@ Priority:
 - Keep square and linear selection behavior deterministic
 - Maintain package build, docs, lint, and test scripts
 - Maintain Makefile wrappers for lint, test, build, verify, and check gates
+- Run the frozen dependency graph and canonical package gates on Node 20 and Node 24 in hosted CI
+- Keep hosted dependency installation lifecycle-script-free and checked-in `dist` output reproducible
 - Keep styling customizable without hiding selection state
 - Emit minute-unique selection payloads that match the grid comparison model
 - Keep every completed maintenance plan under `docs/plans` verified by `docs:check`

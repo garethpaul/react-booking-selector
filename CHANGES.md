@@ -2,6 +2,8 @@
 
 ## 2026-06-10
 
+- Added pinned, read-only hosted package verification on Node 20 and Node 24.
+- Added lifecycle-script-free frozen installs and checked-in `dist` reproducibility checks to CI.
 - Added duplicate package file detection to the package manifest allowlist and
   npm dry-run contents checks.
 

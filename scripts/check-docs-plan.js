@@ -8,6 +8,8 @@ const toPlanPath = (name) => `${planDir}/${name}`
 const toFsPath = (planPath) => path.join(...planPath.split('/'))
 
 const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.md')
+const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
+const ciWorkflowPath = '.github/workflows/check.yml'
 const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
@@ -61,6 +63,34 @@ if (planPaths.length === 0) {
 
 if (!planPaths.includes(baselinePlanPath)) {
   errors.push(`${baselinePlanPath} is missing`)
+}
+
+if (planPaths.includes(ciPlanPath)) {
+  if (!fs.existsSync(toFsPath(ciWorkflowPath))) {
+    errors.push(`${ciWorkflowPath} is missing`)
+  } else {
+    const workflow = fs.readFileSync(toFsPath(ciWorkflowPath), 'utf8')
+    const requiredFragments = [
+      'runs-on: ubuntu-24.04',
+      'permissions:\n  contents: read',
+      'actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10',
+      'actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e',
+      'node: [20.x, 24.x]',
+      'run: corepack enable',
+      'corepack yarn install --frozen-lockfile --ignore-scripts',
+      'run: make check',
+      'run: make build',
+      'run: git diff --exit-code -- dist',
+    ]
+
+    for (const fragment of requiredFragments) {
+      if (!workflow.includes(fragment)) errors.push(`${ciWorkflowPath} must include ${fragment}`)
+    }
+
+    if (workflow.includes('continue-on-error')) {
+      errors.push(`${ciWorkflowPath} must not allow verification failures`)
+    }
+  }
 }
 
 for (const planPath of planPaths) {

@@ -318,6 +318,8 @@ TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict p
 `docs/readme-overview.svg`, `README.md`, and `LICENSE`.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
 screenshots with headless Chrome or Chromium, and checks the rendered DOM, screenshots, and horizontal layout metrics.
+GitHub Actions runs the frozen, lifecycle-script-free dependency graph and full verification on Node 20 and Node 24,
+then rebuilds `dist` and rejects generated output drift. Hosted actions are commit-pinned and use read-only permissions.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
@@ -333,3 +335,4 @@ See `docs/plans/2026-06-09-make-gate-wrapper-aliases.md` for Makefile gate wrapp
 See `docs/plans/2026-06-09-editor-metadata-ignore.md` for local editor metadata ignore coverage.
 See `docs/plans/2026-06-09-package-manifest-allowlist-check.md` for package manifest allowlist coverage.
 See `docs/plans/2026-06-10-package-duplicate-file-check.md` for duplicate package file detection.
+See `docs/plans/2026-06-10-hosted-verification.md` for the pinned Node 20/24 verification and clean distribution gate.
