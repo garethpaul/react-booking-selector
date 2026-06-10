@@ -84,16 +84,33 @@ const getSetDifference = (left, right) => {
   return left.filter((value) => !rightSet.has(value))
 }
 
+const getDuplicateValues = (values) => {
+  const seenValues = new Set()
+  const duplicateValues = new Set()
+  for (const value of values) {
+    if (seenValues.has(value)) {
+      duplicateValues.add(value)
+    } else {
+      seenValues.add(value)
+    }
+  }
+  return Array.from(duplicateValues).sort()
+}
+
 const assertPackageContents = (actualPackageFiles, expectedFiles = expectedPackageFiles) => {
   const actualFiles = [...actualPackageFiles].sort()
   const sortedExpectedFiles = [...expectedFiles].sort()
   const missingFiles = getSetDifference(sortedExpectedFiles, actualFiles)
   const unexpectedFiles = getSetDifference(actualFiles, sortedExpectedFiles)
+  const duplicateFiles = getDuplicateValues(actualFiles)
   const forbiddenFiles = actualFiles.filter((file) =>
     forbiddenPackagePathPrefixes.some((prefix) => file.startsWith(prefix)),
   )
   const errors = []
 
+  if (duplicateFiles.length > 0) {
+    errors.push(`Duplicate package files:\n${duplicateFiles.join('\n')}`)
+  }
   if (missingFiles.length > 0) {
     errors.push(`Missing package files:\n${missingFiles.join('\n')}`)
   }
@@ -174,6 +191,7 @@ module.exports = {
   assertPackageManifestFiles,
   expectedPackageFiles,
   expectedPackageManifestFiles,
+  getDuplicateValues,
   parsePackOutput,
   removePackArtifacts,
 }

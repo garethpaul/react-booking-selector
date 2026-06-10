@@ -7,6 +7,7 @@ import {
   assertPackageManifestFiles,
   expectedPackageFiles,
   expectedPackageManifestFiles,
+  getDuplicateValues,
   parsePackOutput,
   removePackArtifacts,
 } from '../../scripts/check-package-contents'
@@ -82,6 +83,12 @@ describe('check-package-contents script', () => {
     }).not.toThrow()
   })
 
+  it('reports duplicate package manifest allowlist entries', () => {
+    expect(() => {
+      assertPackageManifestFiles({ files: [...expectedPackageManifestFiles, 'README.md'] })
+    }).toThrow(/Duplicate package files:[\s\S]*README\.md/)
+  })
+
   it('requires a package manifest files allowlist', () => {
     expect(() => {
       assertPackageManifestFiles({})
@@ -104,6 +111,19 @@ describe('check-package-contents script', () => {
     }).toThrow(
       /Missing package files:[\s\S]*README\.md[\s\S]*Unexpected package files:[\s\S]*src\/lib\/BookingSelector\.js/,
     )
+  })
+
+  it('reports duplicate packed files', () => {
+    expect(() => {
+      assertPackageContents([...expectedPackageFiles, 'README.md'])
+    }).toThrow(/Duplicate package files:[\s\S]*README\.md/)
+  })
+
+  it('returns sorted unique duplicate values', () => {
+    expect(getDuplicateValues(['dist/lib/index.js', 'README.md', 'README.md', 'dist/lib/index.js'])).toEqual([
+      'README.md',
+      'dist/lib/index.js',
+    ])
   })
 
   it('reports forbidden package paths explicitly', () => {

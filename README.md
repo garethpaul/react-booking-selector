@@ -332,3 +332,4 @@ See `docs/plans/2026-06-09-docs-plan-path-normalization.md` for cross-platform d
 See `docs/plans/2026-06-09-make-gate-wrapper-aliases.md` for Makefile gate wrapper aliases.
 See `docs/plans/2026-06-09-editor-metadata-ignore.md` for local editor metadata ignore coverage.
 See `docs/plans/2026-06-09-package-manifest-allowlist-check.md` for package manifest allowlist coverage.
+See `docs/plans/2026-06-10-package-duplicate-file-check.md` for duplicate package file detection.

@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-10
+
+- Added duplicate package file detection to the package manifest allowlist and
+  npm dry-run contents checks.
+
 ## 2026-06-09
 
 - Added package manifest allowlist checks so `pack:check` fails if
