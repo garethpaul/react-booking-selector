@@ -6,6 +6,8 @@
 - Added lifecycle-script-free frozen installs and checked-in `dist` reproducibility checks to CI.
 - Added duplicate package file detection to the package manifest allowlist and
   npm dry-run contents checks.
+- Added packed-file mode validation so JavaScript, declarations, docs, and
+  assets cannot publish with executable bits.
 
 ## 2026-06-09
 

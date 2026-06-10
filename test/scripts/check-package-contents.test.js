@@ -5,6 +5,7 @@ import path from 'path'
 import {
   assertPackageContents,
   assertPackageManifestFiles,
+  assertNoExecutablePackageFiles,
   expectedPackageFiles,
   expectedPackageManifestFiles,
   getDuplicateValues,
@@ -51,6 +52,31 @@ describe('check-package-contents script', () => {
 
     expect(parsed.filename).toBe(null)
     expect(parsed.files).toEqual(['dist/lib/index.js'])
+    expect(parsed.executableFiles).toEqual([])
+  })
+
+  it('reports executable modes from npm pack output', () => {
+    const parsed = parsePackOutput(
+      JSON.stringify([
+        {
+          files: [
+            { path: 'README.md', mode: 0o644 },
+            { path: 'dist/lib/index.js', mode: 0o755 },
+          ],
+        },
+      ]),
+    )
+
+    expect(parsed.executableFiles).toEqual(['dist/lib/index.js'])
+    expect(() => {
+      assertNoExecutablePackageFiles(parsed.executableFiles)
+    }).toThrow(/Executable package files:[\s\S]*dist\/lib\/index\.js/)
+  })
+
+  it('accepts non-executable package modes', () => {
+    expect(() => {
+      assertNoExecutablePackageFiles([])
+    }).not.toThrow()
   })
 
   it('reports malformed npm dry-run JSON', () => {

@@ -34,6 +34,7 @@ Priority:
 - Keep the package manifest files allowlist aligned with the intended published
   package surface
 - Reject duplicate package file entries in manifest and dry-run package checks
+- Reject executable file modes from the published package surface
 - Keep canonical maintenance plan filenames dated and sortable
 - Keep date, selection, touch, and docs-smoke helpers defensive against
   malformed or invalid inputs
