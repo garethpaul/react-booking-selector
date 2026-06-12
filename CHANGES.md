@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-12
+
+- Added packed, unpacked, and per-file package size budgets to `pack:check`.
+- Rejected malformed npm size metadata and oversized expected package files
+  with focused regression coverage.
+
 ## 2026-06-10
 
 - Added pinned, read-only hosted package verification on Node 20 and Node 24.

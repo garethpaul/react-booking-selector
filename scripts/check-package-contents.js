@@ -36,6 +36,10 @@ const expectedPackageFiles = [
 
 const expectedPackageManifestFiles = ['dist/lib', 'dist/esm', 'docs/readme-overview.svg', 'LICENSE', 'README.md']
 
+const MAX_PACKED_SIZE_BYTES = 64 * 1024
+const MAX_UNPACKED_SIZE_BYTES = 256 * 1024
+const MAX_PACKAGE_FILE_SIZE_BYTES = 64 * 1024
+
 const forbiddenPackagePathPrefixes = [
   '.cache/',
   '.parcel-cache/',
@@ -50,6 +54,13 @@ const forbiddenPackagePathPrefixes = [
 
 /* istanbul ignore next -- the real pack:check command exercises platform-specific npm resolution. */
 const getNpmCommand = () => (process.platform === 'win32' ? 'npm.cmd' : 'npm')
+
+const assertByteCount = (value, label) => {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new Error(`${label} must be a non-negative safe integer`)
+  }
+  return value
+}
 
 const parsePackOutput = (output) => {
   const jsonStart = output.lastIndexOf('\n[')
@@ -66,13 +77,18 @@ const parsePackOutput = (output) => {
     throw new Error('npm pack --json output did not contain exactly one package with a files list')
   }
 
+  const packageSize = assertByteCount(parsed[0].size, 'Packed package size')
+  const unpackedSize = assertByteCount(parsed[0].unpackedSize, 'Unpacked package size')
   const executableFiles = []
+  const fileSizes = []
   const files = parsed[0].files
     .map((file) => {
       if (!file || typeof file.path !== 'string') {
         throw new Error('npm pack --json output contained a file entry without a path')
       }
       const normalizedPath = file.path.replace(/\\/gu, '/')
+      const fileSize = assertByteCount(file.size, `Package file size for ${normalizedPath}`)
+      fileSizes.push({ path: normalizedPath, size: fileSize })
       if (typeof file.mode === 'number' && (file.mode & 0o111) !== 0) {
         executableFiles.push(normalizedPath)
       }
@@ -83,7 +99,10 @@ const parsePackOutput = (output) => {
   return {
     filename: typeof parsed[0].filename === 'string' ? parsed[0].filename : null,
     executableFiles: executableFiles.sort(),
+    fileSizes: fileSizes.sort((left, right) => left.path.localeCompare(right.path)),
     files,
+    packageSize,
+    unpackedSize,
   }
 }
 
@@ -147,6 +166,26 @@ const assertNoExecutablePackageFiles = (executableFiles) => {
   }
 }
 
+const assertPackageSizeLimits = ({ packageSize, unpackedSize, fileSizes }) => {
+  const errors = []
+  const oversizedFiles = fileSizes.filter(({ size }) => size > MAX_PACKAGE_FILE_SIZE_BYTES)
+
+  if (packageSize > MAX_PACKED_SIZE_BYTES) {
+    errors.push(`Packed package size ${packageSize} exceeds ${MAX_PACKED_SIZE_BYTES} bytes`)
+  }
+  if (unpackedSize > MAX_UNPACKED_SIZE_BYTES) {
+    errors.push(`Unpacked package size ${unpackedSize} exceeds ${MAX_UNPACKED_SIZE_BYTES} bytes`)
+  }
+  if (oversizedFiles.length > 0) {
+    errors.push(
+      `Oversized package files:\n${oversizedFiles.map(({ path: filePath, size }) => `${filePath}: ${size}`).join('\n')}`,
+    )
+  }
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'))
+  }
+}
+
 const removePackArtifacts = (cwd, filenames = []) => {
   const knownFilenames = new Set(filenames.filter(Boolean))
   fs.readdirSync(cwd)
@@ -185,6 +224,7 @@ const main = () => {
     packOutput = parsePackOutput(output)
     assertPackageContents(packOutput.files)
     assertNoExecutablePackageFiles(packOutput.executableFiles)
+    assertPackageSizeLimits(packOutput)
     process.stdout.write(`Package contents check passed for ${packOutput.files.length} file(s).\n`)
   } finally {
     removePackArtifacts(process.cwd(), packOutput && packOutput.filename ? [packOutput.filename] : [])
@@ -205,9 +245,13 @@ module.exports = {
   assertPackageContents,
   assertPackageManifestFiles,
   assertNoExecutablePackageFiles,
+  assertPackageSizeLimits,
   expectedPackageFiles,
   expectedPackageManifestFiles,
   getDuplicateValues,
+  MAX_PACKED_SIZE_BYTES,
+  MAX_PACKAGE_FILE_SIZE_BYTES,
+  MAX_UNPACKED_SIZE_BYTES,
   parsePackOutput,
   removePackArtifacts,
 }

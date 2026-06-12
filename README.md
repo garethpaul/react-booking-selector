@@ -315,7 +315,8 @@ corepack yarn docs:smoke
 `corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
 `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
-`docs/readme-overview.svg`, `README.md`, and `LICENSE`; packed files must remain non-executable.
+`docs/readme-overview.svg`, `README.md`, and `LICENSE`; packed files must remain non-executable and within the reviewed
+64 KiB compressed, 256 KiB unpacked, and 64 KiB per-file package size budget.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
 screenshots with headless Chrome or Chromium, and checks the rendered DOM, screenshots, and horizontal layout metrics.
 GitHub Actions runs the frozen, lifecycle-script-free dependency graph and full verification on Node 20 and Node 24,
@@ -337,3 +338,4 @@ See `docs/plans/2026-06-09-package-manifest-allowlist-check.md` for package mani
 See `docs/plans/2026-06-10-package-duplicate-file-check.md` for duplicate package file detection.
 See `docs/plans/2026-06-10-package-file-mode-check.md` for packed-file executable mode rejection.
 See `docs/plans/2026-06-10-hosted-verification.md` for the pinned Node 20/24 verification and clean distribution gate.
+See `docs/plans/2026-06-12-package-size-budget.md` for fail-closed packed, unpacked, and per-file size ceilings.
