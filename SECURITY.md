@@ -29,6 +29,7 @@ Helpful reports include:
 - The demo is static client-side code. Changes that introduce new remote scripts, network calls, analytics, embeds, or deployment credentials should receive security-focused review before merge.
 - Interaction code should preserve safe browser behavior, including blocked-cell handling, keyboard access, touch event cleanup, and avoiding denial-of-service-prone input processing.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
+- Hosted verification installs the frozen lockfile with lifecycle scripts disabled, uses read-only repository permissions, disables checkout credential persistence, pins actions, runs the dependency audit, and rejects generated package drift.
 
 ## Service and API Notes
 

@@ -8,6 +8,10 @@ const toPlanPath = (name) => `${planDir}/${name}`
 const toFsPath = (planPath) => path.join(...planPath.split('/'))
 
 const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.md')
+const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
+const ciWorkflowPath = '.github/workflows/check.yml'
+const workflowDir = '.github/workflows'
+const codeownersPath = '.github/CODEOWNERS'
 const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
@@ -15,6 +19,7 @@ const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8')
 const errors = []
 const planFilenamePattern = /^(\d{4})-(\d{2})-(\d{2})-[-\w.]+\.md$/u
 const getPlanFilename = (planPath) => planPath.split('/').pop()
+const countOccurrences = (contents, fragment) => contents.split(fragment).length - 1
 
 const getPlanPaths = () => {
   if (!fs.existsSync(planDirFsPath)) return []
@@ -61,6 +66,83 @@ if (planPaths.length === 0) {
 
 if (!planPaths.includes(baselinePlanPath)) {
   errors.push(`${baselinePlanPath} is missing`)
+}
+
+if (!planPaths.includes(ciPlanPath)) {
+  errors.push(`${ciPlanPath} is missing`)
+}
+
+if (planPaths.includes(ciPlanPath)) {
+  const workflowDirFsPath = toFsPath(workflowDir)
+  const workflowPaths = fs.existsSync(workflowDirFsPath)
+    ? fs
+        .readdirSync(workflowDirFsPath)
+        .filter((name) => name.endsWith('.yml') || name.endsWith('.yaml'))
+        .sort()
+    : []
+  if (workflowPaths.length !== 1 || workflowPaths[0] !== 'check.yml') {
+    errors.push(`${workflowDir} must contain only check.yml`)
+  }
+
+  if (!fs.existsSync(toFsPath(ciWorkflowPath))) {
+    errors.push(`${ciWorkflowPath} is missing`)
+  } else {
+    const workflow = fs.readFileSync(toFsPath(ciWorkflowPath), 'utf8')
+    const requiredFragments = [
+      'runs-on: ubuntu-24.04',
+      'timeout-minutes: 20',
+      'cancel-in-progress: true',
+      'push:',
+      'pull_request:',
+      'workflow_dispatch:',
+      'permissions:\n  contents: read',
+      'actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10',
+      'persist-credentials: false',
+      'actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e',
+      'node: [20.x, 24.x]',
+      'run: corepack enable',
+      'corepack yarn install --frozen-lockfile --ignore-scripts',
+      'run: make check',
+      'run: make build',
+      'run: git diff --exit-code -- dist',
+    ]
+
+    for (const fragment of requiredFragments) {
+      if (!workflow.includes(fragment)) errors.push(`${ciWorkflowPath} must include ${fragment}`)
+    }
+
+    if (/^\s+(?:branches|branches-ignore|paths|paths-ignore|tags|tags-ignore):/mu.test(workflow)) {
+      errors.push(`${ciWorkflowPath} must validate every pushed branch and pull request`)
+    }
+
+    const uniqueFragments = [
+      'permissions:\n  contents: read',
+      'actions/checkout@',
+      'persist-credentials: false',
+      'actions/setup-node@',
+    ]
+    for (const fragment of uniqueFragments) {
+      if (countOccurrences(workflow, fragment) !== 1) {
+        errors.push(`${ciWorkflowPath} must include ${fragment} exactly once`)
+      }
+    }
+
+    if (workflow.includes('continue-on-error')) {
+      errors.push(`${ciWorkflowPath} must not allow verification failures`)
+    }
+    if (/^\s+if:/mu.test(workflow)) {
+      errors.push(`${ciWorkflowPath} must not conditionally skip verification`)
+    }
+    if (/^\s*[\w-]+:\s*write\s*$/mu.test(workflow) || workflow.includes('write-all')) {
+      errors.push(`${ciWorkflowPath} must not grant write permissions`)
+    }
+  }
+
+  if (!fs.existsSync(toFsPath(codeownersPath))) {
+    errors.push(`${codeownersPath} is missing`)
+  } else if (fs.readFileSync(toFsPath(codeownersPath), 'utf8').trim() !== '* @garethpaul') {
+    errors.push(`${codeownersPath} must assign all paths to @garethpaul`)
+  }
 }
 
 for (const planPath of planPaths) {

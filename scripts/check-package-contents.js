@@ -66,16 +66,24 @@ const parsePackOutput = (output) => {
     throw new Error('npm pack --json output did not contain exactly one package with a files list')
   }
 
+  const executableFiles = []
+  const files = parsed[0].files
+    .map((file) => {
+      if (!file || typeof file.path !== 'string') {
+        throw new Error('npm pack --json output contained a file entry without a path')
+      }
+      const normalizedPath = file.path.replace(/\\/gu, '/')
+      if (typeof file.mode === 'number' && (file.mode & 0o111) !== 0) {
+        executableFiles.push(normalizedPath)
+      }
+      return normalizedPath
+    })
+    .sort()
+
   return {
     filename: typeof parsed[0].filename === 'string' ? parsed[0].filename : null,
-    files: parsed[0].files
-      .map((file) => {
-        if (!file || typeof file.path !== 'string') {
-          throw new Error('npm pack --json output contained a file entry without a path')
-        }
-        return file.path.replace(/\\/gu, '/')
-      })
-      .sort(),
+    executableFiles: executableFiles.sort(),
+    files,
   }
 }
 
@@ -133,6 +141,12 @@ const assertPackageManifestFiles = (packageJson) => {
   assertPackageContents(packageJson.files, expectedPackageManifestFiles)
 }
 
+const assertNoExecutablePackageFiles = (executableFiles) => {
+  if (executableFiles.length > 0) {
+    throw new Error(`Executable package files:\n${executableFiles.join('\n')}`)
+  }
+}
+
 const removePackArtifacts = (cwd, filenames = []) => {
   const knownFilenames = new Set(filenames.filter(Boolean))
   fs.readdirSync(cwd)
@@ -170,6 +184,7 @@ const main = () => {
     const output = runNpmPackDryRun()
     packOutput = parsePackOutput(output)
     assertPackageContents(packOutput.files)
+    assertNoExecutablePackageFiles(packOutput.executableFiles)
     process.stdout.write(`Package contents check passed for ${packOutput.files.length} file(s).\n`)
   } finally {
     removePackArtifacts(process.cwd(), packOutput && packOutput.filename ? [packOutput.filename] : [])
@@ -189,6 +204,7 @@ if (require.main === module) {
 module.exports = {
   assertPackageContents,
   assertPackageManifestFiles,
+  assertNoExecutablePackageFiles,
   expectedPackageFiles,
   expectedPackageManifestFiles,
   getDuplicateValues,

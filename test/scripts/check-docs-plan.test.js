@@ -1,11 +1,45 @@
 import { execFileSync } from 'child_process'
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import path from 'path'
 
 const scriptPath = path.join(process.cwd(), 'scripts/check-docs-plan.js')
 const planDir = 'docs/plans'
 const baselinePlanPath = `${planDir}/2026-06-08-react-booking-selector-baseline.md`
+const ciPlanPath = `${planDir}/2026-06-10-hosted-verification.md`
+const ciWorkflowPath = '.github/workflows/check.yml'
+const codeownersPath = '.github/CODEOWNERS'
+
+const hostedWorkflow = `name: Check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        node: [20.x, 24.x]
+    concurrency:
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile --ignore-scripts
+      - run: make check
+      - run: make build
+      - run: git diff --exit-code -- dist
+`
 
 const completedPlan = (title) => `# ${title}
 
@@ -17,9 +51,10 @@ const completedPlan = (title) => `# ${title}
 - make check
 `
 
-const createTempProject = () => {
+const createTempProject = ({ withHostedVerification = true } = {}) => {
   const projectPath = mkdtempSync(path.join(tmpdir(), 'react-booking-selector-docs-check-'))
   mkdirSync(path.join(projectPath, ...planDir.split('/')), { recursive: true })
+  if (withHostedVerification) writeHostedVerification(projectPath)
   return projectPath
 }
 
@@ -28,7 +63,18 @@ const writePlan = (projectPath, planPath, contents) => {
 }
 
 const writeReadme = (projectPath, planPaths) => {
-  writeFileSync(path.join(projectPath, 'README.md'), planPaths.map((planPath) => `See ${planPath}.`).join('\n'))
+  const referencedPlans = [...planPaths]
+  if (existsSync(path.join(projectPath, ...ciPlanPath.split('/'))) && !referencedPlans.includes(ciPlanPath)) {
+    referencedPlans.push(ciPlanPath)
+  }
+  writeFileSync(path.join(projectPath, 'README.md'), referencedPlans.map((planPath) => `See ${planPath}.`).join('\n'))
+}
+
+const writeHostedVerification = (projectPath, workflow = hostedWorkflow, codeowners = '* @garethpaul\n') => {
+  writePlan(projectPath, ciPlanPath, completedPlan('Hosted Verification'))
+  mkdirSync(path.join(projectPath, '.github', 'workflows'), { recursive: true })
+  writeFileSync(path.join(projectPath, ...ciWorkflowPath.split('/')), workflow)
+  writeFileSync(path.join(projectPath, ...codeownersPath.split('/')), codeowners)
 }
 
 const writeWin32PathPreload = (projectPath) => {
@@ -97,7 +143,47 @@ describe('check-docs-plan script', () => {
     writeReadme(projectPath, [baselinePlanPath, extraPlanPath, leapDayPlanPath])
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
-    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 3 plan(s).\n')
+    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 4 plan(s).\n')
+  })
+
+  it('passes when hosted verification is credential-free and applies to every ref', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeHostedVerification(projectPath)
+    writeReadme(projectPath, [baselinePlanPath, ciPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 2 plan(s).\n')
+  })
+
+  it('rejects weakened hosted workflow and ownership policy', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeHostedVerification(
+      projectPath,
+      hostedWorkflow
+        .replace('  push:\n', '  push:\n    branches: [master]\n    paths: [src/**]\n')
+        .replace('  workflow_dispatch:\n', '')
+        .replace('          persist-credentials: false\n', '')
+        .replace('  contents: read\n', '  contents: write\n')
+        .replace('    runs-on: ubuntu-24.04\n', '    runs-on: ubuntu-24.04\n    if: false\n'),
+      '* @someone-else\n',
+    )
+    writeFileSync(path.join(projectPath, '.github', 'workflows', 'extra.yml'), 'name: Extra\n')
+    writeReadme(projectPath, [baselinePlanPath, ciPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain('.github/workflows must contain only check.yml')
+    expect(stderr).toContain(`${ciWorkflowPath} must validate every pushed branch and pull request`)
+    expect(stderr).toContain(`${ciWorkflowPath} must include workflow_dispatch:`)
+    expect(stderr).toContain(`${ciWorkflowPath} must include persist-credentials: false`)
+    expect(stderr).toContain(`${ciWorkflowPath} must not grant write permissions`)
+    expect(stderr).toContain(`${ciWorkflowPath} must not conditionally skip verification`)
+    expect(stderr).toContain(`${codeownersPath} must assign all paths to @garethpaul`)
   })
 
   it('matches README links against slash-separated plan paths when native paths use backslashes', () => {
@@ -108,7 +194,7 @@ describe('check-docs-plan script', () => {
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
     const preloadPath = writeWin32PathPreload(projectPath)
 
-    expect(runDocsCheck(projectPath, ['--require', preloadPath])).toBe('Docs plan check passed for 1 plan(s).\n')
+    expect(runDocsCheck(projectPath, ['--require', preloadPath])).toBe('Docs plan check passed for 2 plan(s).\n')
   })
 
   it('reports missing status, command, and Makefile requirements', () => {
@@ -138,7 +224,7 @@ describe('check-docs-plan script', () => {
   })
 
   it('reports when no completed plan markdown files exist', () => {
-    const projectPath = createTempProject()
+    const projectPath = createTempProject({ withHostedVerification: false })
     tempProjects.push(projectPath)
     writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
 
@@ -146,6 +232,7 @@ describe('check-docs-plan script', () => {
 
     expect(stderr).toContain('docs/plans must contain completed plan markdown files')
     expect(stderr).toContain(`${baselinePlanPath} is missing`)
+    expect(stderr).toContain(`${ciPlanPath} is missing`)
   })
 
   it('reports when the docs plan path is not a directory', () => {
@@ -173,6 +260,18 @@ describe('check-docs-plan script', () => {
     const stderr = runDocsCheckFailure(projectPath)
 
     expect(stderr).toContain(`${baselinePlanPath} is missing`)
+  })
+
+  it('reports when the hosted verification plan is missing', () => {
+    const projectPath = createTempProject({ withHostedVerification: false })
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writeReadme(projectPath, [baselinePlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`${ciPlanPath} is missing`)
   })
 
   it('reports when README does not reference a docs plan', () => {
