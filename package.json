@@ -97,8 +97,9 @@
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "docs:check": "node scripts/check-docs-plan.js",
     "pack:check": "node scripts/check-package-contents.js",
+    "package:runtime": "node scripts/smoke-package-runtime.js",
     "package:lint": "publint --pack npm --strict && attw --pack .",
-    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check && yarn package:lint",
+    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check && yarn package:runtime && yarn package:lint",
     "start": "yarn docs:dev"
   },
   "engines": {

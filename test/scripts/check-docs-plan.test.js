@@ -21,6 +21,19 @@ permissions:
   contents: read
 
 jobs:
+  node16-runtime:
+    name: Node 16 package runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container:
+      image: node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile --ignore-scripts --ignore-engines
+      - run: corepack yarn package:runtime
   node:
     runs-on: ubuntu-24.04
     timeout-minutes: 20

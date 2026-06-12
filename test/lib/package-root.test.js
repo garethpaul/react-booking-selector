@@ -23,6 +23,8 @@ it('exposes repository Makefile gate wrappers', () => {
   const makefile = readFileSync('Makefile', 'utf8')
 
   expect(packageJson.scripts.test).toBe('yarn lib:build && jest --runInBand')
+  expect(packageJson.scripts['package:runtime']).toBe('node scripts/smoke-package-runtime.js')
+  expect(packageJson.scripts.verify).toContain('yarn package:runtime')
   expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
   expect(makefile).toMatch(/^check: verify$/m)
   expect(makefile).toMatch(/^lint:\n\tcorepack yarn lint$/m)
@@ -89,4 +91,15 @@ it('supports the package ESM import condition', () => {
   )
 
   expect(output.trim()).toBe('function:true')
+})
+
+it('keeps the runtime-floor smoke fail-closed for both package entry modes', () => {
+  const runtimeSmoke = readFileSync('scripts/smoke-package-runtime.js', 'utf8')
+
+  expect(runtimeSmoke).toContain("require('react-booking-selector')")
+  expect(runtimeSmoke).toContain(
+    "import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'",
+  )
+  expect(runtimeSmoke).toContain("commonJsResult !== 'function:true:true:true'")
+  expect(runtimeSmoke).toContain("esmResult !== 'function:true'")
 })

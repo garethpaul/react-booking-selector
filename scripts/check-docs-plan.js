@@ -100,8 +100,13 @@ if (planPaths.includes(ciPlanPath)) {
       'persist-credentials: false',
       'actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e',
       'node: [20.x, 24.x]',
+      'name: Node 16 package runtime',
+      'timeout-minutes: 10',
+      'image: node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb',
       'run: corepack enable',
       'corepack yarn install --frozen-lockfile --ignore-scripts',
+      'corepack yarn install --frozen-lockfile --ignore-scripts --ignore-engines',
+      'run: corepack yarn package:runtime',
       'run: make check',
       'run: make build',
       'run: git diff --exit-code -- dist',
@@ -115,15 +120,16 @@ if (planPaths.includes(ciPlanPath)) {
       errors.push(`${ciWorkflowPath} must validate every pushed branch and pull request`)
     }
 
-    const uniqueFragments = [
-      'permissions:\n  contents: read',
-      'actions/checkout@',
-      'persist-credentials: false',
-      'actions/setup-node@',
-    ]
-    for (const fragment of uniqueFragments) {
-      if (countOccurrences(workflow, fragment) !== 1) {
-        errors.push(`${ciWorkflowPath} must include ${fragment} exactly once`)
+    const expectedOccurrences = new Map([
+      ['permissions:\n  contents: read', 1],
+      ['actions/checkout@', 2],
+      ['persist-credentials: false', 2],
+      ['actions/setup-node@', 1],
+      ['run: corepack yarn package:runtime', 1],
+    ])
+    for (const [fragment, expectedCount] of expectedOccurrences) {
+      if (countOccurrences(workflow, fragment) !== expectedCount) {
+        errors.push(`${ciWorkflowPath} must include ${fragment} exactly ${expectedCount} time(s)`)
       }
     }
 

@@ -2,6 +2,8 @@
 
 ## 2026-06-12
 
+- Added a digest-pinned Node 16.20.2 hosted smoke for the checked-in CommonJS
+  and ESM package entry points.
 - Added packed, unpacked, and per-file package size budgets to `pack:check`.
 - Rejected malformed npm size metadata and oversized expected package files
   with focused regression coverage.

@@ -14,7 +14,10 @@ TypeScript declarations are included for both the default export and the named `
 
 The package exposes a root `exports` map with CommonJS and ESM entry points, and keeps `main`, `module`, and `types` fields for compatibility. Supported peer dependency majors are React 18 or 19 and styled-components 5 or 6.
 
-The published package supports Node 16 or newer for package resolution. Repository verification uses Node 20 or newer because the dev-only package validation tools require it.
+The published package supports Node 16 or newer for package resolution. A
+dedicated hosted Node 16.20.2 job loads both checked-in package entry modes;
+repository development verification uses Node 20 or newer because the dev-only
+package validation tools require it.
 
 ```js
 import React, { useState } from 'react'
@@ -319,8 +322,11 @@ TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict p
 64 KiB compressed, 256 KiB unpacked, and 64 KiB per-file package size budget.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
 screenshots with headless Chrome or Chromium, and checks the rendered DOM, screenshots, and horizontal layout metrics.
-GitHub Actions runs the frozen, lifecycle-script-free dependency graph and full verification on Node 20 and Node 24,
-then rebuilds `dist` and rejects generated output drift. Hosted actions are commit-pinned, use read-only permissions, disable checkout credential persistence, and run for every pushed branch, pull request, or manual dispatch.
+GitHub Actions runs a frozen, lifecycle-script-free Node 16 package runtime
+smoke plus the full verification graph on Node 20 and Node 24, then rebuilds
+`dist` and rejects generated output drift. Hosted actions are commit-pinned,
+use read-only permissions, disable checkout credential persistence, and run for
+every pushed branch, pull request, or manual dispatch.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
@@ -339,3 +345,4 @@ See `docs/plans/2026-06-10-package-duplicate-file-check.md` for duplicate packag
 See `docs/plans/2026-06-10-package-file-mode-check.md` for packed-file executable mode rejection.
 See `docs/plans/2026-06-10-hosted-verification.md` for the pinned Node 20/24 verification and clean distribution gate.
 See `docs/plans/2026-06-12-package-size-budget.md` for fail-closed packed, unpacked, and per-file size ceilings.
+See `docs/plans/2026-06-12-node16-package-runtime.md` for the advertised runtime-floor package smoke.
