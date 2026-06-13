@@ -32,6 +32,10 @@ type MouseSelectionEventType = {
 
 type KeyboardSelectionEventType = {
   key?: mixed,
+  altKey?: mixed,
+  ctrlKey?: mixed,
+  metaKey?: mixed,
+  shiftKey?: mixed,
   preventDefault?: mixed,
 }
 
@@ -402,14 +406,56 @@ const getVerticalKeyboardNavigationTarget = (
   return null
 }
 
+const getRowEdgeKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  slotIndex: number,
+  direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
+): ?Date => {
+  let columnIndex = direction === 1 ? 0 : dateColumns.length - 1
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    const targetTime = getDateSlotTime(getDateColumnSlots(dateColumns[columnIndex])[slotIndex])
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
+    columnIndex += direction
+  }
+  return null
+}
+
+const getGridEdgeKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
+): ?Date => {
+  let columnIndex = direction === 1 ? 0 : dateColumns.length - 1
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    const slots = getDateColumnSlots(dateColumns[columnIndex])
+    let slotIndex = direction === 1 ? 0 : slots.length - 1
+    while (slotIndex >= 0 && slotIndex < slots.length) {
+      const targetTime = getDateSlotTime(slots[slotIndex])
+      if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
+      slotIndex += direction
+    }
+    columnIndex += direction
+  }
+  return null
+}
+
 export const getKeyboardNavigationTarget = (
   dateColumns: Array<DateColumnType>,
   time: Date,
   key: string,
   blockedMinuteKeys: Set<number> = new SetConstructor(),
+  controlKey: boolean = false,
 ): ?Date => {
   const position = findDateSlotPosition(dateColumns, time)
   if (!position) return null
+
+  if (key === 'Home' || key === 'End') {
+    const direction = key === 'Home' ? 1 : -1
+    return controlKey
+      ? getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys)
+      : getRowEdgeKeyboardNavigationTarget(dateColumns, position.slotIndex, direction, blockedMinuteKeys)
+  }
 
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
     return getHorizontalKeyboardNavigationTarget(
@@ -440,7 +486,28 @@ export const getKeyboardNavigationTarget = (
 }
 
 const isKeyboardNavigationKey = (key: string): boolean =>
-  key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp'
+  key === 'ArrowRight' ||
+  key === 'ArrowLeft' ||
+  key === 'ArrowDown' ||
+  key === 'ArrowUp' ||
+  key === 'Home' ||
+  key === 'End'
+
+const hasKeyboardControlModifier = (event: ?KeyboardSelectionEventType): boolean => {
+  try {
+    return Boolean(event && event.ctrlKey === true)
+  } catch {
+    return false
+  }
+}
+
+const hasUnsupportedKeyboardModifier = (event: ?KeyboardSelectionEventType): boolean => {
+  try {
+    return Boolean(event && (event.altKey === true || event.metaKey === true || event.shiftKey === true))
+  } catch {
+    return true
+  }
+}
 
 const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key === ' ' || key === 'Spacebar'
 
@@ -1137,12 +1204,18 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     if (isKeyboardNavigationKey(key)) {
       if (!validTime) return
+      if ((key === 'Home' || key === 'End') && hasUnsupportedKeyboardModifier(event)) return
       const navigationTarget = getKeyboardNavigationTarget(
         buildDateColumns(this.props),
         validTime,
         key,
         this.blockedMinuteKeys,
+        hasKeyboardControlModifier(event),
       )
+      if (key === 'Home' || key === 'End') {
+        if (navigationTarget && this.focusDateCell(navigationTarget)) preventDefault(event)
+        return
+      }
       preventDefault(event)
       if (navigationTarget) this.focusDateCell(navigationTarget)
       return

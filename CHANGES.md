@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-13
+
+- Added blocked-aware `Home` and `End` row navigation plus `Control+Home` and
+  `Control+End` whole-grid navigation for keyboard users.
+
 ## 2026-06-12
 
 - Added a digest-pinned Node 16.20.2 hosted smoke for the checked-in CommonJS

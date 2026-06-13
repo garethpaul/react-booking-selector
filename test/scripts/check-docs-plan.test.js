@@ -7,6 +7,7 @@ const scriptPath = path.join(process.cwd(), 'scripts/check-docs-plan.js')
 const planDir = 'docs/plans'
 const baselinePlanPath = `${planDir}/2026-06-08-react-booking-selector-baseline.md`
 const ciPlanPath = `${planDir}/2026-06-10-hosted-verification.md`
+const homeEndPlanPath = `${planDir}/2026-06-13-home-end-keyboard-navigation.md`
 const ciWorkflowPath = '.github/workflows/check.yml'
 const codeownersPath = '.github/CODEOWNERS'
 
@@ -353,5 +354,27 @@ describe('check-docs-plan script', () => {
     const stderr = runDocsCheckFailure(projectPath)
 
     expect(stderr).toContain(`README.md must reference ${baselinePlanPath} once, found 2`)
+  })
+
+  it('reports missing Home and End keyboard implementation contracts', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writePlan(projectPath, homeEndPlanPath, completedPlan('Home and End Navigation'))
+    writeReadme(projectPath, [baselinePlanPath, homeEndPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    mkdirSync(path.join(projectPath, 'src', 'lib'), { recursive: true })
+    mkdirSync(path.join(projectPath, 'test', 'lib'), { recursive: true })
+    writeFileSync(
+      path.join(projectPath, 'src', 'lib', 'BookingSelector.js'),
+      'export default class BookingSelector {}\n',
+    )
+    writeFileSync(path.join(projectPath, 'test', 'lib', 'BookingSelector.test.js'), "it('placeholder', () => {})\n")
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain("src/lib/BookingSelector.js must preserve key === 'Home'")
+    expect(stderr).toContain('src/lib/BookingSelector.js must preserve getGridEdgeKeyboardNavigationTarget')
+    expect(stderr).toContain('test/lib/BookingSelector.test.js must preserve moves to row edges with Home and End')
   })
 })

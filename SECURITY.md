@@ -28,6 +28,8 @@ Helpful reports include:
 - The library should not contain authentication, token, session, server-side request handling, secret storage, or mobile permission code. Changes adding any of those areas should receive security-focused review before merge.
 - The demo is static client-side code. Changes that introduce new remote scripts, network calls, analytics, embeds, or deployment credentials should receive security-focused review before merge.
 - Interaction code should preserve safe browser behavior, including blocked-cell handling, keyboard access, touch event cleanup, and avoiding denial-of-service-prone input processing.
+- Keyboard access includes blocked-aware arrow, `Home`, `End`, `Control+Home`,
+  and `Control+End` focus movement without changing selection state.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
 - Hosted verification installs the frozen lockfile with lifecycle scripts disabled, uses read-only repository permissions, disables checkout credential persistence, pins actions, runs the dependency audit, and rejects generated package drift.
 - The advertised Node 16 runtime floor separately loads both checked-in package

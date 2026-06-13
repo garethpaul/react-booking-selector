@@ -47,6 +47,7 @@ Next priorities:
   screenshot, DOM, and horizontal overflow checks, and add baseline visual
   regression coverage before larger styling changes.
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
+- Keep row-edge and whole-grid `Home` and `End` navigation blocked-aware
   as the day/hour grid evolves.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.

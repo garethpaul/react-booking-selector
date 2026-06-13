@@ -9,6 +9,7 @@ const toFsPath = (planPath) => path.join(...planPath.split('/'))
 
 const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.md')
 const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
+const homeEndPlanPath = toPlanPath('2026-06-13-home-end-keyboard-navigation.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
@@ -148,6 +149,34 @@ if (planPaths.includes(ciPlanPath)) {
     errors.push(`${codeownersPath} is missing`)
   } else if (fs.readFileSync(toFsPath(codeownersPath), 'utf8').trim() !== '* @garethpaul') {
     errors.push(`${codeownersPath} must assign all paths to @garethpaul`)
+  }
+}
+
+if (planPaths.includes(homeEndPlanPath)) {
+  const keyboardContractFiles = new Map([
+    [
+      'src/lib/BookingSelector.js',
+      ["key === 'Home'", "key === 'End'", 'event && event.ctrlKey === true', 'getGridEdgeKeyboardNavigationTarget'],
+    ],
+    [
+      'test/lib/BookingSelector.test.js',
+      [
+        'moves to row edges with Home and End',
+        'moves to whole-grid edges with Control+Home and Control+End',
+        'does not prevent Home or End defaults when no focus target can be reached',
+      ],
+    ],
+  ])
+
+  for (const [filePath, requiredFragments] of keyboardContractFiles) {
+    if (!fs.existsSync(toFsPath(filePath))) {
+      errors.push(`${filePath} is required by ${homeEndPlanPath}`)
+      continue
+    }
+    const contents = fs.readFileSync(toFsPath(filePath), 'utf8')
+    for (const fragment of requiredFragments) {
+      if (!contents.includes(fragment)) errors.push(`${filePath} must preserve ${fragment}`)
+    }
   }
 }
 

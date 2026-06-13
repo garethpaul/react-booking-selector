@@ -2946,6 +2946,63 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(dateColumns, three, 'ArrowDown')).toBe(null)
   })
 
+  it('moves to row edges with Home and End while skipping blocked and placeholder cells', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const thursdayNine = addHours(addDays(startOfDay(startDate), 3), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      { day: addDays(startDate, 1), slots: [{ hour: 9, time: tuesdayNine }] },
+      { day: addDays(startDate, 2), slots: [{ hour: 9, time: null }] },
+      { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, thursdayNine, 'Home', blocked)).toBe(tuesdayNine)
+    expect(getKeyboardNavigationTarget(dateColumns, tuesdayNine, 'End', blocked)).toBe(thursdayNine)
+  })
+
+  it('moves to whole-grid edges with Control+Home and Control+End', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const mondayTen = addHours(startOfDay(startDate), 10)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const tuesdayTen = addHours(addDays(startOfDay(startDate), 1), 10)
+    const dateColumns = [
+      {
+        day: startDate,
+        slots: [
+          { hour: 9, time: mondayNine },
+          { hour: 10, time: mondayTen },
+        ],
+      },
+      {
+        day: addDays(startDate, 1),
+        slots: [
+          { hour: 9, time: tuesdayNine },
+          { hour: 10, time: tuesdayTen },
+        ],
+      },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000), Math.floor(tuesdayTen.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, tuesdayNine, 'Home', blocked, true)).toBe(mondayTen)
+    expect(getKeyboardNavigationTarget(dateColumns, mondayTen, 'End', blocked, true)).toBe(tuesdayNine)
+  })
+
+  it('returns no Home or End target for malformed or fully blocked navigation data', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      undefined,
+      { day: addDays(startDate, 1), slots: null },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'Home', blocked)).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'End', blocked, true)).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, new Date(NaN), 'Home', blocked)).toBe(null)
+  })
+
   it('renders no date cells when the time range has no slots', () => {
     const rendered = renderSelector({ startDate, numDays: 2, minTime: 10, maxTime: 9 })
 
@@ -4107,6 +4164,107 @@ describe('keyboard interaction', () => {
     fireEvent.keyDown(mondayNine, { key: 'ArrowDown' })
 
     expect(mondayEleven).toHaveFocus()
+  })
+
+  it('moves focus to row edges with Home and End', () => {
+    const blockedMonday = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      blocked: [blockedMonday],
+      startDate,
+      numDays: 3,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+    const wednesdayNine = getByRole('button', { name: 'Available Wednesday, January 3, 2018 at 9 am' })
+
+    wednesdayNine.focus()
+    fireEvent.keyDown(wednesdayNine, { key: 'Home' })
+    expect(tuesdayNine).toHaveFocus()
+
+    fireEvent.keyDown(tuesdayNine, { key: 'End' })
+    expect(wednesdayNine).toHaveFocus()
+  })
+
+  it('moves focus to whole-grid edges with Control+Home and Control+End', () => {
+    const blockedMondayNine = addHours(startOfDay(startDate), 9)
+    const blockedTuesdayTen = addHours(addDays(startOfDay(startDate), 1), 10)
+    const { getByRole } = renderSelector({
+      blocked: [blockedMondayNine, blockedTuesdayTen],
+      startDate,
+      numDays: 2,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const mondayTen = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+
+    tuesdayNine.focus()
+    fireEvent.keyDown(tuesdayNine, { key: 'Home', ctrlKey: true })
+    expect(mondayTen).toHaveFocus()
+
+    fireEvent.keyDown(mondayTen, { key: 'End', ctrlKey: true })
+    expect(tuesdayNine).toHaveFocus()
+  })
+
+  it('falls back to row-edge navigation when the Control modifier lookup throws', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 3, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const wednesdayNine = getByRole('button', { name: 'Available Wednesday, January 3, 2018 at 9 am' })
+    const event = {
+      key: 'Home',
+      get ctrlKey() {
+        throw new Error('Cannot read Control modifier')
+      },
+      preventDefault: jest.fn(),
+    }
+
+    wednesdayNine.focus()
+    expect(() => {
+      instance.handleCellKeyDownEvent(event, addHours(addDays(startOfDay(startDate), 2), 9))
+    }).not.toThrow()
+    expect(mondayNine).toHaveFocus()
+    expect(event.preventDefault).toHaveBeenCalledTimes(1)
+  })
+
+  it('ignores Home and End when unsupported modifiers are active or unreadable', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNineTime = addHours(startOfDay(startDate), 9)
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+    const events = [
+      { key: 'End', altKey: true, preventDefault: jest.fn() },
+      { key: 'End', metaKey: true, preventDefault: jest.fn() },
+      { key: 'End', shiftKey: true, preventDefault: jest.fn() },
+      {
+        key: 'End',
+        get altKey() {
+          throw new Error('Cannot read Alt modifier')
+        },
+        preventDefault: jest.fn(),
+      },
+    ]
+
+    mondayNine.focus()
+    events.forEach((event) => {
+      expect(() => instance.handleCellKeyDownEvent(event, mondayNineTime)).not.toThrow()
+      expect(event.preventDefault).not.toHaveBeenCalled()
+      expect(mondayNine).toHaveFocus()
+    })
+    expect(tuesdayNine).not.toHaveFocus()
+  })
+
+  it('does not prevent Home or End defaults when no focus target can be reached', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNineTime = addHours(startOfDay(startDate), 9)
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const unregisteredTargetEvent = { key: 'Home', preventDefault: jest.fn() }
+
+    mondayNine.focus()
+    instance.dateToCell.clear()
+    instance.handleCellKeyDownEvent(unregisteredTargetEvent, mondayNineTime)
+    expect(unregisteredTargetEvent.preventDefault).not.toHaveBeenCalled()
+    expect(mondayNine).toHaveFocus()
   })
 
   it('handles keyboard navigation events without callable default prevention', () => {

@@ -1,13 +1,13 @@
 ---
 title: Home and End Keyboard Navigation
 type: feature
-status: planned
+status: completed
 date: 2026-06-13
 ---
 
 # Home and End Keyboard Navigation
 
-Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -128,7 +128,7 @@ Requirements:
 - `corepack yarn types:check`
 - `corepack yarn test`
 - `corepack yarn cover:check`
-- `corepack yarn audit:check`
+- `corepack yarn audit --json`
 - `corepack yarn pack:check`
 - `corepack yarn package:lint`
 - `corepack yarn docs:smoke`
@@ -140,4 +140,42 @@ Requirements:
 - digest-pinned Node 16 package-runtime smoke
 - workflow YAML parse
 - hostile keyboard-contract mutations
+- `git diff --check`
+
+## Work Completed
+
+- Added blocked-aware row-edge target lookup for `Home` and `End`.
+- Added blocked-aware whole-grid target lookup for `Control+Home` and
+  `Control+End` in rendered column and slot order.
+- Routed the new keys through guarded focus handling and prevented browser
+  defaults only after focus moved successfully.
+- Added helper, DOM interaction, malformed-input, blocked-slot, modifier, and
+  failed-focus regressions.
+- Extended the plan/document checker and public maintenance documentation, then
+  rebuilt CommonJS, ESM, and static documentation output.
+
+## Verification Results
+
+Completed locally on 2026-06-13 with Node 20.19.5 and Yarn 1.22.22:
+
+- focused selector and plan-checker suites: 262 tests and 2 snapshots passed
+- full Jest suite: 16 suites, 387 tests, and 2 snapshots passed
+- coverage: 100% statements, branches, functions, and lines for covered files
+- `corepack yarn format:check`
+- `corepack yarn lint`
+- `corepack yarn types:check`
+- `corepack yarn test`
+- `corepack yarn cover:check`
+- `corepack yarn audit --json` (zero vulnerabilities)
+- `corepack yarn pack:check` (27 files)
+- `corepack yarn package:runtime`
+- `corepack yarn package:lint` (`publint` and `attw` passed)
+- `corepack yarn docs:smoke`
+- exact digest-pinned Node 16.20.2 package-runtime smoke with networking disabled
+- package measurement: 32,167 packed bytes, 147,974 unpacked bytes, and a
+  50,170-byte largest file
+- workflow YAML parse
+- eight hostile source, modifier, test, plan, and README mutations rejected
+- plan-aware correctness, accessibility, testing, maintainability, and public
+  library contract review completed with no residual actionable findings
 - `git diff --check`
