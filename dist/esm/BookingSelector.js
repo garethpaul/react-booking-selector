@@ -307,12 +307,42 @@ var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigation
   }
   return null;
 };
-export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys) {
+var getRowEdgeKeyboardNavigationTarget = function getRowEdgeKeyboardNavigationTarget(dateColumns, slotIndex, direction, blockedMinuteKeys) {
+  var columnIndex = direction === 1 ? 0 : dateColumns.length - 1;
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    var targetTime = getDateSlotTime(getDateColumnSlots(dateColumns[columnIndex])[slotIndex]);
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
+    columnIndex += direction;
+  }
+  return null;
+};
+var getGridEdgeKeyboardNavigationTarget = function getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys) {
+  var columnIndex = direction === 1 ? 0 : dateColumns.length - 1;
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    var slots = getDateColumnSlots(dateColumns[columnIndex]);
+    var slotIndex = direction === 1 ? 0 : slots.length - 1;
+    while (slotIndex >= 0 && slotIndex < slots.length) {
+      var targetTime = getDateSlotTime(slots[slotIndex]);
+      if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
+      slotIndex += direction;
+    }
+    columnIndex += direction;
+  }
+  return null;
+};
+export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys, controlKey) {
   if (blockedMinuteKeys === void 0) {
     blockedMinuteKeys = new SetConstructor();
   }
+  if (controlKey === void 0) {
+    controlKey = false;
+  }
   var position = findDateSlotPosition(dateColumns, time);
   if (!position) return null;
+  if (key === 'Home' || key === 'End') {
+    var direction = key === 'Home' ? 1 : -1;
+    return controlKey ? getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys) : getRowEdgeKeyboardNavigationTarget(dateColumns, position.slotIndex, direction, blockedMinuteKeys);
+  }
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
     return getHorizontalKeyboardNavigationTarget(dateColumns, position, key === 'ArrowRight' ? 1 : -1, blockedMinuteKeys);
   }
@@ -325,7 +355,21 @@ export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(da
   return null;
 };
 var isKeyboardNavigationKey = function isKeyboardNavigationKey(key) {
-  return key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp';
+  return key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp' || key === 'Home' || key === 'End';
+};
+var hasKeyboardControlModifier = function hasKeyboardControlModifier(event) {
+  try {
+    return Boolean(event && event.ctrlKey === true);
+  } catch (_unused5) {
+    return false;
+  }
+};
+var hasUnsupportedKeyboardModifier = function hasUnsupportedKeyboardModifier(event) {
+  try {
+    return Boolean(event && (event.altKey === true || event.metaKey === true || event.shiftKey === true));
+  } catch (_unused6) {
+    return true;
+  }
 };
 var isKeyboardSelectionKey = function isKeyboardSelectionKey(key) {
   return key === 'Enter' || key === ' ' || key === 'Spacebar';
@@ -377,13 +421,13 @@ var preventDefault = function preventDefault(event) {
   var preventDefaultHandler;
   try {
     preventDefaultHandler = event.preventDefault;
-  } catch (_unused5) {
+  } catch (_unused7) {
     return;
   }
   if (typeof preventDefaultHandler === 'function') {
     try {
       preventDefaultHandler.call(event);
-    } catch (_unused6) {
+    } catch (_unused8) {
       // Ignore non-standard event objects that expose throwing default prevention.
     }
   }
@@ -393,7 +437,7 @@ var getBrowserDocument = function getBrowserDocument() {
     if (typeof window === 'undefined') return null;
     var browserDocument = window.document;
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
-  } catch (_unused7) {
+  } catch (_unused9) {
     return null;
   }
 };
@@ -401,7 +445,7 @@ var getParentElement = function getParentElement(target) {
   try {
     var parentElement = target.parentElement;
     return parentElement && typeof parentElement === 'object' ? parentElement : null;
-  } catch (_unused8) {
+  } catch (_unused0) {
     return null;
   }
 };
@@ -410,7 +454,7 @@ var getOwnerDocument = function getOwnerDocument(target) {
   try {
     var ownerDocument = target.ownerDocument;
     return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null;
-  } catch (_unused9) {
+  } catch (_unused1) {
     return null;
   }
 };
@@ -611,7 +655,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (browserDocument && typeof browserDocument.addEventListener === 'function') {
       try {
         browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused0) {
+      } catch (_unused10) {
         // Continue mounting in non-standard hosts that cannot register document listeners.
       }
     }
@@ -624,7 +668,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
       try {
         browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused1) {
+      } catch (_unused11) {
         // Continue instance cleanup even if the document listener cannot be removed.
       }
     }
@@ -632,7 +676,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused10) {
+        } catch (_unused12) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -674,7 +718,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused11) {
+        } catch (_unused13) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -682,7 +726,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused12) {
+        } catch (_unused14) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -772,7 +816,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused13) {
+    } catch (_unused15) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -905,7 +949,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       dateCell.focus();
       return true;
-    } catch (_unused14) {
+    } catch (_unused16) {
       return false;
     }
   };
@@ -918,7 +962,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var validTime = getValidDate(time);
     if (isKeyboardNavigationKey(key)) {
       if (!validTime) return;
-      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), validTime, key, this.blockedMinuteKeys);
+      if ((key === 'Home' || key === 'End') && hasUnsupportedKeyboardModifier(event)) return;
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), validTime, key, this.blockedMinuteKeys, hasKeyboardControlModifier(event));
+      if (key === 'Home' || key === 'End') {
+        if (navigationTarget && this.focusDateCell(navigationTarget)) preventDefault(event);
+        return;
+      }
       preventDefault(event);
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
