@@ -78,8 +78,8 @@ Requirements:
 
 Files:
 
-- `scripts/check-package-contents.js`
-- `test/scripts/check-package-contents.test.js`
+- `scripts/check-docs-plan.js`
+- `test/scripts/check-docs-plan.test.js`
 - `README.md`
 - `SECURITY.md`
 - `VISION.md`
@@ -91,8 +91,8 @@ Files:
 Requirements:
 
 - Document row-edge and whole-grid keyboard commands.
-- Extend the package checker contract so the source, tests, and completed plan
-  cannot be silently removed.
+- Extend the plan/document contract so the source, tests, README reference, and
+  completed plan cannot be silently removed.
 - Rebuild both published JavaScript formats and prove generated output is
   reproducible.
 - Record completed status and actual verification only after all gates pass.
