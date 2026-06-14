@@ -10,6 +10,7 @@ const toFsPath = (planPath) => path.join(...planPath.split('/'))
 const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.md')
 const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
 const homeEndPlanPath = toPlanPath('2026-06-13-home-end-keyboard-navigation.md')
+const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independent-make.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
@@ -212,8 +213,29 @@ for (const [readmePlanReference, referenceCount] of readmePlanReferenceCounts) {
   }
 }
 
+const makeContracts = [
+  'override REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))',
+  'lint:\n\tcd "$(REPO_ROOT)" && corepack yarn lint',
+  'test:\n\tcd "$(REPO_ROOT)" && corepack yarn test',
+  'build:\n\tcd "$(REPO_ROOT)" && corepack yarn build',
+  'verify:\n\tcd "$(REPO_ROOT)" && corepack yarn verify',
+]
 if (!makefile.includes('corepack yarn verify')) {
   errors.push('Makefile must expose corepack yarn verify')
+}
+for (const makeContract of makeContracts) {
+  if (!makefile.includes(makeContract)) {
+    errors.push(`Makefile must preserve rooted contract: ${makeContract}`)
+  }
+}
+
+if (planPaths.includes(locationIndependentMakePlanPath)) {
+  const locationIndependentMakePlan = fs.readFileSync(toFsPath(locationIndependentMakePlanPath), 'utf8')
+  for (const evidence of ['Node 20', 'Node 24', 'unrelated directory', 'hostile mutations rejected']) {
+    if (!locationIndependentMakePlan.includes(evidence)) {
+      errors.push(`${locationIndependentMakePlanPath} must preserve completed evidence: ${evidence}`)
+    }
+  }
 }
 
 if (errors.length > 0) {

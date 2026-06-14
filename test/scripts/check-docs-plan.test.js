@@ -65,6 +65,27 @@ const completedPlan = (title) => `# ${title}
 - make check
 `
 
+const rootedMakefile = `.DEFAULT_GOAL := check
+
+.PHONY: build check lint test verify
+
+override REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+
+check: verify
+
+lint:
+	cd "$(REPO_ROOT)" && corepack yarn lint
+
+test:
+	cd "$(REPO_ROOT)" && corepack yarn test
+
+build:
+	cd "$(REPO_ROOT)" && corepack yarn build
+
+verify:
+	cd "$(REPO_ROOT)" && corepack yarn verify
+`
+
 const createTempProject = ({ withHostedVerification = true } = {}) => {
   const projectPath = mkdtempSync(path.join(tmpdir(), 'react-booking-selector-docs-check-'))
   mkdirSync(path.join(projectPath, ...planDir.split('/')), { recursive: true })
@@ -155,7 +176,7 @@ describe('check-docs-plan script', () => {
     writePlan(projectPath, extraPlanPath, completedPlan('Extra Plan'))
     writePlan(projectPath, leapDayPlanPath, completedPlan('Leap Day Plan'))
     writeReadme(projectPath, [baselinePlanPath, extraPlanPath, leapDayPlanPath])
-    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
 
     expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 4 plan(s).\n')
   })
@@ -166,7 +187,7 @@ describe('check-docs-plan script', () => {
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     writeHostedVerification(projectPath)
     writeReadme(projectPath, [baselinePlanPath, ciPlanPath])
-    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
 
     expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 2 plan(s).\n')
   })
@@ -187,7 +208,7 @@ describe('check-docs-plan script', () => {
     )
     writeFileSync(path.join(projectPath, '.github', 'workflows', 'extra.yml'), 'name: Extra\n')
     writeReadme(projectPath, [baselinePlanPath, ciPlanPath])
-    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
 
     const stderr = runDocsCheckFailure(projectPath)
 
@@ -205,7 +226,7 @@ describe('check-docs-plan script', () => {
     tempProjects.push(projectPath)
     writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
     writeReadme(projectPath, [baselinePlanPath])
-    writeFileSync(path.join(projectPath, 'Makefile'), 'verify:\n\tcorepack yarn verify\n')
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
     const preloadPath = writeWin32PathPreload(projectPath)
 
     expect(runDocsCheck(projectPath, ['--require', preloadPath])).toBe('Docs plan check passed for 2 plan(s).\n')

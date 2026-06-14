@@ -26,11 +26,12 @@ it('exposes repository Makefile gate wrappers', () => {
   expect(packageJson.scripts['package:runtime']).toBe('node scripts/smoke-package-runtime.js')
   expect(packageJson.scripts.verify).toContain('yarn package:runtime')
   expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
+  expect(makefile).toMatch(/^override REPO_ROOT := \$\(abspath \$\(dir \$\(lastword \$\(MAKEFILE_LIST\)\)\)\)$/m)
   expect(makefile).toMatch(/^check: verify$/m)
-  expect(makefile).toMatch(/^lint:\n\tcorepack yarn lint$/m)
-  expect(makefile).toMatch(/^test:\n\tcorepack yarn test$/m)
-  expect(makefile).toMatch(/^build:\n\tcorepack yarn build$/m)
-  expect(makefile).toMatch(/^verify:\n\tcorepack yarn verify$/m)
+  expect(makefile).toMatch(/^lint:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn lint$/m)
+  expect(makefile).toMatch(/^test:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn test$/m)
+  expect(makefile).toMatch(/^build:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn build$/m)
+  expect(makefile).toMatch(/^verify:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn verify$/m)
 })
 
 it('keeps local editor metadata out of verification inputs', () => {
