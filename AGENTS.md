@@ -33,7 +33,8 @@
 
 ## Coding conventions
 
-- The published package supports Node >=16.0; use Node >=20.0 for repository scripts and verification.
+- The published package supports Node >=16.0; use Node >=20.0 and the pinned Yarn 4.17.0 for repository scripts and verification.
+- Validate Node 16 compatibility against a package artifact built on a supported development Node release; do not run Yarn 4 under Node 16.
 - Package module type is `commonjs`.
 - ESLint is configured; keep lint fixes in source instead of generated output.
 - Keep React components controlled and covered by component tests when props or rendering behavior changes.

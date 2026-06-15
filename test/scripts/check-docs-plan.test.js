@@ -8,8 +8,11 @@ const planDir = 'docs/plans'
 const baselinePlanPath = `${planDir}/2026-06-08-react-booking-selector-baseline.md`
 const ciPlanPath = `${planDir}/2026-06-10-hosted-verification.md`
 const homeEndPlanPath = `${planDir}/2026-06-13-home-end-keyboard-navigation.md`
+const yarnPackageManagerPlanPath = `${planDir}/2026-06-15-yarn-4-package-manager.md`
 const ciWorkflowPath = '.github/workflows/check.yml'
 const codeownersPath = '.github/CODEOWNERS'
+const packageJsonPath = 'package.json'
+const yarnConfigPath = '.yarnrc.yml'
 
 const hostedWorkflow = `name: Check
 
@@ -26,15 +29,22 @@ jobs:
     name: Node 16 package runtime
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    container:
-      image: node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 20.x
       - run: corepack enable
-      - run: corepack yarn install --frozen-lockfile --ignore-scripts --ignore-engines
-      - run: corepack yarn package:runtime
+      - run: corepack yarn install --immutable --mode=skip-build
+      - run: |
+          corepack yarn lib:build
+          package_file="$(npm pack --ignore-scripts --silent)"
+          mkdir .node16-package
+          tar -xzf "$package_file" --strip-components=1 -C .node16-package
+          rm "$package_file"
+      - run: docker run --rm --network none -v "$PWD:/workspace:ro" -w /workspace/.node16-package node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb node ../scripts/smoke-package-runtime.js
   node:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -49,7 +59,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
       - run: corepack enable
-      - run: corepack yarn install --frozen-lockfile --ignore-scripts
+      - run: corepack yarn install --immutable --mode=skip-build
       - run: make check
       - run: make build
       - run: git diff --exit-code -- dist
@@ -110,6 +120,17 @@ const writeHostedVerification = (projectPath, workflow = hostedWorkflow, codeown
   mkdirSync(path.join(projectPath, '.github', 'workflows'), { recursive: true })
   writeFileSync(path.join(projectPath, ...ciWorkflowPath.split('/')), workflow)
   writeFileSync(path.join(projectPath, ...codeownersPath.split('/')), codeowners)
+}
+
+const writeYarnPackageManagerBoundary = (projectPath, overrides = {}) => {
+  const packageJson = {
+    packageManager: 'yarn@4.17.0',
+    engines: { node: '>=16.0' },
+    scripts: { verify: 'yarn npm audit --all --recursive --severity high' },
+    ...overrides,
+  }
+  writeFileSync(path.join(projectPath, 'package.json'), `${JSON.stringify(packageJson, null, 2)}\n`)
+  writeFileSync(path.join(projectPath, '.yarnrc.yml'), 'nodeLinker: node-modules\n')
 }
 
 const writeWin32PathPreload = (projectPath) => {
@@ -190,6 +211,55 @@ describe('check-docs-plan script', () => {
     writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
 
     expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 2 plan(s).\n')
+  })
+
+  it('passes with the pinned Yarn 4 package-manager and Node 16 artifact boundary', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writePlan(
+      projectPath,
+      yarnPackageManagerPlanPath,
+      `${completedPlan('Yarn 4 Package Manager')}\nNode 20\nNode 24\nNode 16\nhostile mutations rejected\n`,
+    )
+    writeYarnPackageManagerBoundary(projectPath)
+    writeReadme(projectPath, [baselinePlanPath, yarnPackageManagerPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
+
+    expect(runDocsCheck(projectPath)).toBe('Docs plan check passed for 3 plan(s).\n')
+  })
+
+  it('rejects weakened Yarn 4 package-manager and runtime-boundary contracts', () => {
+    const projectPath = createTempProject()
+    tempProjects.push(projectPath)
+    writePlan(projectPath, baselinePlanPath, completedPlan('Baseline Plan'))
+    writePlan(projectPath, yarnPackageManagerPlanPath, completedPlan('Yarn 4 Package Manager'))
+    writeYarnPackageManagerBoundary(projectPath, {
+      packageManager: 'yarn@1.22.22',
+      engines: { node: '>=20.0' },
+      scripts: { verify: 'yarn audit' },
+    })
+    writeFileSync(path.join(projectPath, '.yarnrc.yml'), 'nodeLinker: pnp\n')
+    writeHostedVerification(
+      projectPath,
+      hostedWorkflow
+        .replace(' --immutable --mode=skip-build', ' --mode=skip-build')
+        .replace(' --network none', '')
+        .replace('npm pack --ignore-scripts', 'npm pack'),
+    )
+    writeReadme(projectPath, [baselinePlanPath, yarnPackageManagerPlanPath])
+    writeFileSync(path.join(projectPath, 'Makefile'), rootedMakefile)
+
+    const stderr = runDocsCheckFailure(projectPath)
+
+    expect(stderr).toContain(`${ciWorkflowPath} must include corepack yarn install --immutable --mode=skip-build`)
+    expect(stderr).toContain(`${ciWorkflowPath} must include package_file="$(npm pack --ignore-scripts --silent)"`)
+    expect(stderr).toContain(`${ciWorkflowPath} must include docker run --rm --network none`)
+    expect(stderr).toContain(`${packageJsonPath} must pin packageManager to yarn@4.17.0`)
+    expect(stderr).toContain(`${packageJsonPath} verify must run the Yarn 4 recursive high-severity audit`)
+    expect(stderr).toContain(`${packageJsonPath} must preserve the published Node >=16.0 runtime floor`)
+    expect(stderr).toContain(`${yarnConfigPath} must preserve the node-modules linker`)
+    expect(stderr).toContain(`${yarnPackageManagerPlanPath} must preserve completed evidence: Node 20`)
   })
 
   it('rejects weakened hosted workflow and ownership policy', () => {

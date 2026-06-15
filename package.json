@@ -4,7 +4,7 @@
   "description": "A grid-based booking selector.",
   "author": "Gareth Paul Jones",
   "type": "commonjs",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.17.0",
   "sideEffects": false,
   "types": "dist/lib/index.d.ts",
   "repository": {
@@ -56,21 +56,7 @@
     "styled-components": "styled-components/dist/styled-components.browser.esm.js"
   },
   "resolutions": {
-    "**/@babel/cli/make-dir/semver": "5.7.2",
-    "**/@babel/core/debug": "4.4.3",
-    "**/@istanbuljs/load-nyc-config/js-yaml": "3.14.2",
-    "**/anymatch/picomatch": "2.3.2",
-    "**/cliui/wrap-ansi/strip-ansi/ansi-regex": "5.0.1",
-    "**/cliui/wrap-ansi/string-width/strip-ansi/ansi-regex": "5.0.1",
-    "**/istanbul-lib-source-maps/debug": "4.4.3",
-    "**/json5/minimist": "1.2.8",
-    "**/string-length/strip-ansi/ansi-regex": "5.0.1",
-    "**/test-exclude/glob/minimatch": "3.1.5",
-    "**/test-exclude/minimatch": "3.1.5",
-    "**/wrap-ansi-cjs/strip-ansi/ansi-regex": "5.0.1",
-    "**/wrap-ansi-cjs/string-width/strip-ansi/ansi-regex": "5.0.1",
     "braces": "3.0.3",
-    "glob/minimatch/brace-expansion": "2.0.3",
     "lodash": "4.18.1",
     "minimatch/brace-expansion": "1.1.15"
   },
@@ -92,14 +78,14 @@
     "lib:build": "yarn clean:lib && BABEL_ENV=library babel src/lib -d dist/lib --extensions .js,.jsx && BABEL_ENV=esm babel src/lib -d dist/esm --extensions .js,.jsx && node scripts/write-cjs-entry.js && cp src/lib/index.d.ts dist/lib/index.d.ts && cp src/lib/index.d.cts dist/lib/index.d.cts && cp src/lib/index.d.ts dist/esm/index.d.ts && cp src/lib/index.d.ts dist/esm/index.d.mts && node -e \"const fs = require('fs'); fs.writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}\\n')\"",
     "docs:dev": "BABEL_ENV=parcel parcel src/docs/index.html --dist-dir dev/docs",
     "docs:build": "yarn clean:docs && BABEL_ENV=parcel NODE_ENV=production parcel build src/docs/index.html --target docs && yarn docs:normalize-html && rm -rf .cache .parcel-cache",
-    "docs:normalize-html": "node -e \"const fs = require('fs'); const file = 'dist/docs/index.html'; fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/[ \\t]+$/gmu, '').replace(/\\n+$/u, '\\n'))\"",
+    "docs:normalize-html": "node scripts/normalize-docs-html.js",
     "docs:smoke": "yarn docs:build && node scripts/smoke-docs.js",
     "docs:deploy": "yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh",
     "docs:check": "node scripts/check-docs-plan.js",
     "pack:check": "node scripts/check-package-contents.js",
     "package:runtime": "node scripts/smoke-package-runtime.js",
     "package:lint": "publint --pack npm --strict && attw --pack .",
-    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn audit --json && yarn pack:check && yarn package:runtime && yarn package:lint",
+    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn npm audit --all --recursive --severity high && yarn pack:check && yarn package:runtime && yarn package:lint",
     "start": "yarn docs:dev"
   },
   "engines": {

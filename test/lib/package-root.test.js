@@ -13,6 +13,8 @@ it('exports package metadata', () => {
   expect(packageJson.description).toBe('A grid-based booking selector.')
   expect(packageJson.peerDependencies.react).toBe('^18.0.0 || ^19.0.0')
   expect(packageJson.peerDependencies['styled-components']).toBe('^5.1.0 || ^6.0.0')
+  expect(packageJson.packageManager).toBe('yarn@4.17.0')
+  expect(packageJson.engines.node).toBe('>=16.0')
 })
 
 it('marks the published package as side-effect free', () => {
@@ -24,7 +26,9 @@ it('exposes repository Makefile gate wrappers', () => {
 
   expect(packageJson.scripts.test).toBe('yarn lib:build && jest --runInBand')
   expect(packageJson.scripts['package:runtime']).toBe('node scripts/smoke-package-runtime.js')
+  expect(packageJson.scripts['docs:normalize-html']).toBe('node scripts/normalize-docs-html.js')
   expect(packageJson.scripts.verify).toContain('yarn package:runtime')
+  expect(packageJson.scripts.verify).toContain('yarn npm audit --all --recursive --severity high')
   expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
   expect(makefile).toMatch(/^override REPO_ROOT := \$\(abspath \$\(dir \$\(lastword \$\(MAKEFILE_LIST\)\)\)\)$/m)
   expect(makefile).toMatch(/^check: verify$/m)
@@ -32,6 +36,10 @@ it('exposes repository Makefile gate wrappers', () => {
   expect(makefile).toMatch(/^test:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn test$/m)
   expect(makefile).toMatch(/^build:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn build$/m)
   expect(makefile).toMatch(/^verify:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn verify$/m)
+})
+
+it('uses the node-modules linker for repository tooling', () => {
+  expect(readFileSync('.yarnrc.yml', 'utf8')).toBe('nodeLinker: node-modules\n')
 })
 
 it('keeps local editor metadata out of verification inputs', () => {

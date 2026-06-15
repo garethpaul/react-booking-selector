@@ -31,9 +31,10 @@ Helpful reports include:
 - Keyboard access includes blocked-aware arrow, `Home`, `End`, `Control+Home`,
   and `Control+End` focus movement without changing selection state.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
-- Hosted verification installs the frozen lockfile with lifecycle scripts disabled, uses read-only repository permissions, disables checkout credential persistence, pins actions, runs the dependency audit, and rejects generated package drift.
-- The advertised Node 16 runtime floor separately loads both checked-in package
-  entry modes in a digest-pinned container without running install scripts.
+- Hosted verification uses immutable Yarn 4 installs with lifecycle scripts disabled, read-only repository permissions, disabled checkout credential persistence, pinned actions, a recursive dependency audit, and generated-package drift rejection.
+- The advertised Node 16 runtime floor separately loads both package entry modes
+  from a tarball built on Node 20 in a digest-pinned, network-disabled container
+  without invoking Yarn 4 or package lifecycle scripts there.
 - Package verification enforces a reviewed package size budget alongside the
   exact allowlist and non-executable file modes so expected paths cannot hide
   accidental oversized release payloads.

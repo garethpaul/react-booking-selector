@@ -1,5 +1,15 @@
 # Changes
 
+## 2026-06-15
+
+- Migrated repository tooling from Yarn Classic 1.22.22 to Yarn 4.17.0 with
+  immutable, lifecycle-script-free installs and the `node-modules` linker.
+- Preserved the published Node 16 runtime floor by building the package on Node
+  20 and loading the packed CommonJS and ESM entries in a network-disabled,
+  digest-pinned Node 16.20.2 container.
+- Added fail-closed contracts for the package manager, linker, audit command,
+  hosted install mode, and artifact-based runtime boundary.
+
 ## 2026-06-13
 
 - Added blocked-aware `Home` and `End` row navigation plus `Control+Home` and

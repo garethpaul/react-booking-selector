@@ -11,9 +11,12 @@ const baselinePlanPath = toPlanPath('2026-06-08-react-booking-selector-baseline.
 const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
 const homeEndPlanPath = toPlanPath('2026-06-13-home-end-keyboard-navigation.md')
 const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independent-make.md')
+const yarnPackageManagerPlanPath = toPlanPath('2026-06-15-yarn-4-package-manager.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
+const packageJsonPath = 'package.json'
+const yarnConfigPath = '.yarnrc.yml'
 const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
@@ -104,11 +107,14 @@ if (planPaths.includes(ciPlanPath)) {
       'node: [20.x, 24.x]',
       'name: Node 16 package runtime',
       'timeout-minutes: 10',
-      'image: node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb',
+      'node-version: 20.x',
       'run: corepack enable',
-      'corepack yarn install --frozen-lockfile --ignore-scripts',
-      'corepack yarn install --frozen-lockfile --ignore-scripts --ignore-engines',
-      'run: corepack yarn package:runtime',
+      'corepack yarn install --immutable --mode=skip-build',
+      'corepack yarn lib:build',
+      'package_file="$(npm pack --ignore-scripts --silent)"',
+      'tar -xzf "$package_file" --strip-components=1 -C .node16-package',
+      'rm "$package_file"',
+      'docker run --rm --network none -v "$PWD:/workspace:ro" -w /workspace/.node16-package node:16.20.2-bullseye@sha256:cd59a61258b82b86c1ff0ead50c8a689f6c3483c5ed21036e11ee741add419eb node ../scripts/smoke-package-runtime.js',
       'run: make check',
       'run: make build',
       'run: git diff --exit-code -- dist',
@@ -126,8 +132,8 @@ if (planPaths.includes(ciPlanPath)) {
       ['permissions:\n  contents: read', 1],
       ['actions/checkout@', 2],
       ['persist-credentials: false', 2],
-      ['actions/setup-node@', 1],
-      ['run: corepack yarn package:runtime', 1],
+      ['actions/setup-node@', 2],
+      ['corepack yarn install --immutable --mode=skip-build', 2],
     ])
     for (const [fragment, expectedCount] of expectedOccurrences) {
       if (countOccurrences(workflow, fragment) !== expectedCount) {
@@ -143,6 +149,12 @@ if (planPaths.includes(ciPlanPath)) {
     }
     if (/^\s*[\w-]+:\s*write\s*$/mu.test(workflow) || workflow.includes('write-all')) {
       errors.push(`${ciWorkflowPath} must not grant write permissions`)
+    }
+    if (workflow.includes('container:')) {
+      errors.push(`${ciWorkflowPath} must build the package on a Yarn 4-compatible Node release`)
+    }
+    if (workflow.includes('--frozen-lockfile') || workflow.includes('--ignore-engines')) {
+      errors.push(`${ciWorkflowPath} must not use Yarn Classic install flags`)
     }
   }
 
@@ -234,6 +246,36 @@ if (planPaths.includes(locationIndependentMakePlanPath)) {
   for (const evidence of ['Node 20', 'Node 24', 'unrelated directory', 'hostile mutations rejected']) {
     if (!locationIndependentMakePlan.includes(evidence)) {
       errors.push(`${locationIndependentMakePlanPath} must preserve completed evidence: ${evidence}`)
+    }
+  }
+}
+
+if (planPaths.includes(yarnPackageManagerPlanPath)) {
+  if (!fs.existsSync(toFsPath(packageJsonPath))) {
+    errors.push(`${packageJsonPath} is required by ${yarnPackageManagerPlanPath}`)
+  } else {
+    const packageJson = JSON.parse(fs.readFileSync(toFsPath(packageJsonPath), 'utf8'))
+    if (packageJson.packageManager !== 'yarn@4.17.0') {
+      errors.push(`${packageJsonPath} must pin packageManager to yarn@4.17.0`)
+    }
+    if (!packageJson.scripts?.verify?.includes('yarn npm audit --all --recursive --severity high')) {
+      errors.push(`${packageJsonPath} verify must run the Yarn 4 recursive high-severity audit`)
+    }
+    if (packageJson.engines?.node !== '>=16.0') {
+      errors.push(`${packageJsonPath} must preserve the published Node >=16.0 runtime floor`)
+    }
+  }
+
+  if (!fs.existsSync(toFsPath(yarnConfigPath))) {
+    errors.push(`${yarnConfigPath} is required by ${yarnPackageManagerPlanPath}`)
+  } else if (!/^nodeLinker: node-modules$/mu.test(fs.readFileSync(toFsPath(yarnConfigPath), 'utf8'))) {
+    errors.push(`${yarnConfigPath} must preserve the node-modules linker`)
+  }
+
+  const yarnPackageManagerPlan = fs.readFileSync(toFsPath(yarnPackageManagerPlanPath), 'utf8')
+  for (const evidence of ['Node 20', 'Node 24', 'Node 16', 'hostile mutations rejected']) {
+    if (!yarnPackageManagerPlan.includes(evidence)) {
+      errors.push(`${yarnPackageManagerPlanPath} must preserve completed evidence: ${evidence}`)
     }
   }
 }

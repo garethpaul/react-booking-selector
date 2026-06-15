@@ -1,6 +1,6 @@
 # Yarn 4 Package Manager Migration
 
-## Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -69,4 +69,22 @@ runtime evidence.
 
 ## Completion Evidence
 
-Pending implementation and validation.
+- `corepack yarn install --immutable --mode=skip-build` completed with Yarn
+  4.17.0 on local Node 20.19.5 and containerized Node 24.
+- `NODE_OPTIONS=--trace-deprecation corepack yarn --version` printed 4.17.0 on
+  Node 24 with an empty stderr stream, proving the Yarn Classic DEP0169 path is
+  no longer loaded.
+- `corepack yarn npm audit --all --recursive --severity high` reported no audit
+  suggestions.
+- The focused static and package-root suites passed 27 tests, with hostile mutations rejected.
+  The mutations covered the package-manager pin, linker, immutable install,
+  audit, runtime floor, and package-artifact boundary.
+- A package tarball built on Node 20 passed both entry-mode assertions on Node
+  16.20.2 in the digest-pinned container with networking disabled and the
+  repository mounted read-only.
+- `corepack yarn verify` and `make check` passed on Node 20, including 100%
+  source coverage, package contents, type declarations, audit, CommonJS/ESM
+  runtime, Publint, and Are The Types Wrong gates.
+- `make check` passed from an unrelated directory, preserving the rooted gate
+  contract after the package-manager migration.
+- The full `make check` gate passed on Node 24 without DEP0169 output.
