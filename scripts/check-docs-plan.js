@@ -12,10 +12,12 @@ const ciPlanPath = toPlanPath('2026-06-10-hosted-verification.md')
 const homeEndPlanPath = toPlanPath('2026-06-13-home-end-keyboard-navigation.md')
 const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independent-make.md')
 const yarnPackageManagerPlanPath = toPlanPath('2026-06-15-yarn-4-package-manager.md')
+const explicitDocsDeploymentPlanPath = toPlanPath('2026-06-15-explicit-docs-deployment.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
 const packageJsonPath = 'package.json'
+const packageRootTestPath = 'test/lib/package-root.test.js'
 const yarnConfigPath = '.yarnrc.yml'
 const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
@@ -276,6 +278,75 @@ if (planPaths.includes(yarnPackageManagerPlanPath)) {
   for (const evidence of ['Node 20', 'Node 24', 'Node 16', 'hostile mutations rejected']) {
     if (!yarnPackageManagerPlan.includes(evidence)) {
       errors.push(`${yarnPackageManagerPlanPath} must preserve completed evidence: ${evidence}`)
+    }
+  }
+}
+
+if (planPaths.includes(explicitDocsDeploymentPlanPath)) {
+  if (!fs.existsSync(toFsPath(packageJsonPath))) {
+    errors.push(`${packageJsonPath} is required by ${explicitDocsDeploymentPlanPath}`)
+  } else {
+    const packageJson = JSON.parse(fs.readFileSync(toFsPath(packageJsonPath), 'utf8'))
+    for (const lifecycleHook of ['prepublish', 'publish', 'postpublish']) {
+      if (Object.hasOwn(packageJson.scripts ?? {}, lifecycleHook)) {
+        errors.push(`${packageJsonPath} must not define automatic ${lifecycleHook} deployment behavior`)
+      }
+    }
+    if (packageJson.scripts?.prepack !== 'corepack yarn build') {
+      errors.push(`${packageJsonPath} must preserve the reviewed prepack build`)
+    }
+    if (
+      packageJson.scripts?.['docs:deploy'] !==
+      'yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh'
+    ) {
+      errors.push(`${packageJsonPath} must preserve the explicit pinned documentation deployment command`)
+    }
+  }
+
+  if (!fs.existsSync(toFsPath(packageRootTestPath))) {
+    errors.push(`${packageRootTestPath} is required by ${explicitDocsDeploymentPlanPath}`)
+  } else {
+    const packageRootTest = fs.readFileSync(toFsPath(packageRootTestPath), 'utf8')
+    for (const testContract of [
+      "it('keeps documentation deployment explicit and separate from publishing'",
+      'expect(packageJson.scripts.prepublish).toBeUndefined()',
+      'expect(packageJson.scripts.publish).toBeUndefined()',
+      'expect(packageJson.scripts.postpublish).toBeUndefined()',
+      "expect(packageJson.scripts.prepack).toBe('corepack yarn build')",
+      "expect(packageJson.scripts['docs:deploy']).toBe(",
+      'npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh',
+    ]) {
+      if (!packageRootTest.includes(testContract)) {
+        errors.push(`${packageRootTestPath} must preserve release separation contract: ${testContract}`)
+      }
+    }
+  }
+
+  for (const [documentPath, fragment] of [
+    ['README.md', 'Package publication and documentation deployment are separate maintainer'],
+    ['SECURITY.md', 'Package publication has no deployment lifecycle hook.'],
+    ['VISION.md', 'Keep package publication separate from explicit documentation deployment'],
+    ['CHANGES.md', 'Removed automatic documentation deployment from the package publish lifecycle'],
+  ]) {
+    if (!fs.existsSync(toFsPath(documentPath))) {
+      errors.push(`${documentPath} is required by ${explicitDocsDeploymentPlanPath}`)
+    } else if (!fs.readFileSync(toFsPath(documentPath), 'utf8').includes(fragment)) {
+      errors.push(`${documentPath} must document explicit release and deployment separation`)
+    }
+  }
+
+  const explicitDocsDeploymentPlan = fs.readFileSync(toFsPath(explicitDocsDeploymentPlanPath), 'utf8')
+  for (const evidence of [
+    '## Status: Completed',
+    'focused package-root and docs-plan tests passed',
+    'Node 20',
+    'Node 24',
+    'Node 16',
+    'hostile mutations were rejected',
+    '`git diff --check`',
+  ]) {
+    if (!explicitDocsDeploymentPlan.includes(evidence)) {
+      errors.push(`${explicitDocsDeploymentPlanPath} must preserve completed evidence: ${evidence}`)
     }
   }
 }

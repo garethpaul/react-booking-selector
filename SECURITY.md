@@ -38,6 +38,9 @@ Helpful reports include:
 - Package verification enforces a reviewed package size budget alongside the
   exact allowlist and non-executable file modes so expected paths cannot hide
   accidental oversized release payloads.
+- Package publication has no deployment lifecycle hook. Documentation
+  deployment requires the separate explicit `corepack yarn docs:deploy`
+  maintainer action, keeping registry and deployment privileges independent.
 
 ## Service and API Notes
 

@@ -21,6 +21,16 @@ it('marks the published package as side-effect free', () => {
   expect(packageJson.sideEffects).toBe(false)
 })
 
+it('keeps documentation deployment explicit and separate from publishing', () => {
+  expect(packageJson.scripts.prepublish).toBeUndefined()
+  expect(packageJson.scripts.publish).toBeUndefined()
+  expect(packageJson.scripts.postpublish).toBeUndefined()
+  expect(packageJson.scripts.prepack).toBe('corepack yarn build')
+  expect(packageJson.scripts['docs:deploy']).toBe(
+    'yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh',
+  )
+})
+
 it('exposes repository Makefile gate wrappers', () => {
   const makefile = readFileSync('Makefile', 'utf8')
 

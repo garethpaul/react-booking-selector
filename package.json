@@ -63,7 +63,6 @@
   "license": "MIT",
   "scripts": {
     "prepack": "corepack yarn build",
-    "postpublish": "corepack yarn docs:deploy",
     "clean": "rm -rf dist/lib dist/esm dist/docs dev/docs .cache .parcel-cache coverage react-booking-selector-*.tgz",
     "clean:docs": "rm -rf dist/docs",
     "clean:lib": "rm -rf dist/lib dist/esm",

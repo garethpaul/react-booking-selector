@@ -37,6 +37,7 @@ Priority:
 - Reject duplicate package file entries in manifest and dry-run package checks
 - Reject executable file modes from the published package surface
 - Enforce packed, unpacked, and per-file package size budgets
+- Keep package publication separate from explicit documentation deployment
 - Keep canonical maintenance plan filenames dated and sortable
 - Keep date, selection, touch, and docs-smoke helpers defensive against
   malformed or invalid inputs

@@ -9,6 +9,8 @@
   digest-pinned Node 16.20.2 container.
 - Added fail-closed contracts for the package manager, linker, audit command,
   hosted install mode, and artifact-based runtime boundary.
+- Removed automatic documentation deployment from the package publish lifecycle
+  while preserving the explicit pinned deployment command.
 
 ## 2026-06-13
 

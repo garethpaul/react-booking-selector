@@ -1,6 +1,6 @@
 # Require Explicit Documentation Deployment
 
-## Status: Planned
+## Status: Completed
 
 ## Context
 
@@ -64,17 +64,22 @@ without misrepresenting the state of the other.
 - Run package, content, type, runtime, audit, documentation, and mutation gates
   without contacting the registry or deployment service.
 
-## Verification Plan
+## Completion Evidence
 
-- Run focused package-root and docs-plan tests.
-- Run the full immutable Yarn 4 package gate from the repository and an
-  unrelated caller directory on Node 20.
-- Run the complete gate on Node 24 and the packed artifact runtime on the
-  digest-pinned, network-disabled Node 16 container.
-- Run isolated mutations for automatic lifecycle hooks, explicit deployment
-  preservation, documentation, and completed plan evidence.
-- Audit the exact diff, generated artifacts, credential patterns, package and
-  lockfile drift, workflow changes, and `git diff --check` before commit.
+- The focused package-root and docs-plan tests passed with 28 assertions.
+- `corepack yarn verify` and `make check` passed on Node 20.19.5 from the
+  repository and through the absolute Makefile path from an unrelated caller
+  directory.
+- The complete immutable package gate passed on Node 24.16.0 with
+  `NODE_OPTIONS=--trace-deprecation` and no deprecation output.
+- The package tarball built on Node 20 loaded both CommonJS and ESM entries on
+  the digest-pinned, network-disabled Node 16 runtime without package lifecycle
+  scripts.
+- Twelve isolated hostile mutations were rejected across automatic publish
+  hooks, prepack preservation, pinned explicit deployment, regression tests,
+  static checks, documentation, plan linking, and completed evidence.
+- Final generated-artifact, credential-pattern, package, lockfile, workflow,
+  and `git diff --check` audits passed without publishing or deploying.
 
 ## References
 
