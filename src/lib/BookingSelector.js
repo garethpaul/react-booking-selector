@@ -785,6 +785,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   lastTouchEventTime: ?number
   blockedMinuteKeys: Set<number>
   selectedMinuteKeys: Set<number>
+  documentMouseUpTarget: ?BrowserDocumentType
 
   static defaultProps = {
     selection: [],
@@ -810,6 +811,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.dateToCell = new MapConstructor()
     this.touchScrollCells = new SetConstructor()
     this.lastTouchEventTime = null
+    this.documentMouseUpTarget = null
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
@@ -888,29 +890,16 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    const browserDocument = this.getDocument()
-    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
-      try {
-        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
-      } catch {
-        // Continue mounting in non-standard hosts that cannot register document listeners.
-      }
-    }
+    this.syncDocumentMouseUpListener()
   }
 
   componentDidUpdate() {
+    this.syncDocumentMouseUpListener()
     this.refreshInstanceLookups(this.props, this.state.selectionDraft)
   }
 
   componentWillUnmount() {
-    const browserDocument = this.getDocument()
-    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
-      try {
-        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
-      } catch {
-        // Continue instance cleanup even if the document listener cannot be removed.
-      }
-    }
+    this.removeDocumentMouseUpListener()
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
@@ -923,6 +912,31 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.cellToDate.clear()
     this.dateToCell.clear()
     this.touchScrollCells.clear()
+  }
+
+  removeDocumentMouseUpListener() {
+    const browserDocument = this.documentMouseUpTarget
+    this.documentMouseUpTarget = null
+    if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return
+    try {
+      browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+    } catch {
+      // Continue lifecycle cleanup even if the retained document cannot remove listeners.
+    }
+  }
+
+  syncDocumentMouseUpListener() {
+    const browserDocument = this.getDocument()
+    if (browserDocument === this.documentMouseUpTarget) return
+
+    this.removeDocumentMouseUpListener()
+    if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return
+    try {
+      browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      this.documentMouseUpTarget = browserDocument
+    } catch {
+      // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
+    }
   }
 
   refreshInstanceLookups(props: PropsType, selectionDraft: Array<Date>) {

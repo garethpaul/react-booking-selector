@@ -471,6 +471,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.lastTouchEventTime = void 0;
     _this.blockedMinuteKeys = void 0;
     _this.selectedMinuteKeys = void 0;
+    _this.documentMouseUpTarget = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
         $height: "40",
@@ -582,6 +583,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.dateToCell = new MapConstructor();
     _this.touchScrollCells = new SetConstructor();
     _this.lastTouchEventTime = null;
+    _this.documentMouseUpTarget = null;
     var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var selectionPropListSignature = getDateListSignature(_this.props.selection);
@@ -651,32 +653,19 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    var browserDocument = this.getDocument();
-    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
-      try {
-        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused10) {
-        // Continue mounting in non-standard hosts that cannot register document listeners.
-      }
-    }
+    this.syncDocumentMouseUpListener();
   };
   _proto.componentDidUpdate = function componentDidUpdate() {
+    this.syncDocumentMouseUpListener();
     this.refreshInstanceLookups(this.props, this.state.selectionDraft);
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
-    var browserDocument = this.getDocument();
-    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
-      try {
-        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused11) {
-        // Continue instance cleanup even if the document listener cannot be removed.
-      }
-    }
+    this.removeDocumentMouseUpListener();
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused12) {
+        } catch (_unused10) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -684,6 +673,28 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.cellToDate.clear();
     this.dateToCell.clear();
     this.touchScrollCells.clear();
+  };
+  _proto.removeDocumentMouseUpListener = function removeDocumentMouseUpListener() {
+    var browserDocument = this.documentMouseUpTarget;
+    this.documentMouseUpTarget = null;
+    if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return;
+    try {
+      browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
+    } catch (_unused11) {
+      // Continue lifecycle cleanup even if the retained document cannot remove listeners.
+    }
+  };
+  _proto.syncDocumentMouseUpListener = function syncDocumentMouseUpListener() {
+    var browserDocument = this.getDocument();
+    if (browserDocument === this.documentMouseUpTarget) return;
+    this.removeDocumentMouseUpListener();
+    if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return;
+    try {
+      browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      this.documentMouseUpTarget = browserDocument;
+    } catch (_unused12) {
+      // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
+    }
   };
   _proto.refreshInstanceLookups = function refreshInstanceLookups(props, selectionDraft) {
     this.dates = buildDates(props);

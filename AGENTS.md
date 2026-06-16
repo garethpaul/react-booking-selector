@@ -38,6 +38,8 @@
 - Package module type is `commonjs`.
 - ESLint is configured; keep lint fixes in source instead of generated output.
 - Keep React components controlled and covered by component tests when props or rendering behavior changes.
+- Retain and migrate the exact owner document used for global mouseup listeners;
+  do not infer cleanup ownership from a later `gridRef`.
 
 ## Testing guidance
 

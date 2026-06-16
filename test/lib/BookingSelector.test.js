@@ -1611,29 +1611,32 @@ describe('componentDidMount', () => {
 
   it('mounts when document mouseup listener registration is unavailable', () => {
     const { instance } = renderSelector()
-    const addEventListener = document.addEventListener
-    document.addEventListener = true
-
-    try {
-      expect(() => {
-        instance.componentDidMount()
-      }).not.toThrow()
-    } finally {
-      document.addEventListener = addEventListener
+    const ownerDocument = {
+      addEventListener: true,
+      removeEventListener: jest.fn(),
     }
+    instance.gridRef = { ownerDocument }
+
+    expect(() => {
+      instance.componentDidUpdate()
+    }).not.toThrow()
+    expect(instance.documentMouseUpTarget).toBe(null)
   })
 
   it('mounts when document mouseup listener registration throws', () => {
     const { instance } = renderSelector()
-    const addSpy = jest.spyOn(document, 'addEventListener').mockImplementation(() => {
-      throw new Error('Cannot attach document listener')
-    })
+    const ownerDocument = {
+      addEventListener: jest.fn(() => {
+        throw new Error('Cannot attach document listener')
+      }),
+      removeEventListener: jest.fn(),
+    }
+    instance.gridRef = { ownerDocument }
 
     expect(() => {
-      instance.componentDidMount()
+      instance.componentDidUpdate()
     }).not.toThrow()
-
-    addSpy.mockRestore()
+    expect(instance.documentMouseUpTarget).toBe(null)
   })
 
   it('attaches document mouseup listeners to the rendered grid owner document', () => {
@@ -2013,6 +2016,42 @@ describe('componentDidMount', () => {
   })
 })
 
+describe('componentDidUpdate', () => {
+  it('keeps document mouseup ownership synchronized without duplicate listeners', () => {
+    const { instance, unmount } = renderSelector()
+    const firstDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+    const secondDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+    expect(firstDocument.addEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+
+    firstDocument.addEventListener.mockClear()
+    firstDocument.removeEventListener.mockClear()
+    instance.componentDidUpdate()
+    expect(firstDocument.addEventListener).not.toHaveBeenCalled()
+    expect(firstDocument.removeEventListener).not.toHaveBeenCalled()
+
+    instance.gridRef = { ownerDocument: secondDocument }
+    instance.componentDidUpdate()
+    expect(firstDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(secondDocument.addEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(firstDocument.removeEventListener.mock.invocationCallOrder[0]).toBeLessThan(
+      secondDocument.addEventListener.mock.invocationCallOrder[0],
+    )
+
+    instance.gridRef = null
+    unmount()
+    expect(secondDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+  })
+})
+
 describe('componentWillUnmount', () => {
   it('removes the mouseup event listener', () => {
     const removeSpy = jest.spyOn(document, 'removeEventListener')
@@ -2063,19 +2102,17 @@ describe('componentWillUnmount', () => {
     removeSpy.mockRestore()
   })
 
-  it('removes document mouseup listeners from the rendered grid owner document', () => {
-    const { instance } = renderSelector()
-    const originalGridRef = instance.gridRef
+  it('removes document mouseup listeners from the retained owner document', () => {
+    const { instance, unmount } = renderSelector()
     const ownerDocument = {
+      addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
     }
 
-    try {
-      instance.gridRef = { ownerDocument }
-      instance.componentWillUnmount()
-    } finally {
-      instance.gridRef = originalGridRef
-    }
+    instance.gridRef = { ownerDocument }
+    instance.componentDidUpdate()
+    instance.gridRef = null
+    unmount()
 
     expect(ownerDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
   })

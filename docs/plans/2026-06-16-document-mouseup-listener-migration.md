@@ -1,6 +1,6 @@
 ---
 title: Document Mouseup Listener Migration
-status: in_progress
+status: completed
 date: 2026-06-16
 ---
 
@@ -72,3 +72,31 @@ Register the plan and enforce source, tests, guidance, and completed evidence.
 - Do not change selection, keyboard, touch, date, styling, package, or docs
   deployment behavior.
 - Do not add dependencies or weaken the existing 100% coverage requirement.
+
+## Status: Completed
+
+## Work Completed
+
+- Retained the exact document that successfully received the component's
+  mouseup listener.
+- Migrated ownership on update only when the rendered grid's document changes,
+  removing from the old target before attaching to the new target.
+- Removed the listener from the retained document on unmount even when
+  `gridRef` later moves or clears.
+- Added lifecycle, static, guidance, changelog, and completed-plan contracts.
+
+## Verification Completed
+
+- The focused lifecycle tests passed as part of the 248-test BookingSelector
+  suite with both snapshots passing.
+- The complete 392-test suite passed with 100% statement, branch, function, and
+  line coverage.
+- A finalized tracked-file mirror passed `corepack yarn verify` and repository
+  `make check`; external-directory make check passed as well.
+- Package audit reported no suggestions; the 27-file package allowlist, runtime
+  smoke, Publint, and Are The Types Wrong checks passed.
+- Six isolated hostile mutations were rejected for retained ownership, update
+  migration, unmount cleanup, missing tests, erased guidance, and plan status.
+- Exact diff, generated-artifact, whitespace, file-mode, and added-line
+  credential audits passed before the canonical final gates.
+- Live assistive-technology and cross-origin iframe sessions were not exercised.

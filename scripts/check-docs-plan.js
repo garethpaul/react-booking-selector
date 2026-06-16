@@ -13,6 +13,7 @@ const homeEndPlanPath = toPlanPath('2026-06-13-home-end-keyboard-navigation.md')
 const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independent-make.md')
 const yarnPackageManagerPlanPath = toPlanPath('2026-06-15-yarn-4-package-manager.md')
 const explicitDocsDeploymentPlanPath = toPlanPath('2026-06-15-explicit-docs-deployment.md')
+const documentListenerMigrationPlanPath = toPlanPath('2026-06-16-document-mouseup-listener-migration.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
@@ -191,6 +192,65 @@ if (planPaths.includes(homeEndPlanPath)) {
     const contents = fs.readFileSync(toFsPath(filePath), 'utf8')
     for (const fragment of requiredFragments) {
       if (!contents.includes(fragment)) errors.push(`${filePath} must preserve ${fragment}`)
+    }
+  }
+}
+
+if (planPaths.includes(documentListenerMigrationPlanPath)) {
+  const listenerContractFiles = new Map([
+    [
+      'src/lib/BookingSelector.js',
+      [
+        'documentMouseUpTarget: ?BrowserDocumentType',
+        'syncDocumentMouseUpListener()',
+        'removeDocumentMouseUpListener()',
+        'browserDocument === this.documentMouseUpTarget',
+      ],
+    ],
+    [
+      'test/lib/BookingSelector.test.js',
+      [
+        'keeps document mouseup ownership synchronized without duplicate listeners',
+        'removes document mouseup listeners from the retained owner document',
+        'mock.invocationCallOrder[0]',
+      ],
+    ],
+  ])
+
+  for (const [filePath, requiredFragments] of listenerContractFiles) {
+    if (!fs.existsSync(toFsPath(filePath))) {
+      errors.push(`${filePath} is required by ${documentListenerMigrationPlanPath}`)
+      continue
+    }
+    const contents = fs.readFileSync(toFsPath(filePath), 'utf8')
+    for (const fragment of requiredFragments) {
+      if (!contents.includes(fragment)) errors.push(`${filePath} must preserve ${fragment}`)
+    }
+  }
+
+  const listenerGuidance = new Map([
+    ['README.md', 'owner-document listener migration and retained-target cleanup'],
+    ['SECURITY.md', 'Document-level mouseup ownership must migrate'],
+    ['AGENTS.md', 'Retain and migrate the exact owner document'],
+    ['VISION.md', 'document-level drag completion aligned with the rendered grid owner'],
+    ['CHANGES.md', 'Migrated the document-level mouseup listener'],
+  ])
+  for (const [filePath, requiredFragment] of listenerGuidance) {
+    const contents = fs.existsSync(toFsPath(filePath)) ? fs.readFileSync(toFsPath(filePath), 'utf8') : ''
+    if (!contents.includes(requiredFragment)) {
+      errors.push(`${filePath} must preserve ${requiredFragment}`)
+    }
+  }
+
+  const listenerPlan = fs.readFileSync(toFsPath(documentListenerMigrationPlanPath), 'utf8')
+  for (const evidence of [
+    'focused lifecycle tests passed',
+    'external-directory make check passed',
+    'Six isolated hostile mutations were rejected',
+    'Exact diff',
+  ]) {
+    if (!listenerPlan.includes(evidence)) {
+      errors.push(`${documentListenerMigrationPlanPath} must preserve completed evidence: ${evidence}`)
     }
   }
 }

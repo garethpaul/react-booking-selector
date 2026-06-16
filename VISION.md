@@ -50,6 +50,8 @@ Next priorities:
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
 - Keep row-edge and whole-grid `Home` and `End` navigation blocked-aware
   as the day/hour grid evolves.
+- Keep document-level drag completion aligned with the rendered grid owner
+  across iframe or portal relocation.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.
 - Revisit the ESLint 10 major when the active parser and plugin peer ranges

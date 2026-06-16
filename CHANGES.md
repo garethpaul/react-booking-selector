@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-16
+
+- Migrated the document-level mouseup listener when the rendered grid changes
+  owner documents and cleaned up the exact retained listener target.
+
 ## 2026-06-15
 
 - Migrated repository tooling from Yarn Classic 1.22.22 to Yarn 4.17.0 with
