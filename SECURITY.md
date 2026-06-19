@@ -30,8 +30,12 @@ Helpful reports include:
 - Interaction code should preserve safe browser behavior, including blocked-cell handling, keyboard access, touch event cleanup, and avoiding denial-of-service-prone input processing.
 - Document-level mouseup ownership must migrate with the rendered grid and
   clean up the exact retained owner document after iframe or portal relocation.
+- Failed document-listener removals must remain tracked for cleanup retry, and
+  orphaned callbacks must be inert after unmount begins.
 - Keyboard access includes blocked-aware arrow, `Home`, `End`, `Control+Home`,
   and `Control+End` focus movement without changing selection state.
+- The slot grid must keep one available cell in the tab order and move that
+  roving tab stop with focus as blocked and rendered boundaries change.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
 - Hosted verification uses immutable Yarn 4 installs with lifecycle scripts disabled, read-only repository permissions, disabled checkout credential persistence, pinned actions, a recursive dependency audit, and generated-package drift rejection.
 - The advertised Node 16 runtime floor separately loads both package entry modes

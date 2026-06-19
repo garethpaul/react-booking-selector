@@ -2050,6 +2050,77 @@ describe('componentDidUpdate', () => {
     unmount()
     expect(secondDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
   })
+
+  it('retains failed document listener removals for unmount cleanup', () => {
+    const { instance, unmount } = renderSelector()
+    const firstDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest
+        .fn()
+        .mockImplementationOnce(() => {
+          throw new Error('Temporary listener removal failure')
+        })
+        .mockImplementation(() => {}),
+    }
+    const secondDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+    instance.gridRef = { ownerDocument: secondDocument }
+    instance.componentDidUpdate()
+
+    expect(firstDocument.removeEventListener).toHaveBeenCalledTimes(1)
+    firstDocument.addEventListener.mockClear()
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+
+    expect(secondDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(firstDocument.addEventListener).not.toHaveBeenCalled()
+
+    unmount()
+
+    expect(firstDocument.removeEventListener).toHaveBeenCalledTimes(2)
+  })
+
+  it('ignores orphaned document events after unmount', () => {
+    const { instance, unmount } = renderSelector()
+    const ownerDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(() => {
+        throw new Error('Cannot remove document listener')
+      }),
+    }
+    const updateAvailabilityDraft = jest.spyOn(instance, 'updateAvailabilityDraft')
+
+    instance.gridRef = { ownerDocument }
+    instance.componentDidUpdate()
+    instance.state.selectionType = 'add'
+    instance.state.selectionStart = startDate
+    unmount()
+
+    instance.handleDocumentMouseUpEvent({ button: 0, target: null })
+
+    expect(updateAvailabilityDraft).not.toHaveBeenCalled()
+  })
+
+  it('removes a retained non-current document without clearing current ownership', () => {
+    const { instance } = renderSelector()
+    const currentDocument = { addEventListener: jest.fn(), removeEventListener: jest.fn() }
+    const retainedDocument = { addEventListener: jest.fn(), removeEventListener: jest.fn() }
+
+    instance.documentMouseUpTarget = currentDocument
+    instance.documentMouseUpTargets.add(currentDocument)
+    instance.documentMouseUpTargets.add(retainedDocument)
+    instance.removeDocumentMouseUpListenerFrom(retainedDocument)
+
+    expect(instance.documentMouseUpTarget).toBe(currentDocument)
+    expect(retainedDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(instance.documentMouseUpTargets.has(retainedDocument)).toBe(false)
+  })
 })
 
 describe('componentWillUnmount', () => {
@@ -4221,6 +4292,67 @@ describe('keyboard interaction', () => {
 
     fireEvent.keyDown(tuesdayNine, { key: 'End' })
     expect(wednesdayNine).toHaveFocus()
+  })
+
+  it('keeps one available grid cell in the tab order', () => {
+    const blockedMonday = addHours(startOfDay(startDate), 9)
+    const { getAllByRole } = renderSelector({
+      blocked: [blockedMonday],
+      startDate,
+      numDays: 2,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const availableCells = getAllByRole('button', { name: /^Available / })
+
+    expect(availableCells.filter((cell) => cell.tabIndex === 0)).toHaveLength(1)
+    expect(availableCells[0]).toHaveAttribute('tabindex', '0')
+    availableCells.slice(1).forEach((cell) => {
+      expect(cell).toHaveAttribute('tabindex', '-1')
+    })
+  })
+
+  it('moves the roving tab stop when a different cell receives focus', async () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+
+    expect(mondayNine).toHaveAttribute('tabindex', '0')
+    expect(tuesdayNine).toHaveAttribute('tabindex', '-1')
+
+    tuesdayNine.focus()
+
+    await waitFor(() => {
+      expect(mondayNine).toHaveAttribute('tabindex', '-1')
+      expect(tuesdayNine).toHaveAttribute('tabindex', '0')
+    })
+  })
+
+  it('ignores malformed and blocked roving-focus events', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ blocked: [blocked], startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const originalFocusedMinuteKey = instance.focusedMinuteKey
+
+    instance.handleCellFocusEvent(null)
+    instance.handleCellFocusEvent(blocked)
+
+    expect(instance.focusedMinuteKey).toBe(originalFocusedMinuteKey)
+  })
+
+  it('skips malformed registered cells while moving the roving tab stop', () => {
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const targetTime = addHours(startOfDay(startDate), 10)
+    instance.dateToCell.set(addHours(startOfDay(startDate), 8).getTime(), null)
+    instance.dateToCell.set(addHours(startOfDay(startDate), 11).getTime(), {
+      set tabIndex(_value) {
+        throw new Error('Cannot update stale tab stop')
+      },
+    })
+
+    expect(() => {
+      instance.setRovingFocusMinuteKey(targetTime.getTime() / 60000)
+    }).not.toThrow()
+    expect(instance.focusedMinuteKey).toBe(targetTime.getTime() / 60000)
   })
 
   it('moves focus to whole-grid edges with Control+Home and Control+End', () => {

@@ -440,6 +440,30 @@ const getGridEdgeKeyboardNavigationTarget = (
   return null
 }
 
+const hasRenderedMinuteKey = (dateColumns: Array<DateColumnType>, targetMinuteKey: number): boolean => {
+  for (let columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
+    const slots = getDateColumnSlots(dateColumns[columnIndex])
+    for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+      const slotTime = getDateSlotTime(slots[slotIndex])
+      if (slotTime && dateMinuteKey(slotTime) === targetMinuteKey) return true
+    }
+  }
+  return false
+}
+
+const getRovingFocusMinuteKey = (props: PropsType, currentMinuteKey: ?number): ?number => {
+  const dateColumns = buildDateColumns(props)
+  const blockedMinuteKeys = getDateMinuteKeySet(props.blocked)
+  if (
+    currentMinuteKey != null &&
+    !blockedMinuteKeys.has(currentMinuteKey) &&
+    hasRenderedMinuteKey(dateColumns, currentMinuteKey)
+  )
+    return currentMinuteKey
+  const firstAvailableTime = getGridEdgeKeyboardNavigationTarget(dateColumns, 1, blockedMinuteKeys)
+  return firstAvailableTime ? dateMinuteKey(firstAvailableTime) : null
+}
+
 export const getKeyboardNavigationTarget = (
   dateColumns: Array<DateColumnType>,
   time: Date,
@@ -786,6 +810,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   blockedMinuteKeys: Set<number>
   selectedMinuteKeys: Set<number>
   documentMouseUpTarget: ?BrowserDocumentType
+  documentMouseUpTargets: Set<BrowserDocumentType>
+  componentMounted: boolean
+  focusedMinuteKey: ?number
 
   static defaultProps = {
     selection: [],
@@ -812,6 +839,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.touchScrollCells = new SetConstructor()
     this.lastTouchEventTime = null
     this.documentMouseUpTarget = null
+    this.documentMouseUpTargets = new SetConstructor()
+    this.componentMounted = false
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, null)
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
@@ -890,6 +920,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
+    this.componentMounted = true
     this.syncDocumentMouseUpListener()
   }
 
@@ -899,7 +930,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   componentWillUnmount() {
-    this.removeDocumentMouseUpListener()
+    this.componentMounted = false
+    arrayFrom.call(ArrayConstructor, this.documentMouseUpTargets).forEach((browserDocument) => {
+      this.removeDocumentMouseUpListenerFrom(browserDocument)
+    })
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
@@ -915,13 +949,17 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   removeDocumentMouseUpListener() {
-    const browserDocument = this.documentMouseUpTarget
-    this.documentMouseUpTarget = null
+    this.removeDocumentMouseUpListenerFrom(this.documentMouseUpTarget)
+  }
+
+  removeDocumentMouseUpListenerFrom(browserDocument: ?BrowserDocumentType) {
+    if (browserDocument === this.documentMouseUpTarget) this.documentMouseUpTarget = null
     if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return
     try {
       browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      this.documentMouseUpTargets.delete(browserDocument)
     } catch {
-      // Continue lifecycle cleanup even if the retained document cannot remove listeners.
+      // Retain failed removals so unmount can retry every document that may still own the handler.
     }
   }
 
@@ -931,9 +969,14 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     this.removeDocumentMouseUpListener()
     if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return
+    if (this.documentMouseUpTargets.has(browserDocument)) {
+      this.documentMouseUpTarget = browserDocument
+      return
+    }
     try {
       browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
       this.documentMouseUpTarget = browserDocument
+      this.documentMouseUpTargets.add(browserDocument)
     } catch {
       // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
     }
@@ -1045,6 +1088,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleDocumentMouseUpEvent(event: ?MouseEvent) {
+    if (!this.componentMounted) return
     if (this.state.selectionType === null) return
     if (this.shouldIgnoreMouseEvent()) return
     if (!isPrimaryMouseButton(event)) return
@@ -1206,10 +1250,30 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!dateCell || typeof dateCell.focus !== 'function') return false
     try {
       dateCell.focus()
+      this.setRovingFocusMinuteKey(dateMinuteKey(time))
       return true
     } catch {
       return false
     }
+  }
+
+  setRovingFocusMinuteKey(focusedMinuteKey: number) {
+    if (focusedMinuteKey === this.focusedMinuteKey) return
+    this.focusedMinuteKey = focusedMinuteKey
+    this.dateToCell.forEach((dateCell, registeredTime) => {
+      if (!dateCell) return
+      try {
+        dateCell.tabIndex = mathFloor(registeredTime / 60000) === focusedMinuteKey ? 0 : -1
+      } catch {
+        // Ignore stale or non-standard focus targets while preserving the active tab stop.
+      }
+    })
+  }
+
+  handleCellFocusEvent(time: mixed) {
+    const validTime = getValidDate(time)
+    if (!validTime || this.isBlocked(validTime)) return
+    this.setRovingFocusMinuteKey(dateMinuteKey(validTime))
   }
 
   handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: mixed, blocked: boolean = false) {
@@ -1382,6 +1446,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         disabled={blocked}
         aria-label={formatCellLabel(time, selected, blocked)}
         aria-pressed={selected}
+        tabIndex={!blocked && dateMinuteKey(time) === this.focusedMinuteKey ? 0 : -1}
         $height="40px"
         $blocked={blocked}
         $interactive
@@ -1393,6 +1458,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         onMouseDown={mouseStartHandler}
         onMouseEnter={mouseEnterHandler}
         onMouseUp={mouseUpHandler}
+        onFocus={() => {
+          this.handleCellFocusEvent(time)
+        }}
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
@@ -1431,6 +1499,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft)
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, this.focusedMinuteKey)
     const gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby'])
     const gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby'])
     const gridAriaLabel =

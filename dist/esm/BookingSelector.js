@@ -330,6 +330,23 @@ var getGridEdgeKeyboardNavigationTarget = function getGridEdgeKeyboardNavigation
   }
   return null;
 };
+var hasRenderedMinuteKey = function hasRenderedMinuteKey(dateColumns, targetMinuteKey) {
+  for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
+    var slots = getDateColumnSlots(dateColumns[columnIndex]);
+    for (var slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+      var slotTime = getDateSlotTime(slots[slotIndex]);
+      if (slotTime && dateMinuteKey(slotTime) === targetMinuteKey) return true;
+    }
+  }
+  return false;
+};
+var getRovingFocusMinuteKey = function getRovingFocusMinuteKey(props, currentMinuteKey) {
+  var dateColumns = buildDateColumns(props);
+  var blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
+  if (currentMinuteKey != null && !blockedMinuteKeys.has(currentMinuteKey) && hasRenderedMinuteKey(dateColumns, currentMinuteKey)) return currentMinuteKey;
+  var firstAvailableTime = getGridEdgeKeyboardNavigationTarget(dateColumns, 1, blockedMinuteKeys);
+  return firstAvailableTime ? dateMinuteKey(firstAvailableTime) : null;
+};
 export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys, controlKey) {
   if (blockedMinuteKeys === void 0) {
     blockedMinuteKeys = new SetConstructor();
@@ -472,6 +489,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.blockedMinuteKeys = void 0;
     _this.selectedMinuteKeys = void 0;
     _this.documentMouseUpTarget = void 0;
+    _this.documentMouseUpTargets = void 0;
+    _this.componentMounted = void 0;
+    _this.focusedMinuteKey = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
         $height: "40",
@@ -540,6 +560,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         disabled: blocked,
         "aria-label": formatCellLabel(time, selected, blocked),
         "aria-pressed": selected,
+        tabIndex: !blocked && dateMinuteKey(time) === _this.focusedMinuteKey ? 0 : -1,
         $height: "40px",
         $blocked: blocked,
         $interactive: true,
@@ -551,7 +572,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         ,
         onMouseDown: mouseStartHandler,
         onMouseEnter: mouseEnterHandler,
-        onMouseUp: mouseUpHandler
+        onMouseUp: mouseUpHandler,
+        onFocus: function onFocus() {
+          _this.handleCellFocusEvent(time);
+        }
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
@@ -584,6 +608,9 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.touchScrollCells = new SetConstructor();
     _this.lastTouchEventTime = null;
     _this.documentMouseUpTarget = null;
+    _this.documentMouseUpTargets = new SetConstructor();
+    _this.componentMounted = false;
+    _this.focusedMinuteKey = getRovingFocusMinuteKey(_this.props, null);
     var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var selectionPropListSignature = getDateListSignature(_this.props.selection);
@@ -653,6 +680,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
+    this.componentMounted = true;
     this.syncDocumentMouseUpListener();
   };
   _proto.componentDidUpdate = function componentDidUpdate() {
@@ -660,7 +688,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.refreshInstanceLookups(this.props, this.state.selectionDraft);
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
-    this.removeDocumentMouseUpListener();
+    var _this2 = this;
+    this.componentMounted = false;
+    arrayFrom.call(ArrayConstructor, this.documentMouseUpTargets).forEach(function (browserDocument) {
+      _this2.removeDocumentMouseUpListenerFrom(browserDocument);
+    });
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
@@ -675,13 +707,16 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.touchScrollCells.clear();
   };
   _proto.removeDocumentMouseUpListener = function removeDocumentMouseUpListener() {
-    var browserDocument = this.documentMouseUpTarget;
-    this.documentMouseUpTarget = null;
+    this.removeDocumentMouseUpListenerFrom(this.documentMouseUpTarget);
+  };
+  _proto.removeDocumentMouseUpListenerFrom = function removeDocumentMouseUpListenerFrom(browserDocument) {
+    if (browserDocument === this.documentMouseUpTarget) this.documentMouseUpTarget = null;
     if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return;
     try {
       browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      this.documentMouseUpTargets.delete(browserDocument);
     } catch (_unused11) {
-      // Continue lifecycle cleanup even if the retained document cannot remove listeners.
+      // Retain failed removals so unmount can retry every document that may still own the handler.
     }
   };
   _proto.syncDocumentMouseUpListener = function syncDocumentMouseUpListener() {
@@ -689,9 +724,14 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (browserDocument === this.documentMouseUpTarget) return;
     this.removeDocumentMouseUpListener();
     if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return;
+    if (this.documentMouseUpTargets.has(browserDocument)) {
+      this.documentMouseUpTarget = browserDocument;
+      return;
+    }
     try {
       browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
       this.documentMouseUpTarget = browserDocument;
+      this.documentMouseUpTargets.add(browserDocument);
     } catch (_unused12) {
       // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
     }
@@ -702,10 +742,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.selectedMinuteKeys = getDateMinuteKeySet(selectionDraft);
   };
   _proto.clearDateCellLookup = function clearDateCellLookup(dateCell) {
-    var _this2 = this;
+    var _this3 = this;
     this.dateToCell.forEach(function (registeredCell, registeredTime) {
       if (registeredCell === dateCell) {
-        _this2.dateToCell.delete(registeredTime);
+        _this3.dateToCell.delete(registeredTime);
       }
     });
   };
@@ -797,6 +837,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return null;
   };
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
+    if (!this.componentMounted) return;
     if (this.state.selectionType === null) return;
     if (this.shouldIgnoreMouseEvent()) return;
     if (!isPrimaryMouseButton(event)) return;
@@ -861,7 +902,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   // Given an ending Date, determines all the dates that should be selected in this draft
 ;
   _proto.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
-    var _this3 = this;
+    var _this4 = this;
     var _this$state = this.state,
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
@@ -873,10 +914,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }
     var selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)];
     var availableSelection = arrayFilter.call(selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates), function (time) {
-      return !_this3.isBlocked(time);
+      return !_this4.isBlocked(time);
     });
     var nextDraft = arrayFilter.call(normalizeSelectionDraft(this.state.selectionBase), function (time) {
-      return !_this3.isBlocked(time);
+      return !_this4.isBlocked(time);
     });
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection));
@@ -959,13 +1000,31 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (!dateCell || typeof dateCell.focus !== 'function') return false;
     try {
       dateCell.focus();
+      this.setRovingFocusMinuteKey(dateMinuteKey(time));
       return true;
     } catch (_unused16) {
       return false;
     }
   };
+  _proto.setRovingFocusMinuteKey = function setRovingFocusMinuteKey(focusedMinuteKey) {
+    if (focusedMinuteKey === this.focusedMinuteKey) return;
+    this.focusedMinuteKey = focusedMinuteKey;
+    this.dateToCell.forEach(function (dateCell, registeredTime) {
+      if (!dateCell) return;
+      try {
+        dateCell.tabIndex = mathFloor(registeredTime / 60000) === focusedMinuteKey ? 0 : -1;
+      } catch (_unused17) {
+        // Ignore stale or non-standard focus targets while preserving the active tab stop.
+      }
+    });
+  };
+  _proto.handleCellFocusEvent = function handleCellFocusEvent(time) {
+    var validTime = getValidDate(time);
+    if (!validTime || this.isBlocked(validTime)) return;
+    this.setRovingFocusMinuteKey(dateMinuteKey(validTime));
+  };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
-    var _this4 = this;
+    var _this5 = this;
     if (blocked === void 0) {
       blocked = false;
     }
@@ -991,7 +1050,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       selectionStart: validTime,
       selectionBase: this.state.selectionDraft
     }, function () {
-      _this4.updateAvailabilityDraft(validTime, _this4.endSelection);
+      _this5.updateAvailabilityDraft(validTime, _this5.endSelection);
     });
   };
   _proto.handleTouchStartEvent = function handleTouchStartEvent(startTime) {
@@ -1012,7 +1071,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }
   };
   _proto.handleTouchEndEvent = function handleTouchEndEvent() {
-    var _this5 = this;
+    var _this6 = this;
     this.recordTouchEvent();
     if (this.state.selectionType === null) {
       this.clearTouchDragState();
@@ -1023,7 +1082,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       // means the availability draft hasn't yet been updated (since
       // handleTouchMoveEvent was never called) so we need to do it now
       this.updateAvailabilityDraft(null, function () {
-        _this5.endSelection();
+        _this6.endSelection();
       });
     } else if (this.state.selectionDraft === this.state.selectionBase) {
       this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
@@ -1047,10 +1106,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     });
   };
   _proto.render = function render() {
-    var _this6 = this;
+    var _this7 = this;
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft);
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, this.focusedMinuteKey);
     var gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby']);
     var gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby']);
     var gridAriaLabel = getNonEmptyString(this.props['aria-label']) || getNonEmptyString(this.props.ariaLabel) || DEFAULT_ARIA_LABEL;
@@ -1064,10 +1124,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       "aria-label": gridAriaLabelledBy ? undefined : gridAriaLabel,
       "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
-        _this6.gridRef = el;
+        _this7.gridRef = el;
       }
     }, dateColumns.length > 0 && this.renderTimeLabels(), arrayMap.call(dateColumns, function (dateColumn) {
-      return _this6.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
+      return _this7.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };
   return BookingSelector;

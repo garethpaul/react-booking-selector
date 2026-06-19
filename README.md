@@ -52,7 +52,7 @@ Selection schemes:
 - `square` selects a rectangular block between the start and end cells.
 - `linear` selects every chronological slot between the start and end cells.
 
-Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. Arrow keys move focus across the rendered slot grid, skipping disabled slots. `Home` and `End` move to the first and last available slot in the current hour row; `Control+Home` and `Control+End` move to the first and last available slot in the complete rendered grid. `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
+Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. The grid keeps one available slot in the tab order and moves that roving tab stop with focus, so keyboard users enter the grid once and continue with its navigation keys. Arrow keys move focus across the rendered slot grid, skipping disabled slots. `Home` and `End` move to the first and last available slot in the current hour row; `Control+Home` and `Control+End` move to the first and last available slot in the complete rendered grid. `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 
@@ -344,6 +344,7 @@ See `docs/plans/2026-06-14-location-independent-make.md` for location-independen
 See `docs/plans/2026-06-15-yarn-4-package-manager.md` for the Yarn 4 toolchain and Node 16 artifact boundary.
 See `docs/plans/2026-06-15-explicit-docs-deployment.md` for package publication and documentation deployment separation.
 See `docs/plans/2026-06-16-document-mouseup-listener-migration.md` for owner-document listener migration and retained-target cleanup.
+See `docs/plans/2026-06-19-listener-and-roving-focus-review.md` for failed-cleanup ownership and roving-focus review coverage.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.

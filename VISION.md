@@ -52,6 +52,10 @@ Next priorities:
   as the day/hour grid evolves.
 - Keep document-level drag completion aligned with the rendered grid owner
   across iframe or portal relocation.
+- Retry failed document-listener cleanup without allowing stale unmounted
+  handlers to complete selections.
+- Preserve a single blocked-aware roving tab stop across slot focus and grid
+  boundary updates.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.
 - Revisit the ESLint 10 major when the active parser and plugin peer ranges

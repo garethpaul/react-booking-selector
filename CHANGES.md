@@ -1,5 +1,14 @@
 # Changes
 
+## 2026-06-19
+
+- Retained document mouseup targets whose listener cleanup fails, retried every
+  possible owner during unmount, and ignored orphaned events after unmount.
+- Added a blocked-aware roving tab stop so keyboard users enter the slot grid
+  once and continue with Arrow, Home, End, and Control+Home/End navigation.
+- Added focused lifecycle, accessibility, and hostile mutation coverage for
+  the reviewed listener and focus ownership boundaries.
+
 ## 2026-06-16
 
 - Migrated the document-level mouseup listener when the rendered grid changes

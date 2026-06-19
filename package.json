@@ -85,7 +85,8 @@
     "pack:check": "node scripts/check-package-contents.js",
     "package:runtime": "node scripts/smoke-package-runtime.js",
     "package:lint": "publint --pack npm --strict && attw --pack .",
-    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn npm audit --all --recursive --severity high && yarn pack:check && yarn package:runtime && yarn package:lint",
+    "review:mutations": "node scripts/test-booking-selector-review-mutations.js",
+    "verify": "yarn docs:check && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn review:mutations && yarn npm audit --all --recursive --severity high && yarn pack:check && yarn package:runtime && yarn package:lint",
     "start": "yarn docs:dev"
   },
   "engines": {
