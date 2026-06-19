@@ -25,6 +25,7 @@ Priority:
 - Maintain Makefile wrappers for lint, test, build, verify, and check gates
 - Run the frozen dependency graph and canonical package gates on Node 20 and Node 24 in hosted CI
 - Keep hosted dependency installation lifecycle-script-free and checked-in `dist` output reproducible
+- Keep hosted checkout credential-free and validate every pushed branch, pull request, and manual dispatch
 - Keep styling customizable without hiding selection state
 - Emit minute-unique selection payloads that match the grid comparison model
 - Keep every completed maintenance plan under `docs/plans` verified by `docs:check`
@@ -35,6 +36,8 @@ Priority:
   package surface
 - Reject duplicate package file entries in manifest and dry-run package checks
 - Reject executable file modes from the published package surface
+- Enforce packed, unpacked, and per-file package size budgets
+- Keep package publication separate from explicit documentation deployment
 - Keep canonical maintenance plan filenames dated and sortable
 - Keep date, selection, touch, and docs-smoke helpers defensive against
   malformed or invalid inputs
@@ -45,7 +48,14 @@ Next priorities:
   screenshot, DOM, and horizontal overflow checks, and add baseline visual
   regression coverage before larger styling changes.
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
+- Keep row-edge and whole-grid `Home` and `End` navigation blocked-aware
   as the day/hour grid evolves.
+- Keep document-level drag completion aligned with the rendered grid owner
+  across iframe or portal relocation.
+- Retry failed document-listener cleanup without allowing stale unmounted
+  handlers to complete selections.
+- Preserve a single blocked-aware roving tab stop across slot focus and grid
+  boundary updates.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.
 - Revisit the ESLint 10 major when the active parser and plugin peer ranges

@@ -1,9 +1,50 @@
 # Changes
 
+## 2026-06-19
+
+- Retained document mouseup targets whose listener cleanup fails, retried every
+  possible owner during unmount, and ignored orphaned events after unmount.
+- Added a blocked-aware roving tab stop so keyboard users enter the slot grid
+  once and continue with Arrow, Home, End, and Control+Home/End navigation.
+- Added focused lifecycle, accessibility, and hostile mutation coverage for
+  the reviewed listener and focus ownership boundaries.
+
+## 2026-06-16
+
+- Migrated the document-level mouseup listener when the rendered grid changes
+  owner documents and cleaned up the exact retained listener target.
+
+## 2026-06-15
+
+- Migrated repository tooling from Yarn Classic 1.22.22 to Yarn 4.17.0 with
+  immutable, lifecycle-script-free installs and the `node-modules` linker.
+- Preserved the published Node 16 runtime floor by building the package on Node
+  20 and loading the packed CommonJS and ESM entries in a network-disabled,
+  digest-pinned Node 16.20.2 container.
+- Added fail-closed contracts for the package manager, linker, audit command,
+  hosted install mode, and artifact-based runtime boundary.
+- Removed automatic documentation deployment from the package publish lifecycle
+  while preserving the explicit pinned deployment command.
+
+## 2026-06-13
+
+- Added blocked-aware `Home` and `End` row navigation plus `Control+Home` and
+  `Control+End` whole-grid navigation for keyboard users.
+
+## 2026-06-12
+
+- Added a digest-pinned Node 16.20.2 hosted smoke for the checked-in CommonJS
+  and ESM package entry points.
+- Added packed, unpacked, and per-file package size budgets to `pack:check`.
+- Rejected malformed npm size metadata and oversized expected package files
+  with focused regression coverage.
+
 ## 2026-06-10
 
 - Added pinned, read-only hosted package verification on Node 20 and Node 24.
 - Added lifecycle-script-free frozen installs and checked-in `dist` reproducibility checks to CI.
+- Disabled checkout credential persistence, added manual dispatch, and extended hosted validation to every pushed branch.
+- Added CODEOWNERS and fail-closed checks for workflow count, ownership, permissions, action uniqueness, and trigger scope.
 - Added duplicate package file detection to the package manifest allowlist and
   npm dry-run contents checks.
 - Added packed-file mode validation so JavaScript, declarations, docs, and

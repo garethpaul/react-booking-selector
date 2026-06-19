@@ -307,12 +307,59 @@ var getVerticalKeyboardNavigationTarget = function getVerticalKeyboardNavigation
   }
   return null;
 };
-export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys) {
+var getRowEdgeKeyboardNavigationTarget = function getRowEdgeKeyboardNavigationTarget(dateColumns, slotIndex, direction, blockedMinuteKeys) {
+  var columnIndex = direction === 1 ? 0 : dateColumns.length - 1;
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    var targetTime = getDateSlotTime(getDateColumnSlots(dateColumns[columnIndex])[slotIndex]);
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
+    columnIndex += direction;
+  }
+  return null;
+};
+var getGridEdgeKeyboardNavigationTarget = function getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys) {
+  var columnIndex = direction === 1 ? 0 : dateColumns.length - 1;
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    var slots = getDateColumnSlots(dateColumns[columnIndex]);
+    var slotIndex = direction === 1 ? 0 : slots.length - 1;
+    while (slotIndex >= 0 && slotIndex < slots.length) {
+      var targetTime = getDateSlotTime(slots[slotIndex]);
+      if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime;
+      slotIndex += direction;
+    }
+    columnIndex += direction;
+  }
+  return null;
+};
+var hasRenderedMinuteKey = function hasRenderedMinuteKey(dateColumns, targetMinuteKey) {
+  for (var columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
+    var slots = getDateColumnSlots(dateColumns[columnIndex]);
+    for (var slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+      var slotTime = getDateSlotTime(slots[slotIndex]);
+      if (slotTime && dateMinuteKey(slotTime) === targetMinuteKey) return true;
+    }
+  }
+  return false;
+};
+var getRovingFocusMinuteKey = function getRovingFocusMinuteKey(props, currentMinuteKey) {
+  var dateColumns = buildDateColumns(props);
+  var blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
+  if (currentMinuteKey != null && !blockedMinuteKeys.has(currentMinuteKey) && hasRenderedMinuteKey(dateColumns, currentMinuteKey)) return currentMinuteKey;
+  var firstAvailableTime = getGridEdgeKeyboardNavigationTarget(dateColumns, 1, blockedMinuteKeys);
+  return firstAvailableTime ? dateMinuteKey(firstAvailableTime) : null;
+};
+export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(dateColumns, time, key, blockedMinuteKeys, controlKey) {
   if (blockedMinuteKeys === void 0) {
     blockedMinuteKeys = new SetConstructor();
   }
+  if (controlKey === void 0) {
+    controlKey = false;
+  }
   var position = findDateSlotPosition(dateColumns, time);
   if (!position) return null;
+  if (key === 'Home' || key === 'End') {
+    var direction = key === 'Home' ? 1 : -1;
+    return controlKey ? getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys) : getRowEdgeKeyboardNavigationTarget(dateColumns, position.slotIndex, direction, blockedMinuteKeys);
+  }
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
     return getHorizontalKeyboardNavigationTarget(dateColumns, position, key === 'ArrowRight' ? 1 : -1, blockedMinuteKeys);
   }
@@ -325,7 +372,21 @@ export var getKeyboardNavigationTarget = function getKeyboardNavigationTarget(da
   return null;
 };
 var isKeyboardNavigationKey = function isKeyboardNavigationKey(key) {
-  return key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp';
+  return key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp' || key === 'Home' || key === 'End';
+};
+var hasKeyboardControlModifier = function hasKeyboardControlModifier(event) {
+  try {
+    return Boolean(event && event.ctrlKey === true);
+  } catch (_unused5) {
+    return false;
+  }
+};
+var hasUnsupportedKeyboardModifier = function hasUnsupportedKeyboardModifier(event) {
+  try {
+    return Boolean(event && (event.altKey === true || event.metaKey === true || event.shiftKey === true));
+  } catch (_unused6) {
+    return true;
+  }
 };
 var isKeyboardSelectionKey = function isKeyboardSelectionKey(key) {
   return key === 'Enter' || key === ' ' || key === 'Spacebar';
@@ -377,13 +438,13 @@ var preventDefault = function preventDefault(event) {
   var preventDefaultHandler;
   try {
     preventDefaultHandler = event.preventDefault;
-  } catch (_unused5) {
+  } catch (_unused7) {
     return;
   }
   if (typeof preventDefaultHandler === 'function') {
     try {
       preventDefaultHandler.call(event);
-    } catch (_unused6) {
+    } catch (_unused8) {
       // Ignore non-standard event objects that expose throwing default prevention.
     }
   }
@@ -393,7 +454,7 @@ var getBrowserDocument = function getBrowserDocument() {
     if (typeof window === 'undefined') return null;
     var browserDocument = window.document;
     return browserDocument && typeof browserDocument === 'object' ? browserDocument : null;
-  } catch (_unused7) {
+  } catch (_unused9) {
     return null;
   }
 };
@@ -401,7 +462,7 @@ var getParentElement = function getParentElement(target) {
   try {
     var parentElement = target.parentElement;
     return parentElement && typeof parentElement === 'object' ? parentElement : null;
-  } catch (_unused8) {
+  } catch (_unused0) {
     return null;
   }
 };
@@ -410,7 +471,7 @@ var getOwnerDocument = function getOwnerDocument(target) {
   try {
     var ownerDocument = target.ownerDocument;
     return ownerDocument && typeof ownerDocument === 'object' ? ownerDocument : null;
-  } catch (_unused9) {
+  } catch (_unused1) {
     return null;
   }
 };
@@ -427,6 +488,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.lastTouchEventTime = void 0;
     _this.blockedMinuteKeys = void 0;
     _this.selectedMinuteKeys = void 0;
+    _this.documentMouseUpTarget = void 0;
+    _this.documentMouseUpTargets = void 0;
+    _this.componentMounted = void 0;
+    _this.focusedMinuteKey = void 0;
     _this.renderTimeLabels = function () {
       var labels = [/*#__PURE__*/React.createElement(GridCell, {
         $height: "40",
@@ -495,6 +560,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         disabled: blocked,
         "aria-label": formatCellLabel(time, selected, blocked),
         "aria-pressed": selected,
+        tabIndex: !blocked && dateMinuteKey(time) === _this.focusedMinuteKey ? 0 : -1,
         $height: "40px",
         $blocked: blocked,
         $interactive: true,
@@ -506,7 +572,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
         ,
         onMouseDown: mouseStartHandler,
         onMouseEnter: mouseEnterHandler,
-        onMouseUp: mouseUpHandler
+        onMouseUp: mouseUpHandler,
+        onFocus: function onFocus() {
+          _this.handleCellFocusEvent(time);
+        }
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
@@ -538,6 +607,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     _this.dateToCell = new MapConstructor();
     _this.touchScrollCells = new SetConstructor();
     _this.lastTouchEventTime = null;
+    _this.documentMouseUpTarget = null;
+    _this.documentMouseUpTargets = new SetConstructor();
+    _this.componentMounted = false;
+    _this.focusedMinuteKey = getRovingFocusMinuteKey(_this.props, null);
     var selectionDraft = normalizeSelectionDraft(_this.props.selection);
     var selectionPropSignature = getDateMinuteSetSignature(_this.props.selection);
     var selectionPropListSignature = getDateListSignature(_this.props.selection);
@@ -607,27 +680,19 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    var browserDocument = this.getDocument();
-    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
-      try {
-        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused0) {
-        // Continue mounting in non-standard hosts that cannot register document listeners.
-      }
-    }
+    this.componentMounted = true;
+    this.syncDocumentMouseUpListener();
   };
   _proto.componentDidUpdate = function componentDidUpdate() {
+    this.syncDocumentMouseUpListener();
     this.refreshInstanceLookups(this.props, this.state.selectionDraft);
   };
   _proto.componentWillUnmount = function componentWillUnmount() {
-    var browserDocument = this.getDocument();
-    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
-      try {
-        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
-      } catch (_unused1) {
-        // Continue instance cleanup even if the document listener cannot be removed.
-      }
-    }
+    var _this2 = this;
+    this.componentMounted = false;
+    arrayFrom.call(ArrayConstructor, this.documentMouseUpTargets).forEach(function (browserDocument) {
+      _this2.removeDocumentMouseUpListenerFrom(browserDocument);
+    });
     this.cellToDate.forEach(function (value, dateCell) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
@@ -641,16 +706,46 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     this.dateToCell.clear();
     this.touchScrollCells.clear();
   };
+  _proto.removeDocumentMouseUpListener = function removeDocumentMouseUpListener() {
+    this.removeDocumentMouseUpListenerFrom(this.documentMouseUpTarget);
+  };
+  _proto.removeDocumentMouseUpListenerFrom = function removeDocumentMouseUpListenerFrom(browserDocument) {
+    if (browserDocument === this.documentMouseUpTarget) this.documentMouseUpTarget = null;
+    if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return;
+    try {
+      browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      this.documentMouseUpTargets.delete(browserDocument);
+    } catch (_unused11) {
+      // Retain failed removals so unmount can retry every document that may still own the handler.
+    }
+  };
+  _proto.syncDocumentMouseUpListener = function syncDocumentMouseUpListener() {
+    var browserDocument = this.getDocument();
+    if (browserDocument === this.documentMouseUpTarget) return;
+    this.removeDocumentMouseUpListener();
+    if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return;
+    if (this.documentMouseUpTargets.has(browserDocument)) {
+      this.documentMouseUpTarget = browserDocument;
+      return;
+    }
+    try {
+      browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
+      this.documentMouseUpTarget = browserDocument;
+      this.documentMouseUpTargets.add(browserDocument);
+    } catch (_unused12) {
+      // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
+    }
+  };
   _proto.refreshInstanceLookups = function refreshInstanceLookups(props, selectionDraft) {
     this.dates = buildDates(props);
     this.blockedMinuteKeys = getDateMinuteKeySet(props.blocked);
     this.selectedMinuteKeys = getDateMinuteKeySet(selectionDraft);
   };
   _proto.clearDateCellLookup = function clearDateCellLookup(dateCell) {
-    var _this2 = this;
+    var _this3 = this;
     this.dateToCell.forEach(function (registeredCell, registeredTime) {
       if (registeredCell === dateCell) {
-        _this2.dateToCell.delete(registeredTime);
+        _this3.dateToCell.delete(registeredTime);
       }
     });
   };
@@ -674,7 +769,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused11) {
+        } catch (_unused13) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -682,7 +777,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused12) {
+        } catch (_unused14) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -742,6 +837,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     return null;
   };
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
+    if (!this.componentMounted) return;
     if (this.state.selectionType === null) return;
     if (this.shouldIgnoreMouseEvent()) return;
     if (!isPrimaryMouseButton(event)) return;
@@ -772,7 +868,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused13) {
+    } catch (_unused15) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -806,7 +902,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   // Given an ending Date, determines all the dates that should be selected in this draft
 ;
   _proto.updateAvailabilityDraft = function updateAvailabilityDraft(selectionEnd, callback) {
-    var _this3 = this;
+    var _this4 = this;
     var _this$state = this.state,
       selectionType = _this$state.selectionType,
       selectionStart = _this$state.selectionStart;
@@ -818,10 +914,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }
     var selectionSchemeHandler = this.selectionSchemeHandlers[getSelectionScheme(this.props.selectionScheme)];
     var availableSelection = arrayFilter.call(selectionSchemeHandler(validSelectionStart, validSelectionEnd, this.dates), function (time) {
-      return !_this3.isBlocked(time);
+      return !_this4.isBlocked(time);
     });
     var nextDraft = arrayFilter.call(normalizeSelectionDraft(this.state.selectionBase), function (time) {
-      return !_this3.isBlocked(time);
+      return !_this4.isBlocked(time);
     });
     if (selectionType === 'add') {
       nextDraft = uniqueDatesByMinute(concatDates(nextDraft, availableSelection));
@@ -904,13 +1000,31 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     if (!dateCell || typeof dateCell.focus !== 'function') return false;
     try {
       dateCell.focus();
+      this.setRovingFocusMinuteKey(dateMinuteKey(time));
       return true;
-    } catch (_unused14) {
+    } catch (_unused16) {
       return false;
     }
   };
+  _proto.setRovingFocusMinuteKey = function setRovingFocusMinuteKey(focusedMinuteKey) {
+    if (focusedMinuteKey === this.focusedMinuteKey) return;
+    this.focusedMinuteKey = focusedMinuteKey;
+    this.dateToCell.forEach(function (dateCell, registeredTime) {
+      if (!dateCell) return;
+      try {
+        dateCell.tabIndex = mathFloor(registeredTime / 60000) === focusedMinuteKey ? 0 : -1;
+      } catch (_unused17) {
+        // Ignore stale or non-standard focus targets while preserving the active tab stop.
+      }
+    });
+  };
+  _proto.handleCellFocusEvent = function handleCellFocusEvent(time) {
+    var validTime = getValidDate(time);
+    if (!validTime || this.isBlocked(validTime)) return;
+    this.setRovingFocusMinuteKey(dateMinuteKey(validTime));
+  };
   _proto.handleCellKeyDownEvent = function handleCellKeyDownEvent(event, time, blocked) {
-    var _this4 = this;
+    var _this5 = this;
     if (blocked === void 0) {
       blocked = false;
     }
@@ -918,7 +1032,12 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var validTime = getValidDate(time);
     if (isKeyboardNavigationKey(key)) {
       if (!validTime) return;
-      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), validTime, key, this.blockedMinuteKeys);
+      if ((key === 'Home' || key === 'End') && hasUnsupportedKeyboardModifier(event)) return;
+      var navigationTarget = getKeyboardNavigationTarget(buildDateColumns(this.props), validTime, key, this.blockedMinuteKeys, hasKeyboardControlModifier(event));
+      if (key === 'Home' || key === 'End') {
+        if (navigationTarget && this.focusDateCell(navigationTarget)) preventDefault(event);
+        return;
+      }
       preventDefault(event);
       if (navigationTarget) this.focusDateCell(navigationTarget);
       return;
@@ -931,7 +1050,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       selectionStart: validTime,
       selectionBase: this.state.selectionDraft
     }, function () {
-      _this4.updateAvailabilityDraft(validTime, _this4.endSelection);
+      _this5.updateAvailabilityDraft(validTime, _this5.endSelection);
     });
   };
   _proto.handleTouchStartEvent = function handleTouchStartEvent(startTime) {
@@ -952,7 +1071,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     }
   };
   _proto.handleTouchEndEvent = function handleTouchEndEvent() {
-    var _this5 = this;
+    var _this6 = this;
     this.recordTouchEvent();
     if (this.state.selectionType === null) {
       this.clearTouchDragState();
@@ -963,7 +1082,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       // means the availability draft hasn't yet been updated (since
       // handleTouchMoveEvent was never called) so we need to do it now
       this.updateAvailabilityDraft(null, function () {
-        _this5.endSelection();
+        _this6.endSelection();
       });
     } else if (this.state.selectionDraft === this.state.selectionBase) {
       this.updateAvailabilityDraft(this.state.selectionStart, this.endSelection);
@@ -987,10 +1106,11 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     });
   };
   _proto.render = function render() {
-    var _this6 = this;
+    var _this7 = this;
     var dateColumns = buildDateColumns(this.props);
     var blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked);
     var selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft);
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, this.focusedMinuteKey);
     var gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby']);
     var gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby']);
     var gridAriaLabel = getNonEmptyString(this.props['aria-label']) || getNonEmptyString(this.props.ariaLabel) || DEFAULT_ARIA_LABEL;
@@ -1004,10 +1124,10 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       "aria-label": gridAriaLabelledBy ? undefined : gridAriaLabel,
       "aria-labelledby": gridAriaLabelledBy,
       ref: function ref(el) {
-        _this6.gridRef = el;
+        _this7.gridRef = el;
       }
     }, dateColumns.length > 0 && this.renderTimeLabels(), arrayMap.call(dateColumns, function (dateColumn) {
-      return _this6.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
+      return _this7.renderDateColumn(dateColumn, blockedMinuteKeys, selectedMinuteKeys);
     })));
   };
   return BookingSelector;

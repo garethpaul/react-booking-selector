@@ -2,16 +2,18 @@
 
 .PHONY: build check lint test verify
 
+override REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+
 check: verify
 
 lint:
-	corepack yarn lint
+	cd "$(REPO_ROOT)" && corepack yarn lint
 
 test:
-	corepack yarn test
+	cd "$(REPO_ROOT)" && corepack yarn test
 
 build:
-	corepack yarn build
+	cd "$(REPO_ROOT)" && corepack yarn build
 
 verify:
-	corepack yarn verify
+	cd "$(REPO_ROOT)" && corepack yarn verify

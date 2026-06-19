@@ -14,7 +14,11 @@ TypeScript declarations are included for both the default export and the named `
 
 The package exposes a root `exports` map with CommonJS and ESM entry points, and keeps `main`, `module`, and `types` fields for compatibility. Supported peer dependency majors are React 18 or 19 and styled-components 5 or 6.
 
-The published package supports Node 16 or newer for package resolution. Repository verification uses Node 20 or newer because the dev-only package validation tools require it.
+The published package supports Node 16 or newer for package resolution. A
+dedicated hosted job builds a package tarball on Node 20 and loads both package
+entry modes from that artifact in digest-pinned Node 16.20.2. Repository
+development uses Yarn 4.17.0 and Node 20 or newer because the package manager
+and dev-only validation tools require it.
 
 ```js
 import React, { useState } from 'react'
@@ -48,7 +52,7 @@ Selection schemes:
 - `square` selects a rectangular block between the start and end cells.
 - `linear` selects every chronological slot between the start and end cells.
 
-Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. Arrow keys move focus across the rendered slot grid, skipping disabled slots, and `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
+Each time slot is rendered as a native button. Blocked slots are disabled and removed from the tab order. The grid keeps one available slot in the tab order and moves that roving tab stop with focus, so keyboard users enter the grid once and continue with its navigation keys. Arrow keys move focus across the rendered slot grid, skipping disabled slots. `Home` and `End` move to the first and last available slot in the current hour row; `Control+Home` and `Control+End` move to the first and last available slot in the complete rendered grid. `Enter` or `Space` toggles the focused slot. Slots expose accessible labels that include their selected, blocked, or available state plus the full date and hour.
 
 If the same slot appears in both `selection` and `blocked`, blocked state takes precedence. The slot renders as unavailable, is exposed as unpressed to assistive technology, and is not carried into the next selection emitted by `onChange`.
 
@@ -315,16 +319,32 @@ corepack yarn docs:smoke
 `corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
 `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
-`docs/readme-overview.svg`, `README.md`, and `LICENSE`; packed files must remain non-executable.
+`docs/readme-overview.svg`, `README.md`, and `LICENSE`; packed files must remain non-executable and within the reviewed
+64 KiB compressed, 256 KiB unpacked, and 64 KiB per-file package size budget.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
 screenshots with headless Chrome or Chromium, and checks the rendered DOM, screenshots, and horizontal layout metrics.
-GitHub Actions runs the frozen, lifecycle-script-free dependency graph and full verification on Node 20 and Node 24,
-then rebuilds `dist` and rejects generated output drift. Hosted actions are commit-pinned and use read-only permissions.
+GitHub Actions performs immutable, lifecycle-script-free Yarn 4 installs for
+the full verification graph on Node 20 and Node 24. A separate job builds and
+packs on Node 20, then loads the read-only artifact under digest-pinned Node
+16.20.2 without network access. Hosted verification rebuilds `dist` and rejects
+generated output drift. Actions are commit-pinned, use read-only permissions,
+disable checkout credential persistence, and run for every pushed branch, pull
+request, or manual dispatch.
+Package publication and documentation deployment are separate maintainer
+actions: publishing never runs a deploy lifecycle hook, and documentation is
+deployed only through an explicit `corepack yarn docs:deploy` invocation.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
 See `docs/plans/2026-06-08-custom-render-state-coverage.md` for custom cell renderer state coverage.
 See `docs/plans/2026-06-08-custom-render-keyboard-coverage.md` for keyboard coverage around custom-rendered cells.
+
+See `docs/plans/2026-06-13-home-end-keyboard-navigation.md` for row-edge and whole-grid keyboard navigation coverage.
+See `docs/plans/2026-06-14-location-independent-make.md` for location-independent Make gate coverage.
+See `docs/plans/2026-06-15-yarn-4-package-manager.md` for the Yarn 4 toolchain and Node 16 artifact boundary.
+See `docs/plans/2026-06-15-explicit-docs-deployment.md` for package publication and documentation deployment separation.
+See `docs/plans/2026-06-16-document-mouseup-listener-migration.md` for owner-document listener migration and retained-target cleanup.
+See `docs/plans/2026-06-19-listener-and-roving-focus-review.md` for failed-cleanup ownership and roving-focus review coverage.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.
@@ -337,3 +357,5 @@ See `docs/plans/2026-06-09-package-manifest-allowlist-check.md` for package mani
 See `docs/plans/2026-06-10-package-duplicate-file-check.md` for duplicate package file detection.
 See `docs/plans/2026-06-10-package-file-mode-check.md` for packed-file executable mode rejection.
 See `docs/plans/2026-06-10-hosted-verification.md` for the pinned Node 20/24 verification and clean distribution gate.
+See `docs/plans/2026-06-12-package-size-budget.md` for fail-closed packed, unpacked, and per-file size ceilings.
+See `docs/plans/2026-06-12-node16-package-runtime.md` for the advertised runtime-floor package smoke.

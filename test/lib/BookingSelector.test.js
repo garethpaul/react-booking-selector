@@ -1611,29 +1611,32 @@ describe('componentDidMount', () => {
 
   it('mounts when document mouseup listener registration is unavailable', () => {
     const { instance } = renderSelector()
-    const addEventListener = document.addEventListener
-    document.addEventListener = true
-
-    try {
-      expect(() => {
-        instance.componentDidMount()
-      }).not.toThrow()
-    } finally {
-      document.addEventListener = addEventListener
+    const ownerDocument = {
+      addEventListener: true,
+      removeEventListener: jest.fn(),
     }
+    instance.gridRef = { ownerDocument }
+
+    expect(() => {
+      instance.componentDidUpdate()
+    }).not.toThrow()
+    expect(instance.documentMouseUpTarget).toBe(null)
   })
 
   it('mounts when document mouseup listener registration throws', () => {
     const { instance } = renderSelector()
-    const addSpy = jest.spyOn(document, 'addEventListener').mockImplementation(() => {
-      throw new Error('Cannot attach document listener')
-    })
+    const ownerDocument = {
+      addEventListener: jest.fn(() => {
+        throw new Error('Cannot attach document listener')
+      }),
+      removeEventListener: jest.fn(),
+    }
+    instance.gridRef = { ownerDocument }
 
     expect(() => {
-      instance.componentDidMount()
+      instance.componentDidUpdate()
     }).not.toThrow()
-
-    addSpy.mockRestore()
+    expect(instance.documentMouseUpTarget).toBe(null)
   })
 
   it('attaches document mouseup listeners to the rendered grid owner document', () => {
@@ -2013,6 +2016,113 @@ describe('componentDidMount', () => {
   })
 })
 
+describe('componentDidUpdate', () => {
+  it('keeps document mouseup ownership synchronized without duplicate listeners', () => {
+    const { instance, unmount } = renderSelector()
+    const firstDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+    const secondDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+    expect(firstDocument.addEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+
+    firstDocument.addEventListener.mockClear()
+    firstDocument.removeEventListener.mockClear()
+    instance.componentDidUpdate()
+    expect(firstDocument.addEventListener).not.toHaveBeenCalled()
+    expect(firstDocument.removeEventListener).not.toHaveBeenCalled()
+
+    instance.gridRef = { ownerDocument: secondDocument }
+    instance.componentDidUpdate()
+    expect(firstDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(secondDocument.addEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(firstDocument.removeEventListener.mock.invocationCallOrder[0]).toBeLessThan(
+      secondDocument.addEventListener.mock.invocationCallOrder[0],
+    )
+
+    instance.gridRef = null
+    unmount()
+    expect(secondDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+  })
+
+  it('retains failed document listener removals for unmount cleanup', () => {
+    const { instance, unmount } = renderSelector()
+    const firstDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest
+        .fn()
+        .mockImplementationOnce(() => {
+          throw new Error('Temporary listener removal failure')
+        })
+        .mockImplementation(() => {}),
+    }
+    const secondDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+    instance.gridRef = { ownerDocument: secondDocument }
+    instance.componentDidUpdate()
+
+    expect(firstDocument.removeEventListener).toHaveBeenCalledTimes(1)
+    firstDocument.addEventListener.mockClear()
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+
+    expect(secondDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(firstDocument.addEventListener).not.toHaveBeenCalled()
+
+    unmount()
+
+    expect(firstDocument.removeEventListener).toHaveBeenCalledTimes(2)
+  })
+
+  it('ignores orphaned document events after unmount', () => {
+    const { instance, unmount } = renderSelector()
+    const ownerDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(() => {
+        throw new Error('Cannot remove document listener')
+      }),
+    }
+    const updateAvailabilityDraft = jest.spyOn(instance, 'updateAvailabilityDraft')
+
+    instance.gridRef = { ownerDocument }
+    instance.componentDidUpdate()
+    instance.state.selectionType = 'add'
+    instance.state.selectionStart = startDate
+    unmount()
+
+    instance.handleDocumentMouseUpEvent({ button: 0, target: null })
+
+    expect(updateAvailabilityDraft).not.toHaveBeenCalled()
+  })
+
+  it('removes a retained non-current document without clearing current ownership', () => {
+    const { instance } = renderSelector()
+    const currentDocument = { addEventListener: jest.fn(), removeEventListener: jest.fn() }
+    const retainedDocument = { addEventListener: jest.fn(), removeEventListener: jest.fn() }
+
+    instance.documentMouseUpTarget = currentDocument
+    instance.documentMouseUpTargets.add(currentDocument)
+    instance.documentMouseUpTargets.add(retainedDocument)
+    instance.removeDocumentMouseUpListenerFrom(retainedDocument)
+
+    expect(instance.documentMouseUpTarget).toBe(currentDocument)
+    expect(retainedDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
+    expect(instance.documentMouseUpTargets.has(retainedDocument)).toBe(false)
+  })
+})
+
 describe('componentWillUnmount', () => {
   it('removes the mouseup event listener', () => {
     const removeSpy = jest.spyOn(document, 'removeEventListener')
@@ -2063,19 +2173,17 @@ describe('componentWillUnmount', () => {
     removeSpy.mockRestore()
   })
 
-  it('removes document mouseup listeners from the rendered grid owner document', () => {
-    const { instance } = renderSelector()
-    const originalGridRef = instance.gridRef
+  it('removes document mouseup listeners from the retained owner document', () => {
+    const { instance, unmount } = renderSelector()
     const ownerDocument = {
+      addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
     }
 
-    try {
-      instance.gridRef = { ownerDocument }
-      instance.componentWillUnmount()
-    } finally {
-      instance.gridRef = originalGridRef
-    }
+    instance.gridRef = { ownerDocument }
+    instance.componentDidUpdate()
+    instance.gridRef = null
+    unmount()
 
     expect(ownerDocument.removeEventListener).toHaveBeenCalledWith('mouseup', instance.handleDocumentMouseUpEvent)
   })
@@ -2944,6 +3052,63 @@ describe('prop updates', () => {
     expect(getKeyboardNavigationTarget(dateColumns, three, 'ArrowUp')).toBe(one)
     expect(getKeyboardNavigationTarget(dateColumns, one, 'ArrowUp')).toBe(null)
     expect(getKeyboardNavigationTarget(dateColumns, three, 'ArrowDown')).toBe(null)
+  })
+
+  it('moves to row edges with Home and End while skipping blocked and placeholder cells', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const thursdayNine = addHours(addDays(startOfDay(startDate), 3), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      { day: addDays(startDate, 1), slots: [{ hour: 9, time: tuesdayNine }] },
+      { day: addDays(startDate, 2), slots: [{ hour: 9, time: null }] },
+      { day: addDays(startDate, 3), slots: [{ hour: 9, time: thursdayNine }] },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, thursdayNine, 'Home', blocked)).toBe(tuesdayNine)
+    expect(getKeyboardNavigationTarget(dateColumns, tuesdayNine, 'End', blocked)).toBe(thursdayNine)
+  })
+
+  it('moves to whole-grid edges with Control+Home and Control+End', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const mondayTen = addHours(startOfDay(startDate), 10)
+    const tuesdayNine = addHours(addDays(startOfDay(startDate), 1), 9)
+    const tuesdayTen = addHours(addDays(startOfDay(startDate), 1), 10)
+    const dateColumns = [
+      {
+        day: startDate,
+        slots: [
+          { hour: 9, time: mondayNine },
+          { hour: 10, time: mondayTen },
+        ],
+      },
+      {
+        day: addDays(startDate, 1),
+        slots: [
+          { hour: 9, time: tuesdayNine },
+          { hour: 10, time: tuesdayTen },
+        ],
+      },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000), Math.floor(tuesdayTen.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, tuesdayNine, 'Home', blocked, true)).toBe(mondayTen)
+    expect(getKeyboardNavigationTarget(dateColumns, mondayTen, 'End', blocked, true)).toBe(tuesdayNine)
+  })
+
+  it('returns no Home or End target for malformed or fully blocked navigation data', () => {
+    const mondayNine = addHours(startOfDay(startDate), 9)
+    const dateColumns = [
+      { day: startDate, slots: [{ hour: 9, time: mondayNine }] },
+      undefined,
+      { day: addDays(startDate, 1), slots: null },
+    ]
+    const blocked = new Set([Math.floor(mondayNine.getTime() / 60000)])
+
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'Home', blocked)).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, mondayNine, 'End', blocked, true)).toBe(null)
+    expect(getKeyboardNavigationTarget(dateColumns, new Date(NaN), 'Home', blocked)).toBe(null)
   })
 
   it('renders no date cells when the time range has no slots', () => {
@@ -4107,6 +4272,168 @@ describe('keyboard interaction', () => {
     fireEvent.keyDown(mondayNine, { key: 'ArrowDown' })
 
     expect(mondayEleven).toHaveFocus()
+  })
+
+  it('moves focus to row edges with Home and End', () => {
+    const blockedMonday = addHours(startOfDay(startDate), 9)
+    const { getByRole } = renderSelector({
+      blocked: [blockedMonday],
+      startDate,
+      numDays: 3,
+      minTime: 9,
+      maxTime: 9,
+    })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+    const wednesdayNine = getByRole('button', { name: 'Available Wednesday, January 3, 2018 at 9 am' })
+
+    wednesdayNine.focus()
+    fireEvent.keyDown(wednesdayNine, { key: 'Home' })
+    expect(tuesdayNine).toHaveFocus()
+
+    fireEvent.keyDown(tuesdayNine, { key: 'End' })
+    expect(wednesdayNine).toHaveFocus()
+  })
+
+  it('keeps one available grid cell in the tab order', () => {
+    const blockedMonday = addHours(startOfDay(startDate), 9)
+    const { getAllByRole } = renderSelector({
+      blocked: [blockedMonday],
+      startDate,
+      numDays: 2,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const availableCells = getAllByRole('button', { name: /^Available / })
+
+    expect(availableCells.filter((cell) => cell.tabIndex === 0)).toHaveLength(1)
+    expect(availableCells[0]).toHaveAttribute('tabindex', '0')
+    availableCells.slice(1).forEach((cell) => {
+      expect(cell).toHaveAttribute('tabindex', '-1')
+    })
+  })
+
+  it('moves the roving tab stop when a different cell receives focus', async () => {
+    const { getByRole } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+
+    expect(mondayNine).toHaveAttribute('tabindex', '0')
+    expect(tuesdayNine).toHaveAttribute('tabindex', '-1')
+
+    tuesdayNine.focus()
+
+    await waitFor(() => {
+      expect(mondayNine).toHaveAttribute('tabindex', '-1')
+      expect(tuesdayNine).toHaveAttribute('tabindex', '0')
+    })
+  })
+
+  it('ignores malformed and blocked roving-focus events', () => {
+    const blocked = addHours(startOfDay(startDate), 9)
+    const { instance } = renderSelector({ blocked: [blocked], startDate, numDays: 1, minTime: 9, maxTime: 9 })
+    const originalFocusedMinuteKey = instance.focusedMinuteKey
+
+    instance.handleCellFocusEvent(null)
+    instance.handleCellFocusEvent(blocked)
+
+    expect(instance.focusedMinuteKey).toBe(originalFocusedMinuteKey)
+  })
+
+  it('skips malformed registered cells while moving the roving tab stop', () => {
+    const { instance } = renderSelector({ startDate, numDays: 1, minTime: 9, maxTime: 10 })
+    const targetTime = addHours(startOfDay(startDate), 10)
+    instance.dateToCell.set(addHours(startOfDay(startDate), 8).getTime(), null)
+    instance.dateToCell.set(addHours(startOfDay(startDate), 11).getTime(), {
+      set tabIndex(_value) {
+        throw new Error('Cannot update stale tab stop')
+      },
+    })
+
+    expect(() => {
+      instance.setRovingFocusMinuteKey(targetTime.getTime() / 60000)
+    }).not.toThrow()
+    expect(instance.focusedMinuteKey).toBe(targetTime.getTime() / 60000)
+  })
+
+  it('moves focus to whole-grid edges with Control+Home and Control+End', () => {
+    const blockedMondayNine = addHours(startOfDay(startDate), 9)
+    const blockedTuesdayTen = addHours(addDays(startOfDay(startDate), 1), 10)
+    const { getByRole } = renderSelector({
+      blocked: [blockedMondayNine, blockedTuesdayTen],
+      startDate,
+      numDays: 2,
+      minTime: 9,
+      maxTime: 10,
+    })
+    const mondayTen = getByRole('button', { name: 'Available Monday, January 1, 2018 at 10 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+
+    tuesdayNine.focus()
+    fireEvent.keyDown(tuesdayNine, { key: 'Home', ctrlKey: true })
+    expect(mondayTen).toHaveFocus()
+
+    fireEvent.keyDown(mondayTen, { key: 'End', ctrlKey: true })
+    expect(tuesdayNine).toHaveFocus()
+  })
+
+  it('falls back to row-edge navigation when the Control modifier lookup throws', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 3, minTime: 9, maxTime: 9 })
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const wednesdayNine = getByRole('button', { name: 'Available Wednesday, January 3, 2018 at 9 am' })
+    const event = {
+      key: 'Home',
+      get ctrlKey() {
+        throw new Error('Cannot read Control modifier')
+      },
+      preventDefault: jest.fn(),
+    }
+
+    wednesdayNine.focus()
+    expect(() => {
+      instance.handleCellKeyDownEvent(event, addHours(addDays(startOfDay(startDate), 2), 9))
+    }).not.toThrow()
+    expect(mondayNine).toHaveFocus()
+    expect(event.preventDefault).toHaveBeenCalledTimes(1)
+  })
+
+  it('ignores Home and End when unsupported modifiers are active or unreadable', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNineTime = addHours(startOfDay(startDate), 9)
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const tuesdayNine = getByRole('button', { name: 'Available Tuesday, January 2, 2018 at 9 am' })
+    const events = [
+      { key: 'End', altKey: true, preventDefault: jest.fn() },
+      { key: 'End', metaKey: true, preventDefault: jest.fn() },
+      { key: 'End', shiftKey: true, preventDefault: jest.fn() },
+      {
+        key: 'End',
+        get altKey() {
+          throw new Error('Cannot read Alt modifier')
+        },
+        preventDefault: jest.fn(),
+      },
+    ]
+
+    mondayNine.focus()
+    events.forEach((event) => {
+      expect(() => instance.handleCellKeyDownEvent(event, mondayNineTime)).not.toThrow()
+      expect(event.preventDefault).not.toHaveBeenCalled()
+      expect(mondayNine).toHaveFocus()
+    })
+    expect(tuesdayNine).not.toHaveFocus()
+  })
+
+  it('does not prevent Home or End defaults when no focus target can be reached', () => {
+    const { getByRole, instance } = renderSelector({ startDate, numDays: 2, minTime: 9, maxTime: 9 })
+    const mondayNineTime = addHours(startOfDay(startDate), 9)
+    const mondayNine = getByRole('button', { name: 'Available Monday, January 1, 2018 at 9 am' })
+    const unregisteredTargetEvent = { key: 'Home', preventDefault: jest.fn() }
+
+    mondayNine.focus()
+    instance.dateToCell.clear()
+    instance.handleCellKeyDownEvent(unregisteredTargetEvent, mondayNineTime)
+    expect(unregisteredTargetEvent.preventDefault).not.toHaveBeenCalled()
+    expect(mondayNine).toHaveFocus()
   })
 
   it('handles keyboard navigation events without callable default prevention', () => {

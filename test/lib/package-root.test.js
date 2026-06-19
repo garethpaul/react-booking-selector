@@ -13,22 +13,43 @@ it('exports package metadata', () => {
   expect(packageJson.description).toBe('A grid-based booking selector.')
   expect(packageJson.peerDependencies.react).toBe('^18.0.0 || ^19.0.0')
   expect(packageJson.peerDependencies['styled-components']).toBe('^5.1.0 || ^6.0.0')
+  expect(packageJson.packageManager).toBe('yarn@4.17.0')
+  expect(packageJson.engines.node).toBe('>=16.0')
 })
 
 it('marks the published package as side-effect free', () => {
   expect(packageJson.sideEffects).toBe(false)
 })
 
+it('keeps documentation deployment explicit and separate from publishing', () => {
+  expect(packageJson.scripts.prepublish).toBeUndefined()
+  expect(packageJson.scripts.publish).toBeUndefined()
+  expect(packageJson.scripts.postpublish).toBeUndefined()
+  expect(packageJson.scripts.prepack).toBe('corepack yarn build')
+  expect(packageJson.scripts['docs:deploy']).toBe(
+    'yarn docs:build && npx --yes surge@0.27.4 dist/docs --domain react-booking-selector.surge.sh',
+  )
+})
+
 it('exposes repository Makefile gate wrappers', () => {
   const makefile = readFileSync('Makefile', 'utf8')
 
   expect(packageJson.scripts.test).toBe('yarn lib:build && jest --runInBand')
+  expect(packageJson.scripts['package:runtime']).toBe('node scripts/smoke-package-runtime.js')
+  expect(packageJson.scripts['docs:normalize-html']).toBe('node scripts/normalize-docs-html.js')
+  expect(packageJson.scripts.verify).toContain('yarn package:runtime')
+  expect(packageJson.scripts.verify).toContain('yarn npm audit --all --recursive --severity high')
   expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
+  expect(makefile).toMatch(/^override REPO_ROOT := \$\(abspath \$\(dir \$\(lastword \$\(MAKEFILE_LIST\)\)\)\)$/m)
   expect(makefile).toMatch(/^check: verify$/m)
-  expect(makefile).toMatch(/^lint:\n\tcorepack yarn lint$/m)
-  expect(makefile).toMatch(/^test:\n\tcorepack yarn test$/m)
-  expect(makefile).toMatch(/^build:\n\tcorepack yarn build$/m)
-  expect(makefile).toMatch(/^verify:\n\tcorepack yarn verify$/m)
+  expect(makefile).toMatch(/^lint:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn lint$/m)
+  expect(makefile).toMatch(/^test:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn test$/m)
+  expect(makefile).toMatch(/^build:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn build$/m)
+  expect(makefile).toMatch(/^verify:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn verify$/m)
+})
+
+it('uses the node-modules linker for repository tooling', () => {
+  expect(readFileSync('.yarnrc.yml', 'utf8')).toBe('nodeLinker: node-modules\n')
 })
 
 it('keeps local editor metadata out of verification inputs', () => {
@@ -89,4 +110,15 @@ it('supports the package ESM import condition', () => {
   )
 
   expect(output.trim()).toBe('function:true')
+})
+
+it('keeps the runtime-floor smoke fail-closed for both package entry modes', () => {
+  const runtimeSmoke = readFileSync('scripts/smoke-package-runtime.js', 'utf8')
+
+  expect(runtimeSmoke).toContain("require('react-booking-selector')")
+  expect(runtimeSmoke).toContain(
+    "import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'",
+  )
+  expect(runtimeSmoke).toContain("commonJsResult !== 'function:true:true:true'")
+  expect(runtimeSmoke).toContain("esmResult !== 'function:true'")
 })

@@ -32,6 +32,10 @@ type MouseSelectionEventType = {
 
 type KeyboardSelectionEventType = {
   key?: mixed,
+  altKey?: mixed,
+  ctrlKey?: mixed,
+  metaKey?: mixed,
+  shiftKey?: mixed,
   preventDefault?: mixed,
 }
 
@@ -402,14 +406,80 @@ const getVerticalKeyboardNavigationTarget = (
   return null
 }
 
+const getRowEdgeKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  slotIndex: number,
+  direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
+): ?Date => {
+  let columnIndex = direction === 1 ? 0 : dateColumns.length - 1
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    const targetTime = getDateSlotTime(getDateColumnSlots(dateColumns[columnIndex])[slotIndex])
+    if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
+    columnIndex += direction
+  }
+  return null
+}
+
+const getGridEdgeKeyboardNavigationTarget = (
+  dateColumns: Array<DateColumnType>,
+  direction: -1 | 1,
+  blockedMinuteKeys: Set<number>,
+): ?Date => {
+  let columnIndex = direction === 1 ? 0 : dateColumns.length - 1
+  while (columnIndex >= 0 && columnIndex < dateColumns.length) {
+    const slots = getDateColumnSlots(dateColumns[columnIndex])
+    let slotIndex = direction === 1 ? 0 : slots.length - 1
+    while (slotIndex >= 0 && slotIndex < slots.length) {
+      const targetTime = getDateSlotTime(slots[slotIndex])
+      if (targetTime && !hasDateMinuteKey(blockedMinuteKeys, targetTime)) return targetTime
+      slotIndex += direction
+    }
+    columnIndex += direction
+  }
+  return null
+}
+
+const hasRenderedMinuteKey = (dateColumns: Array<DateColumnType>, targetMinuteKey: number): boolean => {
+  for (let columnIndex = 0; columnIndex < dateColumns.length; columnIndex += 1) {
+    const slots = getDateColumnSlots(dateColumns[columnIndex])
+    for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+      const slotTime = getDateSlotTime(slots[slotIndex])
+      if (slotTime && dateMinuteKey(slotTime) === targetMinuteKey) return true
+    }
+  }
+  return false
+}
+
+const getRovingFocusMinuteKey = (props: PropsType, currentMinuteKey: ?number): ?number => {
+  const dateColumns = buildDateColumns(props)
+  const blockedMinuteKeys = getDateMinuteKeySet(props.blocked)
+  if (
+    currentMinuteKey != null &&
+    !blockedMinuteKeys.has(currentMinuteKey) &&
+    hasRenderedMinuteKey(dateColumns, currentMinuteKey)
+  )
+    return currentMinuteKey
+  const firstAvailableTime = getGridEdgeKeyboardNavigationTarget(dateColumns, 1, blockedMinuteKeys)
+  return firstAvailableTime ? dateMinuteKey(firstAvailableTime) : null
+}
+
 export const getKeyboardNavigationTarget = (
   dateColumns: Array<DateColumnType>,
   time: Date,
   key: string,
   blockedMinuteKeys: Set<number> = new SetConstructor(),
+  controlKey: boolean = false,
 ): ?Date => {
   const position = findDateSlotPosition(dateColumns, time)
   if (!position) return null
+
+  if (key === 'Home' || key === 'End') {
+    const direction = key === 'Home' ? 1 : -1
+    return controlKey
+      ? getGridEdgeKeyboardNavigationTarget(dateColumns, direction, blockedMinuteKeys)
+      : getRowEdgeKeyboardNavigationTarget(dateColumns, position.slotIndex, direction, blockedMinuteKeys)
+  }
 
   if (key === 'ArrowRight' || key === 'ArrowLeft') {
     return getHorizontalKeyboardNavigationTarget(
@@ -440,7 +510,28 @@ export const getKeyboardNavigationTarget = (
 }
 
 const isKeyboardNavigationKey = (key: string): boolean =>
-  key === 'ArrowRight' || key === 'ArrowLeft' || key === 'ArrowDown' || key === 'ArrowUp'
+  key === 'ArrowRight' ||
+  key === 'ArrowLeft' ||
+  key === 'ArrowDown' ||
+  key === 'ArrowUp' ||
+  key === 'Home' ||
+  key === 'End'
+
+const hasKeyboardControlModifier = (event: ?KeyboardSelectionEventType): boolean => {
+  try {
+    return Boolean(event && event.ctrlKey === true)
+  } catch {
+    return false
+  }
+}
+
+const hasUnsupportedKeyboardModifier = (event: ?KeyboardSelectionEventType): boolean => {
+  try {
+    return Boolean(event && (event.altKey === true || event.metaKey === true || event.shiftKey === true))
+  } catch {
+    return true
+  }
+}
 
 const isKeyboardSelectionKey = (key: string): boolean => key === 'Enter' || key === ' ' || key === 'Spacebar'
 
@@ -718,6 +809,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   lastTouchEventTime: ?number
   blockedMinuteKeys: Set<number>
   selectedMinuteKeys: Set<number>
+  documentMouseUpTarget: ?BrowserDocumentType
+  documentMouseUpTargets: Set<BrowserDocumentType>
+  componentMounted: boolean
+  focusedMinuteKey: ?number
 
   static defaultProps = {
     selection: [],
@@ -743,6 +838,10 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.dateToCell = new MapConstructor()
     this.touchScrollCells = new SetConstructor()
     this.lastTouchEventTime = null
+    this.documentMouseUpTarget = null
+    this.documentMouseUpTargets = new SetConstructor()
+    this.componentMounted = false
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, null)
 
     const selectionDraft = normalizeSelectionDraft(this.props.selection)
     const selectionPropSignature = getDateMinuteSetSignature(this.props.selection)
@@ -821,29 +920,20 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     //
     // This isn't necessary for touch events since the `touchend` event fires on
     // the element where the touch/drag started so it's always caught.
-    const browserDocument = this.getDocument()
-    if (browserDocument && typeof browserDocument.addEventListener === 'function') {
-      try {
-        browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
-      } catch {
-        // Continue mounting in non-standard hosts that cannot register document listeners.
-      }
-    }
+    this.componentMounted = true
+    this.syncDocumentMouseUpListener()
   }
 
   componentDidUpdate() {
+    this.syncDocumentMouseUpListener()
     this.refreshInstanceLookups(this.props, this.state.selectionDraft)
   }
 
   componentWillUnmount() {
-    const browserDocument = this.getDocument()
-    if (browserDocument && typeof browserDocument.removeEventListener === 'function') {
-      try {
-        browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
-      } catch {
-        // Continue instance cleanup even if the document listener cannot be removed.
-      }
-    }
+    this.componentMounted = false
+    arrayFrom.call(ArrayConstructor, this.documentMouseUpTargets).forEach((browserDocument) => {
+      this.removeDocumentMouseUpListenerFrom(browserDocument)
+    })
     this.cellToDate.forEach((value, dateCell) => {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
@@ -856,6 +946,40 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     this.cellToDate.clear()
     this.dateToCell.clear()
     this.touchScrollCells.clear()
+  }
+
+  removeDocumentMouseUpListener() {
+    this.removeDocumentMouseUpListenerFrom(this.documentMouseUpTarget)
+  }
+
+  removeDocumentMouseUpListenerFrom(browserDocument: ?BrowserDocumentType) {
+    if (browserDocument === this.documentMouseUpTarget) this.documentMouseUpTarget = null
+    if (!browserDocument || typeof browserDocument.removeEventListener !== 'function') return
+    try {
+      browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      this.documentMouseUpTargets.delete(browserDocument)
+    } catch {
+      // Retain failed removals so unmount can retry every document that may still own the handler.
+    }
+  }
+
+  syncDocumentMouseUpListener() {
+    const browserDocument = this.getDocument()
+    if (browserDocument === this.documentMouseUpTarget) return
+
+    this.removeDocumentMouseUpListener()
+    if (!browserDocument || typeof browserDocument.addEventListener !== 'function') return
+    if (this.documentMouseUpTargets.has(browserDocument)) {
+      this.documentMouseUpTarget = browserDocument
+      return
+    }
+    try {
+      browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent)
+      this.documentMouseUpTarget = browserDocument
+      this.documentMouseUpTargets.add(browserDocument)
+    } catch {
+      // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
+    }
   }
 
   refreshInstanceLookups(props: PropsType, selectionDraft: Array<Date>) {
@@ -964,6 +1088,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
   }
 
   handleDocumentMouseUpEvent(event: ?MouseEvent) {
+    if (!this.componentMounted) return
     if (this.state.selectionType === null) return
     if (this.shouldIgnoreMouseEvent()) return
     if (!isPrimaryMouseButton(event)) return
@@ -1125,10 +1250,30 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     if (!dateCell || typeof dateCell.focus !== 'function') return false
     try {
       dateCell.focus()
+      this.setRovingFocusMinuteKey(dateMinuteKey(time))
       return true
     } catch {
       return false
     }
+  }
+
+  setRovingFocusMinuteKey(focusedMinuteKey: number) {
+    if (focusedMinuteKey === this.focusedMinuteKey) return
+    this.focusedMinuteKey = focusedMinuteKey
+    this.dateToCell.forEach((dateCell, registeredTime) => {
+      if (!dateCell) return
+      try {
+        dateCell.tabIndex = mathFloor(registeredTime / 60000) === focusedMinuteKey ? 0 : -1
+      } catch {
+        // Ignore stale or non-standard focus targets while preserving the active tab stop.
+      }
+    })
+  }
+
+  handleCellFocusEvent(time: mixed) {
+    const validTime = getValidDate(time)
+    if (!validTime || this.isBlocked(validTime)) return
+    this.setRovingFocusMinuteKey(dateMinuteKey(validTime))
   }
 
   handleCellKeyDownEvent(event: ?KeyboardSelectionEventType, time: mixed, blocked: boolean = false) {
@@ -1137,12 +1282,18 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
     if (isKeyboardNavigationKey(key)) {
       if (!validTime) return
+      if ((key === 'Home' || key === 'End') && hasUnsupportedKeyboardModifier(event)) return
       const navigationTarget = getKeyboardNavigationTarget(
         buildDateColumns(this.props),
         validTime,
         key,
         this.blockedMinuteKeys,
+        hasKeyboardControlModifier(event),
       )
+      if (key === 'Home' || key === 'End') {
+        if (navigationTarget && this.focusDateCell(navigationTarget)) preventDefault(event)
+        return
+      }
       preventDefault(event)
       if (navigationTarget) this.focusDateCell(navigationTarget)
       return
@@ -1295,6 +1446,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         disabled={blocked}
         aria-label={formatCellLabel(time, selected, blocked)}
         aria-pressed={selected}
+        tabIndex={!blocked && dateMinuteKey(time) === this.focusedMinuteKey ? 0 : -1}
         $height="40px"
         $blocked={blocked}
         $interactive
@@ -1306,6 +1458,9 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
         onMouseDown={mouseStartHandler}
         onMouseEnter={mouseEnterHandler}
         onMouseUp={mouseUpHandler}
+        onFocus={() => {
+          this.handleCellFocusEvent(time)
+        }}
         // Touch handlers
         // Since touch events fire on the event where the touch-drag started, there's no point in passing
         // in the time parameter, instead these handlers will do their job using the default SyntheticEvent
@@ -1344,6 +1499,7 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
     const dateColumns = buildDateColumns(this.props)
     const blockedMinuteKeys = getDateMinuteKeySet(this.props.blocked)
     const selectedMinuteKeys = getDateMinuteKeySet(this.state.selectionDraft)
+    this.focusedMinuteKey = getRovingFocusMinuteKey(this.props, this.focusedMinuteKey)
     const gridAriaDescribedBy = getNonEmptyString(this.props['aria-describedby'])
     const gridAriaLabelledBy = getNonEmptyString(this.props['aria-labelledby'])
     const gridAriaLabel =

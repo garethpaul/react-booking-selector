@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import path from 'path'
 
@@ -6,19 +6,26 @@ import {
   assertPackageContents,
   assertPackageManifestFiles,
   assertNoExecutablePackageFiles,
+  assertPackageSizeLimits,
   expectedPackageFiles,
   expectedPackageManifestFiles,
   getDuplicateValues,
+  MAX_PACKED_SIZE_BYTES,
+  MAX_PACKAGE_FILE_SIZE_BYTES,
+  MAX_UNPACKED_SIZE_BYTES,
   parsePackOutput,
   removePackArtifacts,
 } from '../../scripts/check-package-contents'
 
-const createPackJson = (files = expectedPackageFiles) =>
+const createPackJson = (files = expectedPackageFiles, packageOverrides = {}) =>
   JSON.stringify(
     [
       {
         filename: 'react-booking-selector-1.0.2.tgz',
-        files: files.map((filePath) => ({ path: filePath })),
+        size: 31_226,
+        unpackedSize: 142_514,
+        files: files.map((filePath) => ({ path: filePath, size: 1 })),
+        ...packageOverrides,
       },
     ],
     null,
@@ -39,13 +46,19 @@ describe('check-package-contents script', () => {
 
     expect(parsed.filename).toBe('react-booking-selector-1.0.2.tgz')
     expect(parsed.files).toEqual([...expectedPackageFiles].sort())
+    expect(parsed.packageSize).toBe(31_226)
+    expect(parsed.unpackedSize).toBe(142_514)
+    expect(parsed.fileSizes.map(({ path: filePath }) => filePath).sort()).toEqual(parsed.files)
+    expect(parsed.fileSizes.every(({ size }) => size === 1)).toBe(true)
   })
 
   it('normalizes package paths without requiring an npm tarball filename', () => {
     const parsed = parsePackOutput(
       JSON.stringify([
         {
-          files: [{ path: 'dist\\lib\\index.js' }],
+          size: 1,
+          unpackedSize: 1,
+          files: [{ path: 'dist\\lib\\index.js', size: 1 }],
         },
       ]),
     )
@@ -59,9 +72,11 @@ describe('check-package-contents script', () => {
     const parsed = parsePackOutput(
       JSON.stringify([
         {
+          size: 2,
+          unpackedSize: 2,
           files: [
-            { path: 'README.md', mode: 0o644 },
-            { path: 'dist/lib/index.js', mode: 0o755 },
+            { path: 'README.md', size: 1, mode: 0o644 },
+            { path: 'dist/lib/index.js', size: 1, mode: 0o755 },
           ],
         },
       ]),
@@ -93,8 +108,56 @@ describe('check-package-contents script', () => {
 
   it('reports npm dry-run file entries without paths', () => {
     expect(() => {
-      parsePackOutput(JSON.stringify([{ files: [{}] }]))
+      parsePackOutput(JSON.stringify([{ size: 1, unpackedSize: 1, files: [{}] }]))
     }).toThrow(/file entry without a path/)
+  })
+
+  it.each([
+    ['missing packed package', { size: undefined }, /Packed package size must be a non-negative safe integer/],
+    ['packed package', { size: -1 }, /Packed package size must be a non-negative safe integer/],
+    ['unpacked package', { unpackedSize: 1.5 }, /Unpacked package size must be a non-negative safe integer/],
+    [
+      'missing package file',
+      { files: [{ path: 'README.md' }] },
+      /Package file size for README\.md must be a non-negative safe integer/,
+    ],
+    [
+      'package file',
+      { files: [{ path: 'README.md', size: '1' }] },
+      /Package file size for README\.md must be a non-negative safe integer/,
+    ],
+  ])('rejects malformed %s size metadata', (_label, packageOverrides, expectedError) => {
+    expect(() => {
+      parsePackOutput(createPackJson(['README.md'], packageOverrides))
+    }).toThrow(expectedError)
+  })
+
+  it('accepts package sizes at the reviewed limits', () => {
+    expect(() => {
+      assertPackageSizeLimits({
+        packageSize: MAX_PACKED_SIZE_BYTES,
+        unpackedSize: MAX_UNPACKED_SIZE_BYTES,
+        fileSizes: [{ path: 'dist/lib/BookingSelector.js', size: MAX_PACKAGE_FILE_SIZE_BYTES }],
+      })
+    }).not.toThrow()
+  })
+
+  it('enforces package size limits in the real pack check', () => {
+    const checkerSource = readFileSync('scripts/check-package-contents.js', 'utf8')
+
+    expect(checkerSource).toContain('assertPackageSizeLimits(packOutput)')
+  })
+
+  it('reports packed, unpacked, and per-file size limit violations', () => {
+    expect(() => {
+      assertPackageSizeLimits({
+        packageSize: MAX_PACKED_SIZE_BYTES + 1,
+        unpackedSize: MAX_UNPACKED_SIZE_BYTES + 1,
+        fileSizes: [{ path: 'dist/lib/BookingSelector.js', size: MAX_PACKAGE_FILE_SIZE_BYTES + 1 }],
+      })
+    }).toThrow(
+      /Packed package size 65537 exceeds 65536 bytes[\s\S]*Unpacked package size 262145 exceeds 262144 bytes[\s\S]*Oversized package files:[\s\S]*dist\/lib\/BookingSelector\.js: 65537/,
+    )
   })
 
   it('accepts the expected package file list', () => {
