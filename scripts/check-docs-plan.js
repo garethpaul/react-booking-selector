@@ -323,6 +323,9 @@ if (planPaths.includes(yarnPackageManagerPlanPath)) {
     if (!packageJson.scripts?.verify?.includes('yarn npm audit --all --recursive --severity high')) {
       errors.push(`${packageJsonPath} verify must run the Yarn 4 recursive high-severity audit`)
     }
+    if (packageJson.resolutions?.['js-yaml'] !== '4.2.0') {
+      errors.push(`${packageJsonPath} must pin patched js-yaml 4.2.0 across legacy coverage tooling`)
+    }
     if (packageJson.engines?.node !== '>=16.0') {
       errors.push(`${packageJsonPath} must preserve the published Node >=16.0 runtime floor`)
     }
