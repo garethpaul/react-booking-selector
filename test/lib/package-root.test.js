@@ -21,6 +21,10 @@ it('marks the published package as side-effect free', () => {
   expect(packageJson.sideEffects).toBe(false)
 })
 
+it('pins the patched YAML parser across legacy coverage tooling', () => {
+  expect(packageJson.resolutions['js-yaml']).toBe('4.2.0')
+})
+
 it('keeps documentation deployment explicit and separate from publishing', () => {
   expect(packageJson.scripts.prepublish).toBeUndefined()
   expect(packageJson.scripts.publish).toBeUndefined()

@@ -126,6 +126,7 @@ const writeYarnPackageManagerBoundary = (projectPath, overrides = {}) => {
   const packageJson = {
     packageManager: 'yarn@4.17.0',
     engines: { node: '>=16.0' },
+    resolutions: { 'js-yaml': '4.2.0' },
     scripts: { verify: 'yarn npm audit --all --recursive --severity high' },
     ...overrides,
   }
@@ -237,6 +238,7 @@ describe('check-docs-plan script', () => {
     writeYarnPackageManagerBoundary(projectPath, {
       packageManager: 'yarn@1.22.22',
       engines: { node: '>=20.0' },
+      resolutions: { 'js-yaml': '3.14.2' },
       scripts: { verify: 'yarn audit' },
     })
     writeFileSync(path.join(projectPath, '.yarnrc.yml'), 'nodeLinker: pnp\n')
@@ -257,6 +259,7 @@ describe('check-docs-plan script', () => {
     expect(stderr).toContain(`${ciWorkflowPath} must include docker run --rm --network none`)
     expect(stderr).toContain(`${packageJsonPath} must pin packageManager to yarn@4.17.0`)
     expect(stderr).toContain(`${packageJsonPath} verify must run the Yarn 4 recursive high-severity audit`)
+    expect(stderr).toContain(`${packageJsonPath} must pin patched js-yaml 4.2.0 across legacy coverage tooling`)
     expect(stderr).toContain(`${packageJsonPath} must preserve the published Node >=16.0 runtime floor`)
     expect(stderr).toContain(`${yarnConfigPath} must preserve the node-modules linker`)
     expect(stderr).toContain(`${yarnPackageManagerPlanPath} must preserve completed evidence: Node 20`)

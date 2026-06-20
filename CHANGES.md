@@ -1,5 +1,12 @@
 # Changes
 
+## 2026-06-20
+
+- Pinned `js-yaml` to 4.2.0 across legacy coverage tooling, removing the
+  transitive GHSA-h67p-54hq-rp68 finding that Dependabot could not update.
+- Added package and documentation-contract coverage for the patched parser
+  resolution.
+
 ## 2026-06-19
 
 - Retained document mouseup targets whose listener cleanup fails, retried every

@@ -38,6 +38,8 @@ Helpful reports include:
   roving tab stop with focus as blocked and rendered boundaries change.
 - Dependency manifests detected: package.json, yarn.lock. Dependency updates should preserve lockfiles when present and avoid introducing packages without a clear maintenance reason.
 - Hosted verification uses immutable Yarn 4 installs with lifecycle scripts disabled, read-only repository permissions, disabled checkout credential persistence, pinned actions, a recursive dependency audit, and generated-package drift rejection.
+- The dependency graph pins `js-yaml 4.2.0` across legacy coverage tooling so
+  GHSA-h67p-54hq-rp68 cannot remain hidden behind a transitive 3.x range.
 - The advertised Node 16 runtime floor separately loads both package entry modes
   from a tarball built on Node 20 in a digest-pinned, network-disabled container
   without invoking Yarn 4 or package lifecycle scripts there.
