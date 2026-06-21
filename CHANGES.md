@@ -5,6 +5,8 @@
 - Hardened all five pre-existing Make gates against caller-controlled root and
   shell authority, preloaded Makefiles, ambiguous Makefile lists, and
   shell-sensitive checkout paths without changing package behavior or artifacts.
+- Rejected later target-replacing Makefiles and non-executing/error-ignoring
+  Make modes, and documented the trusted `PATH` and GNU Make preload boundary.
 
 ## 2026-06-20
 

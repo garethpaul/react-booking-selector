@@ -316,6 +316,9 @@ corepack yarn docs:smoke
 
 `make lint`, `make test`, `make build`, and `make check` are repository-standard wrappers around the matching
 `corepack yarn` gates.
+They reject additional Makefiles and non-executing/error-ignoring Make modes;
+trusted automation must still provide the intended Node/Corepack toolchain on
+`PATH` and must not supply caller-controlled Makefiles.
 `corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
 TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
 `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
