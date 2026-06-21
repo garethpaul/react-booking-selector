@@ -288,16 +288,22 @@ for (const [readmePlanReference, referenceCount] of readmePlanReferenceCounts) {
 }
 
 const makeContracts = [
+  'override SHELL := /bin/sh',
+  'override .SHELLFLAGS := -c',
+  'ifneq ($(strip $(MAKEFILES)),)\n$(error MAKEFILES must be empty; repository verification requires this Makefile to be loaded alone)',
   'ifneq ($(origin MAKEFILE_LIST),file)\n$(error MAKEFILE_LIST must not be overridden)',
   'override REPO_ROOT := $(shell path=',
-  '/bin/sed',
+  '/usr/bin/sed',
+  '[ -f "$$path" ] || exit 1',
   '/usr/bin/dirname',
   '/bin/pwd -P',
-  'lint:\n\tcd "$(REPO_ROOT)" && corepack yarn lint',
-  'test:\n\tcd "$(REPO_ROOT)" && corepack yarn test',
-  'build:\n\tcd "$(REPO_ROOT)" && corepack yarn build',
-  'root-test:\n\tcd "$(REPO_ROOT)" && scripts/test-makefile-root.sh',
-  'verify: root-test\n\tcd "$(REPO_ROOT)" && corepack yarn verify',
+  'export REPO_ROOT',
+  'ifeq ($(strip $(REPO_ROOT)),)\n$(error repository Makefile path could not be resolved)',
+  'lint:\n\tcd "$$REPO_ROOT" && corepack yarn lint',
+  'test:\n\tcd "$$REPO_ROOT" && corepack yarn test',
+  'build:\n\tcd "$$REPO_ROOT" && corepack yarn build',
+  'root-test:\n\tcd "$$REPO_ROOT" && scripts/test-makefile-root.sh',
+  'verify: root-test\n\tcd "$$REPO_ROOT" && corepack yarn verify',
 ]
 if (!makefile.includes('corepack yarn verify')) {
   errors.push('Makefile must expose corepack yarn verify')
