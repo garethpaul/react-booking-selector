@@ -288,11 +288,29 @@ for (const [readmePlanReference, referenceCount] of readmePlanReferenceCounts) {
 }
 
 const makeContracts = [
-  'override REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))',
-  'lint:\n\tcd "$(REPO_ROOT)" && corepack yarn lint',
-  'test:\n\tcd "$(REPO_ROOT)" && corepack yarn test',
-  'build:\n\tcd "$(REPO_ROOT)" && corepack yarn build',
-  'verify:\n\tcd "$(REPO_ROOT)" && corepack yarn verify',
+  'override SHELL := /bin/sh',
+  'override .SHELLFLAGS := -c',
+  '$(error MAKEFLAGS must not be overridden for repository verification)',
+  'override REPOSITORY_MAKE_SHORT_FLAGS :=',
+  '$(error non-executing or error-ignoring MAKEFLAGS are not supported for repository verification)',
+  'ifneq ($(strip $(MAKEFILES)),)\n$(error MAKEFILES must be empty; repository verification requires this Makefile to be loaded alone)',
+  'ifneq ($(origin MAKEFILE_LIST),file)\n$(error MAKEFILE_LIST must not be overridden)',
+  'override REPOSITORY_MAKEFILE := $(value MAKEFILE_LIST)',
+  'override REPO_ROOT := $(shell path=',
+  '/usr/bin/sed',
+  '[ -f "$$path" ] || exit 1',
+  '/usr/bin/dirname',
+  '/bin/pwd -P',
+  'export REPO_ROOT',
+  'ifeq ($(strip $(REPO_ROOT)),)\n$(error repository Makefile path could not be resolved)',
+  'build check lint root-test test verify: __repository-make-authority',
+  '__repository-make-authority::',
+  'additional Makefiles are not supported for repository verification',
+  'lint:\n\tcd "$$REPO_ROOT" && corepack yarn lint',
+  'test:\n\tcd "$$REPO_ROOT" && corepack yarn test',
+  'build:\n\tcd "$$REPO_ROOT" && corepack yarn build',
+  'root-test:\n\tcd "$$REPO_ROOT" && scripts/test-makefile-root.sh',
+  'verify: root-test\n\tcd "$$REPO_ROOT" && corepack yarn verify',
 ]
 if (!makefile.includes('corepack yarn verify')) {
   errors.push('Makefile must expose corepack yarn verify')

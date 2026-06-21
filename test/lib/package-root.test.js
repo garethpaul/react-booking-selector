@@ -44,12 +44,38 @@ it('exposes repository Makefile gate wrappers', () => {
   expect(packageJson.scripts.verify).toContain('yarn package:runtime')
   expect(packageJson.scripts.verify).toContain('yarn npm audit --all --recursive --severity high')
   expect(makefile).toMatch(/^\.DEFAULT_GOAL := check$/m)
-  expect(makefile).toMatch(/^override REPO_ROOT := \$\(abspath \$\(dir \$\(lastword \$\(MAKEFILE_LIST\)\)\)\)$/m)
+  expect(makefile).toMatch(/^override SHELL := \/bin\/sh$/m)
+  expect(makefile).toMatch(/^override \.SHELLFLAGS := -c$/m)
+  expect(makefile).toContain('$(error MAKEFLAGS must not be overridden for repository verification)')
+  expect(makefile).toContain('override REPOSITORY_MAKE_SHORT_FLAGS :=')
+  expect(makefile).toContain(
+    '$(error non-executing or error-ignoring MAKEFLAGS are not supported for repository verification)',
+  )
+  expect(makefile).toMatch(
+    /^ifneq \(\$\(strip \$\(MAKEFILES\)\),\)\n\$\(error MAKEFILES must be empty; repository verification requires this Makefile to be loaded alone\)$/m,
+  )
+  expect(makefile).toMatch(
+    /^ifneq \(\$\(origin MAKEFILE_LIST\),file\)\n\$\(error MAKEFILE_LIST must not be overridden\)$/m,
+  )
+  expect(makefile).toMatch(/^override REPOSITORY_MAKEFILE := \$\(value MAKEFILE_LIST\)$/m)
+  expect(makefile).toMatch(/^override REPO_ROOT := \$\(shell path=/m)
+  expect(makefile).toContain('/usr/bin/sed')
+  expect(makefile).toContain('[ -f "$$path" ] || exit 1')
+  expect(makefile).toContain('/usr/bin/dirname')
+  expect(makefile).toContain('/bin/pwd -P')
+  expect(makefile).toMatch(/^export REPO_ROOT$/m)
+  expect(makefile).toMatch(
+    /^ifeq \(\$\(strip \$\(REPO_ROOT\)\),\)\n\$\(error repository Makefile path could not be resolved\)$/m,
+  )
+  expect(makefile).toMatch(/^build check lint root-test test verify: __repository-make-authority$/m)
+  expect(makefile).toMatch(/^__repository-make-authority::$/m)
+  expect(makefile).toContain('additional Makefiles are not supported for repository verification')
   expect(makefile).toMatch(/^check: verify$/m)
-  expect(makefile).toMatch(/^lint:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn lint$/m)
-  expect(makefile).toMatch(/^test:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn test$/m)
-  expect(makefile).toMatch(/^build:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn build$/m)
-  expect(makefile).toMatch(/^verify:\n\tcd "\$\(REPO_ROOT\)" && corepack yarn verify$/m)
+  expect(makefile).toMatch(/^lint:\n\tcd "\$\$REPO_ROOT" && corepack yarn lint$/m)
+  expect(makefile).toMatch(/^test:\n\tcd "\$\$REPO_ROOT" && corepack yarn test$/m)
+  expect(makefile).toMatch(/^build:\n\tcd "\$\$REPO_ROOT" && corepack yarn build$/m)
+  expect(makefile).toMatch(/^root-test:\n\tcd "\$\$REPO_ROOT" && scripts\/test-makefile-root\.sh$/m)
+  expect(makefile).toMatch(/^verify: root-test\n\tcd "\$\$REPO_ROOT" && corepack yarn verify$/m)
 })
 
 it('uses the node-modules linker for repository tooling', () => {
