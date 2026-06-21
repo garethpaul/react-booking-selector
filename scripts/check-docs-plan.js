@@ -288,11 +288,16 @@ for (const [readmePlanReference, referenceCount] of readmePlanReferenceCounts) {
 }
 
 const makeContracts = [
-  'override REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))',
+  'ifneq ($(origin MAKEFILE_LIST),file)\n$(error MAKEFILE_LIST must not be overridden)',
+  'override REPO_ROOT := $(shell path=',
+  '/bin/sed',
+  '/usr/bin/dirname',
+  '/bin/pwd -P',
   'lint:\n\tcd "$(REPO_ROOT)" && corepack yarn lint',
   'test:\n\tcd "$(REPO_ROOT)" && corepack yarn test',
   'build:\n\tcd "$(REPO_ROOT)" && corepack yarn build',
-  'verify:\n\tcd "$(REPO_ROOT)" && corepack yarn verify',
+  'root-test:\n\tcd "$(REPO_ROOT)" && scripts/test-makefile-root.sh',
+  'verify: root-test\n\tcd "$(REPO_ROOT)" && corepack yarn verify',
 ]
 if (!makefile.includes('corepack yarn verify')) {
   errors.push('Makefile must expose corepack yarn verify')

@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-21
+
+- Hardened all five pre-existing Make gates against `MAKEFILE_LIST` and
+  `REPO_ROOT` redirection without changing package behavior or artifacts.
+
 ## 2026-06-20
 
 - Pinned `js-yaml` to 4.2.0 across legacy coverage tooling, removing the

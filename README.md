@@ -346,6 +346,8 @@ See `docs/plans/2026-06-15-explicit-docs-deployment.md` for package publication 
 See `docs/plans/2026-06-16-document-mouseup-listener-migration.md` for owner-document listener migration and retained-target cleanup.
 See `docs/plans/2026-06-19-listener-and-roving-focus-review.md` for failed-cleanup ownership and roving-focus review coverage.
 See `docs/plans/2026-06-20-js-yaml-security-resolution.md` for the patched transitive YAML parser boundary.
+
+See `docs/plans/2026-06-21-safe-make-root.md` for fail-closed Make root resolution and regression coverage.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.
