@@ -86,6 +86,7 @@ if (planPaths.includes(registrySourceBoundaryPlanPath)) {
   for (const fragment of [
     '### Registry Source Boundary',
     'npm `latest` still resolves to `1.0.2`, published on April 12, 2020',
+    'styled-components `>=2.0 || >=3.0` (effectively `>=2.0`)',
     'The registry package is not the current default-branch source.',
     'Use the install command below only when you intentionally need the historical registry package.',
     'A future current-source release needs a new version and a reviewed publish.',

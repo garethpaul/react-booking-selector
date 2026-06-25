@@ -26,6 +26,10 @@
   analysis. The first full rerun found only Prettier layout in the checker;
   formatting was corrected and the complete rerun passed.
 - A full build left checked-in `dist` unchanged, and `git diff --check` passed.
+- Exact-head Codex review found the shorthand `styled-components 2/3`
+  incorrectly implied an upper bound; the registry's published
+  `>=2.0 || >=3.0` range is now documented as effectively `>=2.0` and enforced
+  by the docs contract.
 
 ## 2026-06-21
 

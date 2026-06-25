@@ -62,3 +62,6 @@ peer dependency ranges.
 - `node scripts/check-docs-plan.js` and `git diff --check` passed locally. This
   host has Node 18 and no Corepack, so complete package verification remains a
   hosted Node 20/24 responsibility.
+- Exact-head Codex review found that shorthand `styled-components 2/3` implied
+  an upper bound absent from the published `>=2.0 || >=3.0` range. README and
+  the checker now state its effective `>=2.0` meaning precisely.

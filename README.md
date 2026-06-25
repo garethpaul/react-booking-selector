@@ -9,7 +9,8 @@
 ### Registry Source Boundary
 
 npm `latest` still resolves to `1.0.2`, published on April 12, 2020. That
-historical registry artifact declares React 15/16, styled-components 2/3, and
+historical registry artifact declares React `>=15.5 && <=16.0`,
+styled-components `>=2.0 || >=3.0` (effectively `>=2.0`), and
 Node greater than 8; it does not contain the current package exports,
 TypeScript declarations, keyboard behavior, or verification stack. The
 registry package is not the current default-branch source.
