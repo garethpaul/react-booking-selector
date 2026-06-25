@@ -6,5 +6,6 @@ yarn-error.log
 dev
 coverage
 .vscode/
+.explore/
 .yarn/
 .node16-package/

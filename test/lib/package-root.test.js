@@ -1,5 +1,5 @@
 import { execFileSync } from 'child_process'
-import { existsSync, readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 
 import BookingSelector, { BookingSelector as NamedBookingSelector } from 'react-booking-selector'
 import packageJson from 'react-booking-selector/package.json'
@@ -82,16 +82,28 @@ it('uses the node-modules linker for repository tooling', () => {
   expect(readFileSync('.yarnrc.yml', 'utf8')).toBe('nodeLinker: node-modules\n')
 })
 
-it('keeps local editor metadata out of verification inputs', () => {
-  const gitignore = readFileSync('.gitignore', 'utf8')
-  const trackedEditorFiles = execFileSync('git', ['ls-files', '.vscode'], {
+it('keeps local repository metadata out of verification inputs', () => {
+  const activeGitignorePatterns = new Set(
+    readFileSync('.gitignore', 'utf8')
+      .split(/\r?\n/u)
+      .filter((line) => line && !line.startsWith('#')),
+  )
+  const trackedMetadataFiles = execFileSync('/usr/bin/git', ['ls-files', '--', '.vscode', '.explore'], {
     encoding: 'utf8',
   })
     .split('\n')
-    .filter((filePath) => filePath && existsSync(filePath))
+    .filter(Boolean)
 
-  expect(gitignore).toContain('.vscode/')
-  expect(trackedEditorFiles).toEqual([])
+  expect(activeGitignorePatterns).toContain('.vscode/')
+  expect(activeGitignorePatterns).toContain('.explore/')
+  for (const metadataPath of ['.vscode/', '.explore/', '.explore/REPO_MAP.md']) {
+    expect(() =>
+      execFileSync('/usr/bin/git', ['check-ignore', '--quiet', metadataPath], {
+        stdio: 'ignore',
+      }),
+    ).not.toThrow()
+  }
+  expect(trackedMetadataFiles).toEqual([])
   expect(packageJson.scripts.format).not.toContain('.vscode')
   expect(packageJson.scripts['format:check']).not.toContain('.vscode')
 })

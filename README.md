@@ -350,6 +350,10 @@ request, or manual dispatch.
 Package publication and documentation deployment are separate maintainer
 actions: publishing never runs a deploy lifecycle hook, and documentation is
 deployed only through an explicit `corepack yarn docs:deploy` invocation.
+Repository-local `.vscode/` editor state and `.explore/` maintainer intelligence
+are ignored, effectively excluded by Git, and forbidden from the tracked source
+set. Durable decisions belong in reviewed plans, changes, policies, tests, or
+source rather than local metadata.
 
 See `docs/plans/2026-06-08-react-booking-selector-baseline.md` for the current package verification baseline.
 See `docs/plans/2026-06-08-docs-plan-inventory-check.md` for the docs-plan inventory baseline.
@@ -366,6 +370,7 @@ See `docs/plans/2026-06-20-js-yaml-security-resolution.md` for the patched trans
 
 See `docs/plans/2026-06-21-safe-make-root.md` for fail-closed Make root resolution and regression coverage.
 See `docs/plans/2026-06-25-registry-source-boundary.md` for the npm registry and current-source distinction.
+See `docs/plans/2026-06-25-local-repository-metadata-ignore.md` for effective local metadata ignore and index coverage.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.

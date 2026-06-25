@@ -57,6 +57,8 @@
 ## Safety and gotchas
 
 - `dist/` contains generated or packaged output; prefer changing source and rebuilding.
+- `.explore/` contains local maintainer intelligence; keep it ignored and move
+  durable decisions into tracked plans, changes, policies, tests, or source.
 - Deployment or publish scripts exist; do not run them unless explicitly asked.
 - npm `latest` is the historical 2020 `1.0.2` artifact, not the current
   default-branch source; do not describe it as the current package release.
