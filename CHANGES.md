@@ -46,7 +46,11 @@ tracked source while strengthening the existing `.vscode/` boundary.
   analysis under Node 20.19.5/Corepack 0.33.0/Yarn 4.17.0.
 - `make build` reproduced the checked-in library and documentation output with
   no `dist` drift; `git diff --check` passed.
-- Hosted and exact-head review validation is pending.
+- Exact-head Codex review — clean on
+  `edaa70e1496886a8ee278d270385605705738272` with no actionable findings.
+- Both push and pull-request Node 16 artifact jobs passed, and both Node 20/24
+  full verification matrices passed with clean regenerated `dist` output.
+- CodeQL Actions and JavaScript/TypeScript analysis passed.
 
 ### Bugs / findings
 
@@ -62,8 +66,8 @@ tracked source while strengthening the existing `.vscode/` boundary.
 
 ### Next action
 
-- Complete focused and full gates, exact-head review, and hosted Node/CodeQL
-  checks; merge only when all evidence is clean.
+- Rerun exact-head review and hosted checks for this evidence-only update, then
+  merge if they remain clean.
 
 ## 2026-06-25 12:28 PDT - P2 - Clarify npm registry source boundary
 

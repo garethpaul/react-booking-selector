@@ -55,3 +55,5 @@ the index.
   Jest tests with full covered-source thresholds, hostile review mutations,
   audit, package contents/runtime checks, publint, and type-package analysis.
 - `make build` left checked-in `dist` unchanged, and `git diff --check` passed.
+- Exact-head Codex review was clean. Push and pull-request Node 16/20/24 jobs,
+  clean distribution checks, and CodeQL Actions/JavaScript analysis passed.
