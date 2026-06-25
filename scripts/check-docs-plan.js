@@ -25,6 +25,7 @@ const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
 const normalizedReadme = readme.replace(/\s+/gu, ' ')
+const packageName = fs.existsSync(packageJsonPath) ? JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name : null
 
 const errors = []
 const planFilenamePattern = /^(\d{4})-(\d{2})-(\d{2})-[-\w.]+\.md$/u
@@ -82,7 +83,10 @@ if (!planPaths.includes(ciPlanPath)) {
   errors.push(`${ciPlanPath} is missing`)
 }
 
-if (planPaths.includes(registrySourceBoundaryPlanPath)) {
+if (packageName === 'react-booking-selector') {
+  if (!planPaths.includes(registrySourceBoundaryPlanPath)) {
+    errors.push(`${registrySourceBoundaryPlanPath} is missing`)
+  }
   for (const fragment of [
     '### Registry Source Boundary',
     'npm `latest` still resolves to `1.0.2`, published on April 12, 2020',

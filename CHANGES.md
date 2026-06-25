@@ -4,9 +4,10 @@
 
 - Documented that npm `latest` still resolves to the historical `1.0.2`
   artifact published on April 12, 2020 rather than the current default branch.
-- Recorded the registry artifact's React 15/16, styled-components 2/3, and Node
-  greater-than-8 boundary alongside the current React 18/19, styled-components
-  5/6, Node 16+, exports, types, accessibility, and verification surface.
+- Recorded the registry artifact's exact React and styled-components peer
+  ranges plus Node greater-than-8 boundary alongside the current React 18/19,
+  styled-components 5/6, Node 16+, exports, types, accessibility, and
+  verification surface.
 - Labeled the existing install command as historical-package guidance and
   directed current-source evaluation to a reviewed repository commit plus the
   Node 20+/Yarn 4 development workflow.
@@ -30,6 +31,10 @@
   incorrectly implied an upper bound; the registry's published
   `>=2.0 || >=3.0` range is now documented as effectively `>=2.0` and enforced
   by the docs contract.
+- Follow-up review found deleting the plan disabled the boundary checks and the
+  plan mentioned gate commands only as earlier missing evidence. The actual
+  package repository now requires the plan, and the successful `corepack yarn
+verify` and `make check` runs are recorded explicitly.
 
 ## 2026-06-21
 

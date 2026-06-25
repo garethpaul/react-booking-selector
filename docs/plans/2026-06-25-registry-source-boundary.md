@@ -59,9 +59,16 @@ peer dependency ranges.
   historical-install labeling, and future-release requirements. The first
   source mutation did not alter wrapped Markdown, so a whitespace-aware rerun
   provided the intended rejection evidence.
-- `node scripts/check-docs-plan.js` and `git diff --check` passed locally. This
-  host has Node 18 and no Corepack, so complete package verification remains a
-  hosted Node 20/24 responsibility.
+- `node scripts/check-docs-plan.js` and `git diff --check` passed locally.
+- With isolated Node 20.19.5, Corepack 0.33.0, and Yarn 4.17.0,
+  `corepack yarn verify` passed 400 Jest tests, coverage, review mutations,
+  audit, package contents/runtime checks, publint, and type-package analysis.
+- With that same toolchain, `make check` passed all 42 Make authority cases and
+  the complete verification graph. A full build left `dist` unchanged.
 - Exact-head Codex review found that shorthand `styled-components 2/3` implied
   an upper bound absent from the published `>=2.0 || >=3.0` range. README and
   the checker now state its effective `>=2.0` meaning precisely.
+- Follow-up exact-head review found the plan could be deleted to disable its
+  checks and that successful gates were recorded only indirectly. The checker
+  now requires the plan for the actual package repository, and this section
+  records the successful commands explicitly.
