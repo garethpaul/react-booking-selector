@@ -6,9 +6,22 @@
 
 ## Getting Started
 
+### Registry Source Boundary
+
+npm `latest` still resolves to `1.0.2`, published on April 12, 2020. That
+historical registry artifact declares React 15/16, styled-components 2/3, and
+Node greater than 8; it does not contain the current package exports,
+TypeScript declarations, keyboard behavior, or verification stack. The
+registry package is not the current default-branch source.
+
+Use the install command below only when you intentionally need the historical registry package.
+
 ```bash
 yarn add react-booking-selector styled-components
 ```
+
+To evaluate current source, check out a reviewed repository commit and use the
+Node 20+/Yarn 4 development commands documented below. A future current-source release needs a new version and a reviewed publish.
 
 TypeScript declarations are included for both the default export and the named `BookingSelector` export.
 
@@ -351,6 +364,7 @@ See `docs/plans/2026-06-19-listener-and-roving-focus-review.md` for failed-clean
 See `docs/plans/2026-06-20-js-yaml-security-resolution.md` for the patched transitive YAML parser boundary.
 
 See `docs/plans/2026-06-21-safe-make-root.md` for fail-closed Make root resolution and regression coverage.
+See `docs/plans/2026-06-25-registry-source-boundary.md` for the npm registry and current-source distinction.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.

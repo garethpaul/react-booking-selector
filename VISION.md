@@ -58,6 +58,8 @@ Next priorities:
   boundary updates.
 - Keep peer dependency ranges aligned with supported React and styled-components
   majors.
+- Keep npm `latest` and the current default-branch source clearly distinguished
+  until a new reviewed package version is published.
 - Revisit the ESLint 10 major when the active parser and plugin peer ranges
   support it.
 
