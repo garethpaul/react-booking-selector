@@ -32,6 +32,7 @@ Priority:
 - Keep every canonical maintenance plan linked exactly once from README with
   slash-separated `docs/plans` paths
 - Keep local editor metadata out of package verification inputs
+- Keep local maintainer intelligence ignored and out of the tracked source set
 - Keep the package manifest files allowlist aligned with the intended published
   package surface
 - Reject duplicate package file entries in manifest and dry-run package checks

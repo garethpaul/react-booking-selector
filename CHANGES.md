@@ -1,5 +1,74 @@
 # Changes
 
+## 2026-06-25 15:15 PDT - P2 - Ignore local repository metadata
+
+### Summary
+
+Kept repository-local `.explore/` intelligence out of working-tree status and
+tracked source while strengthening the existing `.vscode/` boundary.
+
+### Work completed
+
+- Added the exact active `.explore/` ignore rule.
+- Reworked the package-root test to require active patterns, effective Git
+  ignore behavior, and an empty tracked metadata set.
+- Removed the filesystem-existence filter that could hide deleted tracked
+  editor or intelligence files.
+- Added durable setup, contributor, roadmap, and maintenance-plan guidance.
+
+### Threads
+
+- Started: local maintainer-intelligence ignore boundary.
+- Continued: editor metadata and package-root repository hygiene.
+- Stopped: none.
+
+### Files changed
+
+- `.gitignore` — ignored `.explore/`.
+- `test/lib/package-root.test.js` — enforced active, effective, and index-aware
+  local metadata boundaries.
+- `README.md` — documented local-only metadata and durable evidence.
+- `AGENTS.md` — added the contributor maintenance rule.
+- `VISION.md` — added the tracked-source guardrail.
+- `docs/plans/2026-06-25-local-repository-metadata-ignore.md` — recorded the
+  evidence, decisions, verification, and risk.
+- `CHANGES.md` — recorded this P2 cycle.
+
+### Validation
+
+- Red-first package-root test — failed because `.explore/` was not an active
+  ignore pattern.
+- Focused docs-plan and package-root suites passed 29 tests; formatting and
+  lint checks passed.
+- `make check` passed 42 Make target/authority cases, 28 canonical plans, 400
+  Jest tests with 100% covered-source thresholds, four review mutations, the
+  high-severity audit, package contents/runtime checks, publint, and type-package
+  analysis under Node 20.19.5/Corepack 0.33.0/Yarn 4.17.0.
+- `make build` reproduced the checked-in library and documentation output with
+  no `dist` drift; `git diff --check` passed.
+- Exact-head Codex review — clean on
+  `edaa70e1496886a8ee278d270385605705738272` with no actionable findings.
+- Both push and pull-request Node 16 artifact jobs passed, and both Node 20/24
+  full verification matrices passed with clean regenerated `dist` output.
+- CodeQL Actions and JavaScript/TypeScript analysis passed.
+
+### Bugs / findings
+
+- P2: persistent maintainer intelligence appeared as untracked package source
+  and could be staged or published accidentally.
+- P2: the previous tracked-editor check filtered by filesystem existence and
+  could miss deleted paths still present in Git's index.
+
+### Blockers
+
+- The system Node is 18 and has no Corepack; an isolated Node 20.19.5/Corepack
+  0.33.0/Yarn 4.17.0 toolchain is available for local verification.
+
+### Next action
+
+- Rerun exact-head review and hosted checks for this evidence-only update, then
+  merge if they remain clean.
+
 ## 2026-06-25 12:28 PDT - P2 - Clarify npm registry source boundary
 
 - Documented that npm `latest` still resolves to the historical `1.0.2`
