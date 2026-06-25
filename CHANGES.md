@@ -1,5 +1,41 @@
 # Changes
 
+## 2026-06-25 12:28 PDT - P2 - Clarify npm registry source boundary
+
+- Documented that npm `latest` still resolves to the historical `1.0.2`
+  artifact published on April 12, 2020 rather than the current default branch.
+- Recorded the registry artifact's exact React and styled-components peer
+  ranges plus Node greater-than-8 boundary alongside the current React 18/19,
+  styled-components 5/6, Node 16+, exports, types, accessibility, and
+  verification surface.
+- Labeled the existing install command as historical-package guidance and
+  directed current-source evaluation to a reviewed repository commit plus the
+  Node 20+/Yarn 4 development workflow.
+- Added a red-first dependency-free docs contract and completed maintenance
+  plan. The checker first rejected the absent plan and five README fragments;
+  four hostile mutations then rejected weakened registry age, source
+  distinction, historical-install labeling, and future-release requirements.
+- The first green attempt exposed Markdown line-wrap sensitivity and was fixed
+  by normalizing prose whitespace. The first source mutation did not alter the
+  wrapped phrase, so its whitespace-aware rerun supplied the intended evidence.
+- The local full-gate attempt stopped because this host has Node 18 and no
+  Corepack; hosted Node 16/20/24 remains authoritative.
+- An isolated Node 20.19.5/Corepack 0.33.0/Yarn 4.17.0 toolchain then completed
+  immutable installation, the focused 17-test docs-plan suite, all 42 Make
+  authority cases, 400 Jest tests with 100% covered source, review mutations,
+  high-severity audit, package contents/runtime lint, publint, and type-package
+  analysis. The first full rerun found only Prettier layout in the checker;
+  formatting was corrected and the complete rerun passed.
+- A full build left checked-in `dist` unchanged, and `git diff --check` passed.
+- Exact-head Codex review found the shorthand `styled-components 2/3`
+  incorrectly implied an upper bound; the registry's published
+  `>=2.0 || >=3.0` range is now documented as effectively `>=2.0` and enforced
+  by the docs contract.
+- Follow-up review found deleting the plan disabled the boundary checks and the
+  plan mentioned gate commands only as earlier missing evidence. The actual
+  package repository now requires the plan, and the successful `corepack yarn
+verify` and `make check` runs are recorded explicitly.
+
 ## 2026-06-21
 
 - Hardened all five pre-existing Make gates against caller-controlled root and

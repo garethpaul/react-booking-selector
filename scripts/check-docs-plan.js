@@ -14,6 +14,7 @@ const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independ
 const yarnPackageManagerPlanPath = toPlanPath('2026-06-15-yarn-4-package-manager.md')
 const explicitDocsDeploymentPlanPath = toPlanPath('2026-06-15-explicit-docs-deployment.md')
 const documentListenerMigrationPlanPath = toPlanPath('2026-06-16-document-mouseup-listener-migration.md')
+const registrySourceBoundaryPlanPath = toPlanPath('2026-06-25-registry-source-boundary.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
 const codeownersPath = '.github/CODEOWNERS'
@@ -23,6 +24,8 @@ const yarnConfigPath = '.yarnrc.yml'
 const planDirFsPath = toFsPath(planDir)
 const makefile = fs.existsSync('Makefile') ? fs.readFileSync('Makefile', 'utf8') : ''
 const readme = fs.existsSync('README.md') ? fs.readFileSync('README.md', 'utf8') : ''
+const normalizedReadme = readme.replace(/\s+/gu, ' ')
+const packageName = fs.existsSync(packageJsonPath) ? JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name : null
 
 const errors = []
 const planFilenamePattern = /^(\d{4})-(\d{2})-(\d{2})-[-\w.]+\.md$/u
@@ -78,6 +81,22 @@ if (!planPaths.includes(baselinePlanPath)) {
 
 if (!planPaths.includes(ciPlanPath)) {
   errors.push(`${ciPlanPath} is missing`)
+}
+
+if (packageName === 'react-booking-selector') {
+  if (!planPaths.includes(registrySourceBoundaryPlanPath)) {
+    errors.push(`${registrySourceBoundaryPlanPath} is missing`)
+  }
+  for (const fragment of [
+    '### Registry Source Boundary',
+    'npm `latest` still resolves to `1.0.2`, published on April 12, 2020',
+    'styled-components `>=2.0 || >=3.0` (effectively `>=2.0`)',
+    'The registry package is not the current default-branch source.',
+    'Use the install command below only when you intentionally need the historical registry package.',
+    'A future current-source release needs a new version and a reviewed publish.',
+  ]) {
+    if (!normalizedReadme.includes(fragment)) errors.push(`README.md registry source boundary must include ${fragment}`)
+  }
 }
 
 if (planPaths.includes(ciPlanPath)) {
