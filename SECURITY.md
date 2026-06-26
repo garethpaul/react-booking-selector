@@ -32,6 +32,8 @@ Helpful reports include:
   clean up the exact retained owner document after iframe or portal relocation.
 - Failed document-listener removals must remain tracked for cleanup retry, and
   orphaned callbacks must be inert after unmount begins.
+- Retained listeners on prior documents must not complete a selection after
+  iframe or portal relocation transfers ownership to another document.
 - Keyboard access includes blocked-aware arrow, `Home`, `End`, `Control+Home`,
   and `Control+End` focus movement without changing selection state.
 - The slot grid must keep one available cell in the tab order and move that

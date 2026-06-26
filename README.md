@@ -102,6 +102,10 @@ Selection draft state and `onChange` payloads are also normalized at minute
 precision. Duplicate values in the same minute collapse to the first valid
 value while preserving the order of distinct selected slots.
 
+Document-level drag completion follows the document that currently owns the
+rendered grid. If cleanup of a prior document listener fails during iframe or
+portal relocation, stale mouseup callbacks from retained prior documents are ignored.
+
 ## Props
 
 ### `className`
@@ -373,6 +377,8 @@ See `docs/plans/2026-06-21-safe-make-root.md` for fail-closed Make root resoluti
 See `docs/plans/2026-06-25-registry-source-boundary.md` for the npm registry and current-source distinction.
 See `docs/plans/2026-06-25-local-repository-metadata-ignore.md` for effective local metadata ignore and index coverage.
 See `docs/plans/2026-06-26-docs-smoke-verify-gate.md` for the canonical real-browser documentation smoke gate.
+See `docs/plans/2026-06-26-stale-document-mouseup-design.md` for the stale-owner event design decision.
+See `docs/plans/2026-06-26-stale-document-mouseup.md` for retained listener owner isolation and verification.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.

@@ -40,6 +40,8 @@
 - Keep React components controlled and covered by component tests when props or rendering behavior changes.
 - Retain and migrate the exact owner document used for global mouseup listeners;
   do not infer cleanup ownership from a later `gridRef`.
+- Ignore retained stale-document mouseup callbacks after the grid moves to a
+  different iframe or portal owner.
 
 ## Testing guidance
 

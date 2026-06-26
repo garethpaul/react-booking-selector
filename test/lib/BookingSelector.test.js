@@ -2086,6 +2086,52 @@ describe('componentDidUpdate', () => {
     expect(firstDocument.removeEventListener).toHaveBeenCalledTimes(2)
   })
 
+  it('ignores stale document mouseup after failed listener migration cleanup', () => {
+    const { instance } = renderSelector()
+    const firstDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(() => {
+        throw new Error('Temporary listener removal failure')
+      }),
+    }
+    const secondDocument = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }
+
+    instance.gridRef = { ownerDocument: firstDocument }
+    instance.componentDidUpdate()
+    instance.gridRef = { ownerDocument: secondDocument }
+    instance.componentDidUpdate()
+    instance.state.selectionType = 'add'
+    instance.state.selectionStart = startDate
+
+    const updateAvailabilityDraft = jest.spyOn(instance, 'updateAvailabilityDraft').mockImplementation(() => {})
+    instance.handleDocumentMouseUpEvent({ button: 0, currentTarget: firstDocument, target: null })
+    expect(updateAvailabilityDraft).not.toHaveBeenCalled()
+
+    instance.handleDocumentMouseUpEvent({ button: 0, currentTarget: secondDocument, target: null })
+    expect(updateAvailabilityDraft).toHaveBeenCalledTimes(1)
+  })
+
+  it('tolerates inaccessible or non-document mouseup current targets', () => {
+    const { instance } = renderSelector()
+    instance.state.selectionType = 'add'
+    instance.state.selectionStart = startDate
+    const updateAvailabilityDraft = jest.spyOn(instance, 'updateAvailabilityDraft').mockImplementation(() => {})
+    const inaccessibleCurrentTarget = { button: 0, target: null }
+    Object.defineProperty(inaccessibleCurrentTarget, 'currentTarget', {
+      get() {
+        throw new Error('Cannot inspect current target')
+      },
+    })
+
+    instance.handleDocumentMouseUpEvent(inaccessibleCurrentTarget)
+    instance.handleDocumentMouseUpEvent({ button: 0, currentTarget: 'not-a-document', target: null })
+
+    expect(updateAvailabilityDraft).toHaveBeenCalledTimes(2)
+  })
+
   it('ignores orphaned document events after unmount', () => {
     const { instance, unmount } = renderSelector()
     const ownerDocument = {

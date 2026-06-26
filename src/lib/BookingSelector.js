@@ -799,6 +799,16 @@ const getOwnerDocument = (target: mixed): ?BrowserDocumentType => {
   }
 }
 
+const getEventCurrentTarget = (event: mixed): ?BrowserDocumentType => {
+  if (!event || typeof event !== 'object') return null
+  try {
+    const currentTarget = (event: any).currentTarget
+    return currentTarget && typeof currentTarget === 'object' ? currentTarget : null
+  } catch {
+    return null
+  }
+}
+
 export default class BookingSelector extends React.Component<PropsType, StateType> {
   dates: Array<Array<Date>>
   selectionSchemeHandlers: { [string]: (?Date, ?Date, Array<Array<Date>>) => Date[] }
@@ -1089,6 +1099,8 @@ export default class BookingSelector extends React.Component<PropsType, StateTyp
 
   handleDocumentMouseUpEvent(event: ?MouseEvent) {
     if (!this.componentMounted) return
+    const listenerDocument = getEventCurrentTarget(event)
+    if (listenerDocument && listenerDocument !== this.documentMouseUpTarget) return
     if (this.state.selectionType === null) return
     if (this.shouldIgnoreMouseEvent()) return
     if (!isPrimaryMouseButton(event)) return

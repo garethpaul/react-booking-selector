@@ -10,6 +10,14 @@ const sourcePath = path.join(repositoryRoot, 'src/lib/BookingSelector.js')
 const source = fs.readFileSync(sourcePath, 'utf8')
 const mutations = [
   {
+    name: 'stale document mouseup owner guard',
+    find:
+      '    const listenerDocument = getEventCurrentTarget(event)\n' +
+      '    if (listenerDocument && listenerDocument !== this.documentMouseUpTarget) return\n',
+    replace: '',
+    testName: 'ignores stale document mouseup after failed listener migration cleanup',
+  },
+  {
     name: 'unmounted document event guard',
     find: '    if (!this.componentMounted) return\n',
     replace: '',

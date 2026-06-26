@@ -475,6 +475,15 @@ var getOwnerDocument = function getOwnerDocument(target) {
     return null;
   }
 };
+var getEventCurrentTarget = function getEventCurrentTarget(event) {
+  if (!event || typeof event !== 'object') return null;
+  try {
+    var currentTarget = event.currentTarget;
+    return currentTarget && typeof currentTarget === 'object' ? currentTarget : null;
+  } catch (_unused10) {
+    return null;
+  }
+};
 var BookingSelector = /*#__PURE__*/function (_React$Component) {
   function BookingSelector(props) {
     var _this;
@@ -697,7 +706,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (dateCell && typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused10) {
+        } catch (_unused11) {
           // Ignore cleanup failures from stale or non-standard registered cells.
         }
       }
@@ -715,7 +724,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     try {
       browserDocument.removeEventListener('mouseup', this.handleDocumentMouseUpEvent);
       this.documentMouseUpTargets.delete(browserDocument);
-    } catch (_unused11) {
+    } catch (_unused12) {
       // Retain failed removals so unmount can retry every document that may still own the handler.
     }
   };
@@ -732,7 +741,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       browserDocument.addEventListener('mouseup', this.handleDocumentMouseUpEvent);
       this.documentMouseUpTarget = browserDocument;
       this.documentMouseUpTargets.add(browserDocument);
-    } catch (_unused12) {
+    } catch (_unused13) {
       // Continue lifecycle updates in non-standard hosts that cannot register document listeners.
     }
   };
@@ -769,7 +778,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
             passive: false
           });
           this.touchScrollCells.add(dateCell);
-        } catch (_unused13) {
+        } catch (_unused14) {
           // Leave the date registered even if this cell cannot accept touch listener options.
         }
       }
@@ -777,7 +786,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (typeof dateCell.removeEventListener === 'function') {
         try {
           dateCell.removeEventListener('touchmove', preventScroll);
-        } catch (_unused14) {
+        } catch (_unused15) {
           // Continue clearing lookup state even when listener cleanup fails.
         }
       }
@@ -838,6 +847,8 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
   };
   _proto.handleDocumentMouseUpEvent = function handleDocumentMouseUpEvent(event) {
     if (!this.componentMounted) return;
+    var listenerDocument = getEventCurrentTarget(event);
+    if (listenerDocument && listenerDocument !== this.documentMouseUpTarget) return;
     if (this.state.selectionType === null) return;
     if (this.shouldIgnoreMouseEvent()) return;
     if (!isPrimaryMouseButton(event)) return;
@@ -868,7 +879,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
     var targetElement;
     try {
       targetElement = browserDocument.elementFromPoint(clientX, clientY);
-    } catch (_unused15) {
+    } catch (_unused16) {
       return null;
     }
     var dateCell = this.getDateCellFromEventTarget(targetElement);
@@ -1002,7 +1013,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       dateCell.focus();
       this.setRovingFocusMinuteKey(dateMinuteKey(time));
       return true;
-    } catch (_unused16) {
+    } catch (_unused17) {
       return false;
     }
   };
@@ -1013,7 +1024,7 @@ var BookingSelector = /*#__PURE__*/function (_React$Component) {
       if (!dateCell) return;
       try {
         dateCell.tabIndex = mathFloor(registeredTime / 60000) === focusedMinuteKey ? 0 : -1;
-      } catch (_unused17) {
+      } catch (_unused18) {
         // Ignore stale or non-standard focus targets while preserving the active tab stop.
       }
     });
