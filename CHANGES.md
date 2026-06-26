@@ -1,5 +1,68 @@
 # Changes
 
+## 2026-06-26 14:00 UTC - P1 - stale document mouseup ownership
+
+### Summary
+
+Prevented a retained mouseup listener on a prior document from completing a
+selection after the booking grid relocates to a new iframe or portal owner.
+
+### Work completed
+
+- Compared native listener `currentTarget` with the current retained owner
+  before any selection mutation.
+- Preserved the existing failed-removal retry set and listener identity.
+- Added a regression that forces old-document cleanup failure, proves the stale
+  callback is inert, and proves the current owner still completes the drag.
+- Added plan, source, test, guidance, and hostile mutation contracts.
+
+### Threads
+
+- Started: stale document event ownership after failed listener cleanup.
+- Continued: exact owner-document migration and retryable cleanup.
+- Stopped: none.
+
+### Files changed
+
+- `src/lib/BookingSelector.js` — rejects mouseup events dispatched by a
+  non-current listener document.
+- `test/lib/BookingSelector.test.js` — covers failed migration cleanup and
+  current-owner completion.
+- `scripts/check-docs-plan.js` and
+  `scripts/test-booking-selector-review-mutations.js` — preserve the completed
+  contract and reject guard removal.
+- `README.md`, `SECURITY.md`, `VISION.md`, `AGENTS.md`, and the two focused plan
+  records — document the ownership boundary.
+
+### Validation
+
+- Red phase: the stale old-document callback invoked `updateAvailabilityDraft`.
+- Green phase: focused owner-isolation and ten adjacent document-mouseup tests
+  passed.
+- Full Jest suite — 403 tests and two snapshots passed with 100% statement,
+  branch, function, and line coverage.
+- Five hostile review mutations — rejected, including owner-guard removal.
+- Real-browser docs smoke, format, lint, types, recursive high-severity audit,
+  package contents/runtime, Publint, Are The Types Wrong, and diff checks —
+  passed locally.
+- Canonical `corepack yarn verify` passed on Node.js 24.12.0; repository and
+  external `make check` passed on the local toolchain.
+- Hosted checks — pending final closeout.
+
+### Bugs / findings
+
+- P1: a failed old-document listener removal left a live callback that could
+  complete a drag currently owned by another document.
+
+### Blockers
+
+- None for the patch.
+
+### Next action
+
+- Open the focused PR, attempt Codex review, and merge only after exact-head
+  hosted checks pass.
+
 ## 2026-06-26 01:00 PDT - P1 - Put true mobile docs smoke in verify
 
 ### Summary

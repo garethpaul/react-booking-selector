@@ -14,6 +14,7 @@ const locationIndependentMakePlanPath = toPlanPath('2026-06-14-location-independ
 const yarnPackageManagerPlanPath = toPlanPath('2026-06-15-yarn-4-package-manager.md')
 const explicitDocsDeploymentPlanPath = toPlanPath('2026-06-15-explicit-docs-deployment.md')
 const documentListenerMigrationPlanPath = toPlanPath('2026-06-16-document-mouseup-listener-migration.md')
+const staleDocumentMouseUpPlanPath = toPlanPath('2026-06-26-stale-document-mouseup.md')
 const registrySourceBoundaryPlanPath = toPlanPath('2026-06-25-registry-source-boundary.md')
 const ciWorkflowPath = '.github/workflows/check.yml'
 const workflowDir = '.github/workflows'
@@ -270,6 +271,31 @@ if (planPaths.includes(documentListenerMigrationPlanPath)) {
   ]) {
     if (!listenerPlan.includes(evidence)) {
       errors.push(`${documentListenerMigrationPlanPath} must preserve completed evidence: ${evidence}`)
+    }
+  }
+}
+
+if (planPaths.includes(staleDocumentMouseUpPlanPath)) {
+  const staleOwnerContracts = new Map([
+    [
+      'src/lib/BookingSelector.js',
+      [
+        'const getEventCurrentTarget = (event: mixed): ?BrowserDocumentType =>',
+        'listenerDocument !== this.documentMouseUpTarget',
+      ],
+    ],
+    ['test/lib/BookingSelector.test.js', ['ignores stale document mouseup after failed listener migration cleanup']],
+    ['README.md', ['stale mouseup callbacks from retained prior documents are ignored']],
+    ['SECURITY.md', ['Retained listeners on prior documents must not complete']],
+    ['AGENTS.md', ['Ignore retained stale-document mouseup callbacks']],
+    ['VISION.md', ['stale retained document listeners inert during relocation']],
+    ['CHANGES.md', ['stale document mouseup ownership']],
+  ])
+
+  for (const [filePath, requiredFragments] of staleOwnerContracts) {
+    const contents = fs.existsSync(toFsPath(filePath)) ? fs.readFileSync(toFsPath(filePath), 'utf8') : ''
+    for (const fragment of requiredFragments) {
+      if (!contents.includes(fragment)) errors.push(`${filePath} must preserve ${fragment}`)
     }
   }
 }
