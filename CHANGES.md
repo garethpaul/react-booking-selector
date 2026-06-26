@@ -1,5 +1,72 @@
 # Changes
 
+## 2026-06-26 01:00 PDT - P1 - Put true mobile docs smoke in verify
+
+### Summary
+
+The canonical verification gate now runs the existing real-browser docs smoke,
+and the smoke owns its viewport through a fixed-size iframe so Chrome's 500px
+minimum outer window cannot turn mobile checks into cropped desktop layouts.
+
+### Work completed
+
+- Added exactly one `yarn docs:smoke` command immediately after `docs:check` in
+  the canonical `verify` sequence.
+- Added a package-root contract for the gate and a Chrome-minimum-width
+  regression for mobile viewport ownership.
+- Reused the existing smoke page as the screenshot and layout wrapper with
+  validated width and height query parameters.
+- Updated the roadmap, README, and completed implementation plan.
+
+### Threads
+
+- Started: none — work completed directly in this maintenance cycle.
+- Continued: none.
+- Stopped: none.
+
+### Files changed
+
+- `package.json` and `test/lib/package-root.test.js` — canonical smoke gate and
+  removal regression.
+- `scripts/smoke-docs.js` and `test/scripts/smoke-docs.test.js` — true mobile
+  viewport ownership and Chrome minimum-width coverage.
+- `README.md`, `VISION.md`, and
+  `docs/plans/2026-06-26-docs-smoke-verify-gate.md` — maintained contracts and
+  evidence.
+
+### Validation
+
+- Red phase: the package-root test found zero smoke commands in `verify`.
+- Red phase: simulated Chrome minimum width produced a 500px mobile viewport.
+- Focused Jest suites passed 25 tests after implementation.
+- `corepack yarn docs:smoke` passed with Google Chrome 149.0.7827.155; manual
+  inspection confirmed the 390px screenshot contains the complete mobile grid.
+- Node 24 `corepack yarn verify`, checkout-local `make check`, and the absolute
+  Makefile gate from `/tmp` passed with 401 tests, four rejected hostile
+  mutations, audit, package-runtime, package-content, publint, and type checks.
+- The checked-in `dist/` tree remained unchanged; hosted Node 20/24 validation
+  remains required before merge.
+- `codex review --base origin/master` was attempted but the external service
+  returned HTTP 401 before analysis; manual review of the viewport ownership,
+  bounded query parsing, regression tests, and verification order found no
+  actionable issue, and the run continued under the instruction to skip auth
+  failures.
+
+### Bugs / findings
+
+- P1: the documented real-browser smoke was absent from `verify`.
+- P1: Chrome's minimum headless outer-window width made prior mobile screenshots
+  crop a wider layout instead of exercising the requested responsive viewport.
+
+### Blockers
+
+- External Codex review authentication is unavailable in this environment.
+
+### Next action
+
+- Open the focused PR, attempt Codex review, and merge only the exact head after
+  hosted Node 20/24 checks pass.
+
 ## 2026-06-25 15:15 PDT - P2 - Ignore local repository metadata
 
 ### Summary

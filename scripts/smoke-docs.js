@@ -84,19 +84,26 @@ const sendResponse = (response, statusCode, body) => {
   response.end(body)
 }
 
-const createLayoutCheckHtml = (targetPath = '/') => `<!doctype html>
+const createLayoutCheckHtml = (targetPath, width, height) => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Docs Layout Smoke</title>
     <style>
       html,
-      body,
-      iframe {
-        width: 100%;
-        height: 100%;
+      body {
+        width: ${width}px;
+        height: ${height}px;
         margin: 0;
+        overflow: hidden;
+      }
+      iframe {
+        width: ${width}px;
+        height: ${height}px;
         border: 0;
+      }
+      #layout-result {
+        display: none;
       }
     </style>
   </head>
@@ -149,11 +156,24 @@ const createLayoutCheckHtml = (targetPath = '/') => `<!doctype html>
 
 const isInsideDocsRoot = (filePath) => filePath === docsRoot || filePath.startsWith(`${docsRoot}${path.sep}`)
 
+const getViewportDimension = (requestUrl, name) => {
+  const value = Number(requestUrl.searchParams.get(name))
+  return Number.isInteger(value) && value > 0 && value <= 4096 ? value : null
+}
+
+const getViewportUrl = (url, screenshot) => {
+  const viewportUrl = new URL(layoutCheckPath, url)
+  viewportUrl.searchParams.set('width', String(screenshot.width))
+  viewportUrl.searchParams.set('height', String(screenshot.height))
+  return viewportUrl.href
+}
+
 const createDocsServer = () =>
   http.createServer((request, response) => {
+    let requestUrl
     let pathname
     try {
-      const requestUrl = new URL(request.url || '/', 'http://127.0.0.1')
+      requestUrl = new URL(request.url || '/', 'http://127.0.0.1')
       pathname = decodeURIComponent(requestUrl.pathname)
     } catch {
       sendResponse(response, 400, 'Bad request')
@@ -164,8 +184,14 @@ const createDocsServer = () =>
       return
     }
     if (pathname === layoutCheckPath) {
+      const width = getViewportDimension(requestUrl, 'width')
+      const height = getViewportDimension(requestUrl, 'height')
+      if (width === null || height === null) {
+        sendResponse(response, 400, 'Bad viewport')
+        return
+      }
       response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-      response.end(createLayoutCheckHtml('/'))
+      response.end(createLayoutCheckHtml('/', width, height))
       return
     }
     const relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '')
@@ -472,8 +498,8 @@ const assertLayout = (screenshot, dom) => {
   const minCellLeft = getLayoutNumber(screenshot, layout, 'minCellLeft')
   const maxCellRight = getLayoutNumber(screenshot, layout, 'maxCellRight')
 
-  if (viewportWidth > screenshot.width || viewportWidth < screenshot.width - 40) {
-    throw new Error(`${screenshot.name} layout viewport is ${viewportWidth}px, expected near ${screenshot.width}px`)
+  if (Math.abs(viewportWidth - screenshot.width) > 1) {
+    throw new Error(`${screenshot.name} layout viewport is ${viewportWidth}px, expected ${screenshot.width}px`)
   }
   if (buttonCount !== 70) {
     throw new Error(`${screenshot.name} layout expected 70 booking slot buttons, found ${buttonCount}`)
@@ -495,12 +521,13 @@ const isRetriableLayoutError = (error) =>
   error.message === 'Docs layout smoke result is missing' || error.message === 'Docs layout smoke result is pending'
 
 const runLayoutSmoke = async (chrome, url, screenshot) => {
+  const viewportUrl = getViewportUrl(url, screenshot)
   for (let attempt = 1; attempt <= layoutSmokeAttempts; attempt += 1) {
     const layoutDom = await runChrome(chrome, [
       `--window-size=${screenshot.width},${screenshot.height}`,
       '--virtual-time-budget=5000',
       '--dump-dom',
-      `${url}${layoutCheckPath}`,
+      viewportUrl,
     ])
 
     try {
@@ -524,10 +551,11 @@ const main = async () => {
 
   try {
     for (const screenshot of screenshots) {
+      const viewportUrl = getViewportUrl(url, screenshot)
       await runChrome(chrome, [
         `--window-size=${screenshot.width},${screenshot.height}`,
         `--screenshot=${screenshot.filePath}`,
-        url,
+        viewportUrl,
       ])
       assertScreenshot(screenshot)
     }

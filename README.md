@@ -333,13 +333,14 @@ corepack yarn docs:smoke
 They reject additional Makefiles and non-executing/error-ignoring Make modes;
 trusted automation must still provide the intended Node/Corepack toolchain on
 `PATH` and must not supply caller-controlled Makefiles.
-`corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs formatting checks, linting,
-TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
+`corepack yarn verify` checks every dated canonical completed plan under `docs/plans`, runs the real-browser documentation
+smoke at desktop and two mobile viewport widths, formatting checks, linting, TypeScript checks, Jest with coverage thresholds, a dependency audit, a strict package dry run with contents validation,
 `publint`, and Are The Types Wrong. The package intentionally publishes `dist/lib`, `dist/esm`,
 `docs/readme-overview.svg`, `README.md`, and `LICENSE`; packed files must remain non-executable and within the reviewed
 64 KiB compressed, 256 KiB unpacked, and 64 KiB per-file package size budget.
 `corepack yarn docs:smoke` builds the docs, serves them locally, captures desktop, mobile, and narrow-mobile
-screenshots with headless Chrome or Chromium, and checks the rendered DOM, screenshots, and horizontal layout metrics.
+screenshots through fixed-size iframe viewports with headless Chrome or Chromium, and checks the rendered DOM, screenshots,
+and horizontal layout metrics even when Chrome enforces a wider minimum outer window.
 GitHub Actions performs immutable, lifecycle-script-free Yarn 4 installs for
 the full verification graph on Node 20 and Node 24. A separate job builds and
 packs on Node 20, then loads the read-only artifact under digest-pinned Node
@@ -371,6 +372,7 @@ See `docs/plans/2026-06-20-js-yaml-security-resolution.md` for the patched trans
 See `docs/plans/2026-06-21-safe-make-root.md` for fail-closed Make root resolution and regression coverage.
 See `docs/plans/2026-06-25-registry-source-boundary.md` for the npm registry and current-source distinction.
 See `docs/plans/2026-06-25-local-repository-metadata-ignore.md` for effective local metadata ignore and index coverage.
+See `docs/plans/2026-06-26-docs-smoke-verify-gate.md` for the canonical real-browser documentation smoke gate.
 See `docs/plans/2026-06-09-minute-unique-selection.md` for minute-unique selection payload handling.
 See `docs/plans/2026-06-09-docs-plan-readme-references.md` for README plan-link coverage.
 See `docs/plans/2026-06-09-docs-plan-readme-unique-references.md` for unique README plan-link coverage.
