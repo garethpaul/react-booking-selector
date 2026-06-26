@@ -42,12 +42,13 @@ Priority:
 - Keep canonical maintenance plan filenames dated and sortable
 - Keep date, selection, touch, and docs-smoke helpers defensive against
   malformed or invalid inputs
+- Keep the real-browser desktop and mobile docs smoke in the canonical verify
+  gate with iframe-owned viewport dimensions
 
 Next priorities:
 
-- Keep `docs:smoke` in the gate for layout-sensitive changes, including its
-  screenshot, DOM, and horizontal overflow checks, and add baseline visual
-  regression coverage before larger styling changes.
+- Extend the existing screenshot, DOM, and horizontal-overflow smoke with a
+  reviewed visual baseline before larger styling changes.
 - Keep daylight-saving-time placeholder behavior and keyboard navigation covered
 - Keep row-edge and whole-grid `Home` and `End` navigation blocked-aware
   as the day/hour grid evolves.

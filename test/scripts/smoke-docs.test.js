@@ -143,7 +143,10 @@ if (args.includes('--dump-dom')) {
         process.exit(0)
       }
       const windowSizeArg = args.find((arg) => arg.startsWith('--window-size='))
-      const [width] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
+      const [requestedWidth] = windowSizeArg.replace('--window-size=', '').split(',').map(Number)
+      const minimumViewportWidth = Number(process.env.FAKE_CHROME_MINIMUM_VIEWPORT_WIDTH || 0)
+      const targetWidth = Number(targetUrl.searchParams.get('width'))
+      const width = targetWidth || Math.max(requestedWidth, minimumViewportWidth)
       const layout = {
         status: 'ok',
         viewportWidth: width,
@@ -284,6 +287,16 @@ describe('smoke-docs script', () => {
     expect(() => {
       runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_LAYOUT_OVERFLOW: '1' })
     }).toThrow(/desktop layout has horizontal overflow/u)
+  })
+
+  it('keeps mobile layout checks at their target width when Chrome enforces a wider window', () => {
+    const projectPath = createTempProject()
+    tempPaths.push(projectPath)
+    const fakeChromePath = writeFakeChrome(projectPath)
+
+    const output = runSmoke(projectPath, fakeChromePath, { FAKE_CHROME_MINIMUM_VIEWPORT_WIDTH: '500' })
+
+    expect(output).toContain('Docs smoke passed. Screenshots:')
   })
 
   it('retries when a layout smoke dump is missing once', () => {
