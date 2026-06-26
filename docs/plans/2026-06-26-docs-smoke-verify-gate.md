@@ -74,3 +74,6 @@
   mutations, audit, package-runtime, package-content, publint, and type checks.
 - The checked-in `dist/` tree remained unchanged. Hosted Node 20/24 checks remain
   required before merge.
+- `codex review --base origin/master` was attempted but returned HTTP 401 before
+  analysis. Manual review found no actionable issue in the bounded viewport
+  parsing, iframe ownership, regression coverage, or verification ordering.

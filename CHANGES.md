@@ -46,6 +46,11 @@ minimum outer window cannot turn mobile checks into cropped desktop layouts.
   mutations, audit, package-runtime, package-content, publint, and type checks.
 - The checked-in `dist/` tree remained unchanged; hosted Node 20/24 validation
   remains required before merge.
+- `codex review --base origin/master` was attempted but the external service
+  returned HTTP 401 before analysis; manual review of the viewport ownership,
+  bounded query parsing, regression tests, and verification order found no
+  actionable issue, and the run continued under the instruction to skip auth
+  failures.
 
 ### Bugs / findings
 
@@ -55,7 +60,7 @@ minimum outer window cannot turn mobile checks into cropped desktop layouts.
 
 ### Blockers
 
-- None.
+- External Codex review authentication is unavailable in this environment.
 
 ### Next action
 
