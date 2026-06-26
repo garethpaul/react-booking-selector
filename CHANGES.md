@@ -47,7 +47,12 @@ selection after the booking grid relocates to a new iframe or portal owner.
   passed locally.
 - Canonical `corepack yarn verify` passed on Node.js 24.12.0; repository and
   external `make check` passed on the local toolchain.
-- Hosted checks — pending final closeout.
+- Hosted Node.js 16 runtime and Node.js 20/24 verification passed twice on
+  `c9e336c7fc0d481b951bce0a1c30cdc8cd8136de` in runs `28243446196` and
+  `28243448503`; CodeQL actions and JavaScript analysis passed in run
+  `28243446530`.
+- `codex review --base origin/master` was attempted and skipped after the Codex
+  API returned HTTP 401 for both WebSocket and HTTPS transports.
 
 ### Bugs / findings
 
@@ -56,12 +61,13 @@ selection after the booking grid relocates to a new iframe or portal owner.
 
 ### Blockers
 
-- None for the patch.
+- Codex review authentication is unavailable; local, mutation, and hosted
+  verification provide the review evidence for this cycle.
 
 ### Next action
 
-- Open the focused PR, attempt Codex review, and merge only after exact-head
-  hosted checks pass.
+- Push this evidence-only closeout and merge PR #49 only after its exact final
+  head passes hosted checks.
 
 ## 2026-06-26 01:00 PDT - P1 - Put true mobile docs smoke in verify
 

@@ -78,4 +78,8 @@
   snapshots, 100% coverage, five rejected hostile mutations, package checks,
   and the real-browser docs smoke.
 - Repository and external `make check` passed on the local toolchain; hosted
-  validation remains the final closeout gate.
+  validation passed on implementation head
+  `c9e336c7fc0d481b951bce0a1c30cdc8cd8136de` in verification runs
+  `28243446196` and `28243448503` and CodeQL run `28243446530`.
+- `codex review --base origin/master` was attempted and skipped after HTTP 401
+  responses from both Codex API transports.
