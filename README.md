@@ -393,3 +393,4 @@ See `docs/plans/2026-06-10-package-file-mode-check.md` for packed-file executabl
 See `docs/plans/2026-06-10-hosted-verification.md` for the pinned Node 20/24 verification and clean distribution gate.
 See `docs/plans/2026-06-12-package-size-budget.md` for fail-closed packed, unpacked, and per-file size ceilings.
 See `docs/plans/2026-06-12-node16-package-runtime.md` for the advertised runtime-floor package smoke.
+See `docs/plans/2026-07-17-verify-chain-contract.md` for the fail-closed contract on the canonical verify chain.

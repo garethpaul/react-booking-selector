@@ -224,4 +224,32 @@ if [ -e "$COMMAND_LOG" ]; then
   exit 1
 fi
 
-printf '%s\n' "Makefile root tests passed: 42 executed target/authority cases, 2 MAKEFILE_LIST rejections, 1 MAKEFILES rejection, 2 multi-Makefile rejections, 5 MAKEFLAGS rejections, and 1 dollar-path fail-closed case"
+# `make check` runs this target as a prerequisite of `verify`, before `corepack yarn verify`, so this
+# is the only gate channel that still runs when the verify chain itself is emptied. Every quality
+# command is reached only through that chain, and the checks that would notice a dropped link all run
+# inside it, so the chain is asserted here rather than only from within itself. Values are read with
+# a JSON parser so duplicate `scripts` keys (last key wins) cannot satisfy the contract with dead text.
+EXPECTED_VERIFY_CHAIN='yarn docs:check && yarn docs:smoke && yarn format:check && yarn lint && yarn types:check && yarn cover:check && yarn review:mutations && yarn npm audit --all --recursive --severity high && yarn pack:check && yarn package:runtime && yarn package:lint'
+EXPECTED_COVER_CHECK='yarn lib:build && jest --coverage --runInBand; status=$?; rm -rf coverage; exit $status'
+read_script() {
+  (cd "$ROOT_DIR" && node -e 'const s = require("./package.json").scripts || {}; process.stdout.write(String(s[process.argv[1]] ?? ""))' "$1")
+}
+
+ACTUAL_VERIFY_CHAIN=$(read_script verify)
+if [ "$ACTUAL_VERIFY_CHAIN" != "$EXPECTED_VERIFY_CHAIN" ]; then
+  printf '%s\n' "package.json verify must run the reviewed gate chain in order" >&2
+  printf '  expected: %s\n' "$EXPECTED_VERIFY_CHAIN" >&2
+  printf '  found:    %s\n' "$ACTUAL_VERIFY_CHAIN" >&2
+  exit 1
+fi
+
+# cover:check carries the test suite and the coverage thresholds; its exit status is the gate.
+ACTUAL_COVER_CHECK=$(read_script cover:check)
+if [ "$ACTUAL_COVER_CHECK" != "$EXPECTED_COVER_CHECK" ]; then
+  printf '%s\n' "package.json cover:check must propagate the Jest exit status" >&2
+  printf '  expected: %s\n' "$EXPECTED_COVER_CHECK" >&2
+  printf '  found:    %s\n' "$ACTUAL_COVER_CHECK" >&2
+  exit 1
+fi
+
+printf '%s\n' "Makefile root tests passed: 42 executed target/authority cases, 2 MAKEFILE_LIST rejections, 1 MAKEFILES rejection, 2 multi-Makefile rejections, 5 MAKEFLAGS rejections, 1 dollar-path fail-closed case, 1 verify-chain contract, and 1 cover:check exit-status contract"
