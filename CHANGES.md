@@ -1,5 +1,24 @@
 # Changes
 
+## 2026-07-17 12:00 UTC - P1 - verify chain contract
+
+### Summary
+
+Made the repository gate fail closed when a link is dropped from the canonical
+`verify` chain. Previously the assertions covering the chain ran inside the chain
+itself, so removing `yarn cover:check` also removed the only check that would
+have noticed.
+
+### Work completed
+
+- Asserted the ordered `verify` chain and the `cover:check` exit-status
+  propagation from `scripts/test-makefile-root.sh`, which `make` runs as a
+  prerequisite of `verify` and which survives an emptied chain
+- Compared parsed `package.json` script values so duplicate JSON keys cannot
+  satisfy the contract with dead text
+- Rejected `|| true`, `|| exit 0`, `|| :`, `; true`, `--passWithNoTests`, and
+  `continue-on-error` in any package script
+
 ## 2026-06-26 14:00 UTC - P1 - stale document mouseup ownership
 
 ### Summary

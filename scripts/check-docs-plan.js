@@ -366,6 +366,62 @@ for (const makeContract of makeContracts) {
   }
 }
 
+// The reviewed gate chain, in order. `make check` reaches every quality command only through this
+// chain, so a dropped or reordered link silently removes verification. Compare the parsed value so
+// duplicate `scripts` keys (last key wins in JSON) cannot satisfy this contract with dead text.
+const verifyChainContract = [
+  'yarn docs:check',
+  'yarn docs:smoke',
+  'yarn format:check',
+  'yarn lint',
+  'yarn types:check',
+  'yarn cover:check',
+  'yarn review:mutations',
+  'yarn npm audit --all --recursive --severity high',
+  'yarn pack:check',
+  'yarn package:runtime',
+  'yarn package:lint',
+]
+
+// Commands whose exit status is the gate. `cover:check` must propagate Jest's status after cleaning
+// coverage output; `exit 0` there reports failures and still passes.
+const gateScriptContracts = new Map([
+  ['cover:check', 'yarn lib:build && jest --coverage --runInBand; status=$?; rm -rf coverage; exit $status'],
+  ['review:mutations', 'node scripts/test-booking-selector-review-mutations.js'],
+  ['docs:check', 'node scripts/check-docs-plan.js'],
+  ['pack:check', 'node scripts/check-package-contents.js'],
+])
+
+const failureSuppressingFragments = ['|| true', '|| exit 0', '|| :', '; true', '--passWithNoTests', 'continue-on-error']
+
+if (packageName === 'react-booking-selector') {
+  const gateScripts = JSON.parse(fs.readFileSync(toFsPath(packageJsonPath), 'utf8')).scripts ?? {}
+  const verifyChain = (gateScripts.verify ?? '').split(' && ').map((command) => command.trim())
+
+  if (verifyChain.join(' && ') !== verifyChainContract.join(' && ')) {
+    errors.push(
+      `${packageJsonPath} verify must run the reviewed gate chain in order:\n` +
+        `  expected: ${verifyChainContract.join(' && ')}\n` +
+        `  found:    ${verifyChain.join(' && ')}`,
+    )
+  }
+
+  for (const [scriptName, expectedCommand] of gateScriptContracts) {
+    if (gateScripts[scriptName] !== expectedCommand) {
+      errors.push(`${packageJsonPath} ${scriptName} must preserve the reviewed command: ${expectedCommand}`)
+    }
+  }
+
+  for (const [scriptName, command] of Object.entries(gateScripts)) {
+    if (typeof command !== 'string') continue
+    for (const fragment of failureSuppressingFragments) {
+      if (command.includes(fragment)) {
+        errors.push(`${packageJsonPath} ${scriptName} must not suppress failures with ${fragment}`)
+      }
+    }
+  }
+}
+
 if (planPaths.includes(locationIndependentMakePlanPath)) {
   const locationIndependentMakePlan = fs.readFileSync(toFsPath(locationIndependentMakePlanPath), 'utf8')
   for (const evidence of ['Node 20', 'Node 24', 'unrelated directory', 'hostile mutations rejected']) {
